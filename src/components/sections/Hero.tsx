@@ -10,7 +10,7 @@ export function Hero() {
         variant="outline"
         className="flex items-center gap-2 text-sm px-4 py-2"
       >
-        <div className="w-1.5 h-1.5 bg-green-500 rounded-full" />
+        <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
         <span>Gotowy do współpracy</span>
       </Badge>
       <h1 className="text-4xl sm:text-5xl md:text-6xl xl:text-7xl font-medium max-w-6xl transition-all duration-300">

@@ -64,7 +64,7 @@ export function Skills() {
                 <span className="text-2xl md:text-3xl lg:text-4xl xl:text-5xl text-muted-foreground/30">
                   {skill.number}
                 </span>
-                <h2 className="text-2xl sm:text-3xl md:text-4xl xl:text-5xl">
+                <h2 className="text-xl sm:text-3xl md:text-4xl xl:text-5xl">
                   {skill.title}
                 </h2>
               </div>

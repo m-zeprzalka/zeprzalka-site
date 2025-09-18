@@ -81,7 +81,7 @@ export function Contact() {
                 <Input
                   id="project-type"
                   type="text"
-                  placeholder="np. Strona firmowa, Animacja produktu..."
+                  placeholder="Strona internetowa / Animacja / Grafik..."
                 />
               </div>
 

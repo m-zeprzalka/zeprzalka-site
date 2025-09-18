@@ -35,7 +35,7 @@ const galleryItems = [
   },
   {
     id: 5,
-    title: "Inteligentna polska",
+    title: "Inteligentna Polska",
     category: "Design & Deployment",
     type: "video",
     src: "https://socontent.marketing/img/ip.mp4",

@@ -1,5 +1,5 @@
 // src/app/blog/[slug]/page.tsx
-import { getPostBySlug, getAllPosts, type Post } from "@/lib/posts"
+import { getPostBySlug, getAllPosts } from "@/lib/posts"
 import { notFound } from "next/navigation"
 import { MDXRemote } from "next-mdx-remote/rsc"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -12,20 +12,7 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
 import { Button } from "@/components/ui/button"
-import {
-  ArrowLeft,
-  ArrowRight,
-  CalendarDays,
-  Clock,
-  Hash,
-  Info,
-  LinkIcon,
-  Linkedin,
-  List,
-  Twitter,
-  Check,
-  Copy,
-} from "lucide-react"
+import { CalendarDays, Clock, Hash } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 import type { Metadata } from "next"
@@ -61,21 +48,23 @@ function TableOfContents({
 // MDX Components
 const mdxComponents = {
   Button,
-  h2: ({ children, id }: any) => (
+  h2: (props: React.HTMLAttributes<HTMLHeadingElement>) => (
     <h2
-      id={id}
-      className="text-2xl font-bold tracking-tight mt-12 mb-4 scroll-mt-24"
-    >
-      {children}
-    </h2>
+      {...props}
+      className={
+        "text-2xl font-bold tracking-tight mt-12 mb-4 scroll-mt-24 " +
+        (props.className || "")
+      }
+    />
   ),
-  h3: ({ children, id }: any) => (
+  h3: (props: React.HTMLAttributes<HTMLHeadingElement>) => (
     <h3
-      id={id}
-      className="text-xl font-bold tracking-tight mt-8 mb-3 scroll-mt-24"
-    >
-      {children}
-    </h3>
+      {...props}
+      className={
+        "text-xl font-bold tracking-tight mt-8 mb-3 scroll-mt-24 " +
+        (props.className || "")
+      }
+    />
   ),
   // Callout: Callout, // Dodaj import z osobnego pliku jeśli chcesz używać Callout z hookami
 }

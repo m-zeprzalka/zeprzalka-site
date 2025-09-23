@@ -81,7 +81,7 @@ const blogPostsData = [
 
 export function BlogB() {
   return (
-    <section className="flex flex-col justify-center p-4 py-6 md:py-8 lg:py-12 xl:py-16 lg:min-h-[calc(100vh-4rem)] container mx-auto">
+    <section className="flex flex-col justify-center p-4 py-6 md:py-8 lg:py-12 xl:py-16 xl:min-h-[calc(100vh-4rem)] container mx-auto">
       <div className="grid gap-8 lg:grid-cols-12">
         <div className="lg:col-span-3 lg:sticky top-22 self-start ">
           <div>
@@ -117,7 +117,7 @@ export function BlogB() {
                 </Link>
 
                 {/* --- SEKCJA TREŚCI --- */}
-                <div className="flex flex-col flex-grow px-4">
+                <div className="flex h flex-col flex-grow px-4">
                   <CardHeader className="p-0">
                     <Link href={post.href}>
                       <CardTitle className="text-lg mb-2 hover:text-primary transition-colors duration-300 hover:underline">

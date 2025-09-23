@@ -3,6 +3,7 @@ import { SkillsB } from "@/components/alternative/SkillsB"
 import { GalleryB } from "@/components/alternative/GalleryB"
 import { ContactB } from "@/components/alternative/ContactB"
 import { BlogB } from "@/components/alternative/BlogB"
+import { BlogC } from "@/components/alternative/BlogC"
 
 export default function Home() {
   return (
@@ -11,6 +12,7 @@ export default function Home() {
       <SkillsB />
       <GalleryB />
       <BlogB />
+      <BlogC />
       <ContactB />
     </>
   )

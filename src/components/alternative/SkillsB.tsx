@@ -55,7 +55,7 @@ const skillsData = [
 
 export function SkillsB() {
   return (
-    <section className="flex flex-col justify-center p-4 py-6 md:py-8 lg:py-12 xl:py-16 lg:min-h-[calc(100vh-4rem)] container mx-auto">
+    <section className="flex flex-col justify-center p-4 py-6 md:py-8 lg:py-12 xl:py-16 xl:min-h-[calc(100vh-4rem)] container mx-auto">
       <div className="grid gap-6 lg:gap-8 lg:grid-cols-12">
         <div className="lg:col-span-3 lg:sticky top-22 self-start">
           <div>

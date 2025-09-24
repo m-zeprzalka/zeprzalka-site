@@ -18,10 +18,10 @@ export function Contact() {
       <div className="grid gap-8 lg:grid-cols-2">
         <div className="space-y-6 lg:sticky top-22 self-start">
           <div>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl xl:text-5xl font-bold">
+            <h2 className="text-3xl md:text-4xl md:font-semi-bold font-medium">
               Wyślij niezobowiązującą wiadomość, aby otrzymać wycenę
             </h2>
-            <p className="mt-4 text-muted-foreground">
+            <p className="text-muted-foreground lg:text-lg 2xl:text-xl mt-2 lg:mt-6 max-w-xs">
               Masz ambitny pomysł, ale nie wiesz, od czego zacząć? A może
               potrzebujesz specjalisty, który pomoże Twojemu produktowi wejść na
               wyższy poziom?

@@ -1,15 +1,18 @@
-import { Hero } from "@/components/sections/Hero"
-import { Skills } from "@/components/sections/Skills"
-import { Gallery } from "@/components/sections/Gallery"
-import { Contact } from "@/components/sections/Contact"
+import { HeroB } from "@/components/alternative/HeroB"
+import { SkillsB } from "@/components/alternative/SkillsB"
+import { GalleryB } from "@/components/alternative/GalleryB"
+import { ContactB } from "@/components/alternative/ContactB"
+import { BlogB } from "@/components/alternative/BlogB"
+import { BlogC } from "@/components/alternative/BlogC"
 
 export default function Home() {
   return (
     <>
-      <Hero />
-      <Skills />
-      <Gallery />
-      <Contact />
+      <HeroB />
+      <SkillsB />
+      <GalleryB />
+      <BlogC />
+      <ContactB />
     </>
   )
 }

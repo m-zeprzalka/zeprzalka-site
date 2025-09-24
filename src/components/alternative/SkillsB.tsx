@@ -59,10 +59,10 @@ export function SkillsB() {
       <div className="grid gap-6 lg:gap-8 lg:grid-cols-12">
         <div className="lg:col-span-3 lg:sticky top-22 self-start">
           <div>
-            <h2 className="text-xl sm:text-2xl md:text-3xl xl:text-4xl font-medium">
+            <h2 className="text-3xl md:text-4xl md:font-semi-bold font-medium">
               Kompetencje
             </h2>
-            <p className="text-muted-foreground lg:text-lg 2xl:text-xl mt-6 max-w-xs">
+            <p className="text-muted-foreground lg:text-lg 2xl:text-xl mt-2 lg:mt-6 max-w-xs">
               Umiejętności, które pomogą w sukcesie Twojego projektu
             </p>
           </div>

@@ -1,0 +1,465 @@
+---
+title: "HTML od Podstaw: Kompletny Przewodnik dla Studentów"
+description: "Praktyczny kurs HTML - od struktury dokumentu po semantyczne znaczniki. Wszystko, czego potrzebujesz, aby zacząć tworzyć strony internetowe."
+date: "2025-10-14"
+categories: ["HTML", "Web Development", "Frontend"]
+tags: ["HTML", "Web Development", "Frontend", "Kurs", "Podstawy"]
+image: "/html.jpg"
+imageCaption: "Ilustracja przedstawiająca strukturę dokumentu HTML"
+featured: true
+author:
+  name: "zeprzalka.com"
+  title: "Digital Solutions Architect"
+  bio: "Tworzę rozwiązania łączące biznes z technologią."
+  avatar: "/avatar.png"
+---
+
+Witajcie w kompleksowym przewodniku po HTML! 🎉 Ten wpis powstał specjalnie dla moich studentów, ale każdy, kto chce poznać lub uporządkować wiedzę o HTML, znajdzie tu coś dla siebie.
+
+HTML (HyperText Markup Language) to fundament każdej strony internetowej. Bez niego nie ma internetu, jaki znamy. Zacznijmy!
+
+## Czym Jest HTML?
+
+HTML to **język znaczników**, nie język programowania. Co to oznacza?
+
+- 📝 Nie piszemy w nim algorytmów czy logiki
+- 🏗️ Definiujemy **strukturę** i **znaczenie** treści
+- 🎯 Mówimy przeglądarce: "to jest nagłówek", "to jest paragraf", "to jest link"
+
+### Historia w Pigułce
+
+| Rok  | Wersja   | Kluczowe Zmiany                   |
+| ---- | -------- | --------------------------------- |
+| 1991 | HTML 1.0 | Pierwsze znaczniki (18 tagów!)    |
+| 1995 | HTML 2.0 | Formularze, tabele                |
+| 1997 | HTML 4.0 | CSS, skrypty, accessibility       |
+| 2014 | HTML5    | Semantyczne tagi, multimedia, API |
+| 2021 | HTML 5.2 | Żyjący standard (Living Standard) |
+
+> **Fun Fact:** :computer: Tim Berners-Lee stworzył HTML w 1991 roku w CERN. Pierwsze strony były czysto tekstowe!
+
+## Anatomia Dokumentu HTML
+
+Każdy dokument HTML ma **identyczną strukturę**. To jak szkielet - zawsze taki sam:
+
+```html
+<!DOCTYPE html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Moja Pierwsza Strona</title>
+  </head>
+  <body>
+    <h1>Witaj, świecie!</h1>
+    <p>To jest mój pierwszy dokument HTML.</p>
+  </body>
+</html>
+```
+
+### Rozbijmy to na Czynniki Pierwsze:
+
+1. **`<!DOCTYPE html>`** - Deklaracja typu dokumentu (mówi przeglądarce: "to HTML5!")
+2. **`<html lang="pl">`** - Korzeń dokumentu (atrybut `lang` poprawia SEO i accessibility)
+3. **`<head>`** - Metadane (informacje _o_ stronie, niewidoczne dla użytkownika)
+4. **`<body>`** - Treść strony (wszystko, co widzi użytkownik)
+
+## Znaczniki (Tags) - Twoje Narzędzia Pracy
+
+### Struktura Znacznika
+
+```html
+<tag atrybut="wartość">Treść</tag>
+```
+
+**Rodzaje znaczników:**
+
+- **Parowe:** `<p>tekst</p>`, `<div>...</div>`, `<h1>...</h1>`
+- **Samozamykające:** `<img />`, `<br />`, `<input />`
+
+### Najważniejsze Znaczniki Tekstowe
+
+#### Nagłówki (h1-h6)
+
+```html
+<h1>Najważniejszy nagłówek (tylko jeden na stronie!)</h1>
+<h2>Nagłówek sekcji</h2>
+<h3>Podsekcja</h3>
+<h4>Mniejszy nagłówek</h4>
+<h5>Jeszcze mniejszy</h5>
+<h6>Najmniejszy</h6>
+```
+
+**Złota zasada SEO:** :bulb: Jedna strona = jeden `<h1>`. Nagłówki muszą być **hierarchiczne** (nie przeskakuj z h1 na h4).
+
+#### Paragrafy i Formatowanie
+
+```html
+<p>To jest paragraf. Zawiera zwykły tekst.</p>
+<p>Możemy <strong>pogrubić tekst</strong> lub <em>pochylić go</em>.</p>
+<p>Możemy też dodać <mark>podświetlenie</mark> lub <del>przekreślenie</del>.</p>
+```
+
+**Różnica między `<strong>` a `<b>`:**
+
+- `<strong>` = **semantyczne** pogrubienie (ważne dla SEO!)
+- `<b>` = tylko **wizualne** pogrubienie
+
+### Listy - Uporządkuj Swoją Treść
+
+#### Lista Nieuporządkowana (wypunktowana)
+
+```html
+<ul>
+  <li>Kawa</li>
+  <li>Herbata</li>
+  <li>Sok</li>
+</ul>
+```
+
+Rezultat:
+
+- Kawa
+- Herbata
+- Sok
+
+#### Lista Uporządkowana (numerowana)
+
+```html
+<ol>
+  <li>Otwórz edytor</li>
+  <li>Napisz kod HTML</li>
+  <li>Zapisz jako .html</li>
+  <li>Otwórz w przeglądarce</li>
+</ol>
+```
+
+Rezultat:
+
+1. Otwórz edytor
+2. Napisz kod HTML
+3. Zapisz jako .html
+4. Otwórz w przeglądarce
+
+## Linki - Połącz Internet
+
+Linki to **serce internetu**. Bez nich każda strona byłaby samotną wyspą.
+
+### Podstawowa Składnia
+
+```html
+<a href="https://google.com">Przejdź do Google</a>
+<a href="https://github.com" target="_blank" rel="noopener noreferrer">
+  GitHub (nowa karta)
+</a>
+```
+
+**Atrybuty linków:**
+
+- `href` - dokąd prowadzi link
+- `target="_blank"` - otwórz w nowej karcie
+- `rel="noopener noreferrer"` - bezpieczeństwo (zawsze używaj z `target="_blank"`)
+
+### Rodzaje Linków
+
+```html
+<!-- Link zewnętrzny (absolutny) -->
+<a href="https://example.com">Strona zewnętrzna</a>
+
+<!-- Link wewnętrzny (relatywny) -->
+<a href="/about.html">O nas</a>
+
+<!-- Link do sekcji na stronie -->
+<a href="#kontakt">Skocz do kontaktu</a>
+
+<!-- Link email -->
+<a href="mailto:hello@example.com">Napisz do nas</a>
+
+<!-- Link telefon -->
+<a href="tel:+48123456789">Zadzwoń</a>
+```
+
+## Obrazy - Dodaj Wizualny Wymiar
+
+```html
+<img src="/images/logo.png" alt="Logo firmy XYZ" width="300" height="200" />
+```
+
+**Atrybut `alt` jest OBOWIĄZKOWY!** :warning:
+
+Dlaczego?
+
+1. **Accessibility** - czytniki ekranu odczytają opis dla osób niewidomych
+2. **SEO** - Google indeksuje obrazy po alt
+3. **Fallback** - jeśli obraz się nie załaduje, użytkownik zobaczy opis
+
+### Figure i Figcaption - Profesjonalne Podpisy
+
+```html
+<figure>
+  <img src="/chart.png" alt="Wykres sprzedaży 2024" />
+  <figcaption>Rys. 1: Wzrost sprzedaży w Q1 2024</figcaption>
+</figure>
+```
+
+## Semantyczne Znaczniki HTML5
+
+HTML5 wprowadził **semantyczne tagi**, które opisują **znaczenie** treści, nie tylko wygląd.
+
+### Struktura Semantyczna
+
+```html
+<header>
+  <nav>
+    <ul>
+      <li><a href="/">Home</a></li>
+      <li><a href="/blog">Blog</a></li>
+      <li><a href="/contact">Kontakt</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main>
+  <article>
+    <h1>Tytuł Artykułu</h1>
+    <p>Treść artykułu...</p>
+  </article>
+
+  <aside>
+    <h2>Powiązane artykuły</h2>
+    <ul>
+      <li><a href="#">Artykuł 1</a></li>
+      <li><a href="#">Artykuł 2</a></li>
+    </ul>
+  </aside>
+</main>
+
+<footer>
+  <p>&copy; 2025 Moja Firma. Wszelkie prawa zastrzeżone.</p>
+</footer>
+```
+
+### Co Dają Semantyczne Tagi?
+
+| Tag         | Znaczenie                                  |
+| ----------- | ------------------------------------------ |
+| `<header>`  | Nagłówek strony/sekcji                     |
+| `<nav>`     | Nawigacja                                  |
+| `<main>`    | Główna treść strony (tylko jedna!)         |
+| `<article>` | Samodzielny kawałek treści (wpis, artykuł) |
+| `<section>` | Sekcja tematyczna                          |
+| `<aside>`   | Treść poboczna (sidebar)                   |
+| `<footer>`  | Stopka strony/sekcji                       |
+
+**Korzyści:**
+
+- ✅ Lepsze SEO (Google rozumie strukturę)
+- ✅ Accessibility (czytniki ekranu wiedzą, co jest czym)
+- ✅ Czystszy kod (natychmiast wiadomo, co robi każda sekcja)
+
+## Tabele - Dane w Porządku
+
+Tabele to **tylko do danych tabelarycznych**, nie do layoutu!
+
+```html
+<table>
+  <thead>
+    <tr>
+      <th>Język</th>
+      <th>Rok Powstania</th>
+      <th>Twórca</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>HTML</td>
+      <td>1991</td>
+      <td>Tim Berners-Lee</td>
+    </tr>
+    <tr>
+      <td>CSS</td>
+      <td>1996</td>
+      <td>Håkon Wium Lie</td>
+    </tr>
+    <tr>
+      <td>JavaScript</td>
+      <td>1995</td>
+      <td>Brendan Eich</td>
+    </tr>
+  </tbody>
+</table>
+```
+
+## Formularze - Zbieraj Dane
+
+Formularze to sposób, w jaki użytkownicy komunikują się z Twoją stroną.
+
+```html
+<form action="/submit" method="POST">
+  <label for="name">Imię:</label>
+  <input type="text" id="name" name="name" required />
+
+  <label for="email">Email:</label>
+  <input type="email" id="email" name="email" required />
+
+  <label for="message">Wiadomość:</label>
+  <textarea id="message" name="message" rows="5"></textarea>
+
+  <button type="submit">Wyślij</button>
+</form>
+```
+
+### Rodzaje Inputów
+
+```html
+<input type="text" />
+<!-- Tekst -->
+<input type="email" />
+<!-- Email (walidacja!) -->
+<input type="password" />
+<!-- Hasło (ukryte znaki) -->
+<input type="number" />
+<!-- Liczba -->
+<input type="date" />
+<!-- Data (picker!) -->
+<input type="checkbox" />
+<!-- Checkbox -->
+<input type="radio" />
+<!-- Radio button -->
+<input type="file" />
+<!-- Upload pliku -->
+```
+
+## Dobre Praktyki HTML
+
+### 1. Zawsze Używaj Semantycznych Tagów
+
+❌ **Źle:**
+
+```html
+<div class="header">
+  <div class="navigation">...</div>
+</div>
+```
+
+✅ **Dobrze:**
+
+```html
+<header>
+  <nav>...</nav>
+</header>
+```
+
+### 2. Accessibility Jest Kluczowa
+
+```html
+<!-- Zawsze dodawaj alt do obrazów -->
+<img src="logo.png" alt="Logo firmy" />
+
+<!-- Używaj label z inputami -->
+<label for="username">Nazwa użytkownika:</label>
+<input type="text" id="username" name="username" />
+
+<!-- ARIA attributes dla interaktywnych elementów -->
+<button aria-label="Zamknij okno">×</button>
+```
+
+### 3. Waliduj Swój Kod
+
+Użyj [W3C Validator](https://validator.w3.org/) aby sprawdzić poprawność HTML.
+
+### 4. Indentacja i Czytelność
+
+❌ **Źle:**
+
+```html
+<div>
+  <p>Tekst</p>
+  <a href="#">Link</a>
+</div>
+```
+
+✅ **Dobrze:**
+
+```html
+<div>
+  <p>Tekst</p>
+  <a href="#">Link</a>
+</div>
+```
+
+## Narzędzia dla Web Developera
+
+### Podstawowe:
+
+- **VS Code** - najlepszy edytor kodu :rocket:
+- **Chrome DevTools** - inspekcja i debugowanie (F12)
+- **Live Server** - rozszerzenie VS Code do live reload
+
+### Pomocne Rozszerzenia VS Code:
+
+- HTML CSS Support
+- Auto Rename Tag
+- Prettier (formatowanie kodu)
+- IntelliSense for CSS class names
+
+## Zadania Praktyczne
+
+### Zadanie 1: Stwórz Swoją Wizytówkę
+
+Utwórz stronę HTML z:
+
+- Nagłówkiem `<h1>` z Twoim imieniem
+- Paragrafem `<p>` z krótkim opisem
+- Listą `<ul>` Twoich umiejętności
+- Linkiem do GitHub/LinkedIn
+
+### Zadanie 2: Blog Post
+
+Stwórz strukturę artykułu z:
+
+- Semantycznymi tagami (`<article>`, `<header>`, `<footer>`)
+- Przynajmniej 3 sekcjami (`<section>`)
+- Obrazkiem z `<figure>` i `<figcaption>`
+- Tabelą z danymi
+
+### Zadanie 3: Formularz Kontaktowy
+
+Zbuduj formularz z polami:
+
+- Imię (text, required)
+- Email (email, required)
+- Wiadomość (textarea)
+- Checkbox zgody na RODO
+- Przycisk wysyłki
+
+## Podsumowanie
+
+HTML to fundament web developmentu. Kluczowe punkty:
+
+1. ✅ HTML to **język znaczników**, nie programowania
+2. ✅ Struktura: `<!DOCTYPE html>` → `<html>` → `<head>` + `<body>`
+3. ✅ Używaj **semantycznych tagów** (lepsze SEO i accessibility)
+4. ✅ **Atrybut `alt`** w obrazach jest obowiązkowy
+5. ✅ Waliduj kod i dbaj o czytelność
+
+### Kolejne Kroki
+
+Po opanowaniu HTML, czas na:
+
+1. **CSS** - stylowanie i layout
+2. **JavaScript** - interaktywność
+3. **Frameworki** (React, Next.js) - nowoczesne aplikacje
+
+## Przydatne Linki
+
+- [MDN Web Docs](https://developer.mozilla.org/pl/docs/Web/HTML) - najlepsza dokumentacja HTML
+- [W3Schools](https://www.w3schools.com/html/) - interaktywne tutoriale
+- [Can I Use](https://caniuse.com/) - sprawdź wsparcie przeglądarek
+- [HTML Living Standard](https://html.spec.whatwg.org/) - oficjalna specyfikacja
+
+---
+
+**Pytania? Problemy?** Napisz w komentarzach lub na kontakt@zeprzalka.com
+
+Powodzenia w nauce! 🚀

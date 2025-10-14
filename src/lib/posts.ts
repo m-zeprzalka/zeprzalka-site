@@ -3,6 +3,7 @@ import fs from "fs"
 import path from "path"
 import matter from "gray-matter"
 import readingTime from "reading-time"
+import GithubSlugger from "github-slugger"
 
 const postsDirectory = path.join(process.cwd(), "content/posts")
 
@@ -13,6 +14,7 @@ export interface PostFrontmatter {
   categories: string[]
   tags: string[]
   image: string
+  imageCaption?: string
   author: {
     name: string
     title: string
@@ -80,18 +82,16 @@ export function getPostBySlug(slug: string): Post | null {
 }
 
 function extractHeadings(content: string) {
-  const headingRegex = /^(#{2,3})\s+(.+)$/gm
+  const headingRegex = /^(#{2})\s+(.+)$/gm
   const headings: { id: string; level: number; text: string }[] = []
+  const slugger = new GithubSlugger()
   let match
 
   while ((match = headingRegex.exec(content)) !== null) {
     const level = match[1].length
     const text = match[2].trim()
-    const id = text
-      .toLowerCase()
-      .replace(/[^a-z0-9\s-]/g, "")
-      .replace(/\s+/g, "-")
-      .trim()
+    // Użyj dokładnie tego samego algorytmu co rehype-slug (github-slugger)
+    const id = slugger.slug(text)
 
     headings.push({ id, level, text })
   }

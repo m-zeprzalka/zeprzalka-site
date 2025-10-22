@@ -1,0 +1,344 @@
+---
+title: "CSS od Podstaw: Przewodnik po Kaskadowych Arkuszach Styli"
+description: "Druga lekcja naszego kursu web developmentu. Opanuj CSS od selektorów i modelu pudełkowego po podstawy responsywności i kluczową koncepcję specyficzności."
+date: "2025-10-21"
+categories: ["CSS", "Web Development", "Frontend"]
+tags: ["CSS", "Web Development", "Frontend", "Kurs", "Style", "Flexbox", "Grid"]
+image: "/blog/css.jpg"
+imageCaption: "Ilustracja wizualizująca jak CSS dodaje styl do surowej struktury HTML"
+featured: true
+author:
+  name: "zeprzalka.com"
+  title: "Digital Solutions Architect"
+  bio: "Tworzę rozwiązania łączące biznes z technologią."
+  avatar: "/avatar.png"
+---
+
+Witajcie w drugiej lekcji naszego kursu! 🎉 Skoro macie już solidne fundamenty HTML, czas tchnąć życie w Wasze struktury. W tej części zajmiemy się CSS (Cascading Style Sheets), czyli technologią, która odpowiada za wygląd i styl każdej strony w internecie.
+
+Jeśli HTML jest szkieletem strony, to CSS jest jej ubraniem, skórą i całą resztą stylizacji. Zaczynajmy!
+
+## Czym Jest CSS?
+
+CSS to **język deklaratywny** służący do opisu wyglądu dokumentu napisanego w języku znaczników, takim jak HTML. W przeciwieństwie do HTML, który definiuje _znaczenie_ treści, CSS definiuje jej _prezentację_.
+
+- 🎨 Określamy kolory, czcionki, marginesy, tła.
+- 📐 Budujemy układy (layouty), od prostych po skomplikowane siatki.
+- 📱 Tworzymy responsywne projekty, które świetnie wyglądają na każdym urządzeniu.
+
+Słowo-klucz to **"Kaskadowe"** (Cascading). Oznacza to, że style są stosowane w określonej hierarchii, o czym opowiemy w dalszej części. To jedna z najważniejszych i często mylących koncepcji w CSS!
+
+### Historia w Pigułce
+
+| Rok   | Wersja | Kluczowe Zmiany                                        |
+| ----- | ------ | ------------------------------------------------------ |
+| 1996  | CSS 1  | Podstawowe właściwości: czcionki, kolory, marginesy.   |
+| 1998  | CSS 2  | Pozycjonowanie, `z-index`, media types.                |
+| 2011+ | CSS 3  | Moduły: Flexbox, Grid, animacje, custom properties.    |
+| Dziś  | -      | CSS to "żyjący standard", ciągle rozwijany w modułach. |
+
+> **Pro Tip:** :computer: Nie ma czegoś takiego jak "CSS4". CSS jest teraz rozwijany modułowo. Mówimy np. "CSS Grid Layout Module Level 1" zamiast czekać na jedną, wielką nową wersję.
+
+## Anatomia Reguły CSS
+
+Każda reguła CSS składa się z dwóch głównych części: **selektora** i **bloku deklaracji**.
+
+```css
+/* To jest komentarz w CSS */
+
+h1 {
+  color: #1a2b3c;
+  font-size: 32px;
+  font-family: "Arial", sans-serif;
+}
+```
+
+**Rozbijmy to na czynniki pierwsze:**
+
+1. **`h1`** - to **selektor**. Mówi przeglądarce, które elementy HTML chcemy ostylować. W tym przypadku wszystkie nagłówki `<h1>`.
+2. **`{ ... }`** - to **blok deklaracji**, który zawiera jedną lub więcej deklaracji.
+3. **`color: #1a2b3c;`** - to **deklaracja**. Składa się z:
+   - **`color`** - Właściwości (Property) - co chcemy zmienić.
+   - **`#1a2b3c`** - Wartości (Value) - jak chcemy to zmienić.
+
+## Jak Dodać CSS do Strony? (3 Sposoby)
+
+Istnieją trzy metody dodawania stylów do dokumentu HTML. Każda ma swoje zastosowanie.
+
+1. **Zewnętrzny Arkusz Styli (External Stylesheet) - NAJLEPSZA PRAKTYKA**
+
+   Tworzymy osobny plik `.css` i podpinamy go w sekcji `<head>` naszego HTML.
+
+   ```html
+   <head>
+     <link rel="stylesheet" href="style.css" />
+   </head>
+   ```
+
+   **Zalety:**
+
+   - ✅ Oddzielenie struktury (HTML) od prezentacji (CSS).
+   - ✅ Ten sam plik `.css` może być używany przez wiele stron.
+   - ✅ Przeglądarka może buforować (cache'ować) plik, przyspieszając ładowanie kolejnych podstron.
+
+2. **Wewnętrzny Arkusz Styli (Internal Stylesheet)**
+
+   Style umieszczamy bezpośrednio w sekcji `<head>` wewnątrz znacznika `<style>`.
+
+   ```html
+   <head>
+     <style>
+       body {
+         background-color: #f0f0f0;
+       }
+     </style>
+   </head>
+   ```
+
+   **Zastosowanie:** Gdy style są unikalne tylko dla tej jednej, konkretnej strony. Czasem używane do szybkiego prototypowania.
+
+3. **Style Liniowe (Inline Styles)**
+
+   Style dodajemy bezpośrednio do znacznika HTML za pomocą atrybutu `style`.
+
+   ```html
+   <p style="color: red; font-size: 20px;">
+     Ten tekst jest czerwony i powiększony.
+   </p>
+   ```
+
+   **Zastosowanie:** :warning: **Unikaj tej metody!** Ma najwyższy priorytet (specyficzność), co utrudnia zarządzanie stylami. Używaj tylko w ostateczności lub gdy style są generowane dynamicznie przez JavaScript.
+
+## Selektory - Serce CSS
+
+Selektory to potężne narzędzie do "celowania" w konkretne elementy. Ich zrozumienie jest kluczowe.
+
+### Selektory Podstawowe
+
+```css
+/* Selektor typu (tagu) */
+p {
+  line-height: 1.6;
+}
+
+/* Selektor klasy */
+.btn-primary {
+  background-color: blue;
+  color: white;
+}
+
+/* Selektor ID (unikalny na stronie!) */
+#main-header {
+  border-bottom: 1px solid #ccc;
+}
+```
+
+**Złota zasada:** :bulb: Używaj klas do wielokrotnego stylowania, a ID do unikalnych elementów (jak główny nagłówek czy stopka).
+
+### Selektory Złożone (Kombinatory)
+
+Pozwalają na precyzyjne celowanie na podstawie relacji między elementami.
+
+```css
+/* Selektor potomka (spacja) - dowolny element 'a' wewnątrz 'nav' */
+nav a {
+  text-decoration: none;
+}
+
+/* Selektor dziecka (>) - tylko 'li', które jest bezpośrednim dzieckiem 'ul' */
+ul > li {
+  padding-left: 15px;
+}
+
+/* Selektor sąsiadujący (+) - paragraf 'p' bezpośrednio po 'h2' */
+h2 + p {
+  margin-top: 0;
+}
+```
+
+### Pseudoklasy i Pseudoelementy
+
+Pozwalają na stylowanie elementów w określonym stanie lub dodawanie elementów, których nie ma w HTML.
+
+```css
+/* Pseudoklasa - styl linku po najechaniu myszką */
+a:hover {
+  color: darkred;
+  text-decoration: underline;
+}
+
+/* Pseudoklasa - styl co drugiego elementu listy (świetne do tabel!) */
+li:nth-child(even) {
+  background-color: #eee;
+}
+
+/* Pseudoelement - dodaje treść PRZED elementem */
+.important::before {
+  content: "⚠️ ";
+}
+
+/* Pseudoelement - stylowanie pierwszej litery akapitu */
+article p::first-letter {
+  font-size: 2em;
+  font-weight: bold;
+}
+```
+
+Pełną listę selektorów znajdziesz w dokumentacji MDN - to lektura obowiązkowa.
+
+## Model Pudełkowy (Box Model)
+
+Każdy element na stronie to prostokątne pudełko. Zrozumienie jego budowy jest **ABSOLUTNIE FUNDAMENTALNE**.
+
+Składa się z 4 warstw (od wewnątrz):
+
+1. **Content** - treść (tekst, obraz)
+2. **Padding** - wewnętrzny margines (przestrzeń między treścią a ramką)
+3. **Border** - ramka
+4. **Margin** - zewnętrzny margines (przestrzeń dookoła elementu, oddziela go od innych)
+
+```css
+.box {
+  width: 200px;
+  height: 100px;
+  padding: 20px;
+  border: 5px solid black;
+  margin: 30px;
+}
+```
+
+### `box-sizing: border-box` - Święty Graal Layoutów
+
+Domyślnie, `width` i `height` dotyczą tylko warstwy **Content**. Oznacza to, że `padding` i `border` _zwiększają_ finalny rozmiar pudełka. W naszym przykładzie `.box` zajmie 250px szerokości (`200px` + `2*20px padding` + `2*5px border`). To historycznie powodowało masę problemów.
+
+**Rozwiązanie:**
+
+```css
+* {
+  box-sizing: border-box;
+}
+```
+
+Ta prosta reguła zmienia sposób liczenia rozmiaru. Od teraz `width` i `height` obejmują **Content, Padding i Border**. Nasz `.box` będzie miał dokładnie `200px` szerokości. To znacznie ułatwia tworzenie layoutów. Większość nowoczesnych frameworków używa tego jako standard.
+
+## Specyficzność - Kto Tu Rządzi?
+
+Pamiętasz "Kaskadowość"? Specyficzność to mechanizm, który decyduje, która reguła CSS zostanie zastosowana, jeśli kilka z nich celuje w ten sam element.
+
+**Hierarchia Mocy (od najsłabszej do najmocniejszej):**
+
+1. **Elementy i pseudoelementy** (np. `p`, `::before`) - najniższy priorytet
+2. **Klasy, pseudoklasy, atrybuty** (np. `.klasa`, `:hover`, `[type="text"]`)
+3. **ID** (np. `#main-header`)
+4. **Style liniowe** (`style="..."`) - bardzo wysoki priorytet
+5. **`!important`** - "opcja nuklearna", nadpisuje wszystko inne. **Używaj z ogromną ostrożnością!**
+
+```css
+/* Ten styl przegra, bo selektor typu ma niską specyficzność */
+p {
+  color: blue;
+}
+
+/* Ten styl wygra, bo klasa jest mocniejsza niż typ */
+.opis {
+  color: green;
+}
+```
+
+**Dobra praktyka:** Staraj się utrzymywać niską specyficzność. Zamiast pisać `div#main .content > p.opis`, często wystarczy samo `.opis`. Ułatwia to zarządzanie kodem.
+
+## Podstawy Layoutu: Flexbox i Grid
+
+Kiedyś layouty tworzyło się za pomocą tabel, `float`ów i `position`. To mroczne czasy. Dziś mamy dwa potężne narzędzia dedykowane do budowy układów.
+
+- **Flexbox (Flexible Box Layout):** Idealny do układania elementów w **jednym wymiarze** (wiersz lub kolumna). Świetny do nawigacji, wyrównywania elementów w kontenerze, formularzy.
+- **Grid Layout:** Zaprojektowany do budowy złożonych, **dwuwymiarowych** siatek (wiersze i kolumny jednocześnie). Idealny do całego layoutu strony.
+
+W kolejnych lekcjach zanurkujemy w nie głębiej, ale już teraz warto wiedzieć, że istnieją i do czego służą. To absolutny standard w nowoczesnym CSS. Polecam genialne poradniki od CSS-Tricks: [A Complete Guide to Flexbox](https://css-tricks.com/snippets/css/a-guide-to-flexbox/) oraz [A Complete Guide to Grid](https://css-tricks.com/snippets/css/a-guide-to-grid/).
+
+## Responsywność i Media Queries
+
+Dziś strony muszą działać na telefonach, tabletach i desktopach. Służą do tego **Media Queries**. Pozwalają one na stosowanie stylów tylko wtedy, gdy spełnione są określone warunki (np. szerokość ekranu).
+
+**Podejście Mobile First:** Zaczynamy od stylów dla najmniejszych ekranów, a następnie dodajemy style dla większych.
+
+```css
+/* Style domyślne (dla telefonów) */
+.container {
+  width: 100%;
+}
+
+/* Style dla ekranów o szerokości co najmniej 768px (tablety) */
+@media (min-width: 768px) {
+  .container {
+    width: 750px;
+    margin: 0 auto; /* Wyśrodkowanie */
+  }
+}
+
+/* Style dla ekranów o szerokości co najmniej 1200px (desktop) */
+@media (min-width: 1200px) {
+  .container {
+    width: 1170px;
+  }
+}
+```
+
+## Dobre Praktyki CSS
+
+1. **Używaj Zewnętrznych Arkuszy Styli:** Utrzymuj porządek w projekcie.
+2. **Zacznij od Resetu/Normalizacji:** Przeglądarki mają swoje domyślne style. Użyj pliku jak [Normalize.css](https://necolas.github.io/normalize.css/) aby je ujednolicić.
+3. **Używaj Zrozumiałych Nazw Klas:** `btn-danger` jest lepsze niż `czerwony-przycisk`. Rozważ metodologie nazewnictwa, takie jak BEM, dla dużych projektów.
+4. **Nie Nadużywaj `!important`:** To znak, że coś jest nie tak z architekturą Twojego CSS.
+5. **Komentuj Kod:** Zwłaszcza skomplikowane selektory lub "magiczne" wartości.
+
+## Zadania Praktyczne
+
+### Zadanie 1: Ostyluj Swoją Wizytówkę
+
+Wróć do pliku HTML z zadania z poprzedniej lekcji. Stwórz plik `style.css` i:
+
+- Wyśrodkuj całą treść na stronie.
+- Nadaj nagłówkowi `<h1>` inny kolor i większy rozmiar czcionki.
+- Usuń kropki z listy umiejętności (`list-style-type: none;`).
+- Zamień listę w rząd przycisków za pomocą Flexbox (`display: flex;`).
+
+### Zadanie 2: Stwórz Interaktywny Przycisk
+
+Dodaj do swojego HTML-a element `<button class="my-button">Kliknij mnie</button>`. W CSS:
+
+- Nadaj mu tło, kolor tekstu, padding i usuń domyślną ramkę.
+- Użyj pseudoklasy `:hover`, aby przycisk zmieniał kolor tła po najechaniu myszką.
+- Dodaj `cursor: pointer;` aby pokazać, że jest klikalny.
+
+### Zadanie 3: Wprowadź Responsywność
+
+Użyj Media Query. Spraw, aby dla ekranów mniejszych niż 600px, kolor tła strony (`body`) był jasnoszary, a dla większych - biały.
+
+## Podsumowanie
+
+CSS to potężne narzędzie, które wymaga praktyki. Najważniejsze koncepcje z tej lekcji:
+
+1. ✅ **Oddzielaj CSS od HTML** używając zewnętrznych arkuszy.
+2. ✅ Opanuj **selektory**, aby precyzyjnie celować w elementy.
+3. ✅ Zrozum **model pudełkowy** i zawsze używaj `box-sizing: border-box`.
+4. ✅ Zrozum **specyficzność**, aby uniknąć frustracji przy nadpisywaniu stylów.
+5. ✅ Myśl **responsywnie** od samego początku (Mobile First).
+
+### Kolejne Kroki
+
+1. **Głębokie Zanurzenie w Flexbox i Grid**
+2. **Pozycjonowanie i `z-index`**
+3. **Przejścia (Transitions) i Animacje**
+4. **Wprowadzenie do JavaScript**
+
+## Przydatne Linki
+
+- [MDN Web Docs: CSS](https://developer.mozilla.org/pl/docs/Web/CSS) - najlepsza dokumentacja CSS
+- [CSS-Tricks](https://css-tricks.com/) - artykuły, poradniki, snippety
+- [Can I Use](https://caniuse.com/) - sprawdź wsparcie przeglądarek dla właściwości CSS
+- [CSS Zen Garden](http://www.csszengarden.com/) - Zobacz co można osiągnąć samym CSS!
+
+---
+
+**Pytania? Problemy?** Dajcie znać w komentarzach lub piszcie na kontakt@zeprzalka.com. Czas na stylowanie! 🚀

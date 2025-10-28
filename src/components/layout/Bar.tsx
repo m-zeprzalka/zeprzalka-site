@@ -25,7 +25,7 @@ export function Bar() {
   return (
     <div className="sticky top-0 z-60 h-1 bg-background/65 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div
-        className="h-full bg-gradient-to-r from-black to-white"
+        className="h-full bg-gradient-to-r from-white to-black dark:from-black dark:to-white"
         style={{ width: `${scrollProgress}%` }}
       />
     </div>

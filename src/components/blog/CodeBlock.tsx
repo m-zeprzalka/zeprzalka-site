@@ -32,15 +32,23 @@ export function CodeBlock({
   }
 
   return (
-    <div className="relative group my-6">
-      <pre
-        {...props}
-        className={`bg-white dark:bg-muted/50 rounded-lg p-12 overflow-x-auto border ${
-          className || ""
-        }`}
-      >
-        {children}
-      </pre>
+    <div className="relative group my-6 rounded-lg border border-border overflow-hidden bg-white dark:bg-muted/50">
+      <div className="overflow-x-auto">
+        <pre
+          {...props}
+          className={className || ""}
+          style={{
+            margin: 0,
+            padding: "1.5rem", // 24px wszędzie - inline style ZAWSZE działa!
+            background: "transparent",
+            fontSize: "0.875rem",
+            lineHeight: "1.7",
+          }}
+        >
+          {children}
+        </pre>
+      </div>
+
       <button
         onClick={handleCopy}
         className="absolute top-3 right-3 p-2 rounded-md bg-background/80 border hover:bg-background transition-all opacity-0 group-hover:opacity-100 focus:opacity-100"

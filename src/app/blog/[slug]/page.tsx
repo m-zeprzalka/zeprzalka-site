@@ -354,9 +354,6 @@ export default async function BlogPost({ params }: PageProps) {
                   </AvatarFallback>
                 </Avatar>
                 <div className="flex-1">
-                  <span className="text-sm text-muted-foreground">
-                    Napisane przez
-                  </span>
                   <h4 className="font-semibold text-xl mt-1">
                     {post.frontmatter.author?.name || "Autor"}
                   </h4>

@@ -35,7 +35,7 @@ export function CodeBlock({
     <div className="relative group my-6">
       <pre
         {...props}
-        className={`bg-white dark:bg-muted/50 rounded-lg p-4 overflow-x-auto border ${
+        className={`bg-white dark:bg-muted/50 rounded-lg p-12 overflow-x-auto border ${
           className || ""
         }`}
       >

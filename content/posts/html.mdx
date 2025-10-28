@@ -26,15 +26,15 @@ HTML to **język znaczników**, nie język programowania. Co to oznacza?
 
 ### Historia w Pigułce
 
-| Rok  | Wersja   | Kluczowe Zmiany                   |
-| ---- | -------- | --------------------------------- |
-| 1991 | HTML 1.0 | Pierwsze znaczniki (18 tagów!)    |
-| 1995 | HTML 2.0 | Formularze, tabele                |
-| 1997 | HTML 4.0 | CSS, skrypty, accessibility       |
-| 2014 | HTML5    | Semantyczne tagi, multimedia, API |
-| 2021 | HTML 5.2 | Żyjący standard (Living Standard) |
+| Rok   | Wersja               | Kluczowe Zmiany                   |
+| ----- | -------------------- | --------------------------------- |
+| 1991  | HTML 1.0             | Pierwsze znaczniki (22 tagi)      |
+| 1995  | HTML 2.0             | Formularze, tabele                |
+| 1997  | HTML 4.0             | CSS, skrypty, accessibility       |
+| 2014  | HTML5                | Semantyczne tagi, multimedia, API |
+| Teraz | HTML Living Standard | Żyjący standard (Living Standard) |
 
-> **Fun Fact:** :computer: Tim Berners-Lee stworzył HTML w 1991 roku w CERN. Pierwsze strony były czysto tekstowe!
+> :computer: HTML narodził się z potrzeby, a nie dla zysku. Fizyk [Tim Berners-Lee](https://pl.wikipedia.org/wiki/Tim_Berners-Lee) stworzył go w 1991 roku w CERN, aby naukowcy mogli w końcu łatwo dzielić się wynikami badań.
 
 ## Anatomia Dokumentu HTML
 
@@ -72,8 +72,8 @@ Każdy dokument HTML ma **identyczną strukturę**. To jak szkielet - zawsze tak
 
 **Rodzaje znaczników:**
 
-- **Parowe:** `<p>tekst</p>`, `<div>...</div>`, `<h1>...</h1>`
-- **Samozamykające:** `<img />`, `<br />`, `<input />`
+- **Znaczniki parowe (Elementy standardowe):** `<p>tekst</p>`, `<div>...</div>`, `<h1>...</h1>`
+- **Znaczniki samozamykające (Elementy puste):** `<img />`, `<br />`, `<input />`
 
 ### Najważniejsze Znaczniki Tekstowe
 
@@ -139,14 +139,16 @@ Rezultat:
 3. Zapisz jako .html
 4. Otwórz w przeglądarce
 
-## Linki - Połącz Internet
+## Linki - Połącz stwoje strony
 
 Linki to **serce internetu**. Bez nich każda strona byłaby samotną wyspą.
 
 ### Podstawowa Składnia
 
 ```html
+<!-- Podstawowy Odnośnik -->
 <a href="https://google.com">Przejdź do Google</a>
+<!-- Odnośnik z Atrybutami -->
 <a href="https://github.com" target="_blank" rel="noopener noreferrer">
   GitHub (nowa karta)
 </a>
@@ -177,7 +179,7 @@ Linki to **serce internetu**. Bez nich każda strona byłaby samotną wyspą.
 <a href="tel:+48123456789">Zadzwoń</a>
 ```
 
-## Obrazy - Dodaj Wizualny Wymiar
+## Obrazy - Dodaj Elementy Wizualne
 
 ```html
 <img src="/images/logo.png" alt="Logo firmy XYZ" width="300" height="200" />
@@ -188,7 +190,7 @@ Linki to **serce internetu**. Bez nich każda strona byłaby samotną wyspą.
 Dlaczego?
 
 1. **Accessibility** - czytniki ekranu odczytają opis dla osób niewidomych
-2. **SEO** - Google indeksuje obrazy po alt
+2. **SEO** - Google indeksuje obrazy po alt (obecnie również wizualnie)
 3. **Fallback** - jeśli obraz się nie załaduje, użytkownik zobaczy opis
 
 ### Figure i Figcaption - Profesjonalne Podpisy
@@ -255,9 +257,9 @@ HTML5 wprowadził **semantyczne tagi**, które opisują **znaczenie** treści, n
 - ✅ Accessibility (czytniki ekranu wiedzą, co jest czym)
 - ✅ Czystszy kod (natychmiast wiadomo, co robi każda sekcja)
 
-## Tabele - Dane w Porządku
+## Tabele - Uporządkowane Dane
 
-Tabele to **tylko do danych tabelarycznych**, nie do layoutu!
+Tabel używamy do **danych tabelarycznych**, nie do układania layoutu!
 
 ```html
 <table>
@@ -310,22 +312,22 @@ Formularze to sposób, w jaki użytkownicy komunikują się z Twoją stroną.
 ### Rodzaje Inputów
 
 ```html
-<input type="text" />
 <!-- Tekst -->
-<input type="email" />
+<input type="text" />
 <!-- Email (walidacja!) -->
-<input type="password" />
+<input type="email" />
 <!-- Hasło (ukryte znaki) -->
-<input type="number" />
+<input type="password" />
 <!-- Liczba -->
-<input type="date" />
+<input type="number" />
 <!-- Data (picker!) -->
-<input type="checkbox" />
+<input type="date" />
 <!-- Checkbox -->
-<input type="radio" />
+<input type="checkbox" />
 <!-- Radio button -->
-<input type="file" />
+<input type="radio" />
 <!-- Upload pliku -->
+<input type="file" />
 ```
 
 ## Dobre Praktyki HTML
@@ -362,44 +364,13 @@ Formularze to sposób, w jaki użytkownicy komunikują się z Twoją stroną.
 <button aria-label="Zamknij okno">×</button>
 ```
 
-### 3. Waliduj Swój Kod
-
-Użyj [W3C Validator](https://validator.w3.org/) aby sprawdzić poprawność HTML.
-
-### 4. Indentacja i Czytelność
-
-❌ **Źle:**
-
-```html
-<div>
-  <p>Tekst</p>
-  <a href="#">Link</a>
-</div>
-```
-
-✅ **Dobrze:**
-
-```html
-<div>
-  <p>Tekst</p>
-  <a href="#">Link</a>
-</div>
-```
-
 ## Narzędzia dla Web Developera
 
 ### Podstawowe:
 
-- **VS Code** - najlepszy edytor kodu :rocket:
+- **VS Code** - najczęściej używany edytor kodu :rocket:
 - **Chrome DevTools** - inspekcja i debugowanie (F12)
 - **Live Server** - rozszerzenie VS Code do live reload
-
-### Pomocne Rozszerzenia VS Code:
-
-- HTML CSS Support
-- Auto Rename Tag
-- Prettier (formatowanie kodu)
-- IntelliSense for CSS class names
 
 ## Zadania Praktyczne
 

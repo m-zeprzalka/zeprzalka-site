@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useRef } from "react"
 import { Check, Copy } from "lucide-react"
 
 export function CodeBlock({
@@ -9,32 +9,23 @@ export function CodeBlock({
   ...props
 }: React.HTMLAttributes<HTMLPreElement>) {
   const [copied, setCopied] = useState(false)
+  const preRef = useRef<HTMLPreElement>(null)
 
   const handleCopy = async () => {
-    // Wyciągnij tekst z children (może być zagnieżdżony w <code>)
-    let codeText = ""
-    if (typeof children === "string") {
-      codeText = children
-    } else if (children && typeof children === "object") {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const extractText = (node: any): string => {
-        if (typeof node === "string") return node
-        if (Array.isArray(node)) return node.map(extractText).join("")
-        if (node?.props?.children) return extractText(node.props.children)
-        return ""
-      }
-      codeText = extractText(children)
+    // Użyj .textContent z DOM node, aby wyciągnąć czysty tekst bez tagów HTML
+    if (preRef.current) {
+      const codeText = preRef.current.textContent || ""
+      await navigator.clipboard.writeText(codeText)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
     }
-
-    await navigator.clipboard.writeText(codeText)
-    setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
   }
 
   return (
     <div className="relative group my-6 rounded-lg border border-border overflow-hidden bg-white dark:bg-muted/50">
       <div className="overflow-x-auto">
         <pre
+          ref={preRef}
           {...props}
           className={className || ""}
           style={{

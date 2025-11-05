@@ -1,6 +1,6 @@
 ---
-title: "Bootstrap 5: Zbuduj Stronę w Godzinę, Nie w Tydzień"
-description: "Trzecia lekcja kursu. Odkryj moc frameworków CSS! Zobacz, czym jest Bootstrap, jak działa jego system siatki i komponenty, i zbuduj z nami responsywny landing page dla aplikacji mobilnej."
+title: "Bootstrap: Zbuduj Prostą Stronę w Godzinę"
+description: "Czwarta lekcja kursu Frontend Development. Odkryj moc frameworków CSS! Zobacz, czym jest Bootstrap, jak działa jego system siatki i komponenty, zbudujmy responsywny landing page dla aplikacji mobilnej."
 date: "2025-11-05"
 categories: ["CSS", "Web Development", "Frontend", "Framework"]
 tags:
@@ -24,11 +24,11 @@ author:
 avatar: "/avatar.png"
 ---
 
-Witaj w trzeciej części naszego kursu! 🎉 W poprzednich lekcjach nauczyliśmy się budować solidne, semantyczne szkielety HTML i stylować je "od zera" za pomocą czystego CSS. Zbudowaliśmy responsywne sekcje, używając Flexboxa i Grida.
+Witaj w czwartej części naszego kursu! 🎉 W poprzednich lekcjach nauczyliśmy się budować solidne, semantyczne szkielety HTML i stylować je "od zera" za pomocą czystego CSS. Zbudowaliśmy responsywne sekcje, używając Flexboxa i Grida.
 
-Wiecie już, ile pracy wymaga stworzenie własnego przycisku, responsywnej siatki kart czy formularza. To świetne ćwiczenie... ale co, jeśli powiem Wam, że 90% tej pracy można zautomatyzować?
+Wiecie już, ile pracy wymaga stworzenie własnego przycisku, responsywnej siatki kart czy formularza. To świetne ćwiczenie... ale co, jeśli powiem Wam, że 80-90% tej pracy można zautomatyzować (na następnych lekcjach zautomatyzujemy całość procesu)?
 
-Czas przestać "odkrywać koło na nowo" i sięgnąć po narzędzia profesjonalistów. Wprowadzamy **Frameworki CSS**, a zaczniemy od najpopularniejszego: **Bootstrapa**.
+Czas przestać "odkrywać koło na nowo" i sięgnąć po narzędzia, używane przez profesjonalistów. Wprowadzamy **Frameworki CSS**, a zaczniemy od najpopularniejszego: **Bootstrapa**.
 
 ## 🚀 Czym Jest Bootstrap?
 
@@ -40,7 +40,7 @@ Tym właśnie jest Bootstrap. To gigantyczny zestaw gotowych:
 
 - **Komponentów:** Przyciski, nawigacje, karty, formularze, modale (okna pop-up).
 - **Systemu Siatki (Grid):** Niezwykle potężny system do tworzenia responsywnych layoutów w kilka minut.
-- **Klas Użytkowych (Utilities):** Tysiące klas typu `mt-3` (margines górny) czy `d-flex` (display: flex), które pozwalają stylować bez pisania linijki CSS.
+- **Klas Użytkowych (Utilities):** Tysiące klas typu `mt-3` (margines górny) czy `d-flex` (display: flex), które pozwalają stylować bez pisania ani jednej linijki CSS.
 
 > 💻 Bootstrap został stworzony przez programistów Twittera, aby ujednolicić wygląd ich wewnętrznych narzędzi. W 2011 roku udostępnili go światu. Dziś napędza miliony stron internetowych.
 
@@ -95,7 +95,7 @@ Gdy pracujesz nad dużym projektem (np. w React lub Angular), będziesz instalow
 
 ## 💎 Fundamenty Bootstrapa
 
-Bootstrap opiera się na trzech filarach. Zrozum je, a zrozumiesz wszystko.
+Bootstrap opiera się na trzech filarach. Zrozum je, a zrozumiesz wszystko , co potrzebne do wydajnej pracy w tym framework'u.
 
 ### 1. System Siatki (The Grid System)
 
@@ -107,13 +107,13 @@ Ty decydujesz, ile z tych 12 kolumn ma zająć Twój element na różnych rozmia
 
 **Struktura: container -> row -> col-\***
 
-| Klasa        | Znaczenie                                                               | Przykład                    |
-| ------------ | ----------------------------------------------------------------------- | --------------------------- |
-| `.container` | Centruje treść i nadaje jej maksymalną szerokość.                       | Główny "pojemnik" na treść. |
-| `.row`       | To jest "wiersz" (działa jak display: flex). W nim umieszczamy kolumny. |                             |
-| `.col-12`    | Element zajmuje 12 z 12 kolumn (całą szerokość).                        |                             |
-| `.col-6`     | Element zajmuje 6 z 12 kolumn (połowę szerokości).                      |                             |
-| `.col-4`     | Element zajmuje 4 z 12 kolumn (1/3 szerokości).                         |                             |
+| Klasa        | Znaczenie                                                               |
+| ------------ | ----------------------------------------------------------------------- |
+| `.container` | Centruje treść i nadaje jej maksymalną szerokość.                       |
+| `.row`       | To jest "wiersz" (działa jak display: flex). W nim umieszczamy kolumny. |
+| `.col-12`    | Element zajmuje 12 z 12 kolumn (całą szerokość).                        |
+| `.col-6`     | Element zajmuje 6 z 12 kolumn (połowę szerokości).                      |
+| `.col-4`     | Element zajmuje 4 z 12 kolumn (1/3 szerokości).                         |
 
 Magia zaczyna się z **breakpointami**:
 

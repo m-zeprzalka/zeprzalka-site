@@ -19,9 +19,6 @@ export const metadata: Metadata = {
 export default function BlogPage() {
   const allPosts = getAllPosts()
   const featuredPosts = getFeaturedPosts()
-  const regularPosts = allPosts.filter(
-    (post: Post) => !post.frontmatter.featured
-  )
 
   return (
     <div className="container mx-auto px-4 py-12">
@@ -92,7 +89,7 @@ export default function BlogPage() {
       <section>
         <h2 className="text-2xl font-bold mb-8">Wszystkie artykuły</h2>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {regularPosts.map((post: Post) => (
+          {allPosts.map((post: Post) => (
             <article key={post.slug} className="group">
               <Link href={`/blog/${post.slug}`}>
                 <div className="relative aspect-[16/9] rounded-lg overflow-hidden mb-4">

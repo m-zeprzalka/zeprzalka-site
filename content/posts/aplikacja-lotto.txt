@@ -1,0 +1,7 @@
+Plan MVP Aplikacji "LottoWizard" Robocza nazwa
+
+Aplikacja do predykcji / przewidywania prawdopodobieństwa wyników Lotto. Aplikacja na bazie różnych algorytmów i metod, spośród, których, będzie można wybierać typuje liczny lotto, które mogą paść, w następnych losowaniach. Nawet jeżeli jest to niemalże niemożliwe, aplikacja prezentuje realne, statystyczne i matematyczne rozwiązania w poszukiwaniu złotego grala i ewentualnych luk w systemie.
+
+W MVP będziemy korzystać na małej bazie i na kilku metodach analizy, aby zbytnio na tym etapie nie rozbudowywać aplikacji. Potrzebujemy solidnego, działającego MVP.
+
+Baza danych. Skorzystamy tymczasowo z pliku losowaniaLotto.json.

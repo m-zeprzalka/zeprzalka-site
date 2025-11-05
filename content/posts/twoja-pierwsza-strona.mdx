@@ -1,0 +1,454 @@
+---
+title: "Projekt: Twoja Pierwsza Responsywna Strona (Landing Page)"
+description: "Podsumowanie podstaw HTML i CSS. Krok po kroku budujemy kompletny, responsywny landing page dla Tesli, łącząc semantyczny HTML, Flexbox, Grid i Media Queries."
+date: "2025-10-28"
+categories: ["HTML", "CSS", "Web Development", "Frontend"]
+tags:
+  [
+    "HTML",
+    "CSS",
+    "Frontend",
+    "Kurs",
+    "Responsive",
+    "Flexbox",
+    "Grid",
+    "Landing Page",
+  ]
+image: "/blog/twoja-pierwsza-strona.jpg"
+imageCaption: "Responsywny Landing Page Tesla"
+featured: true
+author:
+  name: "zeprzalka.com"
+  title: "Digital Solutions Architect"
+  bio: "Tworzę rozwiązania łączące biznes z technologią."
+  avatar: "/avatar.png"
+---
+
+Witajcie w naszym pierwszym dużym projekcie! 🎉 To tutaj łączymy całą naszą dotychczasową wiedzę. Na ostatnich zajęciach ćwiczyliśmy już tworzenie poszczególnych sekcji – responsywnego hero i siatki kart. Teraz połączymy te elementy, dodamy nowe (formularz i stopkę) i zbudujemy z nich kompletny, profesjonalny **landing page**.
+
+Naszym celem jest stworzenie strony "produktowej" dla Tesli, która będzie świetnie wyglądać na każdym urządzeniu – od telefonu po duży monitor. Zaczynajmy!
+
+## 🚀 Plan Projektu
+
+Zanim napiszemy pierwszą linijkę kodu, zróbmy szybki plan. Nasz landing page będzie składał się z czterech logicznych sekcji, które odpowiadają semantycznym znacznikom HTML5:
+
+1. **Sekcja Hero (`<section class="hero">`)**: Duży, przyciągający uwagę obraz tła z głównym hasłem (Call to Action) zachęcającym do zamówienia. Użyjemy **Flexboxa** (opcjonalne), aby idealnie wyśrodkować treść.
+2. **Sekcja Modeli (`<section id="modele">`)**: Responsywna siatka 5-ciu kart prezentujących różne modele Tesli. To idealne zadanie dla **CSS Grid** i jego "magicznych" właściwości.
+3. **Sekcja CTA / Formularz (`<section id="zamow">`)**: Prosty formularz kontaktowy/zamówienia. Utrwalimy tu wiedzę o znacznikach `<form>`, `<label>` i `<input>`.
+4. **Stopka (`<footer>`)**: Standardowa stopka z informacjami o prawach autorskich.
+
+## 🛠️ Krok 0: Przygotowanie Globalne (Globalne Style)
+
+Zanim zaczniemy budować, przygotujmy nasz plik `style.css`. Zaczniemy od dwóch kluczowych rzeczy, które uzupełniają lekcję o CSS:
+
+1. **Reset `box-sizing`**: Podstawa layoutów, która sprawia, że `padding` i `border` są wliczane w szerokość elementu.
+2. **Podstawowe style `body`**: Ustawiamy globalny font, usuwamy domyślne marginesy i ustawiamy kolor tła.
+
+```css
+/* style.css */
+
+/* --- Globalny Reset & Podstawy --- */
+
+/* Ustawiamy domyślny box-sizing dla wszystkich elementów */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: Roboto, Helvetica, Arial, sans-serif;
+  /* line-height: 1.4; */ /* Poprawia czytelność tekstu */
+  background-color: #f4f4f4;
+  color: #1d1d1d;
+}
+
+/* Ułatwienie dla responsywnych obrazów */
+img {
+  max-width: 100%;
+  display: block;
+}
+
+/* Globalny styl dla przycisków */
+.btn {
+  display: inline-block;
+  padding: 12px 24px;
+  background-color: #333;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.btn:hover {
+  background-color: #3e6ae1; /* Kolor Tesli */
+}
+```
+
+## 📝 Krok 1: Szkielet Strony (HTML)
+
+Najpierw stwórzmy pełną strukturę semantyczną w naszym pliku `index.html`. Na razie jest pusta, ale już teraz doskonale opisuje, co gdzie się znajduje. Zwróć uwagę na użycie `<main>` do opakowania głównej treści.
+
+```html
+<!DOCTYPE html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Zamów Swoją Teslę - Oficjalny Landing Page</title>
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <main>
+      <section class="hero">
+        <div class="hero-content">
+          <h1>Doświadcz Przyszłości Jazdy</h1>
+          <p>Zamów jazdę próbną jednym z naszych rewolucyjnych modeli.</p>
+          <a href="#zamow" class="btn">Umów Jazdę Próbną</a>
+        </div>
+      </section>
+
+      <section id="modele" class="container">
+        <h2>Nasze Modele</h2>
+        <div class="card-grid">
+          <article class="card">
+            <img src="/img/model-s.avif" alt="Tesla Model S" />
+            <div class="card-content">
+              <h3>Model S</h3>
+              <p>Limuzyna o najwyższym zasięgu i niesamowitych osiągach.</p>
+            </div>
+          </article>
+
+          <article class="card">
+            <img src="/img/model-3.avif" alt="Tesla Model 3" />
+            <div class="card-content">
+              <h3>Model 3</h3>
+              <p>
+                Najpopularniejszy elektryczny sedan na świecie. Dostępny dla
+                każdego.
+              </p>
+            </div>
+          </article>
+
+          <article class="card">
+            <img src="/img/model-x.avif" alt="Tesla Model X" />
+            <div class="card-content">
+              <h3>Model X</h3>
+              <p>
+                Najbezpieczniejszy i najbardziej wszechstronny SUV w historii.
+              </p>
+            </div>
+          </article>
+
+          <article class="card">
+            <img src="/img/model-y.avif" alt="Tesla Model Y" />
+            <div class="card-content">
+              <h3>Model Y</h3>
+              <p>Kompaktowy SUV łączący przestronność z wydajnością.</p>
+            </div>
+          </article>
+
+          <article class="card">
+            <img src="/img/cybertruck.avif" alt="Tesla Cybertruck" />
+            <div class="card-content">
+              <h3>Cybertruck</h3>
+              <p>
+                Trwalszy niż pickup, z większymi możliwościami niż auto
+                sportowe.
+              </p>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section id="zamow" class="cta-form">
+        <div class="container">
+          <h2>Umów Jazdę Próbną</h2>
+          <p>Wypełnij formularz, a nasz konsultant skontaktuje się z Tobą.</p>
+
+          <form action="/submit-form" method="POST">
+            <div class="form-group">
+              <label for="name">Imię i Nazwisko:</label>
+              <input type="text" id="name" name="name" required />
+            </div>
+
+            <div class="form-group">
+              <label for="email">Adres E-mail:</label>
+              <input type="email" id="email" name="email" required />
+            </div>
+
+            <div class="form-group">
+              <label for="model-select">Wybierz model:</label>
+              <select id="model-select" name="model">
+                <option value="s">Model S</option>
+                <option value="3">Model 3</option>
+                <option value="x">Model X</option>
+                <option value="y">Model Y</option>
+              </select>
+            </div>
+
+            <button type="submit" class="btn">Wyślij</button>
+          </form>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <p>&copy; 2025 Tesla Projekt. Stworzone dla celów edukacyjnych.</p>
+    </footer>
+  </body>
+</html>
+```
+
+## 🎨 Krok 2: Stylowanie Sekcji (CSS)
+
+Mamy solidny szkielet HTML. Czas dodać style do naszego pliku `style.css`. Zrobimy to sekcja po sekcji.
+
+### Sekcja 1: Hero
+
+Chcemy, aby ta sekcja zajmowała prawie cały ekran, miała tło w postaci obrazka i idealnie wyśrodkowaną treść (opcjonalnie). Flexbox jest idealnym narzędziem do tego rozwiązania.
+
+```css
+/* --- Sekcja 1: Hero --- */
+
+.hero {
+  /* Używamy vh (viewport height) aby sekcja zajmowała 90% wysokości ekranu */
+  min-height: 90vh;
+
+  /* Tło - zastąp 'hero-bg.jpg' własnym obrazem */
+  background-image: url("/img/hero-bg.webp");
+  background-size: cover; /* Obraz zawsze pokrywa cały element */
+  background-position: top; /* Obraz jest od góry dla widoczności tekstu */
+
+  /* Magia Flexboxa do centrowania contentu hero
+  display: flex;
+  justify-content: center; 
+  align-items: center; */
+
+  /* Style dla tekstu na ciemnym tle */
+  color: #fff;
+  text-align: center;
+  padding: 20px;
+}
+
+.hero-content h1 {
+  font-size: 2.5rem; /* Duży, czytelny tytuł */
+  font-weight: 600;
+  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5); /* Cień dla czytelności */
+}
+
+.hero-content p {
+  font-size: 1.2rem;
+  margin-bottom: 1.5rem;
+  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.4);
+}
+
+/* Dostosowujemy przycisk w hero */
+.hero .btn {
+  background-color: #3e6ae1;
+  font-size: 1.1rem;
+}
+
+.hero .btn:hover {
+  background-color: black;
+}
+```
+
+### Sekcja 2: Responsywne Karty (CSS Grid)
+
+To kluczowy element. Chcemy siatkę, która automatycznie dostosowuje liczbę kolumn do dostępnego miejsca. Na telefonie będzie 1 kolumna, na tablecie 2, a na desktopie 3 lub 4 – bez ani jednej linijki Media Query!
+
+💡 Użyjemy `repeat(auto-fit, minmax(300px, 1fr))`. Co to oznacza?
+
+- **`repeat(..., ...)`**: Tworzy powtarzające się kolumny.
+- **`auto-fit`**: Automatycznie dopasuj liczbę kolumn, aby wypełnić dostępną przestrzeń.
+- **`minmax(300px, 1fr)`**: Każda kolumna ma mieć minimum 300px szerokości. Jeśli jest więcej miejsca, ma się rozciągnąć i zająć równą część (1fr - jedna frakcja).
+
+```css
+/* --- Sekcja 2: Karty (Modele) --- */
+
+/* Klasa .container dodaje marginesy po bokach na większych ekranach */
+.container {
+  /* max-width: 1200px; */ /* Maksymalna szerokość kontenera */
+  margin: 0 auto; /* Centruje kontener */
+  padding: 2rem; /* Odstęp wewnątrz sekcji */
+}
+
+/* Raczej nie stylujemy po ID, ale są przypadki, w których można */
+#modele h2 {
+  text-align: center;
+  font-size: 2.5rem;
+  margin-bottom: 2.5rem;
+}
+
+.card-grid {
+  display: grid;
+  /* Oto magia responsywności bez media queries */
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem; /* Odstęp między kartami */
+}
+
+.card {
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  overflow: hidden; /* Obcina rogi obrazka */
+  display: flex; /* Opcjonalne */
+  flex-direction: column; /* Opcjonalne */
+  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Animacja on hover */
+}
+
+.card:hover {
+  transform: translateY(-5px); /* Lekkie podniesienie karty */
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+.card img {
+  width: 100%;
+  height: 400px; /* Stała wysokość obrazka */
+  /* height: 250px; */ /* Alternatywna wysokość */
+  object-fit: cover; /* Obraz wypełnia przestrzeń bez zniekształceń */
+}
+
+.card-content {
+  padding: 1.5rem;
+  flex-grow: 1; /* Rozciąga treść, aby karty miały równą wysokość */
+}
+
+.card-content h3 {
+  margin-bottom: 0.5rem;
+  font-size: 1.5rem;
+}
+```
+
+### Sekcja 3: Formularz CTA
+
+Stylowanie formularzy polega głównie na nadaniu inputom 100% szerokości, aby ładnie wypełniły kontener, oraz na ostylowaniu przycisku.
+
+```css
+/* --- Sekcja 3: Formularz CTA --- */
+
+.cta-form {
+  background-color: #fff;
+  padding: 40px 0;
+}
+
+.cta-form h2 {
+  text-align: center;
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.cta-form p {
+  text-align: center;
+  margin-bottom: 2rem;
+  font-size: 1.1rem;
+}
+
+/* Ograniczamy szerokość formularza i centrujemy go */
+form {
+  max-width: 600px;
+  margin: 0 auto; /* Centrujemy formularz */
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block; /* Etykieta nad polem */
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+/* Wspólne style dla inputów i selecta */
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 1rem;
+}
+
+/* Stylujemy przycisk, aby zajął całą szerokość */
+form .btn {
+  width: 100%;
+  text-align: center;
+  font-size: 1.1rem;
+  background-color: #3e6ae1;
+  border: none; /* Usuwamy domyślną ramkę */
+}
+
+form .btn:hover {
+  background-color: #333;
+  color: #fff;
+}
+```
+
+### Sekcja 4: Stopka
+
+Stopka to najprostszy element – padding i wyśrodkowany tekst.
+
+```css
+/* --- Sekcja 4: Stopka --- */
+
+footer {
+  text-align: center;
+  padding: 2rem;
+}
+```
+
+## 📱 Krok 3: Ręczne Poprawki Responsywności (Media Queries)
+
+Nasz layout (dzięki CSS Grid) jest już w 90% responsywny! Jednak na bardzo małych ekranach, element `<h1>` w sekcji Hero być za mały.
+
+Użyjemy Media Query, aby zwiększyć ją tylko na ekranach większych niż 768px. Stosujemy podejście "Mobile First".
+
+```css
+/* --- Poprawki Responsywne (Media Queries) --- */
+
+@media (min-width: 768px) {
+  /* Zwiększamy czcionki w sekcji Hero na tabletach */
+  .hero-content h1 {
+    font-size: 3.5rem;
+  }
+
+  .hero-content p {
+    font-size: 1.5rem;
+  }
+
+  /* Zwiększamy tytuły sekcji */
+  #modele h2,
+  .cta-form h2 {
+    font-size: 2.5rem;
+  }
+}
+```
+
+## 🏆 Podsumowanie Projektu
+
+Gratulacje! Właśnie zbudowałeś kompletny, responsywny landing page od zera.
+
+**Co przećwiczyliśmy?**
+
+1. **Semantyczny HTML**: Używanie `<main>`, `<section>`, `<article>`, `<footer>` do budowania logicznej struktury.
+2. **Model Pudełkowy**: Globalny reset `box-sizing` uratował nam mnóstwo czasu.
+3. **Flexbox**: Użyliśmy go do idealnego centrowania treści w sekcji Hero.
+4. **CSS Grid**: Zbudowaliśmy automatycznie responsywną siatkę kart (`auto-fit` + `minmax`).
+5. **Formularze**: Stworzyliśmy i ostylowaliśmy podstawowy formularz kontaktowy.
+6. **Media Queries**: Użyliśmy ich do "dopieszczenia" typografii na urządzeniach desktopowych.
+
+To jest fundament, na którym opiera się cały nowoczesny web development.
+
+## Kolejne Kroki
+
+Przećwicz to czego sie nauczyłeś na innym przykładzie. Spróbuj znaleźć w internecie inny prosty przykład Landing Page i zakodować go ręcznie.
+Dopiero wtedy przejdź do Design Systemów, Frameworków i innych narzędzi przyspieszających pracę. Dobre zrozumienie podstaw jest kluczowym elementem nauki w świecie IT!
+**Trening czyni mistrza!**
+
+---
+
+**Pytania? Problemy?** Napisz do mnie m@zeprzalka.com
+
+Świetna robota! 🚀

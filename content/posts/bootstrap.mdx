@@ -1,0 +1,509 @@
+---
+title: "Bootstrap 5: Zbuduj Stronę w Godzinę, Nie w Tydzień"
+description: "Trzecia lekcja kursu. Odkryj moc frameworków CSS! Zobacz, czym jest Bootstrap, jak działa jego system siatki i komponenty, i zbuduj z nami responsywny landing page dla aplikacji mobilnej."
+date: "2025-11-05"
+categories: ["CSS", "Web Development", "Frontend", "Framework"]
+tags:
+  [
+    "Bootstrap",
+    "CSS",
+    "Frontend",
+    "Kurs",
+    "Framework",
+    "Grid",
+    "Utility",
+    "Landing Page",
+  ]
+image: "/blog/bootstrap.svg"
+imageCaption: "Logo frameworka Bootstrap"
+featured: true
+author:
+  name: "zeprzalka.com"
+  title: "Digital Solutions Architect"
+  bio: "Tworzę rozwiązania łączące biznes z technologią."
+avatar: "/avatar.png"
+---
+
+Witaj w trzeciej części naszego kursu! 🎉 W poprzednich lekcjach nauczyliśmy się budować solidne, semantyczne szkielety HTML i stylować je "od zera" za pomocą czystego CSS. Zbudowaliśmy responsywne sekcje, używając Flexboxa i Grida.
+
+Wiecie już, ile pracy wymaga stworzenie własnego przycisku, responsywnej siatki kart czy formularza. To świetne ćwiczenie... ale co, jeśli powiem Wam, że 90% tej pracy można zautomatyzować?
+
+Czas przestać "odkrywać koło na nowo" i sięgnąć po narzędzia profesjonalistów. Wprowadzamy **Frameworki CSS**, a zaczniemy od najpopularniejszego: **Bootstrapa**.
+
+## 🚀 Czym Jest Bootstrap?
+
+Mówiąc najprościej, Bootstrap to **darmowy, otwarty framework CSS**.
+
+Wyobraź sobie, że zamiast budować dom od wylewania fundamentów i murowania każdej cegły, dostajesz gotowe, profesjonalnie zaprojektowane moduły: gotowe ściany, okna, drzwi, a nawet całą kuchnię. Ty musisz je tylko złożyć w sensowną całość.
+
+Tym właśnie jest Bootstrap. To gigantyczny zestaw gotowych:
+
+- **Komponentów:** Przyciski, nawigacje, karty, formularze, modale (okna pop-up).
+- **Systemu Siatki (Grid):** Niezwykle potężny system do tworzenia responsywnych layoutów w kilka minut.
+- **Klas Użytkowych (Utilities):** Tysiące klas typu `mt-3` (margines górny) czy `d-flex` (display: flex), które pozwalają stylować bez pisania linijki CSS.
+
+> 💻 Bootstrap został stworzony przez programistów Twittera, aby ujednolicić wygląd ich wewnętrznych narzędzi. W 2011 roku udostępnili go światu. Dziś napędza miliony stron internetowych.
+
+## 💡 Dlaczego Warto Używać Frameworka?
+
+Zanim przejdziemy do projektu, odpowiedzmy na kluczowe pytanie: "Po co mi to, skoro umiem już CSS?"
+
+1. **Szybkość (Speed):** To najważniejszy powód. Landing page, który w czystym CSS zająłby Ci 2 dni, w Bootstrapie złożysz w 2 godziny. Czas to pieniądz.
+2. **Spójność (Consistency):** Masz gwarancję, że wszystkie elementy do siebie pasują. Twoja strona od startu wygląda profesjonalnie, bo korzysta z przemyślanego "design systemu".
+3. **Responsywność (RWD):** System siatki Bootstrapa jest przetestowany na tysiącach urządzeń. Nie musisz martwić się o każdy `breakpoint` – on robi to za Ciebie.
+4. **Dokumentacja:** Bootstrap ma jedną z najlepszych dokumentacji na świecie. Każdy komponent jest opisany z przykładami "kopiuj-wklej".
+5. **Focus:** Zamiast walczyć z centrowaniem diva, możesz skupić się na architekturze aplikacji i logice biznesowej.
+
+## 🛠️ Jak Dodać Bootstrap do Projektu?
+
+Są dwie główne metody. My użyjemy tej szybszej (CDN), ale warto znać obie.
+
+### 1. CDN (Content Delivery Network) - Sposób na Dziś
+
+To najprostsza metoda. Po prostu wklejamy linki do gotowych plików (CSS i JavaScript) w sekcji `<head>` i na końcu `<body>` naszego HTML. Przeglądarka pobierze je z szybkiego, zewnętrznego serwera.
+
+```html
+<!DOCTYPE html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Moja Strona na Bootstrapie</title>
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+      crossorigin="anonymous"
+    />
+  </head>
+  <body>
+    <h1>Witaj, Bootstrap!</h1>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+      crossorigin="anonymous"
+    ></script>
+  </body>
+</html>
+```
+
+### 2. NPM (Node Package Manager) - Sposób "Pro"
+
+Gdy pracujesz nad dużym projektem (np. w React lub Angular), będziesz instalować Bootstrapa jako pakiet za pomocą menedżera pakietów Node.js. Na razie to tylko ciekawostka, wrócimy do tego przy JavaScript.
+
+## 💎 Fundamenty Bootstrapa
+
+Bootstrap opiera się na trzech filarach. Zrozum je, a zrozumiesz wszystko.
+
+### 1. System Siatki (The Grid System)
+
+To najważniejsza koncepcja. Jest trochę inna niż CSS Grid, który poznaliśmy.
+
+**Cała przestrzeń w Bootstrapie jest dzielona na 12 wirtualnych kolumn.**
+
+Ty decydujesz, ile z tych 12 kolumn ma zająć Twój element na różnych rozmiarach ekranu.
+
+**Struktura: container -> row -> col-\***
+
+| Klasa        | Znaczenie                                                               | Przykład                    |
+| ------------ | ----------------------------------------------------------------------- | --------------------------- |
+| `.container` | Centruje treść i nadaje jej maksymalną szerokość.                       | Główny "pojemnik" na treść. |
+| `.row`       | To jest "wiersz" (działa jak display: flex). W nim umieszczamy kolumny. |                             |
+| `.col-12`    | Element zajmuje 12 z 12 kolumn (całą szerokość).                        |                             |
+| `.col-6`     | Element zajmuje 6 z 12 kolumn (połowę szerokości).                      |                             |
+| `.col-4`     | Element zajmuje 4 z 12 kolumn (1/3 szerokości).                         |                             |
+
+Magia zaczyna się z **breakpointami**:
+
+- `col-sm-*` - style dla małych ekranów (small, >576px)
+- `col-md-*` - style dla średnich ekranów (medium, >768px)
+- `col-lg-*` - style dla dużych ekranów (large, >992px)
+
+**Przykład:** Chcemy layout, który:
+
+- Na telefonach (XS) jest jedna kolumna (domyślnie).
+- Na tabletach (MD) ma dwie kolumny.
+- Na desktopach (LG) ma trzy kolumny.
+
+```html
+<div class="container">
+  <div class="row">
+    <div class="col-lg-4 col-md-6">Treść A</div>
+    <div class="col-lg-4 col-md-6">Treść B</div>
+    <div class="col-lg-4 col-md-6">Treść C</div>
+  </div>
+</div>
+```
+
+### 2. Komponenty (Components)
+
+Gotowe, ostylowane klocki. Po prostu znajdujesz w dokumentacji i wklejasz.
+
+**Pamiętasz nasz przycisk z lekcji CSS?** Wymagał 10 linii kodu.
+
+W Bootstrapie:
+
+```html
+<button class="btn btn-primary">Kliknij mnie</button>
+
+<button class="btn btn-outline-success">Sukces</button>
+
+<a href="#" class="btn btn-danger btn-lg">Usuń</a>
+```
+
+**Pamiętasz naszą kartę?** W Bootstrapie:
+
+```html
+<div class="card" style="width: 18rem;">
+  <img src="..." class="card-img-top" alt="..." />
+  <div class="card-body">
+    <h5 class="card-title">Tytuł Karty</h5>
+    <p class="card-text">Trochę tekstu opisującego kartę.</p>
+    <a href="#" class="btn btn-primary">Idź gdzieś</a>
+  </div>
+</div>
+```
+
+### 3. Klasy Użytkowe (Utility Classes)
+
+To jest "game-changer". Zamiast pisać `style.css`, dodajesz style bezpośrednio w HTML.
+
+- Chcesz margines górny? Dodaj `mt-3` (margin-top, 3/5).
+- Chcesz wyśrodkować tekst? Dodaj `text-center`.
+- Chcesz czerwone tło i biały tekst? Dodaj `bg-danger text-white`.
+- Chcesz użyć Flexboxa? Dodaj `d-flex justify-content-center`.
+
+**Przykład:**
+
+**Tradycyjnie:**
+
+```html
+<div class="moj-div">Mój tekst</div>
+
+<style>
+  .moj-div {
+    background-color: #007bff;
+    color: white;
+    padding: 20px;
+    margin-top: 15px;
+    border-radius: 10px;
+  }
+</style>
+```
+
+**Bootstrap:**
+
+```html
+<div class="bg-primary text-white p-4 mt-3 rounded-3">Mój tekst</div>
+```
+
+To podejście (zwane "Atomic CSS") niesamowicie przyspiesza pracę.
+
+## 📱 Projekt: Landing Page Aplikacji "AppFlow"
+
+Dość teorii. Zbudujmy landing page dla fikcyjnej aplikacji "AppFlow" do zarządzania zadaniami.
+
+### Krok 0: Przygotowanie (Plik Startowy)
+
+Stwórz plik `index.html` i wklej ten szablon startowy (zawiera już linki CDN i jeden plik `style.css` na nasze drobne poprawki).
+
+```html
+<!DOCTYPE html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AppFlow - Zorganizuj Swoje Życie</title>
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    />
+
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>
+```
+
+### Krok 1: Nawigacja (Navbar)
+
+Każda strona potrzebuje menu. Wchodzimy w dokumentację Bootstrapa (sekcja Components > Navbar) i kopiujemy gotowca.
+
+Wklej to w `<body>`:
+
+```html
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+  <div class="container">
+    <a class="navbar-brand fw-bold" href="#">
+      <i class="bi bi-kanban-fill"></i> AppFlow
+    </a>
+
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navMenu"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navMenu">
+      <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link active" href="#hero">Start</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#features">Funkcje</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#cta">Pobierz</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link btn btn-primary text-white ms-lg-2" href="#"
+            >Zaloguj się</a
+          >
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+```
+
+**Co tu się stało?**
+
+- `navbar-expand-lg`: Menu będzie "hamburgerem" na ekranach mniejszych niż LG (large).
+- `navbar-dark bg-dark`: Ciemny motyw.
+- `fixed-top`: Przykleja menu do góry ekranu.
+- `data-bs-toggle="collapse"`: To atrybut JS, który obsługuje pokazywanie i ukrywanie menu.
+- `ms-auto`: Magiczna klasa! margin-start: auto - wypycha menu na prawą stronę.
+
+### Krok 2: Sekcja Hero
+
+Chcemy sekcję z tytułem, tekstem i przyciskiem po lewej oraz obrazkiem po prawej. Na mobilce obrazek ma być pod tekstem.
+
+Wklej poniżej `<nav>`:
+
+```html
+<section
+  id="hero"
+  class="py-5 text-center text-md-start"
+  style="padding-top: 100px;"
+>
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-md-6">
+        <h1 class="display-3 fw-bold">Zorganizuj chaos</h1>
+        <p class="lead my-4">
+          AppFlow to jedyna aplikacja, której potrzebujesz, aby zarządzać
+          zadaniami, projektami i całym swoim życiem. Prosto i skutecznie.
+        </p>
+        <a href="#cta" class="btn btn-primary btn-lg">Pobierz Aplikację</a>
+        <a href="#" class="btn btn-outline-secondary btn-lg ms-2"
+          >Zobacz Demo</a
+        >
+      </div>
+
+      <div class="col-md-6">
+        <img
+          src="https://via.placeholder.com/500x500"
+          alt="AppFlow na telefonie"
+          class="img-fluid d-none d-md-block"
+        />
+      </div>
+    </div>
+  </div>
+</section>
+```
+
+**Co tu się stało?**
+
+- `py-5`: Klasa użytkowa (padding-y góra/dół o wartości 5).
+- `text-center text-md-start`: Na mobilce tekst na środku, od md w górę tekst do lewej.
+- `row align-items-center`: Używa Flexboxa (wewnątrz `.row`), aby wyśrodkować kolumny w pionie.
+- `col-md-6`: Dwie kolumny, każda po 6/12 (pół) szerokości na ekranach md i większych. Na mniejszych automatycznie ustawią się jedna pod drugą (100% szerokości).
+- `img-fluid`: Obrazek jest responsywny.
+- `d-none d-md-block`: Obrazek jest ukryty na mobilce (d-none), a widoczny od md w górę (d-md-block), aby nie zapychać małego ekranu.
+
+### Krok 3: Sekcja Funkcji (Features)
+
+Chcemy 3 karty z ikonami i opisami. To idealne miejsce na siatkę.
+
+Wklej poniżej sekcji hero:
+
+```html
+<section id="features" class="py-5 bg-light">
+  <div class="container">
+    <div class="row text-center mb-4">
+      <div class="col">
+        <h2>Dlaczego AppFlow?</h2>
+        <p class="lead">Wszystko, czego potrzebujesz, w jednym miejscu.</p>
+      </div>
+    </div>
+
+    <div class="row text-center">
+      <div class="col-md-4 mb-4">
+        <div class="card shadow-sm h-100 p-4">
+          <i class="bi bi-check-circle-fill display-3 text-primary"></i>
+          <h3 class="h4 mt-3">Proste Zadania</h3>
+          <p class="text-muted">
+            Szybko dodawaj i zarządzaj zadaniami. Nigdy więcej nie zapomnisz o
+            terminach.
+          </p>
+        </div>
+      </div>
+      <div class="col-md-4 mb-4">
+        <div class="card shadow-sm h-100 p-4">
+          <i class="bi bi-bar-chart-fill display-3 text-success"></i>
+          <h3 class="h4 mt-3">Śledź Postępy</h3>
+          <p class="text-muted">
+            Wizualizuj swoje postępy dzięki czytelnym wykresom i statystykom.
+          </p>
+        </div>
+      </div>
+      <div class="col-md-4 mb-4">
+        <div class="card shadow-sm h-100 p-4">
+          <i class="bi bi-people-fill display-3 text-warning"></i>
+          <h3 class="h4 mt-3">Praca Zespołowa</h3>
+          <p class="text-muted">
+            Dziel się projektami ze swoim zespołem i osiągajcie cele razem.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+```
+
+**Co tu się stało?**
+
+- `bg-light`: Lekko szare tło sekcji.
+- `col-md-4`: 3 kolumny, każda po 4/12 (1/3) szerokości na md i w górę.
+- `.card`: Używamy komponentu karty.
+- `shadow-sm`: Mały cień (klasa użytkowa).
+- `h-100`: Sprawia, że wszystkie karty mają 100% wysokości (dzięki czemu są równe).
+- `bi bi-*`: Ikony z biblioteki Bootstrap Icons.
+- `display-3 text-primary`: Klasy użytkowe do stylowania ikon (duży rozmiar, główny kolor).
+
+### Krok 4: Sekcja CTA i Stopka (Footer)
+
+Na koniec proste wezwanie do działania i stopka.
+
+Wklej na końcu:
+
+```html
+<section id="cta" class="py-5">
+  <div class="container text-center">
+    <div class="row">
+      <div class="col-lg-8 mx-auto">
+        <h2 class="display-5 fw-bold">Gotowy, by zacząć?</h2>
+        <p class="lead">
+          Pobierz AppFlow już dziś i odzyskaj kontrolę nad swoim czasem.
+          Dostępne na iOS i Android.
+        </p>
+        <a href="#" class="btn btn-primary btn-lg">Pobierz za Darmo</a>
+        <a href="#" class="btn btn-outline-secondary btn-lg ms-2"
+          >Skontaktuj się z nami</a
+        >
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="py-4 bg-dark text-white text-center">
+  <div class="container">
+    <p class="mb-0">
+      &copy; 2025 AppFlow. Stworzone dla celów edukacyjnych przy użyciu
+      Bootstrapa.
+    </p>
+  </div>
+</footer>
+```
+
+**Co tu się stało?**
+
+- `col-lg-8 mx-auto`: Centrujemy kolumnę o szerokości 8/12 na dużych ekranach (mx-auto to margin-x: auto).
+
+## 🎨 Kustomizacja (Mój własny styl)
+
+"Ale teraz moja strona wygląda jak każda inna strona na Bootstrapie!"
+
+Racja! Bootstrap daje bazę. Teraz czas ją nadpisać. Stwórz plik `style.css` (ten, który podpięliśmy w kroku 0) i dodajmy własne style.
+
+```css
+/* style.css */
+
+/* Nadpisujemy domyślne kolory Bootstrapa (to jest trudniejsze, wymaga Sass)
+   ale możemy łatwo nadpisać konkretne elementy. */
+
+/* Zmieńmy czcionkę */
+body {
+  font-family: "Inter", sans-serif; /* Załóżmy, że importujemy ją z Google Fonts */
+}
+
+/* Zmieńmy główny kolor przycisku */
+.btn-primary {
+  background-color: #6a11cb;
+  border: none;
+}
+
+.btn-primary:hover {
+  background-color: #2575fc;
+}
+
+/* Dodajmy gradient do sekcji hero */
+#hero {
+  background: linear-gradient(to right, #6a11cb, #2575fc);
+  color: white; /* Bootstrap nie dodałby tu koloru, bo nie wie o tle */
+}
+
+/* Bootstrapowy `.lead` jest szary, my chcemy biały na tym tle */
+#hero .lead {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* Nadpiszmy przycisk "outline" w hero */
+#hero .btn-outline-secondary {
+  color: white;
+  border-color: white;
+}
+
+#hero .btn-outline-secondary:hover {
+  background-color: white;
+  color: #6a11cb;
+}
+```
+
+## ✅ Podsumowanie
+
+Gratulacje! Właśnie zbudowałeś w pełni responsywny, świetnie wyglądający landing page w mniej niż godzinę.
+
+- ✅ Frameworki (Bootstrap) oszczędzają masę czasu, dając gotowe komponenty i system siatki.
+- ✅ System siatki (12 kolumn, container, row, col-\*) to serce Bootstrapa.
+- ✅ Klasy Użytkowe (p-5, m-3, d-flex) pozwalają stylować bez pisania CSS.
+- ✅ Kustomizacja polega na podpięciu własnego `style.css` PO pliku Bootstrapa i nadpisywaniu stylów.
+
+Bootstrap to potężne narzędzie. Nie zastąpi znajomości CSS (nadal musisz wiedzieć, co chcesz nadpisać), ale niesamowicie przyspiesza pracę.
+
+## Kolejne Kroki
+
+1. **Eksploruj Dokumentację:** Przejrzyj wszystkie komponenty (Modal, Carousel, Alerts).
+2. **Tailwind CSS:** Zobaczysz inny, jeszcze bardziej "użytkowy" framework.
+3. **Bootstrap + JavaScript:** Nauczymy się, jak dynamicznie otwierać Modale lub zmieniać treść za pomocą JS.
+
+## Przydatne Linki
+
+- [Oficjalna Dokumentacja Bootstrap 5](https://getbootstrap.com/docs/5.3/getting-started/introduction/) - Twoja nowa biblia.
+- [Oficjalne Przykłady Bootstrapa](https://getbootstrap.com/docs/5.3/examples/) - Gotowe layouty do analizy.
+- [Bootstrap Icons](https://icons.getbootstrap.com/) - Oficjalny zestaw ikon.
+
+**Pytania? Problemy? Napisz do mnie m@zeprzalka.com**

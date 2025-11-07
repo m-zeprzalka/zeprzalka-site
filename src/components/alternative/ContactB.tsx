@@ -27,7 +27,7 @@ export function ContactB() {
           </div>
         </div>
         <div className="lg:col-span-9">
-          <Card className="bg-transparent border-0 p-0">
+          <Card className="shadow-none bg-transparent border-0 p-0">
             <CardHeader className="p-0">
               <CardTitle className="text-xl font-semibold">
                 Opowiedz o swoim projekcie

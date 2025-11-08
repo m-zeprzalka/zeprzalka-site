@@ -128,3 +128,12 @@
 html {
   scroll-behavior: smooth;
 }
+
+main table {
+  display: block;
+  width: 100%;
+  overflow-x: auto;
+
+  /* Dodatek dla płynnego przewijania na iOS */
+  -webkit-overflow-scrolling: touch;
+}

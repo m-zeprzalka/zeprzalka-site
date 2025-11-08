@@ -49,7 +49,7 @@ export function ContactB() {
                   <Input
                     id="name"
                     type="text"
-                    placeholder="Jak mam się do Ciebie zwracać?"
+                    placeholder="Podaj imię"
                     required
                     className="py-6 px-4 mt-4"
                   />
@@ -65,7 +65,7 @@ export function ContactB() {
                   <Input
                     id="email"
                     type="email"
-                    placeholder="twoj@email.com"
+                    placeholder="twoj email"
                     required
                     className="py-6 px-4 mt-4"
                   />

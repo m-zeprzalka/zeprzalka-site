@@ -17,7 +17,7 @@ export function BlogC() {
               Blog
             </h2>
             <p className="text-muted-foreground lg:text-lg 2xl:text-xl mt-2 lg:mt-6 max-w-xs">
-              Myśli, analizy i projekty ze świata nowoczesnego developmentu.
+              Myśli, analizy oraz moje projekty z pogranicza technologii i AI
             </p>
           </div>
         </aside>
@@ -51,7 +51,7 @@ export function BlogC() {
                       {(post.frontmatter.tags || []).map((tag) => (
                         <Badge
                           key={tag}
-                          className="border-white/20 bg-white/10 py-1 px-3 text-sm font-normal text-white backdrop-blur-md transition-all duration-300 group-hover:bg-white/20"
+                          className="border-white/20 bg-white/10 py-1 px-3 text-xs font-normal text-white backdrop-blur-md transition-all duration-300 group-hover:bg-white/20"
                         >
                           {tag}
                         </Badge>

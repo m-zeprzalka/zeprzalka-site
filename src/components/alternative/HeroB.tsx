@@ -29,7 +29,12 @@ export function HeroB() {
         </Link>
       </Button>
       <video autoPlay muted loop playsInline className="rounded-lg">
+        {/* WAŻNE: Najpierw lżejszy format WebM */}
+        <source src="/hero_web.webm" type="video/webm" />
+        {/* WAŻNE: MP4 jako fallback dla starszych przeglądarek (np. Safari) */}
         <source src="/hero_web.mp4" type="video/mp4" />
+        {/* Komunikat dla bardzo starych przeglądarek */}
+        Twoja przeglądarka nie obsługuje wideo.
       </video>
     </section>
   )

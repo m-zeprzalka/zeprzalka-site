@@ -1,0 +1,1631 @@
+---
+title: "MDX w Next.js: Kompletny Przewodnik dla Nowoczesnego Bloga"
+description: "Praktyczny przewodnik po MDX w Next.js 15 - od instalacji po zaawansowane komponenty. Dowiedz się, jak budować profesjonalny blog z interaktywną treścią, Server Components i pełną optymalizacją SEO."
+date: "2025-11-10"
+categories: ["Next.js", "MDX", "Web Development", "Content"]
+tags:
+  [
+    "MDX",
+    "Next.js",
+    "App Router",
+    "Server Components",
+    "Blog",
+    "Content Management",
+  ]
+image: "/blog/mdx.jpg"
+imageCaption: "MDX + Next.js - Idealne połączenie dla technicznego bloga"
+featured: true
+author:
+  name: "zeprzalka.com"
+  title: "Digital Solutions Architect"
+  bio: "Tworzę rozwiązania łączące biznes z technologią."
+  avatar: "/avatar.png"
+---
+
+Witaj w kompleksowym przewodniku po **MDX w Next.js**! 🚀 Ten artykuł powstał specjalnie dla developerów pracujących z Next.js 15 i App Router, którzy chcą zbudować profesjonalny blog techniczny z interaktywną treścią.
+
+MDX to połączenie **Markdown** (prostota pisania) z **JSX** (komponenty Next.js) - idealne rozwiązanie dla blogów technicznych. W tym przewodniku pokażę Ci wszystko, co musisz wiedzieć, aby zintegrować MDX z Next.js i stworzyć blog na miarę XXI wieku.
+
+## 🎯 Czym Jest MDX w Kontekście Next.js?
+
+**MDX = Markdown + JSX + Next.js**
+
+To format pliku pozwalający na **osadzanie komponentów Next.js bezpośrednio w Markdown**. Możesz używać Server Components, Client Components, obrazów z `next/image`, linków z `next/link` - wszystko w pliku `.mdx`!
+
+### Tradycyjny Markdown
+
+```markdown
+# Nagłówek
+
+To jest paragraf z **pogrubieniem** i _kursywą_.
+
+- Lista
+- Elementów
+```
+
+### MDX - Markdown na Sterydach (Next.js Edition)
+
+```mdx
+import Image from "next/image"
+import { Button } from "@/components/ui/button"
+import { Chart } from "@/components/Chart"
+
+# Nagłówek
+
+To jest paragraf z **pogrubieniem** i _kursywą_.
+
+<Image
+  src="/hero.jpg"
+  width={800}
+  height={600}
+  alt="Hero"
+  className="rounded-lg"
+/>
+
+<Button onClick={() => alert("Działa!")}>
+  Kliknij mnie - jestem prawdziwym komponentem Next.js!
+</Button>
+
+<Chart data={salesData} type="line" />
+```
+
+**Kluczowa różnica:** W MDX możesz używać **komponentów Next.js**, **next/image** (optymalizacja obrazów), **next/link** (prefetching), **Server Components** - wszystko w pliku, który wygląda jak zwykły Markdown!
+
+### Historia MDX
+
+| Rok  | Wydarzenie                               |
+| ---- | ---------------------------------------- |
+| 2017 | Stworzony przez John Otander             |
+| 2018 | Wersja 1.0 - stabilna                    |
+| 2022 | MDX 2.0 - pełne wsparcie ESM             |
+| 2023 | MDX 3.0 - lepsze TypeScript support      |
+| 2024 | Natywne wsparcie w Next.js 15 App Router |
+| Dziś | Standard w Next.js, Gatsby, Docusaurus   |
+
+> 💡 **Next.js Fact:** Next.js 15 ma wbudowane wsparcie dla MDX z `next-mdx-remote/rsc`, co pozwala na używanie Server Components bezpośrednio w MDX - zero client-side JavaScript dla statycznej treści!
+
+## 🆚 MDX vs Markdown w Next.js
+
+### Markdown (Klasyczny)
+
+```markdown
+# To jest nagłówek
+
+Tekst z [linkiem](https://example.com).
+
+![Obrazek](image.jpg)
+
+\`\`\`javascript
+const hello = 'world'
+\`\`\`
+```
+
+**Zalety:**
+
+- ✅ Prosty w nauce
+- ✅ Uniwersalny (GitHub, README, etc.)
+- ✅ Czytelny jako czysty tekst
+
+**Wady:**
+
+- ❌ Statyczny - brak interaktywności
+- ❌ Brak komponentów Next.js (np. next/image)
+- ❌ Brak Server Components
+- ❌ Ograniczone możliwości stylowania
+
+### MDX w Next.js (Nowoczesny)
+
+```mdx
+import Image from "next/image"
+import Link from "next/link"
+import { Callout } from "@/components/Callout"
+import { Chart } from "@/components/Chart"
+
+# To jest nagłówek
+
+<Link href="/posts/next">Prefetchowany link Next.js</Link>
+
+<Image
+  src="/image.jpg"
+  width={800}
+  height={600}
+  alt="Zoptymalizowany obrazek"
+/>
+
+<Callout type="warning">
+  To jest **Server Component** z Markdown wewnątrz!
+</Callout>
+
+<Chart data={[1, 2, 3, 4, 5]} />
+
+export const author = "John Doe"
+
+Autor: {author}
+```
+
+**Zalety:**
+
+- ✅ Wszystkie możliwości Markdown
+- ✅ Komponenty Next.js (Server + Client)
+- ✅ next/image - automatyczna optymalizacja
+- ✅ next/link - prefetching
+- ✅ Dynamic imports
+- ✅ TypeScript support
+- ✅ Static Generation w Next.js
+
+**Wady:**
+
+- ⚠️ Wymaga Next.js build step
+- ⚠️ Nieznacznie większy setup
+
+## 🛠️ Jak Zacząć z MDX w Next.js 15?
+
+### Krok 1: Instalacja (next-mdx-remote)
+
+**Polecam `next-mdx-remote/rsc`** - najlepsza biblioteka do MDX w Next.js App Router z pełnym wsparciem Server Components.
+
+```bash
+npm install next-mdx-remote gray-matter reading-time
+```
+
+**Dodatkowe pluginy (opcjonalne, ale polecane):**
+
+```bash
+npm install remark-gfm remark-emoji rehype-highlight rehype-slug rehype-autolink-headings github-slugger
+```
+
+### Krok 2: Struktura Folderów
+
+```
+app/
+├── blog/
+│   ├── page.tsx              # Lista artykułów
+│   └── [slug]/
+│       └── page.tsx          # Pojedynczy artykuł
+content/
+└── posts/
+    ├── first-post.mdx
+    ├── second-post.mdx
+    └── mdx-guide.mdx
+lib/
+└── mdx.ts                    # Funkcje pomocnicze
+```
+
+### Krok 3: Funkcje Pomocnicze (`lib/mdx.ts`)
+
+```typescript
+// lib/mdx.ts
+import fs from "fs"
+import path from "path"
+import matter from "gray-matter"
+import readingTime from "reading-time"
+
+const postsDirectory = path.join(process.cwd(), "content/posts")
+
+export interface PostFrontmatter {
+  title: string
+  description: string
+  date: string
+  categories: string[]
+  tags: string[]
+  image?: string
+  featured?: boolean
+}
+
+export interface Post {
+  slug: string
+  frontmatter: PostFrontmatter
+  content: string
+  readingTime: string
+}
+
+// Pobierz wszystkie posty
+export function getAllPosts(): Post[] {
+  const fileNames = fs.readdirSync(postsDirectory)
+
+  const posts = fileNames
+    .filter((name) => name.endsWith(".mdx"))
+    .map((fileName) => {
+      const slug = fileName.replace(/\.mdx$/, "")
+      const fullPath = path.join(postsDirectory, fileName)
+      const fileContents = fs.readFileSync(fullPath, "utf8")
+      const { data, content } = matter(fileContents)
+
+      return {
+        slug,
+        frontmatter: data as PostFrontmatter,
+        content,
+        readingTime: readingTime(content).text,
+      }
+    })
+    .sort(
+      (a, b) =>
+        new Date(b.frontmatter.date).getTime() -
+        new Date(a.frontmatter.date).getTime()
+    )
+
+  return posts
+}
+
+// Pobierz pojedynczy post
+export function getPostBySlug(slug: string): Post | null {
+  try {
+    const fullPath = path.join(postsDirectory, `${slug}.mdx`)
+    const fileContents = fs.readFileSync(fullPath, "utf8")
+    const { data, content } = matter(fileContents)
+
+    return {
+      slug,
+      frontmatter: data as PostFrontmatter,
+      content,
+      readingTime: readingTime(content).text,
+    }
+  } catch {
+    return null
+  }
+}
+
+// Pobierz slugi dla generateStaticParams
+export function getAllPostSlugs(): string[] {
+  const fileNames = fs.readdirSync(postsDirectory)
+  return fileNames
+    .filter((name) => name.endsWith(".mdx"))
+    .map((name) => name.replace(/\.mdx$/, ""))
+}
+```
+
+### Krok 4: Strona Pojedynczego Posta (`app/blog/[slug]/page.tsx`)
+
+```typescript
+// app/blog/[slug]/page.tsx
+import { MDXRemote } from "next-mdx-remote/rsc"
+import { notFound } from "next/navigation"
+import { getAllPostSlugs, getPostBySlug } from "@/lib/mdx"
+import remarkGfm from "remark-gfm"
+import remarkEmoji from "remark-emoji"
+import rehypeHighlight from "rehype-highlight"
+import rehypeSlug from "rehype-slug"
+import rehypeAutolinkHeadings from "rehype-autolink-headings"
+import type { Metadata } from "next"
+
+// Generuj statyczne ścieżki (Static Generation)
+export async function generateStaticParams() {
+  const slugs = getAllPostSlugs()
+  return slugs.map((slug) => ({ slug }))
+}
+
+// Metadata dla SEO
+export async function generateMetadata({
+  params,
+}: {
+  params: { slug: string }
+}): Promise<Metadata> {
+  const post = getPostBySlug(params.slug)
+
+  if (!post) return {}
+
+  return {
+    title: `${post.frontmatter.title} | Zeprzalka.com`,
+    description: post.frontmatter.description,
+    keywords: post.frontmatter.tags.join(", "),
+    openGraph: {
+      title: post.frontmatter.title,
+      description: post.frontmatter.description,
+      type: "article",
+      publishedTime: post.frontmatter.date,
+    },
+  }
+}
+
+export default async function Post({ params }: { params: { slug: string } }) {
+  const post = getPostBySlug(params.slug)
+
+  if (!post) notFound()
+
+  return (
+    <article className="max-w-4xl mx-auto px-4 py-12">
+      {/* Header */}
+      <header className="mb-12">
+        <h1 className="text-4xl font-bold mb-4">{post.frontmatter.title}</h1>
+        <div className="flex gap-4 text-muted-foreground text-sm">
+          <time>
+            {new Date(post.frontmatter.date).toLocaleDateString("pl-PL")}
+          </time>
+          <span>•</span>
+          <span>{post.readingTime}</span>
+        </div>
+      </header>
+
+      {/* Content - MDX renderuje się tutaj! */}
+      <div className="prose prose-lg dark:prose-invert max-w-none">
+        <MDXRemote
+          source={post.content}
+          options={{
+            parseFrontmatter: true,
+            mdxOptions: {
+              remarkPlugins: [remarkGfm, remarkEmoji],
+              rehypePlugins: [
+                rehypeSlug,
+                rehypeAutolinkHeadings,
+                rehypeHighlight,
+              ],
+            },
+          }}
+        />
+      </div>
+    </article>
+  )
+}
+```
+
+### Krok 5: Stwórz Pierwszy Plik MDX
+
+```mdx
+---
+title: "Mój Pierwszy Post MDX w Next.js"
+description: "Poznaj możliwości MDX w Next.js 15"
+date: "2025-11-10"
+categories: ["Next.js", "MDX"]
+tags: ["Next.js", "MDX", "Blog"]
+featured: true
+---
+
+# Witaj w MDX + Next.js! 🎉
+
+To jest **zwykły Markdown**.
+
+A teraz magia - komponent Next.js:
+
+<div className="p-6 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg">
+  **Next.js Server Component** renderuje się po stronie serwera!
+</div>
+
+Zero JavaScript w przeglądarce dla statycznej treści! 🚀
+```
+
+## 📚 Podstawowa Składnia MDX
+
+### 1. Frontmatter - Metadane Posta
+
+Frontmatter to YAML na początku pliku - metadane Twojego artykułu.
+
+```mdx
+---
+title: "Tytuł Artykułu"
+description: "Krótki opis (160 znaków dla SEO)"
+date: "2025-11-10"
+categories: ["Web Dev", "React"]
+tags: ["MDX", "Next.js"]
+author: "Jan Kowalski"
+featured: true
+---
+
+# Tutaj zaczyna się treść
+```
+
+**Dostęp do frontmatter w Next.js:**
+
+```tsx
+const { content, frontmatter } = await compileMDX({
+  source,
+  options: { parseFrontmatter: true },
+})
+
+console.log(frontmatter.title) // "Tytuł Artykułu"
+```
+
+### 2. Import Komponentów
+
+```mdx
+import { Button } from "@/components/ui/button"
+import { Alert } from "@/components/Alert"
+import CustomChart from "../components/Chart.tsx"
+
+# Mój Artykuł
+
+<Button variant="primary">Kliknij mnie</Button>
+
+<Alert type="info">To jest **alert** z Markdown wewnątrz!</Alert>
+
+<CustomChart data={[1, 2, 3, 4]} />
+```
+
+### 3. Export Zmiennych
+
+```mdx
+export const author = {
+  name: "Michał Zeprzałka",
+  role: "Digital Solutions Architect",
+}
+
+export const publishDate = new Date("2025-11-10")
+
+Autor: {author.name} ({author.role})
+
+Data publikacji: {publishDate.toLocaleDateString('pl-PL')}
+```
+
+### 4. Wyrażenia JavaScript
+
+```mdx
+# Liczby Pierwsze
+
+{[2, 3, 5, 7, 11, 13, 17, 19].map(num => (
+
+{" "}
+
+<span key={num} style={{ marginRight: "10px", fontWeight: "bold" }}>
+  {num}
+</span>
+))}
+
+---
+
+Aktualna data: {new Date().toLocaleDateString('pl-PL')}
+
+Wynik: 2 + 2 = {2 + 2}
+```
+
+## 🎨 Zaawansowane Funkcjonalności MDX
+
+### 1. Custom Components - Nadpisanie Domyślnych Elementów
+
+MDX pozwala "podmienić" standardowe elementy Markdown na własne komponenty.
+
+```tsx
+// components/mdx-components.tsx
+import { Button } from "./ui/button"
+
+export const mdxComponents = {
+  // Nadpisz nagłówki
+  h1: (props) => (
+    <h1 className="text-4xl font-bold mb-6 text-gradient" {...props} />
+  ),
+
+  h2: (props) => (
+    <h2 className="text-2xl font-bold mt-12 mb-4 scroll-mt-24" {...props} />
+  ),
+
+  // Nadpisz linki
+  a: (props) => (
+    <a
+      className="text-primary underline hover:text-primary/80"
+      target={props.href?.startsWith("http") ? "_blank" : undefined}
+      {...props}
+    />
+  ),
+
+  // Nadpisz bloki kodu
+  pre: (props) => (
+    <div className="my-6 rounded-lg border overflow-hidden">
+      <pre className="p-4 overflow-x-auto" {...props} />
+    </div>
+  ),
+
+  // Dodaj własne komponenty
+  Button,
+}
+```
+
+**Użycie:**
+
+```tsx
+// app/blog/[slug]/page.tsx
+import { MDXRemote } from "next-mdx-remote/rsc"
+import { mdxComponents } from "@/components/mdx-components"
+
+export default async function Post() {
+  return <MDXRemote source={source} components={mdxComponents} />
+}
+```
+
+Teraz w MDX:
+
+```mdx
+## Ten nagłówek ma niestandardowy styl!
+
+[Ten link](https://google.com) otworzy się w nowej karcie automatycznie.
+
+\`\`\`javascript
+// Ten kod ma piękne obramowanie
+const magic = true
+\`\`\`
+```
+
+### 2. Remark & Rehype Plugins - Supermoce Przetwarzania
+
+Pluginy pozwalają rozszerzyć możliwości MDX w Next.js.
+
+**Instalacja:**
+
+```bash
+npm install remark-gfm remark-emoji rehype-highlight rehype-slug rehype-autolink-headings
+```
+
+**Konfiguracja w Next.js App Router:**
+
+```tsx
+// app/blog/[slug]/page.tsx
+import { MDXRemote } from "next-mdx-remote/rsc"
+import remarkGfm from "remark-gfm"
+import remarkEmoji from "remark-emoji"
+import rehypeHighlight from "rehype-highlight"
+import rehypeSlug from "rehype-slug"
+import rehypeAutolinkHeadings from "rehype-autolink-headings"
+
+export default async function Post({ params }: { params: { slug: string } }) {
+  const post = getPostBySlug(params.slug)
+
+  return (
+    <MDXRemote
+      source={post.content}
+      options={{
+        parseFrontmatter: true,
+        mdxOptions: {
+          remarkPlugins: [
+            remarkGfm, // GitHub Flavored Markdown (tabele, checkboxy)
+            remarkEmoji, // :rocket: → 🚀
+          ],
+          rehypePlugins: [
+            rehypeSlug, // Auto-generuj ID dla nagłówków
+            rehypeAutolinkHeadings, // Anchor linki do nagłówków
+            rehypeHighlight, // Syntax highlighting kodu
+          ],
+        },
+      }}
+    />
+  )
+}
+```
+
+**Co dają te pluginy?**
+
+```mdx
+# Automatyczne ID dla nagłówków
+
+## Moja Sekcja
+
+Powyższy nagłówek automatycznie dostaje `id="moja-sekcja"`.
+Link: [Skocz do sekcji](#moja-sekcja)
+
+---
+
+# GitHub Flavored Markdown
+
+~~Przekreślony tekst~~
+
+- [ ] Todo item
+- [x] Ukończone
+
+| Kolumna 1 | Kolumna 2 |
+| --------- | --------- |
+| Tabele    | Działają! |
+
+---
+
+# Emoji
+
+:rocket: :fire: :heart: :+1:
+
+Konwertuje się na: 🚀 🔥 ❤️ 👍
+
+---
+
+# Syntax Highlighting
+
+\`\`\`typescript
+const greeting: string = "Hello, MDX!"
+console.log(greeting)
+\`\`\`
+```
+
+### 3. Interaktywne Komponenty w Next.js
+
+MDX w Next.js pozwala na używanie **Server Components** (domyślnie) i **Client Components** (z `"use client"`).
+
+**Komponent Counter (Client Component):**
+
+```tsx
+// components/Counter.tsx
+"use client"
+import { useState } from "react"
+import { Button } from "@/components/ui/button"
+
+export function Counter({ initialCount = 0 }: { initialCount?: number }) {
+  const [count, setCount] = useState(initialCount)
+
+  return (
+    <div className="p-6 border rounded-lg bg-muted my-6">
+      <p className="text-2xl font-bold mb-4">Licznik: {count}</p>
+      <div className="flex gap-2">
+        <Button onClick={() => setCount(count + 1)} variant="default">
+          +1
+        </Button>
+        <Button onClick={() => setCount(count - 1)} variant="secondary">
+          -1
+        </Button>
+        <Button onClick={() => setCount(0)} variant="outline">
+          Reset
+        </Button>
+      </div>
+    </div>
+  )
+}
+```
+
+**W MDX:**
+
+```mdx
+import { Counter } from "@/components/Counter"
+
+# Interaktywny Artykuł w Next.js
+
+Ten licznik działa na żywo (Client Component):
+
+<Counter initialCount={10} />
+
+Każde kliknięcie zmienia stan w Next.js!
+```
+
+**Server Component Example:**
+
+```tsx
+// components/PostStats.tsx
+// Domyślnie Server Component (bez "use client")
+export async function PostStats({ slug }: { slug: string }) {
+  // Możesz robić fetch bezpośrednio w komponencie!
+  const stats = await fetch(`https://api.example.com/posts/${slug}/stats`).then(
+    (res) => res.json()
+  )
+
+  return (
+    <div className="p-4 bg-muted rounded-lg">
+      <p>Wyświetlenia: {stats.views}</p>
+      <p>Polubienia: {stats.likes}</p>
+    </div>
+  )
+}
+```
+
+**W MDX:**
+
+```mdx
+import { PostStats } from "@/components/PostStats"
+
+# Mój Artykuł
+
+<PostStats slug="moj-artykul" />
+
+Ten komponent renderuje się po stronie serwera - zero JavaScript w przeglądarce!
+```
+
+### 4. Warunkowe Renderowanie
+
+```mdx
+export const isDev = process.env.NODE_ENV === "development"
+
+# Mój Artykuł
+
+{isDev && (
+
+{" "}
+
+<div className="bg-yellow-100 p-4 mb-4">
+  ⚠️ Tryb developerski - ten komunikat nie pojawi się w produkcji
+</div>
+)}
+
+Normalna treść artykułu...
+```
+
+### 5. Pętle i Mapowanie Danych
+
+```mdx
+export const authors = [
+  { name: "Alice", role: "Developer" },
+  { name: "Bob", role: "Designer" },
+  { name: "Charlie", role: "PM" },
+]
+
+# Zespół
+
+<div className="grid grid-cols-3 gap-4">
+  {authors.map((author) => (
+    <div key={author.name} className="p-4 border rounded">
+      <h3 className="font-bold">{author.name}</h3>
+      <p className="text-muted-foreground">{author.role}</p>
+    </div>
+  ))}
+</div>
+```
+
+### 6. Layouty - Własny Layout dla MDX w Next.js
+
+**Centralne komponenty MDX (`components/mdx-components.tsx`):**
+
+```tsx
+// components/mdx-components.tsx
+import Image from "next/image"
+import Link from "next/link"
+import { Button } from "./ui/button"
+
+export const mdxComponents = {
+  // Nadpisz nagłówki
+  h1: (props: any) => (
+    <h1
+      className="text-4xl font-bold mb-6 text-gradient scroll-mt-24"
+      {...props}
+    />
+  ),
+
+  h2: (props: any) => (
+    <h2 className="text-2xl font-bold mt-12 mb-4 scroll-mt-24" {...props} />
+  ),
+
+  // Nadpisz linki - użyj next/link!
+  a: ({ href, ...props }: any) => {
+    const isExternal = href?.startsWith("http")
+    const Component = isExternal ? "a" : Link
+
+    return (
+      <Component
+        href={href}
+        className="text-primary underline hover:text-primary/80"
+        target={isExternal ? "_blank" : undefined}
+        rel={isExternal ? "noopener noreferrer" : undefined}
+        {...props}
+      />
+    )
+  },
+
+  // Nadpisz obrazki - użyj next/image!
+  img: ({ src, alt, ...props }: any) => (
+    <Image
+      src={src}
+      alt={alt || ""}
+      width={800}
+      height={600}
+      className="rounded-lg my-6"
+      {...props}
+    />
+  ),
+
+  // Nadpisz bloki kodu
+  pre: (props: any) => (
+    <div className="my-6 rounded-lg border overflow-hidden">
+      <pre className="p-4 overflow-x-auto bg-muted" {...props} />
+    </div>
+  ),
+
+  // Dodaj własne komponenty
+  Button,
+}
+```
+
+**Użycie w page.tsx:**
+
+```tsx
+// app/blog/[slug]/page.tsx
+import { MDXRemote } from "next-mdx-remote/rsc"
+import { mdxComponents } from "@/components/mdx-components"
+
+export default async function Post({ params }: { params: { slug: string } }) {
+  const post = getPostBySlug(params.slug)
+
+  return (
+    <article className="prose prose-lg dark:prose-invert max-w-none">
+      <MDXRemote source={post.content} components={mdxComponents} />
+    </article>
+  )
+}
+```
+
+Teraz w MDX:
+
+```mdx
+## Ten nagłówek ma niestandardowy styl!
+
+[Ten link](/blog) używa next/link (prefetching!)
+
+[Link zewnętrzny](https://google.com) otwiera się w nowej karcie.
+
+![Obrazek](/hero.jpg)
+^ Ten obrazek używa next/image (optymalizacja!)
+```
+
+## 🎓 Przykłady Praktyczne
+
+### Przykład 1: Callout Component (Ostrzeżenia, Info, Tip)
+
+```tsx
+// components/Callout.tsx
+export function Callout({
+  type = "info",
+  children,
+}: {
+  type?: "info" | "warning" | "success" | "error"
+  children: React.ReactNode
+}) {
+  const styles = {
+    info: "bg-blue-50 border-blue-200 text-blue-900 dark:bg-blue-900/20 dark:border-blue-800 dark:text-blue-100",
+    warning:
+      "bg-yellow-50 border-yellow-200 text-yellow-900 dark:bg-yellow-900/20 dark:border-yellow-800 dark:text-yellow-100",
+    success:
+      "bg-green-50 border-green-200 text-green-900 dark:bg-green-900/20 dark:border-green-800 dark:text-green-100",
+    error:
+      "bg-red-50 border-red-200 text-red-900 dark:bg-red-900/20 dark:border-red-800 dark:text-red-100",
+  }
+
+  const icons = {
+    info: "ℹ️",
+    warning: "⚠️",
+    success: "✅",
+    error: "❌",
+  }
+
+  return (
+    <div className={`p-4 my-6 border-l-4 rounded-r-lg ${styles[type]}`}>
+      <div className="flex items-start gap-3">
+        <span className="text-2xl">{icons[type]}</span>
+        <div className="flex-1">{children}</div>
+      </div>
+    </div>
+  )
+}
+```
+
+**Użycie w MDX:**
+
+```mdx
+import { Callout } from "@/components/Callout"
+
+# Ważne Informacje
+
+<Callout type="info">
+  To jest **informacja**. MDX pozwala na Markdown wewnątrz komponentów!
+</Callout>
+
+<Callout type="warning">
+  **Uwaga:** Nie zapomnij dodać `'use client'` jeśli używasz hooków!
+</Callout>
+
+<Callout type="success">
+  Gratulacje! Właśnie nauczyłeś się tworzyć własne komponenty MDX.
+</Callout>
+
+<Callout type="error">
+  **Błąd:** Nie używaj `<img>` - użyj `next/image` dla optymalizacji!
+</Callout>
+```
+
+### Przykład 2: Code Block z Przyciskiem Kopiowania
+
+```tsx
+// components/CodeBlock.tsx
+"use client"
+import { useState } from "react"
+import { Check, Copy } from "lucide-react"
+
+export function CodeBlock({
+  children,
+  language,
+}: {
+  children: string
+  language?: string
+}) {
+  const [copied, setCopied] = useState(false)
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(children)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
+
+  return (
+    <div className="relative group my-6">
+      <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity">
+        <button
+          onClick={handleCopy}
+          className="p-2 bg-muted rounded-md hover:bg-muted/80"
+          aria-label="Kopiuj kod"
+        >
+          {copied ? (
+            <Check className="w-4 h-4 text-green-500" />
+          ) : (
+            <Copy className="w-4 h-4" />
+          )}
+        </button>
+      </div>
+      <pre className="p-4 bg-muted rounded-lg overflow-x-auto">
+        <code className={`language-${language}`}>{children}</code>
+      </pre>
+    </div>
+  )
+}
+```
+
+**W MDX:**
+
+```mdx
+import { CodeBlock } from "@/components/CodeBlock"
+
+# Kod do Skopiowania
+
+<CodeBlock language="typescript">
+{`const greeting = (name: string): string => {
+  return \`Hello, \${name}!\`
+}
+
+console.log(greeting('MDX'))`}
+
+</CodeBlock>
+
+Najedź na blok kodu i kliknij przycisk kopiowania!
+```
+
+### Przykład 3: Tabs Component (Zakładki)
+
+```tsx
+// components/Tabs.tsx
+"use client"
+import { useState } from "react"
+
+export function Tabs({ children }: { children: React.ReactNode }) {
+  const [activeTab, setActiveTab] = useState(0)
+  const tabs = React.Children.toArray(children)
+
+  return (
+    <div className="my-6 border rounded-lg overflow-hidden">
+      <div className="flex border-b bg-muted/50">
+        {tabs.map((tab: any, index) => (
+          <button
+            key={index}
+            onClick={() => setActiveTab(index)}
+            className={`px-4 py-2 font-medium transition-colors ${
+              activeTab === index
+                ? "bg-background text-foreground border-b-2 border-primary"
+                : "text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            {tab.props.label}
+          </button>
+        ))}
+      </div>
+      <div className="p-4">{tabs[activeTab]}</div>
+    </div>
+  )
+}
+
+export function Tab({
+  children,
+}: {
+  label: string
+  children: React.ReactNode
+}) {
+  return <div>{children}</div>
+}
+```
+
+**W MDX:**
+
+```mdx
+import { Tabs, Tab } from "@/components/Tabs"
+
+# Różne Podejścia
+
+<Tabs>
+  <Tab label="JavaScript">
+    \`\`\`javascript const hello = 'world' console.log(hello) \`\`\`
+  </Tab>
+
+{" "}
+
+<Tab label="TypeScript">
+  \`\`\`typescript const hello: string = 'world' console.log(hello) \`\`\`
+</Tab>
+
+  <Tab label="Python">\`\`\`python hello = 'world' print(hello) \`\`\`</Tab>
+</Tabs>
+```
+
+## 🔧 MDX w Next.js - Najlepsze Praktyki
+
+### 1. Organizacja Plików
+
+```
+content/
+├── posts/
+│   ├── mdx-guide.mdx
+│   ├── react-tips.mdx
+│   └── next-js-tutorial.mdx
+├── authors/
+│   ├── john-doe.mdx
+│   └── jane-smith.mdx
+└── pages/
+    ├── about.mdx
+    └── privacy.mdx
+```
+
+### 2. Centralna Funkcja do Ładowania MDX
+
+```typescript
+// lib/mdx.ts
+import fs from "fs"
+import path from "path"
+import matter from "gray-matter"
+import { compileMDX } from "next-mdx-remote/rsc"
+
+const postsDirectory = path.join(process.cwd(), "content/posts")
+
+export async function getPostBySlug(slug: string) {
+  const fullPath = path.join(postsDirectory, `${slug}.mdx`)
+  const fileContents = fs.readFileSync(fullPath, "utf8")
+
+  const { content, frontmatter } = await compileMDX({
+    source: fileContents,
+    options: {
+      parseFrontmatter: true,
+      mdxOptions: {
+        remarkPlugins: [remarkGfm, remarkEmoji],
+        rehypePlugins: [rehypeHighlight, rehypeSlug],
+      },
+    },
+  })
+
+  return { content, frontmatter, slug }
+}
+
+export function getAllPostSlugs() {
+  const fileNames = fs.readdirSync(postsDirectory)
+  return fileNames
+    .filter((name) => name.endsWith(".mdx"))
+    .map((name) => name.replace(/\.mdx$/, ""))
+}
+```
+
+### 3. TypeScript dla Frontmatter
+
+```typescript
+// types/mdx.ts
+export interface PostFrontmatter {
+  title: string
+  description: string
+  date: string
+  categories: string[]
+  tags: string[]
+  author: {
+    name: string
+    avatar: string
+  }
+  featured?: boolean
+}
+
+export interface Post {
+  slug: string
+  content: JSX.Element
+  frontmatter: PostFrontmatter
+}
+```
+
+### 4. SEO-Friendly Metadata
+
+```tsx
+// app/blog/[slug]/page.tsx
+import { getPostBySlug } from "@/lib/mdx"
+import type { Metadata } from "next"
+
+export async function generateMetadata({
+  params,
+}: {
+  params: { slug: string }
+}): Promise<Metadata> {
+  const { frontmatter } = await getPostBySlug(params.slug)
+
+  return {
+    title: `${frontmatter.title} | Zeprzalka.com`,
+    description: frontmatter.description,
+    keywords: frontmatter.tags.join(", "),
+    openGraph: {
+      title: frontmatter.title,
+      description: frontmatter.description,
+      type: "article",
+      publishedTime: frontmatter.date,
+      authors: [frontmatter.author.name],
+    },
+  }
+}
+```
+
+## ⚡ Performance - Optymalizacja MDX w Next.js
+
+### 1. Static Generation (Rekomendowane dla Blogów)
+
+Next.js domyślnie generuje statyczne HTML dla stron MDX - ultraszybkie ładowanie!
+
+```tsx
+// app/blog/[slug]/page.tsx
+import { getAllPostSlugs, getPostBySlug } from "@/lib/mdx"
+
+// Generuj statyczne strony w build time
+export async function generateStaticParams() {
+  const slugs = getAllPostSlugs()
+  return slugs.map((slug) => ({ slug }))
+}
+
+export default async function Post({ params }: { params: { slug: string } }) {
+  const post = getPostBySlug(params.slug)
+
+  return (
+    <article>
+      <h1>{post.frontmatter.title}</h1>
+      <MDXRemote source={post.content} />
+    </article>
+  )
+}
+```
+
+**Korzyści:**
+
+- ✅ Ultraszybkie ładowanie (pre-renderowane HTML)
+- ✅ Świetne SEO (crawlery widzą pełny content)
+- ✅ Niskie obciążenie serwera (CDN)
+- ✅ Zero opóźnień - strona gotowa od razu
+
+**Build:**
+
+```bash
+npm run build
+```
+
+Next.js wygeneruje statyczne pliki HTML dla wszystkich postów!
+
+### 2. Lazy Loading Komponentów z next/dynamic
+
+```tsx
+// components/mdx-components.tsx
+import dynamic from "next/dynamic"
+
+// Ciężkie komponenty ładuj lazy (tylko gdy widoczne)
+const Chart = dynamic(() => import("./Chart"), {
+  loading: () => <div className="animate-pulse h-64 bg-muted rounded" />,
+  ssr: false, // Nie renderuj na serwerze (jeśli nie potrzeba)
+})
+
+const VideoPlayer = dynamic(() => import("./VideoPlayer"))
+
+export const mdxComponents = {
+  Chart,
+  VideoPlayer,
+  // Lekkie komponenty normalnie
+  Button: (props: any) => <button {...props} />,
+}
+```
+
+### 3. next/image dla Obrazków w MDX
+
+**Automatycznie optymalizuj obrazki:**
+
+```tsx
+// components/mdx-components.tsx
+import Image from "next/image"
+
+export const mdxComponents = {
+  img: ({ src, alt, ...props }: any) => (
+    <Image
+      src={src}
+      alt={alt || ""}
+      width={800}
+      height={600}
+      placeholder="blur"
+      blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRg..." // Opcjonalne
+      className="rounded-lg"
+      {...props}
+    />
+  ),
+}
+```
+
+**Korzyści:**
+
+- ✅ Automatyczna kompresja (WebP/AVIF)
+- ✅ Lazy loading (obrazki ładują się gdy widoczne)
+- ✅ Blur placeholder (lepsze UX)
+- ✅ Responsive images (różne rozmiary dla mobile/desktop)
+
+### 4. Bundle Size Optimization
+
+```tsx
+// ❌ ŹLE - importujesz całą bibliotekę
+import _ from "lodash"
+
+// ✅ DOBRZE - importuj tylko potrzebne funkcje
+import { map, filter } from "lodash"
+
+// ✅ JESZCZE LEPIEJ - użyj native JS
+const mapped = array.map((x) => x * 2)
+```
+
+### 5. Server Components > Client Components
+
+**Zasada:** Używaj Server Components gdzie się da!
+
+```tsx
+// ✅ DOBRZE - Server Component (domyślnie)
+// components/PostHeader.tsx
+export function PostHeader({ title, date }: { title: string; date: string }) {
+  return (
+    <header>
+      <h1>{title}</h1>
+      <time>{new Date(date).toLocaleDateString("pl-PL")}</time>
+    </header>
+  )
+}
+
+// ⚠️ Client Component (tylko gdy potrzeba interaktywności)
+// components/LikeButton.tsx
+;("use client")
+import { useState } from "react"
+
+export function LikeButton() {
+  const [likes, setLikes] = useState(0)
+  return <button onClick={() => setLikes(likes + 1)}>👍 {likes}</button>
+}
+```
+
+**W MDX:**
+
+```mdx
+import { PostHeader } from "@/components/PostHeader"
+import { LikeButton } from "@/components/LikeButton"
+
+<PostHeader title="Mój Post" date="2025-11-10" />^ Zero JavaScript w
+przeglądarce!
+
+<LikeButton />^ Minimalne JavaScript (tylko interaktywność)
+```
+
+## 🐛 Częste Problemy i Rozwiązania w Next.js
+
+### Problem 1: "Cannot use import statement outside a module"
+
+**Przyczyna:** Konflikt między ESM a CommonJS.
+
+**Rozwiązanie:**
+
+```typescript
+// next.config.ts
+const nextConfig = {
+  experimental: {
+    serverComponentsExternalPackages: ["rehype-highlight"], // Jeśli plugin ma problemy
+  },
+}
+```
+
+### Problem 2: Komponenty nie działają w MDX
+
+**Przyczyna:** Nie przekazałeś komponentów do `<MDXRemote>`.
+
+**Rozwiązanie:**
+
+```tsx
+// ❌ ŹLE
+;<MDXRemote source={content} />
+
+// ✅ DOBRZE
+import { mdxComponents } from "@/components/mdx-components"
+;<MDXRemote source={content} components={mdxComponents} />
+```
+
+### Problem 3: "use client" nie działa
+
+**Przyczyna:** `'use client'` musi być **pierwszą linią** pliku.
+
+**Rozwiązanie:**
+
+```tsx
+// ❌ ŹLE
+import { useState } from "react"
+;("use client")
+
+// ✅ DOBRZE
+;("use client")
+import { useState } from "react"
+```
+
+### Problem 4: Obrazki nie ładują się
+
+**Przyczyna:** Next.js wymaga konfiguracji dla zewnętrznych domen.
+
+**Rozwiązanie:**
+
+```typescript
+// next.config.ts
+const nextConfig = {
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "images.unsplash.com",
+      },
+    ],
+  },
+}
+```
+
+### Problem 5: Styling Markdown w MDX
+
+**Rozwiązanie:** Użyj `@tailwindcss/typography`
+
+```bash
+npm install @tailwindcss/typography
+```
+
+```tsx
+// app/blog/[slug]/page.tsx
+<article className="prose prose-lg dark:prose-invert max-w-none">
+  <MDXRemote source={content} components={mdxComponents} />
+</article>
+```
+
+### Problem 6: Rebuild Required dla każdej zmiany MDX
+
+**Rozwiązanie:** Użyj Turbopack w dev mode (Next.js 15)
+
+```bash
+npm run dev --turbo
+```
+
+**Korzyści:**
+
+- ⚡ 10x szybszy Hot Reload
+- ⚡ Natychmiastowe zmiany w MDX
+- ⚡ Mniejsze zużycie pamięci
+
+## 📊 MDX vs Alternatywy dla Next.js
+
+| Feature               | MDX + Next.js | Markdown + Next.js | Contentful | Sanity | Notion     |
+| --------------------- | ------------- | ------------------ | ---------- | ------ | ---------- |
+| Komponenty Next.js    | ✅            | ❌                 | ❌         | ❌     | ❌         |
+| Server Components     | ✅            | ⚠️                 | ❌         | ❌     | ❌         |
+| Static Generation     | ✅            | ✅                 | ✅         | ✅     | ⚠️         |
+| next/image            | ✅            | ⚠️                 | ⚠️         | ⚠️     | ❌         |
+| next/link             | ✅            | ⚠️                 | ❌         | ❌     | ❌         |
+| TypeScript Support    | ✅            | ⚠️                 | ✅         | ✅     | ❌         |
+| Version Control (Git) | ✅            | ✅                 | ❌         | ❌     | ❌         |
+| Offline Editing       | ✅            | ✅                 | ❌         | ❌     | ❌         |
+| SEO-Friendly          | ✅            | ✅                 | ✅         | ✅     | ⚠️         |
+| Interaktywność        | ✅            | ❌                 | ❌         | ❌     | ⚠️         |
+| Prostota              | ⭐⭐⭐⭐      | ⭐⭐⭐⭐⭐         | ⭐⭐⭐     | ⭐⭐⭐ | ⭐⭐⭐⭐⭐ |
+| Koszt                 | $0            | $0                 | $$$        | $$$    | $0-$$      |
+| Vendor Lock-in        | ❌            | ❌                 | ✅         | ✅     | ✅         |
+
+## 🎯 Kiedy Używać MDX w Next.js?
+
+### ✅ Używaj MDX + Next.js gdy:
+
+- Budujesz **blog techniczny** (pokazy kodu, interaktywne przykłady)
+- Potrzebujesz **dokumentacji** z działającymi komponentami Next.js
+- Chcesz **content + interaktywność** w jednym pliku
+- Pracujesz z **Next.js App Router**
+- Potrzebujesz **version control** dla contentu (Git)
+- Zależy Ci na **SEO** (Static Generation)
+- Chcesz **zero vendor lock-in** (pliki lokalne)
+- Potrzebujesz **next/image** i **next/link**
+
+### ❌ NIE używaj MDX gdy:
+
+- Potrzebujesz **prostego bloga** bez interaktywności (czysty Markdown wystarczy)
+- Pracujesz z **non-technical writers** (Notion/WordPress lepsze)
+- Nie pracujesz z **Next.js/React**
+- Priorytet to **maksymalna prostota** (czysty Markdown)
+- Potrzebujesz **CMS z GUI** dla klienta
+
+## 🚀 Zaawansowane Use Cases
+
+### 1. Dynamiczne Ładowanie Danych
+
+```mdx
+export async function getStaticProps() {
+  const res = await fetch("https://api.github.com/repos/vercel/next.js")
+  const data = await res.json()
+  return { stars: data.stargazers_count }
+}
+
+export const stars = await getStaticProps()
+
+# Next.js ma {stars.toLocaleString()} gwiazdek na GitHub! ⭐
+```
+
+### 2. Interaktywne Quizy
+
+```tsx
+// components/Quiz.tsx
+"use client"
+import { useState } from "react"
+
+export function Quiz({ question, answers, correct }) {
+  const [selected, setSelected] = useState(null)
+  const [revealed, setRevealed] = useState(false)
+
+  return (
+    <div className="p-6 border rounded-lg my-6">
+      <h3 className="font-bold mb-4">{question}</h3>
+      {answers.map((answer, i) => (
+        <button
+          key={i}
+          onClick={() => {
+            setSelected(i)
+            setRevealed(true)
+          }}
+          className={`block w-full text-left p-3 mb-2 border rounded ${
+            revealed && i === correct
+              ? "bg-green-100 border-green-500"
+              : revealed && i === selected
+              ? "bg-red-100 border-red-500"
+              : "hover:bg-muted"
+          }`}
+        >
+          {answer}
+        </button>
+      ))}
+    </div>
+  )
+}
+```
+
+**W MDX:**
+
+```mdx
+import { Quiz } from "@/components/Quiz"
+
+# Test Wiedzy
+
+<Quiz
+  question="Co oznacza MDX?"
+  answers={[
+    "Markdown Extended",
+    "Markdown + JSX",
+    "Modern Document XML",
+    "Markdown Deluxe",
+  ]}
+  correct={1}
+/>
+```
+
+### 3. Live Code Editor
+
+```tsx
+// components/LiveEditor.tsx
+"use client"
+import { useState } from "react"
+import { LiveProvider, LiveEditor, LiveError, LivePreview } from "react-live"
+
+export function LiveEditor({ code }) {
+  return (
+    <LiveProvider code={code}>
+      <div className="grid md:grid-cols-2 gap-4 my-6">
+        <div>
+          <h4 className="font-bold mb-2">Kod:</h4>
+          <LiveEditor className="font-mono text-sm p-4 border rounded" />
+          <LiveError className="text-red-500 text-sm mt-2" />
+        </div>
+        <div>
+          <h4 className="font-bold mb-2">Podgląd:</h4>
+          <div className="p-4 border rounded bg-muted">
+            <LivePreview />
+          </div>
+        </div>
+      </div>
+    </LiveProvider>
+  )
+}
+```
+
+## 📚 Przydatne Pluginy MDX
+
+### Remark (Markdown Processing)
+
+```bash
+npm install remark-gfm remark-math remark-emoji remark-toc
+```
+
+- **remark-gfm** - GitHub Flavored Markdown (tabele, task lists)
+- **remark-math** - Równania matematyczne (KaTeX)
+- **remark-emoji** - `:rocket:` → 🚀
+- **remark-toc** - Auto-generowanie Table of Contents
+
+### Rehype (HTML Processing)
+
+```bash
+npm install rehype-highlight rehype-slug rehype-autolink-headings rehype-external-links
+```
+
+- **rehype-highlight** - Syntax highlighting kodu
+- **rehype-slug** - Auto ID dla nagłówków
+- **rehype-autolink-headings** - Klikalny anchor link
+- **rehype-external-links** - target="\_blank" dla zewnętrznych linków
+
+## 🎓 Podsumowanie
+
+MDX w Next.js to **perfekcyjne połączenie** dla developerów budujących nowoczesne blogi techniczne. Łączy prostotę Markdown z mocą Next.js - Server Components, next/image, next/link, Static Generation i pełne wsparcie TypeScript.
+
+### Kluczowe Punkty:
+
+1. ✅ **MDX + Next.js** - pisz Markdown, używaj komponentów Next.js
+2. ✅ **next-mdx-remote/rsc** - najlepsza biblioteka dla App Router
+3. ✅ **Server Components** - zero JavaScript dla statycznej treści
+4. ✅ **Static Generation** - ultraszybkie ładowanie (generateStaticParams)
+5. ✅ **Frontmatter** - metadane w YAML + TypeScript
+6. ✅ **Plugins** - Remark & Rehype rozszerzają możliwości
+7. ✅ **next/image** - automatyczna optymalizacja obrazków
+8. ✅ **next/link** - prefetching i client-side navigation
+9. ✅ **TypeScript** - pełne wsparcie typów
+10. ✅ **SEO** - generateMetadata + Static HTML
+
+### Dlaczego MDX + Next.js?
+
+- 🚀 **Performance** - Static Generation + Server Components
+- 🎨 **Flexibility** - Komponenty React w Markdown
+- 📱 **SEO** - Pre-rendered HTML dla crawlerów
+- 🔒 **Type Safety** - TypeScript dla frontmatter i komponentów
+- 💰 **Cost** - $0 (pliki lokalne, zero CMS fees)
+- 🎯 **Developer Experience** - Hot reload, VSCode support
+
+### Następne Kroki:
+
+1. Zainstaluj `next-mdx-remote` w swoim projekcie Next.js
+2. Stwórz folder `content/posts/` z pierwszym plikiem `.mdx`
+3. Dodaj funkcje pomocnicze w `lib/mdx.ts`
+4. Skonfiguruj `app/blog/[slug]/page.tsx` z generateStaticParams
+5. Stwórz własne komponenty MDX w `components/mdx-components.tsx`
+6. Eksperymentuj z pluginami (remark-gfm, rehype-highlight)
+7. Zbuduj profesjonalny blog techniczny z Next.js + MDX!
+
+### Mój Stack (Ten Blog):
+
+```typescript
+// To czego używam na zeprzalka.com
+- Next.js 15 (App Router + Turbopack)
+- next-mdx-remote/rsc (MDX w Server Components)
+- Tailwind CSS 4.0 (@tailwindcss/typography)
+- remark-gfm + remark-emoji
+- rehype-highlight + rehype-slug + rehype-autolink-headings
+- gray-matter (frontmatter parsing)
+- reading-time (szacowanie czasu czytania)
+- TypeScript (strict mode)
+```
+
+**Efekt:** Lighthouse 95+ we wszystkich kategoriach! 🎯
+
+## 🔗 Przydatne Zasoby
+
+### Oficjalna Dokumentacja
+
+- [Next.js Markdown and MDX](https://nextjs.org/docs/app/building-your-application/configuring/mdx) - Oficjalna dokumentacja Next.js
+- [next-mdx-remote](https://github.com/hashicorp/next-mdx-remote) - Biblioteka do MDX w Next.js
+- [MDX Docs](https://mdxjs.com/) - Oficjalna dokumentacja MDX
+
+### Pluginy Next.js + MDX
+
+- [Remark Plugins](https://github.com/remarkjs/remark/blob/main/doc/plugins.md) - Markdown processing
+- [Rehype Plugins](https://github.com/rehypejs/rehype/blob/main/doc/plugins.md) - HTML processing
+- [remark-gfm](https://github.com/remarkjs/remark-gfm) - GitHub Flavored Markdown
+- [rehype-highlight](https://github.com/rehypejs/rehype-highlight) - Syntax highlighting
+
+### Przykładowe Projekje
+
+- [Next.js Blog Starter](https://github.com/vercel/next.js/tree/canary/examples/blog-starter) - Oficjalny starter Next.js
+- [MDX Blog Template](https://github.com/timlrx/tailwind-nextjs-starter-blog) - Tailwind + Next.js + MDX
+- [Zeprzalka.com](https://github.com/m-zeprzalka/zeprzalka-site) - Kod źródłowy tego bloga!
+
+### Narzędzia
+
+- [MDX Playground](https://mdxjs.com/playground/) - Testuj MDX online
+- [rehype-pretty-code](https://rehype-pretty-code.netlify.app/) - Piękne code blocki
+- [@tailwindcss/typography](https://tailwindcss.com/docs/typography-plugin) - Styling dla prose
+
+---
+
+**Pytania? Problemy?** Napisz do mnie m@zeprzalka.com
+
+Powodzenia z Next.js + MDX! 🚀✨

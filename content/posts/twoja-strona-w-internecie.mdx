@@ -1,0 +1,303 @@
+---
+title: "Jak Opublikować Stronę WWW? (GitHub Pages, Vercel i Magia AI)"
+description: "Masz gotowy HTML, CSS i Bootstrap? Czas pokazać go światu! W tej lekcji opublikujemy Twoją stronę za darmo na GitHub Pages i Vercel. Odkryj też, jak 'oszukać system' i generować profesjonalne szablony za pomocą AI."
+date: "2025-11-14"
+categories: ["Hosting", "Web Development", "Frontend", "GitHub", "Vercel", "AI"]
+tags:
+  [
+    "Hosting",
+    "GitHub Pages",
+    "Vercel",
+    "Deployment",
+    "Kurs",
+    "HTML",
+    "AI",
+    "Prompt",
+    "Bootstrap",
+  ]
+image: "/blog/github-vercel.jpg"
+imageCaption: "Ze swojego komputera wprost do globalnej sieci. Czas na deployment!"
+featured: true
+author:
+  name: "zeprzalka.com"
+  title: "Digital Solutions Architect"
+  bio: "Tworzę rozwiązania łączące biznes z technologią."
+  avatar: "/avatar.png"
+---
+
+Witajcie! 🎉 Do tej pory stworzyliśmy solidne fundamenty. Macie opanowany **HTML**, potraficie go stylować za pomocą **CSS** i wiecie, jak drastycznie przyspieszyć pracę dzięki **[Bootstrapowi](/blog/bootstrap)**.
+
+Wasze projekty ewoluują, ale mają jeden problem... **nikt ich nie widzi**.
+
+Na razie żyją tylko na Waszych komputerach, ich ścieżką może być np. `C:\Users\Student\MojaSuperStrona`. Dziś to zmienimy. Przejdziemy przez absolutnie kluczowy proces dla każdego developera: **publikację (deployment)**. Pokażę Wam, jak w kilka minut i za absolutne zero złotych udostępnić Waszą pracę całemu światu.
+
+Nie będziemy używać skomplikowanych komend, `npm` ani niczego, co wymaga instalacji. Użyjemy tylko przeglądarki i potęgi darmowych narzędzi.
+
+## 💾 Krótka Historia: Jak To Się Robiło Kiedyś? (FTP)
+
+Zapytajcie starszych kolegów, a opowiedzą Wam o programach typu **Total Commander** i protokole **FTP**. Kiedyś, aby opublikować stronę, trzeba było ręcznie kopiować pliki na serwer przez specjalnego klienta. To było powolne, toporne i łatwo było o błędy. Dziś dla prostych stron (statycznych) mamy inne metody. Nadal używamy klasycznego FTP, ale są inne metody dotyczące deploymentu.
+
+## 🚀 Metoda 1 (Fundament): GitHub i GitHub Pages
+
+To jest dziś absolutny standard. Każdy programista ma konto na GitHubie.
+
+**Czym jest GitHub?** To "Dropbox dla kodu". Miejsce, w którym trzymasz swoje projekty (repozytoria), możesz śledzić zmiany i współpracować z innymi.
+
+Ale GitHub ma też genialną, darmową funkcję: **GitHub Pages**. Pozwala on "zamienić" dowolne repozytorium w działającą stronę internetową.
+
+### Krok 1: Załóż Konto GitHub
+
+Jeśli jeszcze go nie masz, to Twój pierwszy obowiązkowy krok. Wejdź na [github.com](https://github.com/) i zarejestruj się. Następnie odwiedź stronę [github pages](https://pages.github.com/)
+
+### Krok 2: Stwórz Nowe Repozytorium
+
+1. Po zalogowaniu, kliknij ikonę `+` w prawym górnym rogu i wybierz **"New repository"**.
+2. **Nazwa repozytorium (Repository name):** Wpisz nazwę swojego projektu, nazwa jest bardzo ważna! Musi mieć odpowiednią składnię "nazwa-uzytkownika.github.io"
+3. **Public/Private:** Zaznacz **"Public"**. (Darmowe GitHub Pages działają tylko dla publicznych repozytoriów).
+4. Kliknij **"Create repository"**.
+
+### Krok 3: Wrzuć Pliki (Bez Linii Komend!)
+
+Masz teraz puste repozytorium. Czas wrzucić tam Twoje pliki (`index.html`, `style.css`, obrazki).
+
+1. W swoim nowym repozytorium kliknij link **"uploading an existing file"**.
+2. Otworzy się strona, na którą możesz **przeciągnąć i upuścić** (drag & drop) cały swój folder z projektem.
+3. Poczekaj, aż pliki się załadują.
+4. Na dole strony, w polu **"Commit changes"**, wpisz krótki opis, np. "Pierwszy upload" i kliknij zielony przycisk.
+
+Gratulacje! Twój kod jest już na GitHubie.
+
+### Krok 4: Uruchom GitHub Pages
+
+1. Będąc w swoim repozytorium, kliknij zakładkę **"Settings"** (na górze, obok "Code" i "Issues").
+2. W menu po lewej stronie znajdź i kliknij **"Pages"** (w sekcji "Code and automation").
+3. W sekcji "Branch", zmień "None" na **"main"** (lub "master", jeśli tak się nazywa Twój główny branch) i zostaw folder `/root`.
+4. Kliknij **"Save"**.
+
+Na górze strony pojawi się niebieski pasek z informacją: "Your site is being built...". Po minucie lub dwóch zmieni się na zielony z linkiem.
+
+Twój link będzie miał postać: `https://[TwojaNazwaUzytkownika].github.io/[NazwaRepozytorium]/`
+
+**Gotowe!** Masz działającą stronę w internecie.
+
+---
+
+## 🌩️ Metoda 2 (Profesjonalna): Vercel
+
+GitHub Pages jest super, ale Vercel to... rakieta. To platforma stworzona specjalnie do hostowania nowoczesnych stron. Jest błyskawiczna, daje lepszy (krótszy) darmowy link i robi wszystko automatycznie.
+
+Najlepsza część? **Vercel integruje się z Twoim kontem GitHub.** Nie musisz niczego wrzucać drugi raz.
+
+### Krok 1: Załóż Konto Vercel (przez GitHub)
+
+1. Wejdź na [vercel.com](https://vercel.com/).
+2. Kliknij "Sign Up" i wybierz opcję **"Continue with GitHub"**.
+3. Autoryzuj Vercel, aby miał dostęp do Twoich repozytoriów (możesz wybrać, czy do wszystkich, czy tylko do tego jednego, które przed chwilą stworzyłeś).
+
+### Krok 2: Zaimportuj Projekt
+
+1. Po zalogowaniu trafisz na swój Dashboard.
+2. Kliknij **"Add New... > Project"**.
+3. Vercel automatycznie pokaże Ci listę Twoich repozytoriów z GitHuba.
+4. Znajdź swoje repozytorium (np. `moje-portfolio`) i kliknij **"Import"**.
+
+### Krok 3: Wdróż (Deploy)
+
+1. Vercel jest mądry. Rozpozna, że to prosty projekt HTML/CSS (nie zapyta o "Framework Preset").
+2. Po prostu przewiń na dół i kliknij **"Deploy"**.
+3. To wszystko.
+
+Vercel zacznie budować Twoją stronę. Po kilkunastu sekundach pokaże Ci... konfetti! 🎊
+Otrzymasz darmowy link w domenie `.vercel.app`.
+
+> **Magia Vercela:** Od teraz, za każdym razem, gdy zaktualizujesz swoje pliki na GitHubie (np. wrzucając nową wersję `index.html`), Vercel automatycznie to wykryje i sam zaktualizuje Twoją stronę. To się nazywa **CI/CD** (Continuous Integration/Continuous Deployment) i właśnie poznałeś jego podstawy.
+
+---
+
+## 🤫 Faza 3: Jak "Oszukać System"? (Gotowe Szablony)
+
+Okej, umiesz już kodować HTML i Bootstrapa. Umiesz też publikować strony. Ale... pisanie wszystkiego od zera jest czasochłonne. Profesjonaliści robią to rzadko.
+
+Czas na "cheat code": **korzystanie z gotowych szablonów**.
+
+Nie ma w tym nic złego! Bierzesz gotowy, profesjonalny szablon, podmieniasz teksty, obrazki, zmieniasz kolory w CSS i masz gotowy projekt w godzinę, a nie w tydzień.
+
+### Gdzie Znaleźć Darmowe, Dobre Szablony?
+
+- **[HTML5 UP](https://html5up.net/):** Piękne, nowoczesne i bardzo lekkie. Idealne na portfolio.
+- **[Start Bootstrap](https://startbootstrap.com/):** Gotowe szablony i komponenty oparte w 100% na Bootstrapie, który już znasz!
+- **[One Page Love](https://onepagelove.com/):** Ogromna galeria inspiracji dla stron typu "one-page".
+
+**Proces:**
+
+1. Pobierz szablon (ZIP).
+2. Rozpakuj go.
+3. Otwórz `index.html` i `style.css` w VS Code.
+4. Dostosuj go pod siebie.
+5. Wrzuć gotowe pliki na GitHuba (Metoda 1, Krok 3).
+
+## 🤖 Faza 4: "Oszukiwanie Systemu" 2.0 (Generowanie Stron przez AI)
+
+Gotowe szablony są super, ale co, jeśli chcesz czegoś _naprawdę_ unikalnego, ale nadal nie chcesz pisać całego kodu?
+
+Witaj w nowej erze. Zamiast _szukać_ szablonu, możesz go... **wygenerować**.
+
+Narzędzia AI potrafią dziś na podstawie Twojego opisu (promptu) wygenerować kompletny, działający kod HTML i CSS.
+
+### Narzędzia, Które Warto Znać:
+
+**1. Generatory Kodu (LLM):**
+
+- **[ChatGPT](https://chat.openai.com/), [Claude](https://claude.ai/), [Gemini](https://gemini.google.com/):** Możesz im napisać: "Stwórz mi kod HTML i CSS dla sekcji 'hero' w stylu Apple" i dostaniesz gotowy kod do wklejenia.
+- **[Chatbot Arena](https://lmarena.ai/):** Nie wiesz, który model jest najlepszy? To jest "arena", na której możesz przetestować i porównać, który model (np. Claude 3 vs GPT-4) najlepiej rozumie Twoje polecenia i generuje lepszy kod.
+
+**2. Generatory Stron (AI-Powered):**
+
+- **[Lovable](https://lovable.ai/):** Świetne narzędzie, które generuje piękne landing page na podstawie promptu.
+- **[Bold](https://bolt.new/):** Podobnie, skupia się na szybkim tworzeniu stron dla biznesu.
+- **[Base 44](https://www.base44.com/):** Tworzy cały szkielet strony w kilka sekund.
+- **[Durable](https://durable.co/):** Twierdzi, że buduje stronę w 30 sekund.
+
+---
+
+## 📝 Faza 5: Perfekcyjny Prompt (Szkielet do Generowania Stron)
+
+Problem z AI? "Garbage in, garbage out" (śmieci na wejściu = śmieci na wyjściu). Jeśli napiszesz słaby prompt, dostaniesz słaby kod.
+
+Oto "ciekawy szkielet" promptu, którego możesz używać do generowania całych stron. Po prostu skopiuj go i uzupełnij swoje dane w nawiasach `[ ]`.
+
+> **Cel:** Chcemy wygenerować kompletny, pojedynczy plik `index.html` ze stylami CSS wewnątrz tagu `<style>`, używając Bootstrapa 5.
+
+```text
+ROLA:
+Jesteś ekspertem Front-end Developmentu, specjalizującym się w tworzeniu czystego, responsywnego kodu HTML i Bootstrap 5.
+
+ZADANIE:
+Stwórz kompletny, pojedynczy plik `index.html` dla strony typu "landing page". Strona ma być w pełni responsywna. Użyj Bootstrapa 5 do layoutu i komponentów. Umieść cały kod CSS wewnątrz tagu `<style>` w sekcji `<head>`.
+
+TECHNOLOGIE:
+- HTML5
+- Bootstrap 5 (dołączony przez CDN)
+- Własny CSS (w tagu `<style>`)
+- Fonty (użyj Google Fonts, np. 'Poppins')
+
+STRUKTURA STRONY:
+Proszę o stworzenie strony składającej się z następujących sekcji, w tej kolejności:
+
+1.  **Navbar (Nawigacja):**
+    * Logo po lewej: [Nazwa Twojej Strony, np. "AppFlow"]
+    * Linki po prawej: [np. "Funkcje", "Cennik", "Kontakt"]
+    * Tło: [np. "zmieniające kolor po przewinięciu"]
+
+2.  **Sekcja "Hero" (Główna):**
+    * Duży nagłówek (H1): [Twój główny slogan, np. "Zarządzaj finansami w jednym miejscu"]
+    * Paragraf (opis): [Krótki tekst pod sloganem, np. "Nasza aplikacja to rewolucja..."]
+    * Dwa przyciski (Buttons):
+        * Główny (Primary): [np. "Pobierz Aplikację"]
+        * Dodatkowy (Secondary): [np. "Zobacz Demo"]
+    * Tło: [np. "Delikatny gradient" lub "Zdjęcie w tle"]
+
+3.  **Sekcja "Funkcje" (Features):**
+    * Nagłówek (H2): [np. "Dlaczego warto nas wybrać?"]
+    * Układ 3 kolumn (Bootstrap grid `col-md-4`).
+    * Każda kolumna powinna zawierać: [np. Ikonę (użyj Bootstrap Icons), krótki tytuł i opis].
+
+4.  **Sekcja "Call to Action" (CTA):**
+    * Prosta sekcja z nagłówkiem [np. "Gotowy, by zacząć?"] i jednym dużym przyciskiem [np. "Zarejestruj się za Darmo"].
+
+5.  **Stopka (Footer):**
+    * Prosty tekst: [np. "© 2025 [Twoja Nazwa]. Wszelkie prawa zastrzeżone."]
+    * Linki do social media: [np. "Facebook, Twitter, LinkedIn"]
+
+STYL I KOLORYSTYKA:
+* **Główny kolor (Primary):** [Twój główny kolor, np. "#6a11cb" (fioletowy)]
+* **Font (Czcionka):** [np. "Poppins" z Google Fonts]
+* **Styl ogólny:** [np. "Nowoczesny, czysty (clean), minimalistyczny, z zaokrąglonymi rogami"]
+
+Proszę o wygenerowanie kompletnego kodu, gotowego do wklejenia i uruchomienia.
+```
+
+---
+
+## 🏆 Faza 6: ZADANIE ZALICZENIOWE (Twój Brief)
+
+Nadszedł czas na Wasz projekt zaliczeniowy. Zadanie jest proste: **stworzyć, opublikować i zaprezentować swój własny landing page**.
+
+Temat jest dowolny, ale musi być profesjonalny. Może to być:
+
+- Wasze portfolio jako developera.
+- Landing page dla fikcyjnej aplikacji mobilnej.
+- Strona dla małego biznesu (np. lokalnej kawiarni, fotografa).
+- Strona promująca Wasze hobby.
+
+Aby ułatwić Wam start, poniżej znajduje się podstawowy **Brief Projektowy**. Wypełnijcie go dla siebie, zanim zaczniecie pracować. Pomoże Wam to skupić się na celu.
+
+### Szablon Briefu Projektowego (Do Wypełnienia)
+
+Proszę skopiować ten szablon i wypełnić go dla swojego projektu zaliczeniowego.
+
+```text
+BRIEF PROJEKTOWY: [Wpisz Nazwę Swojego Projektu]
+
+**0. Krótki opids strony**
+Czego dotyczy strona i jak powinna wyglądać. Maksymalnie 3-4 zadania
+
+**1. Cel Strony (Konwersja):**
+(Jaki jest JEDEN główny cel, który użytkownik ma wykonać?)
+* Przykład: "Zachęcenie rekrutera do pobrania mojego CV i kontaktu ze mną."
+* Twój Cel: [..........................................................]
+
+**2. Grupa Docelowa:**
+(Do kogo mówisz? Bądź konkretny.)
+* Przykład: "Rekruterzy IT z firm software house oraz managerowie HR."
+* Twoja Grupa: [..........................................................]
+
+**3. Propozycja Wartości (Slogan):**
+(Twój główny nagłówek H1. Co oferujesz?)
+* Przykład: "Jan Kowalski: Kreatywny Junior Developer gotowy do pracy."
+* Twój Slogan: [..........................................................]
+
+**4. Metoda Wykonania:**
+(Zaznacz, jak stworzysz stronę. Można mieszać.)
+* [ ] Kodowanie 100% od zera (HTML/CSS/Bootstrap)
+* [ ] Użycie gotowego szablonu (np. z HTML5 UP) i dostosowanie go
+* [ ] Wygenerowanie przez AI (Faza 5) i ręczne poprawki
+
+**5. Wymagane Sekcje (Struktura):**
+(Wypisz minimum 4-5 sekcji, które musi zawierać Twoja strona.)
+1.  [np. Sekcja Hero (ze sloganem)]
+2.  [np. O Mnie (krótkie bio)]
+3.  [np. Portfolio (moje 3 najlepsze projekty)]
+4.  [np. Umiejętności (technologie, które znam)]
+5.  [np. Kontakt (prosty formularz lub link do LinkedIn)]
+
+**6. Link do Gotowej Strony (GitHub Pages lub Vercel):**
+(Wklej tutaj link, gdy strona będzie gotowa i opublikowana.)
+* Link: [..........................................................]
+```
+
+---
+
+## ✅ Podsumowanie: Co Dzisiaj Osiągnęliśmy?
+
+Gratulacje! 🎉 Dzisiaj nauczyliście się:
+
+1. ✅ **Publikować strony za darmo** na GitHub Pages i Vercel
+2. ✅ **Korzystać z gotowych szablonów** HTML/Bootstrap
+3. ✅ **Generować kod przez AI** przy pomocy odpowiednich promptów
+4. ✅ **Tworzyć brief** projektowy
+5. ✅ **Rozumieć podstawy CI/CD** (automatyczny deployment)
+
+### Następne Kroki:
+
+1. **Stwórz konto GitHub** (jeśli jeszcze nie masz)
+2. **Wypełnij Brief Projektowy** dla swojego projektu zaliczeniowego
+3. **Wybierz metodę** (kod od zera / szablon / AI)
+4. **Stwórz stronę** i opublikuj ją
+5. **Prześlij link** do oceny
+
+---
+
+**Pytania? Problemy z deploymentem?** Napisz do mnie: m@zeprzalka.com
+
+Powodzenia z Waszymi projektami! 🚀✨

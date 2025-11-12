@@ -1,0 +1,45 @@
+# Plan gry tekstowej 2055 (tytuł bardzo roboczy)
+
+# Krótki zarys (koncept)
+
+Historia ludzi, którzy chcą się przeciwstawić rządom AI i ludzi połączonych z AI, cyborgów.
+Istnieje kilka frakcji w różnym stopniu integracji z maszynami. Od nomadów (zwykłych ludzi żyjących na banicji) po chodzące roboty.
+Dochodzi do propozycji AI dla ludzi najwyższego szczebla, dającą im możliwość życia wiecznego, transcendencji i zgrania mózgu do wielkiego generatora AI.
+Jakie będą losy ziemi? Czy zostanie przejęta całkowicie przez AI. Pojawia się młody (już nie taki młody 34 letni), bohater, który chce zmienić losy świata.
+
+# O czym tak naprawdę jest gra
+
+O dobru, chęci przetrwania, niezależności i nonkonformizmowi. O antysystemowej wolnoći. O bohaterstwie i zasadach.
+A może z drugiej strony o głupocie, naiwności, donkichotowskiej walce z wiatrakami? Naiwności, przeciwstawianiu się zmianom?
+Kto wie? Niech gracz zadecyduje co dla niego znaczy moralność
+
+# Klimat gry
+
+Chciałbym iść w stylu cyberpunk. Ale niestety obawiam się, że to zbyt oklepany motyw. Może bardziej starwars, może blade runner?
+Ciężko na tym etapie jednoznacznie określić klimat. Można coś zaproponować. To samo lokacje? Jaki jest poziom rozwoju naszej cywilizacji?
+Może w okół ziemi jest pierścień w postaci statku kosmicznego. Może kolonizujemy masa, lub inne planety w układzie słonecznym?
+Tutaj również jest pewna downlność na tym etapie gry
+
+SI-fi, komedia, thriller, psychologiczny, socjologiczny, futuryzm, abstrakcja
+
+# Bohater
+
+Główny Bohater (Protagonista):
+
+Kim jest? (Roboczo: [Gracz Ja mówię na niego Michał, ale użytkownik będzie wprowadzał własne imię na poczatku gry], zawód: Informatyk rebeliant żyjący z nomadami, wygląd: przysadzisty, średniego wzrostu, silny, niebieskie oczy, blond (raczej ciemny) włosy gęste. Krępa budowa, dosyć solidna muskulatura, twarz intelektualisty połączonego z patusem., cecha charakteru: NIE DO KUPIENIA, idealista, nonkonformista, intelektualista, opozycjonista, empatyczny, pomocny, przyjacielskie dla swoich ludzi).
+
+Jaka jest jego słabość na początku historii? : Naiwny, idealistyczny, dobry, często miękki mimo agresywnego powierzchownego pancerze. Trochę zmęczony życiem, zaczynający lekko wątpić w swoją idee. Można by powiedzieć, że następny krok to już szaleństwo
+
+Czego chce? Zmienić świat! Zapobiec wielkiej zbiorowej integracji z AI i urządzeniami. Już to było totalnym odcieciem ludzi od interakcji między sobą. Teraz włamując się do jednej z największych korporacy dowiaduje się, że w planach jest zbiorowa transcendencja ludzkości
+
+Czego potrzebuje? Chyba pomocy innych? A jest jednostką, kta wszystko chce robić sama i dźwigać całość na swoich barkach. Ale nie jest to pewny element gry
+
+Antagonista/Główny Konflikt: Kto lub co staje na drodze bohaterowi i dlaczego? Korporacja, roboty-humanoidy, to co sam tworzył! Do czego się przyczynił! Historia zatoczyła koło. To jak z wynalezieniem atomu, laski dynamitu. Miało być użyte w słusznej wierze, a przejęło nad nami kontrolę. Teraz [Gracz] Musi pokonać to co sam tworzył!
+
+# Mechanika gry
+
+Tu nie jestem pewien. Wiele gier zbiera statystyki jak RPG. To fajne, że bohater kształtuje swoimi wyborami jakieś cechy, ale nie wiem, czy zbyt nie komplikuje to gry?
+Może powinienem na start zastosować klasyczne drzewo, z rozgałęzieniami, które łączy się w kilku miejscach?
+Nie jestem dokładnie pewien. Chodzi mi o grę tekstową z wyborami. Ale wiem, że w tej kategorii jest dużo rozwiązań
+
+# I TAK WSZYSTKO NIE MA SENSU? - na końcu okaże się, że już jesteśmy efektem takiej transcendentalnej symulacji, która już się odbyła.

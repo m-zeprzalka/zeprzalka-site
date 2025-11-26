@@ -1,4 +1,3 @@
-"use client"
 import { ModeToggle } from "@/components/Toogle"
 import {
   NavigationMenu,

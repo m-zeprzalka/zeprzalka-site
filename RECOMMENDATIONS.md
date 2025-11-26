@@ -6,260 +6,6 @@
 
 ---
 
-## 🚨 KRYTYCZNE PROBLEMY (Priorytet 1 - Do naprawy natychmiast)
-
-### 1. ⚠️ Brak Optymalizacji Mediów
-
-**Problem:**
-
-- Video `hero_web.mp4` waży **6.1 MB** i jest ładowane automatycznie na stronie głównej
-- Obrazy w folderze `/public/blog/` nie są zoptymalizowane:
-  - `formaty-grafik-w-internecie.jpg` - **568 KB**
-  - `twoja-pierwsza-strona.jpg` - **317 KB**
-  - `min.png` - **1.5 MB** (!!)
-  - SVG `efekty.svg` - **448 KB**
-  - SVG `ppg.svg` - **394 KB**
-
-**Wpływ:**
-
-- Strona główna ładuje 6+ MB tylko dla video
-- First Contentful Paint (FCP) > 3s
-- Largest Contentful Paint (LCP) > 4s
-- Użytkownicy mobilni z wolnym internetem czekają 10-20 sekund
-
-**Rozwiązanie:**
-
-```bash
-# 1. Kompresuj video (docelowo 500-800 KB)
-ffmpeg -i hero_web.mp4 -vcodec libx264 -crf 28 -preset slow -vf scale=1280:-2 hero_web_optimized.mp4
-
-# 2. Konwertuj do WebM (lepszy codec dla web)
-ffmpeg -i hero_web.mp4 -c:v libvpx-vp9 -crf 30 -b:v 0 hero_web.webm
-
-# 3. Użyj Next.js Image dla wszystkich obrazów
-# 4. Konwertuj duże PNG do WebP/AVIF
-```
-
-**Kod po optymalizacji:**
-
-```tsx
-// src/components/alternative/HeroB.tsx
-<video
-  autoPlay
-  muted
-  loop
-  playsInline
-  className="rounded-lg"
-  preload="metadata"
->
-  <source src="/hero_web.webm" type="video/webm" />
-  <source src="/hero_web_optimized.mp4" type="video/mp4" />
-</video>
-```
-
-**Dodaj do page.tsx `<link rel="preload">`:**
-
-```tsx
-// src/app/page.tsx
-import Script from "next/script"
-
-export default function Home() {
-  return (
-    <>
-      <link rel="preload" as="video" href="/hero_web.webm" />
-      {/* ... reszta */}
-    </>
-  )
-}
-```
-
----
-
-### 2. 🚫 Brak `sitemap.xml` i `robots.txt`
-
-**Problem:**
-
-- Google nie może indeksować Twojej strony efektywnie
-- Brak mapy strony = wolniejsze odkrywanie nowych artykułów
-- Brak robots.txt = crawlery nie wiedzą, co mogą indeksować
-
-**Wpływ:**
-
-- Artykuły pojawiają się w Google z 2-4 tygodniowym opóźnieniem
-- Strony `/blog-b`, `/blog-c`, `/page-b` są indexowane niepotrzebnie (duplikaty treści!)
-
-**Rozwiązanie:**
-
-**a) Stwórz `app/sitemap.ts`:**
-
-```typescript
-// src/app/sitemap.ts
-import { getAllPosts } from "@/lib/posts"
-import { MetadataRoute } from "next"
-
-export default function sitemap(): MetadataRoute.Sitemap {
-  const posts = getAllPosts()
-
-  const blogPosts = posts.map((post) => ({
-    url: `https://zeprzalka.com/blog/${post.slug}`,
-    lastModified: new Date(post.frontmatter.date),
-    changeFrequency: "weekly" as const,
-    priority: 0.8,
-  }))
-
-  return [
-    {
-      url: "https://zeprzalka.com",
-      lastModified: new Date(),
-      changeFrequency: "daily",
-      priority: 1,
-    },
-    {
-      url: "https://zeprzalka.com/blog",
-      lastModified: new Date(),
-      changeFrequency: "daily",
-      priority: 0.9,
-    },
-    ...blogPosts,
-  ]
-}
-```
-
-**b) Stwórz `app/robots.ts`:**
-
-```typescript
-// src/app/robots.ts
-import { MetadataRoute } from "next"
-
-export default function robots(): MetadataRoute.Robots {
-  return {
-    rules: [
-      {
-        userAgent: "*",
-        allow: ["/", "/blog", "/blog/*"],
-        disallow: ["/blog-b", "/blog-c", "/page-b", "/api/"],
-      },
-    ],
-    sitemap: "https://zeprzalka.com/sitemap.xml",
-  }
-}
-```
-
----
-
-### 3. 🔒 Brak Security Headers
-
-**Problem:**
-
-- Aplikacja nie ma ustawionych nagłówków bezpieczeństwa
-- Podatność na XSS, clickjacking, MIME sniffing
-
-**Rozwiązanie:**
-
-Dodaj do `next.config.ts`:
-
-```typescript
-import type { NextConfig } from "next"
-
-const nextConfig: NextConfig = {
-  pageExtensions: ["js", "jsx", "md", "mdx", "ts", "tsx"],
-
-  async headers() {
-    return [
-      {
-        source: "/:path*",
-        headers: [
-          {
-            key: "X-DNS-Prefetch-Control",
-            value: "on",
-          },
-          {
-            key: "Strict-Transport-Security",
-            value: "max-age=63072000; includeSubDomains; preload",
-          },
-          {
-            key: "X-Frame-Options",
-            value: "SAMEORIGIN",
-          },
-          {
-            key: "X-Content-Type-Options",
-            value: "nosniff",
-          },
-          {
-            key: "X-XSS-Protection",
-            value: "1; mode=block",
-          },
-          {
-            key: "Referrer-Policy",
-            value: "origin-when-cross-origin",
-          },
-          {
-            key: "Permissions-Policy",
-            value: "camera=(), microphone=(), geolocation=()",
-          },
-        ],
-      },
-    ]
-  },
-
-  // Optymalizacja obrazów
-  images: {
-    formats: ["image/avif", "image/webp"],
-    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
-    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
-  },
-}
-
-export default nextConfig
-```
-
----
-
-### 4. 📦 Bundle Size - Zbyt wiele Client Components
-
-**Problem:**
-
-- Komponent `Footer.tsx` jest oznaczony jako `"use client"` mimo że nie używa żadnych hooków
-- `Header.tsx` również może być Server Component z małymi zmianami
-- To zwiększa bundle JavaScript wysyłany do klienta
-
-**Obecny Stan:**
-
-```tsx
-// src/components/layout/Footer.tsx
-"use client" // ❌ NIEPOTRZEBNE
-import Link from "next/link"
-
-export function Footer() {
-  // Statyczny content - nie ma useState, useEffect, onClick
-}
-```
-
-**Rozwiązanie:**
-
-```tsx
-// src/components/layout/Footer.tsx
-import Link from "next/link" // ✅ Server Component
-
-export function Footer() {
-  return (
-    // ... ten sam kod
-  )
-}
-```
-
-**Dla Header:**
-
-```tsx
-// src/components/layout/Header.tsx - wymaga małych zmian
-// Przenieś logikę otwierania menu do osobnego Client Component
-// a sam Header zostaw jako Server Component
-```
-
-**Szacowany zysk:** -15-25 KB JavaScript bundle
-
----
-
 ## ⚡ WYSOKIE PRIORYTETY (Priorytet 2 - Do wdrożenia w tym tygodniu)
 
 ### 5. 🖼️ Brak Lazy Loading dla Video w Gallery
@@ -280,7 +26,7 @@ export function Footer() {
 
 ```tsx
 "use client"
-import { useInView } from 'react-intersection-observer'
+import { useInView } from "react-intersection-observer"
 
 export function GalleryItem({ item }) {
   const { ref, inView } = useInView({
@@ -291,7 +37,7 @@ export function GalleryItem({ item }) {
   return (
     <div ref={ref}>
       {item.type === "video" ? (
-        inView ? (
+        inView ? (dd
           <video autoPlay muted loop playsInline preload="metadata">
             <source src={item.src} type="video/mp4" />
           </video>
@@ -299,7 +45,12 @@ export function GalleryItem({ item }) {
           <div className="aspect-video bg-muted animate-pulse" />
         )
       ) : (
-        // Image component
+        <img
+          src={item.src}
+          alt={item.title}
+          className="w-full h-auto block"
+          loading="lazy"
+        />
       )}
     </div>
   )

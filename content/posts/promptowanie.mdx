@@ -1,0 +1,205 @@
+---
+title: "Tworzenie Stron za pomocą AI: Kompletny Przewodnik (Od Promptu do Produkcji)"
+description: "To nie jest kolejny artykuł o ChatGPT. To kompendium wiedzy o inżynierii promptów (np.CO-STAR, CRISP), przegląd narzędzi (Cursor, Githu Copilot) i workflow, który zmienia juniora w seniora (prawie :D), wspomaganego przez LLM."
+date: "2025-12-03"
+categories: ["Web Development", "AI", "Engineering"]
+tags:
+  [
+    "Prompt Engineering",
+    "DeepSeek",
+    "Claude",
+    "v0.dev",
+    "Cursor",
+    "Generative UI",
+  ]
+image: "/blog/ai.jpg"
+imageCaption: "Programowanie w 2025 roku to zarządzanie kodem, a nie tylko jego pisanie."
+featured: true
+author:
+  name: "zeprzalka.com"
+  title: "Digital Solutions Architect"
+  bio: "Tworzę rozwiązania łączące biznes z technologią."
+  avatar: "/avatar.png"
+---
+
+Witajcie na pokładzie kursu! 🚀
+
+Jeśli myślicie, że AI w programowaniu służy tylko do tego, żeby "napisać nagłówek w HTML", to jesteście w błędzie. Dzisiejsze zajęcia (i ten artykuł) to przysłowiowa **czerwona pigułka**, która zmienia sposób patrzenia na AI w kontekście Web Dev.
+
+Macie już fundamenty: HTML, CSS, Git, Vercel. To wasza baza. Ale rynek zmienił się drastycznie. Dziś nie wygrywa ten, kto najszybciej pisze na klawiaturze. Wygrywa ten, kto potrafi **zarządzać flotą modeli AI**, by dostarczyć bezbłędny kod 10x szybciej.
+
+Oczywiście samo AI nie wystarczy. Może okazać się pułapką ciągłych bezskutecznych prób osiągnięcia oczekiwanego rezultatu. Z kolei radykalne podejście uwzględniające całkowicie ręczne kodowanie, też może zostawić Was daleko w tyle. Podejście hybrydowe, wydaje się być obecnie najlepszym rozwiązaniem.
+
+Przygotowałem dla Was kompendium, które przeprowadzi Was od poziomu "Usera" do poziomu "Junior AI Engineera".
+
+---
+
+## 🧰 Część 1: Przegląd Narzędzi (Ekosystem 2025)
+
+Nie przywiązujcie się do numerków wersji (3.5, 4, 5.1...). Nazwy i wersje modeli ulegają ciągłym zmianom. Jako profesjonaliści musicie znać **klasy** narzędzi i wiedzieć, gdzie szukać aktualnego lidera. Albo w jaki sposób dopasować narzędzie do problemu. Jedyną skuteczną metodą jest przepracowanie projektu załączonego w tym artykule w oparciu o różne schematy pracy.
+
+### 0. Generatory UX/UI
+
+Pomimo tego, że materiał dotyczy zajęć w obszarze Web Dev, radzę zapoznać się w wolnej chwili przynajmniej z jednym narzędziem generującym wireframe'y i wizualne/graficzne schematy stron internetowych. Jest to bardzo duże wsparcie w projekcie docelowym w postaci zakodowanej strony.
+
+1.  **[Relume](https://www.relume.io/)** – **Szybki wizualny prototyp**
+
+    - _Dlaczego:_ Idealnie nadaje się do szybkich makiet i wireframe'ów, można dzięki temu we współpracy z grafikiem stworzyć idealny wizualny projekt naszej strony.
+    - _Zastosowanie:_ Stworzenie prototypu, który możemy wyeksportować i wyedytować w figmie.
+
+### 1. Wielkie Modele Językowe (LLM) — Mózg Operacji
+
+Tutaj generujemy logikę, strukturę i refaktoryzujemy kod.
+
+1.  **[Claude (Anthropic)](https://claude.ai/)** – **👑 Król Kodowania.**
+
+    - _Dlaczego:_ Model znany z "ciepłego", bardziej ludzkiego podejścia i doskonałego zrozumienia kontekstu technicznego. Generuje bardzo czysty, nowoczesny kod i rzadziej "zmyśla" klasy CSS niż konkurencja.
+    - _Zastosowanie:_ Główny architekt kodu, skomplikowane refaktoryzacje.
+
+2.  **[DeepSeek](https://chat.deepseek.com/)** – **🦄 Czarny Koń (Open/Free).**
+
+    - _Dlaczego:_ Model open-weight, który wstrząsnął rynkiem, oferując wydajność płatnych gigantów za ułamek kosztów (lub za darmo). Świetny np. w Pythonie i JavaScript.
+    - _Zastosowanie:_ Codzienna praca, szybkie skrypty, debugowanie.
+
+3.  **[ChatGPT (OpenAI)](https://chatgpt.com/)** – **🛠️ Wszechstronny Scyzoryk.**
+
+    - _Dlaczego:_ Najlepszy w "rozumieniu świata" i multimodalności (widzi obrazy, słyszy głos). Jeśli potrzebujesz wygenerować tekst na stronę (copywriting) lub przeanalizować screenshot designu.
+    - _Zastosowanie:_ Copywriting, analiza grafik (Vision), burza mózgów.
+
+4.  **[Gemini (Google)](https://gemini.google.com/)** – **📚 Bibliotekarz z Gigantyczną Pamięcią.**
+    - _Dlaczego:_ Oferuje największe "okno kontekstowe" na rynku. Możesz wkleić mu _całą dokumentację_ nowej biblioteki albo _cały kod_ starego projektu i zapytać o jedną zmienną.
+    - _Zastosowanie:_ Praca na ogromnych zbiorach danych i długich plikach.
+
+> **💡 Pro-Tip: Gdzie sprawdzać, jakie modele są obecnie najlepsze w danych kategoriach?**
+> Nie wierzcie marketingowi. Sprawdzajcie **[LM Arena](https://lmarena.ai/)**. To otwarty ranking, gdzie społeczność w ślepych testach (blind test) wybiera najlepszy model.
+
+### 2. Generative UI — Od Tekstu do Interfejsu (Visual Coding)
+
+Narzędzia, które "widzą i renderują" kod w czasie rzeczywistym. Koniec z kopiowaniem pojedynczych divów.
+
+1.  **[v0.dev (Vercel)](https://v0.dev/)** – **Standard w React/Tailwind.**
+    - Narzędzie od twórców Next.js. Generuje gotowe komponenty (shadcn/ui), które są idealnie zoptymalizowane pod nowoczesny stack.
+2.  **[Bolt.new (StackBlitz)](https://bolt.new/)** – **Full-Stack w przeglądarce.**
+    - To nie tylko UI. Bolt potrafi postawić całą aplikację z backendem i bazą danych. Możesz w nim edytować kod jak w VS Code.
+3.  **[Lovable.dev](https://lovable.dev/)** – **Dobry Design.**
+    - Skupia się na estetyce i UX. Jeśli zależy Ci na efekcie "wow" bez długiego stylowania, to jest dobry kierunek.
+
+### 3. AI-Native IDE — Przyszłość Edytorów Kodu
+
+Edytor kodu to już nie notatnik, to kokpit pilota.
+
+1.  **[Cursor](https://www.cursor.com/)** – **Nowy Standard.**
+    - Fork VS Code z wbudowanym AI. Cursor "indeksuje" Twoje pliki lokalne, więc wie o projekcie wszystko. Nie musisz kopiować kodu do czatu – on tam już jest.
+2.  **[Windsurf](https://codeium.com/windsurf)** – **Nowy Gracz (Editor with "Flow").**
+    - Edytor od twórców Codeium. Posiada funkcję "Cascades", która pozwala mu głęboko rozumieć przepływ danych w całej aplikacji, a nie tylko w otwartym pliku.
+
+---
+
+## 🧠 Część 2: Inżynieria Promptów Poziom PRO
+
+Większość ludzi pisze: _"Zrób mi ładną stronę..."_. To błąd. LLM to maszyna – jakość wyniku (Output) zależy od jakości kontekstu (Input).
+
+Poznajcie techniki, które odróżniają amatorów od inżynierów.
+
+### 1. Zero-Shot vs. Few-Shot Prompting (Klucz do stylu)
+
+- **Zero-Shot (Bez przykładów):** Model opiera się tylko na swojej ogólnej wiedzy.
+
+  - _Prompt:_ "Napisz przycisk w HTML."
+  - _Wynik:_ Dostaniesz generyczny, brzydki przycisk. Ryzykowne.
+
+- **Few-Shot (Z przykładami):** Podajesz modelowi wzorzec (input -> output), którego ma się trzymać. To **najważniejsza technika dla programistów**, gdy chcecie zachować spójność kodu.
+
+> **Przykład zastosowania (Few-Shot):** > _"Chcę stworzyć kartę produktu. Oto jak piszemy karty w naszym projekcie (wzór):_ > _`<div class="card p-4 shadow-lg rounded-xl">...</div>`_ > _Teraz wygeneruj mi taką samą kartę, ale dla produktu 'Kurs AI' z ceną 200 PLN."_
+
+### 2. Chain-of-Thought (CoT) — Łańcuch Myśli
+
+Modele LLM czasem "zgadują" odpowiedź. Technika CoT wymusza na modelu, by najpierw "pomyślał", a potem napisał kod. To drastycznie redukuje liczbę błędów w logice (JS/TS).
+
+- **Jak to zrobić?** Dodaj do promptu zdanie: _"Zanim napiszesz kod, przeanalizuj problem krok po kroku i wypisz plan działania."_
+
+### 3. Struktura: Framework CRISPE
+
+Aby Wasz prompt był kompletny i zrozumiały dla AI, używajcie frameworka **CRISPE**. Każda litera to element, który musi znaleźć się w Waszym poleceniu:
+
+- **CR - Capacity and Role (Rola i Kompetencje):** Zdefiniuj, w jakiej roli ma wystąpić ChatGPT (lub inny model). Czy ma być copywriterem, researcherem, czy seniorem programistą? Określenie tego na początku pomaga ukierunkować odpowiedzi AI.
+- **I - Insight (Wgląd/Kontekst):** Podaj niezbędne tło i informacje kontekstowe. Im więcej szczegółów otrzyma model, tym trafniejsza będzie odpowiedź.
+- **S - Statement (Polecenie):** To serce Twojego promptu. Co dokładnie chcesz, aby AI zrobiło? Bądź jak najbardziej precyzyjny.
+- **P - Personality (Osobowość/Styl):** Jak model ma brzmieć? Formalnie i biznesowo czy luźno i przyjaźnie?
+- **E - Experiment (Eksperyment/Warianty):** Poproś o kilka wersji odpowiedzi lub przykładów, abyś mógł wybrać najlepszą lub połączyć elementy z różnych opcji. To kluczowe w designie!
+
+### 4. Słownik Wizualny (Mów językiem Designu)
+
+AI nie widzi, AI "czyta" obrazy. Musisz używać precyzyjnych terminów w promptach. Zamiast pisać "zrób ładne przyciski", napisz:
+
+- **Kształt:** "Pill-shaped buttons" (kapsułki) vs "Sharp-edged rectangles" (ostre prostokąty) vs "Slightly rounded" (lekko zaokrąglone - `rounded-md`).
+- **Cienie:** "Soft drop shadow" (miękki cień) vs "Flat design" (płaski) vs "Neumorphism".
+- **Przestrzeń:** "Airy layout with extensive whitespace" (dużo oddechu) vs "Compact, data-dense grid" (ciasna siatka danych).
+- **Hierarchia:** "Visual hierarchy focused on Typography" (typografia rządzi) vs "Image-driven layout".
+
+---
+
+## ⚔️ Część 3: Zadanie Praktyczne — "Uniwersytet Civitas 2.0"
+
+Mierzymy się z realnym wyzwaniem.
+
+**Klient:** [Uniwersytet Civitas](https://civitas.edu.pl/pl/).
+
+**Cel:** Redesign strony głównej. Połączenie akademickiej powagi z nowoczesnością Web 3.0.
+
+### 🧪 WZORCOWY PROMPT (Framework CRISPE)
+
+Oto prompt przygotowany specjalnie dla Was. Wyedytujcie go po swojemu, uzupełniając ewentualne detale. Chcesz zrobić to zupełnie inaczej? Nie ma problemu, ale pamiętaj o dobrych praktykach. Prompt jest po polsku, abyście mieli pełną kontrolę nad podstawowym zrozumieniem pewnych wzorców i schematów.
+
+> **(CR) CAPACITY & ROLE (Rola):**
+> Wciel się w rolę Lead Frontend Developera oraz UI/UX Designera z wieloletnim doświadczeniem, który stworzył dziesiątki nagradzanych projektów, specjalizującego się w sektorze Szkolnictwa Wyższego. Jesteś ekspertem w frameworku Tailwind CSS, Dostępności (WCAG 2.1) oraz optymalizacji konwersji (CRO).
+>
+> **(I) INSIGHT (Kontekst):**
+> Projektujemy redesign strony głównej dla "Uniwersytet Civitas", prestiżowej uczelni w Warszawie. Obecna strona jest przestarzała. Nowy design musi łączyć 25 lat tradycji akademickiej z nowoczesnym, technologicznym wyglądem ("tech-savvy"), który przyciągnie studentów z Generacji Z.
+> **Design System:**
+>
+> - Kolory: Głębokie odcienie Niebieskiego (navy blue) (Primary - nawiązanie do brandingu) oraz Szarości/Biel (Neutralne tło).
+> - Typografia: Szeryfowe nagłówki (np. Playfair Display) dla prestiżu, Bezszeryfowy tekst (np. Inter) dla czytelności.
+> - Layout: Dużo przestrzeni ("Airy layout"), unikanie ścisku.
+>
+> **(S) STATEMENT (Zadanie):**
+> Wygeneruj kompletny, responsywny kod HTML/CSS dla Landing Page'a.
+> Użyj **Tailwind CSS** (zaimportuj przez CDN) i stwórz jeden plik `index.html`.
+> Struktura strony:
+>
+> 1. Navbar (Przyklejony/Sticky, z wyraźnym podziałem menu: "Dla Studenta" vs "Dla Kandydata").
+> 2. Hero Section (Nagłówek: "Przyszłość zaczyna się tutaj", podtytuł i 2 przyciski CTA).
+> 3. Siatka Cech/Features (3 kolumny z ikonami, np. "Praktyczne podejście", "Prestiż").
+> 4. Testimonials (Opinie absolwentów).
+>
+> **(P) PERSONALITY (Styl kodu):**
+> Styl kodu ma być na poziomie "Senior Level" – czysty, semantyczny (używaj tagów `<section>`, `<nav>`, `<header>`) i dobrze skomentowany. Wizualnie strona ma sprawiać wrażenie "Premium", "Zaufanej" i "Nowoczesnej".
+>
+> **(E) EXPERIMENT (Eksperyment):**
+> Stwórz w kodzie 2 warianty przycisków dla sekcji Hero (możesz jeden zakomentować lub wyświetlić oba do wyboru):
+>
+> - Opcja A: Przyciski w kształcie pigułki (`rounded-full`) z miękkimi cieniami (styl soft UI).
+> - Opcja B: Ostre, prostokątne przyciski (`rounded-none`) z grubym obrysem (styl brutalistyczny/nowoczesny).
+
+### Twój Workflow do wykonania zadania (około 90 min):
+
+1.  **Analiza (10 min):** Wybierz styl (Opcja A czy B w prompcie?). Zdecyduj, czy wolisz nowoczesny "vibe" czy klasyczny.
+2.  **Generowanie (30 min):** Użyj **v0.dev**, **Claude** lub dowolnego innego modelu ze zmodyfikowanym powyższym promptem.
+3.  **Refinement (Iteracja):**
+    - _Prompt 2:_ "Sekcja Hero zajmuje za dużo miejsca na mobile. Zmniejsz paddingi pionowe o połowę na ekranach `<md`."
+    - _Prompt 3:_ "Zmień kolor przycisków CTA na gradient od jasnoniebieskiego do ciemnego błękitu."
+4.  **Deploy:** Github + Vercel - Budujemy kompleksowe portfolio.
+
+### 🏆 Co podlega ocenie?
+
+1.  **Jakość Inżynierii:** Czy kod jest czysty? Czy strona nie zawiera kardynalnych błędów i poprawnie się wyświetla?
+2.  **Świadomość Designu:** Czy konsekwentnie trzymałeś się wybranego stylu (np. "Pill buttons", "Brand Colors")?
+3.  **Responsywność:** Test na wszystkich urządzeniach
+
+---
+
+## 🎯 Podsumowanie
+
+Tworzenie stron w 2025 roku to **dialog z technologią**. Waszym zadaniem nie jest pamiętanie wszystkich właściwości CSS, ale umiejętność opisania ich działania i wyglądu językiem zrozumiałym dla modelu.
+
+Do dzieła! Niech Waszych repozytoriach pojawią się pierwsze zielone kafelki - Powodzenia! 🟢

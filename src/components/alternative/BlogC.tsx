@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge"
 import { getAllPosts } from "@/lib/posts"
 
 export function BlogC() {
-  const posts = getAllPosts()
+  const posts = getAllPosts().slice(0, 6)
   return (
     <section className="container mx-auto flex flex-col justify-center p-4 py-12 md:py-16 lg:py-24">
       <div className="grid gap-12 lg:grid-cols-12">

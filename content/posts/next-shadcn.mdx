@@ -1,0 +1,219 @@
+---
+title: "Next.js + Shadcn UI: Twój Pierwszy Poważny Stack (Szybki Start w Chmurze)"
+description: "Gotowi na wejście do pierwszej ligi? Żegnamy statyczny HTML. Dziś poznacie 'Świętą Trójcę' nowoczesnego Frontendu: Next.js, Tailwind CSS i Shadcn UI. Zbudujemy interaktywną aplikację w przeglądarce."
+date: "2025-12-28"
+categories: ["React", "Next.js", "Frontend", "UI"]
+tags:
+  ["Next.js", "Shadcn UI", "Tailwind CSS", "CodeSandbox", "React", "Components"]
+image: "/blog/next-js.jpg"
+imageCaption: "Architektura nowoczesnej aplikacji: Next.js jako silnik, Tailwind jako styl, Shadcn jako wyposażenie."
+featured: true
+author:
+  name: "zeprzalka.com"
+  title: "Digital Solutions Architect"
+  bio: "Tworzę rozwiązania łączące biznes z technologią."
+  avatar: "/avatar.png"
+---
+
+Witajcie! 👋
+
+Przeszliśmy już przez [HTML](/blog/html) (szkielet) i [Tailwind CSS](/blog/tailwind) (skórę). Teraz czas tchnąć w to wszystko życie i inteligencję.
+Dziś wchodzimy w świat **Reacta** opakowanego w framework **Next.js**.
+
+Dlaczego ten krok jest tak ważny? Bo w 2025 roku rzadko pisze się "czyste" strony HTML.
+Rynkiem rządzą **komponenty**, **interaktywność** i **szybkość**.
+
+Pokażę Wam mój ulubiony stack technologiczny, w którym powstaje większość nowoczesnych startupów. I co najlepsze – zrobimy to w chmurze, bez instalowania Node.js na komputerze.
+
+---
+
+## 🏗️ Część 1: "Święta Trójca" Frontendu
+
+Zanim otworzymy edytor, musicie zrozumieć, kto jest kim w tym zespole.
+
+### 1. Next.js (Silnik) 🚅
+
+React to biblioteka. Next.js to **framework**.
+Wyobraźcie sobie, że budujecie samochód.
+
+- **React** to silnik.
+- **Next.js** to cała reszta: podwozie, koła, kierownica i nawigacja.
+  Daje nam routing (podstrony), optymalizację obrazków i renderowanie po stronie serwera (SSR), co kocha Google.
+
+### 2. Tailwind CSS (Styl) 🎨
+
+To już znacie. To nasz sposób na szybkie stylowanie bez wychodzenia z plików HTML/JSX.
+
+### 3. shadcn/ui (Wyposażenie Wnętrza) 🛋️
+
+To **NIE** jest zwykła biblioteka komponentów (jak Bootstrap czy Material UI).
+To zbiór gotowych, pięknie zaprojektowanych elementów (przyciski, karty, inputy), które **kopiujesz** do swojego projektu.
+
+- **Tradycyjna biblioteka:** Instalujesz wielką paczkę i jesteś skazany na ich wygląd.
+- **shadcn/ui:** Kopiujesz kod przycisku do swojego folderu i masz nad nim 100% kontroli. Możesz go zmieniać jak chcesz.
+
+---
+
+## ☁️ Część 2: Środowisko Pracy (CodeSandbox)
+
+Nie będziemy walczyć z terminalem na Windowsie. Użyjemy **CodeSandbox**, potężnego środowiska w chmurze.
+
+### ⚠️ Krok Krytyczny: FORK (Rozwidlenie)
+
+To najważniejszy punkt dzisiejszej lekcji.
+Gdy otwierasz gotowy szablon (Template), jesteś w trybie "Tylko do odczytu" (Read-only). Terminal będzie zablokowany.
+
+Aby móc pracować, musisz stworzyć **własną kopię** projektu:
+
+1.  Otwórz link startowy (poniżej).
+2.  Spójrz w prawy górny róg (lub na górną belkę).
+3.  Kliknij przycisk **"Fork"** (lub "Fork Devbox").
+4.  Dopiero teraz masz swoje środowisko, w którym działa terminal!
+
+---
+
+## 🚀 Część 3: Instalacja i Konfiguracja (Krok po Kroku)
+
+Zróbmy to razem.
+
+### Krok 1: Start Projektu
+
+Otwórz ten link (to czysty Next.js + Tailwind):
+👉 **[Szablon Startowy Next.js](https://codesandbox.io/p/sandbox/github/vercel/next.js/tree/canary/examples/hello-world)**
+_(Pamiętaj o kliknięciu FORK!)_
+
+### Krok 2: Inicjalizacja shadcn/ui
+
+Otwórz terminal w CodeSandbox (na dole ekranu) i wpisz magiczną komendę:
+
+```bash
+npx shadcn@latest init
+```
+
+Kreator zada Ci kilka pytań. Możesz w ciemno klikać Enter (wybierając domyślne opcje):
+
+- **Which style would you like to use?** -> New York
+- **Which color would you like to use?** -> Zinc
+- **Do you want to use CSS variables?** -> Yes
+
+### Krok 3: Dodajemy pierwsze "klocki"
+
+Shadcn nie instaluje wszystkiego na raz (dlatego jest lekki). Instalujemy tylko to, czego potrzebujemy. Dodajmy Przycisk (Button) i Kartę (Card). Wpisz w terminalu:
+
+```bash
+npx shadcn@latest add button card input
+```
+
+Zobaczcie teraz folder `components/ui` w plikach projektu. Pojawiły się tam nowe pliki! To jest właśnie ten kod, który należy do Was.
+
+---
+
+## 🧑‍💻 Część 4: Budujemy "Waitlist Page"
+
+Stworzymy nowoczesną sekcję zapisu na listę oczekujących. Użyjemy do tego pliku `app/page.tsx`.
+
+### Zrozumieć strukturę pliku (JSX)
+
+Next.js używa JSX – to HTML połączony z JavaScriptem.
+
+- Klasy CSS to teraz `className="..."`.
+- Komponenty importujemy na górze pliku.
+
+### Kod do wklejenia
+
+Otwórz `app/page.tsx`, usuń wszystko i wklej ten kod:
+
+```typescript
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
+import { Mail } from "lucide-react" // Ikona (często instalowana z shadcn)
+
+export default function Home() {
+  return (
+    // Główny kontener - wyśrodkowany na ekranie (Tailwind)
+    <main className="flex min-h-screen items-center justify-center bg-gray-50 p-4">
+      {/* Komponent Karty z shadcn */}
+      <Card className="w-full max-w-md shadow-xl">
+        <CardHeader className="text-center">
+          <CardTitle className="text-2xl font-bold">Dołącz do nas 🚀</CardTitle>
+          <CardDescription>
+            Bądź pierwszym, który dowie się o premierze naszego kursu.
+          </CardDescription>
+        </CardHeader>
+
+        <CardContent>
+          <div className="flex flex-col gap-4">
+            <div className="flex gap-2">
+              {/* Input z shadcn */}
+              <Input type="email" placeholder="twoj@email.com" />
+
+              {/* Button z shadcn */}
+              <Button>Zapisz się</Button>
+            </div>
+
+            <p className="text-xs text-gray-500 text-center">
+              Bez spamu. Możesz się wypisać w każdej chwili.
+            </p>
+          </div>
+        </CardContent>
+      </Card>
+    </main>
+  )
+}
+```
+
+### Co tu się wydarzyło?
+
+- **Importy**: Zaimportowaliśmy gotowe klocki (Card, Button, Input).
+- **Kompozycja**: Zamiast pisać `div class="border rounded shadow..."`, użyliśmy gotowego `<Card>`.
+- **Szybkość**: Zbudowanie tego w czystym HTML/CSS zajęłoby 30 minut. Nam zajęło 3 minuty.
+
+---
+
+## 🧠 Część 5: Ważna koncepcja - "Client" vs "Server"
+
+W Next.js (w wersji App Router, której używamy) domyślnie wszystko renderuje się na serwerze. To super szybkie, ale... serwer nie obsłuży kliknięcia myszką.
+
+Jeśli chcecie dodać obsługę kliknięcia (np. `onClick={() => alert('Działa!')}`), musicie dodać jedną magiczną linijkę na samej górze pliku:
+
+```typescript
+"use client"
+
+import { Button } from...
+```
+
+💡 **Pro-Tip**: Jeśli zobaczycie błąd "Event handlers cannot be passed to Client Component props", to znaczy, że zapomnieliście o `"use client"`.
+
+---
+
+## ⚔️ Zadanie Domowe (Challenge)
+
+Macie działające środowisko na CodeSandbox. Wasze zadanie:
+
+1. Zróbcie **Fork** projektu (jeśli jeszcze tego nie zrobiliście).
+2. Dodajcie nowy komponent z biblioteki shadcn: **Accordion** (akordeon / zwijana lista pytań FAQ).
+   - Komenda: `npx shadcn@latest add accordion`
+3. Stwórzcie pod formularzem zapisu sekcję FAQ z dwoma pytaniami (np. "Kiedy start kursu?", "Jaka cena?").
+4. **Wymaganie**: FAQ ma być wewnątrz nowej Karty (`<Card>`).
+
+---
+
+## 🎯 Podsumowanie
+
+Właśnie stworzyliście aplikację w stacku, którego używają Netflix, Nike czy OpenAI.
+
+- **Next.js** dba o strukturę.
+- **Tailwind** dba o układ.
+- **shadcn/ui** daje Wam gotowe, piękne elementy.
+- **CodeSandbox** pozwala to robić na dowolnym komputerze z dostępem do sieci.
+
+To jest współczesny Web Development. Mniej pisania kodu od zera, więcej składania gotowych, sprawdzonych rozwiązań.
+
+Powodzenia w kodowaniu! Jeśli utkniecie z terminalem – pamiętajcie o przycisku **Fork**! 🍴

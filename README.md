@@ -4,12 +4,11 @@
 [![React](https://img.shields.io/badge/React-19.1.0-blue?style=flat&logo=react)](https://react.dev/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?style=flat&logo=typescript)](https://www.typescriptlang.org/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-4.0-38bdf8?style=flat&logo=tailwind-css)](https://tailwindcss.com/)
-[![License](https://img.shields.io/badge/license-Private-red?style=flat)]()
 
 Profesjonalny blog technologiczny i portfolio dla Digital Solutions Architecta. Zbudowany z naciskiem na performance, SEO i user experience.
 
 **🌐 Live:** [zeprzalka.com](https://zeprzalka.com)  
-**👤 Author:** Michał Zeprzałka - Digital Solutions Architect  
+**👤 Author:** Michał Zeprzałka - Digital Solutions Architect
 **📧 Contact:** m@zeprzalka.com
 
 ---
@@ -33,7 +32,7 @@ Profesjonalny blog technologiczny i portfolio dla Digital Solutions Architecta. 
 
 ## 🎯 O Projekcie
 
-Blog technologiczny i portfolio prezentujące expertise w:
+Blog technologiczny i portfolio:
 
 - **Web Development** (Next.js, React, TypeScript)
 - **AI Integration** (Vercel AI SDK, LangChain)
@@ -58,7 +57,7 @@ Platforma do:
 - **Framework:** [Next.js 15.5.3](https://nextjs.org/) (App Router, Turbopack)
 - **Language:** [TypeScript 5.0](https://www.typescriptlang.org/) (Strict Mode)
 - **UI Library:** [React 19.1.0](https://react.dev/)
-- **Styling:** [Tailwind CSS 4.0](https://tailwindcss.com/) + PostCSS
+- **Styling:** [Tailwind CSS 4.0](https://tailwindcss.com/) + CSS
 
 ### Content & Markdown
 
@@ -295,7 +294,7 @@ author:
   name: "zeprzalka.com"
   title: "Digital Solutions Architect"
   bio: "Tworzę rozwiązania łączące biznes z technologią."
-avatar: "/avatar.png"
+  avatar: "/avatar.png"
 ---
 ```
 

@@ -193,7 +193,7 @@ export default async function BlogPost({ params }: PageProps) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <main className="container mx-auto p-4 py-6 md:py-8 lg:py-12 xl:py-16">
+      <div className="container mx-auto p-4 py-6 md:py-8 lg:py-12 xl:py-16">
         <div className="grid grid-cols-1 lg:grid-cols-12 lg:gap-x-12">
           {/* Table of Contents */}
           <aside className="hidden lg:block lg:col-span-2">
@@ -368,7 +368,7 @@ export default async function BlogPost({ params }: PageProps) {
             </footer>
           </article>
         </div>
-      </main>
+      </div>
     </>
   )
 }

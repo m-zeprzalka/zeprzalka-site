@@ -1,0 +1,121 @@
+---
+title: "JS i TS od Podstaw #1 - Zmienne, Pamięć, Typy"
+description: "Pierwsza lekcja naszego kursu JavaScript i TypeScript. Dowiedz się, jak komputer zapamiętuje dane, dlaczego uciekamy od słówka 'var' i jak TS pilnuje naszych błędów."
+date: "2026-02-24"
+categories: ["JavaScript", "TypeScript", "Web Development"]
+tags: ["JS", "TS", "Web Development", "Kurs", "Podstawy", "Zmienne"]
+image: "/blog/ts.jpg"
+imageCaption: "Fundamenty programowania: jak kontrolować dane w przeglądarce."
+featured: true
+author:
+  name: "zeprzalka.com"
+  title: "Digital Solutions Architect"
+  bio: "Tworzę rozwiązania łączące biznes z technologią."
+  avatar: "/avatar.png"
+---
+
+Witajcie w pierwszej lekcji prostego kursu JavaScript z naciskiem na TypeScript! 🎉 
+
+Jeśli potraficie już zbudować szkielet strony w HTML i nadać mu styl w CSS, nadszedł czas na krok, który oddziela statyczne strony od prawdziwych, interaktywnych aplikacji internetowych. Zanim wyślecie dane użytkownika do bazy lub zrobicie animację po kliknięciu, musicie wiedzieć, jak **przechowywać informacje**.
+
+Dziś nauczymy się, jak komputer zapamiętuje dane (JavaScript) i jak upewnia się, że nie zrobimy w nich bałaganu (TypeScript). Ważna adnotacja, TypeScript to w rzeczywistości super setup JavaScript, który dodaje do niego typy, które zabezpieczają nas przed błędami. TS obsługuje wszystkie nowoczesne funkcje JS, więc nie musimy się martwić o kompatybilność.
+
+Zaczynamy! 🚀
+
+## Zmienne – Pudełka z Etykietami
+
+Wyobraźcie sobie zmienną jako pudełko w pamięci komputera. Wkładamy tam dane (np. imię użytkownika), przyklejamy etykietę (nazwę) i dzięki temu możemy tych danych użyć później w naszym kodzie.
+
+W nowoczesnym JavaScript (i we frameworkach takich jak React czy Next.js [który jest z kolei frameworkiem na React]) używamy do tego dwóch głównych słów kluczowych:
+
+### 1. `const` (Stała) - Twój domyślny wybór
+Używamy `const` w większości przypadków. Jeśli raz włożycie coś do tego "pudełka", nie możecie tego podmienić na nic innego. To zabezpiecza kod przed przypadkowymi zmianami.
+
+```javascript
+const userName = "Adam";
+// userName = "Piotr"; // BŁĄD! const nie pozwala na przypisanie nowej wartości.
+```
+
+### 2. `let` (Zmienna)
+Używamy `let`, gdy z góry wiemy, że wartość w pudełku będzie się zmieniać (np. licznik kliknięć na stronie, stan otwarcia menu).
+
+```javascript
+let clickCount = 0;
+clickCount = 1; // Super, let na to pozwala.
+```
+
+## Duch Przeszłości: Dlaczego nie używamy `var`?
+
+Zanim wymyślono `const` i `let`, programiści mieli do dyspozycji tylko jedno słowo: `var`. Dlaczego od niego odeszliśmy? Przez dwa zjawiska: brak blokowego zasięgu (scope) oraz tzw. **Hoisting**.
+
+Zmienne `let` i `const` "żyją" tylko wewnątrz bloku kodu (np. między klamerkami `{ }` w instrukcji warunkowej). `var` to ignorował i "wypadał" na zewnątrz, co powodowało dziesiątki trudnych do wykrycia błędów w dużych projektach. Dodatkowo, mechanizm JS przenosił deklaracje `var` na samą górę pliku, co pozwalało na używanie zmiennych... zanim w ogóle zostały stworzone!
+
+Dziś trzymamy się zasady: **`var` to relikt przeszłości. Używamy tylko `const` i `let`.**
+
+## Wkracza TypeScript: Strażnik Pudełek
+
+JavaScript jest językiem dynamicznym. Zmienna zdefiniowana jako `let` może najpierw trzymać tekst, a linijkę niżej liczbę. Brzmi wygodnie, ale w aplikacjach produkcyjnych to proszenie się o potężną awarię.
+
+TypeScript (TS) to tzw. "nakładka" na JS, która dodaje do niego statyczne typowanie. Wprowadza jedną żelazną zasadę: **Jeśli tworzysz pudełko, musisz zadeklarować, jaki typ danych będzie w nim przechowywany.**
+
+### Typy Podstawowe (Prymitywy)
+W TS operujemy na trzech absolutnie bazowych typach:
+* `string` (tekst)
+* `number` (liczby całkowite i ułamkowe)
+* `boolean` (prawda/fałsz - `true` / `false`)
+
+Jak to zapisać? (Jawne typowanie):
+
+```typescript
+const appName: string = "Moja Apka Next.js";
+let maxUsers: number = 100;
+let isActive: boolean = false;
+```
+
+### Magia TypeScriptu: Inferencja
+
+TypeScript jest sprytny. Jeśli przypisujecie wartość od razu przy tworzeniu zmiennej, TS sam "zgadnie" jej typ (Inferencja). Często pisanie np. `: string` jest całkowicie zbędne!
+
+```typescript
+let score = 10; // TS sam "wie", że to 'number'
+
+// Jeśli spróbujemy zrobić to:
+// score = "dużo"; 
+// TS podświetli to na czerwono w edytorze: "Type 'string' is not assignable to type 'number'."
+```
+Kod z błędem typu w ogóle się nie skompiluje. I to jest piękno TS – łapie błędy, zanim kod trafi do użytkownika!
+
+## Zadania Praktyczne
+
+Spróbujcie samodzielnie napisać kod do poniższych zadań w dowolnym edytorze (np. VS Code):
+
+### Zadanie 1: Jawne typowanie
+Napisz kod w TypeScript, który jawnie (z użyciem `: typ`) deklaruje:
+1. Stałą o nazwie `projectName` z wartością "Supabase CMS".
+2. Zmienną o nazwie `version` z wartością 1.
+
+### Zadanie 2: Zmiana stanu
+Wyobraź sobie, że sprawdzasz, czy użytkownik ma uprawnienia admina.
+1. Stwórz zmienną (wybierz odpowiednie słówko!), nazwij ją `isAdmin`, przypisz jej jawnie typ logiczny oraz wartość początkową `false`.
+2. W kolejnej linijce "zmień zdanie" i przypisz do niej `true`.
+
+### Zadanie 3: Błąd inferencji
+1. Stwórz zmienną `userRole` i przypisz jej tekst "guest", nie podając jawnie typu (użyj inferencji).
+2. W nowej linijce spróbuj przypisać do niej liczbę `404`.
+3. Co zrobi edytor i dlaczego?
+
+## Podsumowanie
+
+1. ✅ Używaj **`const`** domyślnie, a **`let`** tylko wtedy, gdy wartość musi się zmienić. Zapomnij o `var`.
+2. ✅ **JavaScript** przechowuje dane w pamięci.
+3. ✅ **TypeScript** nakłada na te dane typy (`string`, `number`, `boolean`), aby kod był przewidywalny i bezpieczny.
+
+### Kolejne Kroki
+
+W następnej lekcji z tego cyklu wejdziemy głębiej. Skoro umiemy już trzymać dane, nauczymy się, jak wykonywać na nich operacje. Poznamy **Funkcje, Zasięg (Scope)** i dowiemy się, jak typować to, co wchodzi i wychodzi z funkcji.
+
+---
+
+**Pytania? Problemy?** Napisz do mnie na m@zeprzalka.com
+
+Powodzenia w kodowaniu! 🚀

@@ -1,4 +1,4 @@
-import { ModeToggle } from "@/components/Toogle"
+import { ModeToggle } from "@/components/Toggle"
 import {
   NavigationMenu,
   NavigationMenuItem,

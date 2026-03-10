@@ -203,9 +203,9 @@ export function Full() {
   )
 
   return (
-    <div className="p-4 containder mx-auto ">
+    <div className="container mx-auto">
       <div
-        className="inset-0 bg-black font-mono text-2xl leading-none select-none overflow-hidden z-50"
+        className="inset-0 font-mono text-2xl leading-none select-none overflow-hidden z-50"
         style={{ letterSpacing: "0.1ch" }}
       >
         <pre className="whitespace-pre leading-none">{lines.join("\n")}</pre>

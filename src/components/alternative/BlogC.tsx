@@ -22,7 +22,7 @@ export function BlogC() {
           </div>
         </aside>
 
-        <main className="lg:col-span-9">
+        <div className="lg:col-span-9">
           <div className="grid gap-8 leading-relaxed md:grid-cols-2">
             {posts.map((post) => (
               <Link
@@ -78,7 +78,7 @@ export function BlogC() {
               </Link>
             ))}
           </div>
-        </main>
+        </div>
       </div>
     </section>
   )

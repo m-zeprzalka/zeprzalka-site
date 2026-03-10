@@ -1,0 +1,199 @@
+---
+title: "Makerkit #5 - Server Components. Jak pobierać dane w Next.js?"
+description: "Żegnamy `useEffect`. Poznaj rewolucję React Server Components w Next.js. Zobacz na praktycznym przykładzie systemu ticketów, jak bezpiecznie pobierać dane z Supabase bezpośrednio na serwerze, kiedy i dlaczego! używać komponentów klienckich."
+date: "2026-02-24"
+categories: ["SaaS", "Next.js", "Makerkit", "React", "Supabase"]
+tags:
+  [
+    "Server Components",
+    "Client Components",
+    "Supabase",
+    "Data Fetching",
+    "Next.js App Router",
+    "Routing",
+    "Tickets"
+  ]
+image: "/blog/makerkit.jpg"
+imageCaption: "Architektura Server vs Client Components w Next.js"
+featured: false
+author:
+  name: "zeprzalka.com"
+  title: "Digital Solutions Architect"
+  bio: "Tworzę rozwiązania łączące biznes z technologią."
+  avatar: "/avatar.png"
+---
+
+Witajcie w piątej i ostatniej części naszej serii! 👋
+
+Do tej pory zbudowaliśmy solidne fundamenty: mamy środowisko, bazę danych i bezpieczne schematy (RLS). Teraz czas na coś, co dla wielu programistów Reacta jest jak zderzenie ze ścianą.
+
+Wchodzimy w świat **Server Components**.
+
+Zapomnij o `useEffect`, zapomnij o kręcących się spinnerach przy ładowaniu każdej drobnostki. W Makerkit i Next.js dane pobieramy tam, gdzie ich miejsce – na serwerze.
+
+## 🤯 Rewolucja: Server vs Client Components
+
+To jest najważniejsza koncepcja w nowoczesnym internecie. Musisz to zrozumieć, żeby budować szybkie aplikacje.
+
+### 🍽️ Analogia Restauracji
+
+Wyobraź sobie swoją aplikację jako restaurację:
+
+1.  **Server Component (Szef Kuchni 👨‍🍳):**
+    * Siedzi w kuchni (na serwerze).
+    * Ma dostęp do lodówki (Bazy Danych).
+    * Gotuje potrawę i układa ją na talerzu (generuje gotowy HTML).
+    * **Klucz:** Jest super szybki i bezpieczny, ale nie wyjdzie do klienta.
+
+2.  **Client Component (Kelner 💁‍♂️):**
+    * Chodzi po sali (przeglądarka użytkownika).
+    * Przynosi gotowe danie od Szefa.
+    * Reaguje na prośby klienta (kliknięcia, sortowanie, formularze).
+    * **Klucz:** Jest interaktywny, ale nie ma wstępu do kuchni (nie dotyka bazy danych bezpośrednio).
+
+### Kiedy używać którego?
+
+| Cecha | Server Component 🟢 | Client Component 🔵 |
+| :--- | :--- | :--- |
+| **Gdzie działa?** | Na serwerze (podczas budowania lub żądania) | W przeglądarce użytkownika |
+| **Dostęp do Bazy?** | ✅ TAK (Bezpośredni) | ❌ NIE (Tylko przez API) |
+| **Interakcja (onClick)?** | ❌ NIE | ✅ TAK |
+| **Hooki (useState)?** | ❌ NIE | ✅ TAK |
+| **SEO?** | 🌟 Idealne (Google widzi gotowy HTML) | Dobre (ale wymaga hydratacji) |
+
+W Makerkit zasada jest prosta: **Wszystko jest Serwerem, dopóki nie potrzebujesz interakcji.**
+
+## 🛠️ Praktyka: Budujemy Listę Ticketów
+
+Zbudujmy stronę, na której pracownik supportu widzi zgłoszenia. Zobaczysz, jak te dwa światy (Serwer i Klient) współpracują.
+
+### Krok 1: Usługa (Service) - Logika Biznesowa
+
+Zamiast pisać zapytania do bazy bezpośrednio w komponentach, w Makerkit tworzymy **Serwisy**. To taka warstwa "czystego kodu".
+
+Plik: `apps/web/lib/server/tickets/tickets.service.ts`
+
+```typescript
+import { SupabaseClient } from '@supabase/supabase-js';
+import { Database } from '~/lib/database.types';
+
+export function createTicketsService(client: SupabaseClient<Database>) {
+  return new TicketsService(client);
+}
+
+class TicketsService {
+  constructor(private readonly client: SupabaseClient<Database>) {}
+
+  async getTickets(params: { accountSlug: string; page: number }) {
+    // 1. Zapytanie do bazy (Szef Kuchni otwiera lodówkę)
+    const { data, count } = await this.client
+      .from('tickets')
+      .select('*, account_id !inner (slug)', { count: 'exact' })
+      .eq('account_id.slug', params.accountSlug)
+      .order('created_at', { ascending: false });
+
+    // 2. Zwracamy dane
+    return {
+      data: data ?? [],
+      count: count ?? 0,
+    };
+  }
+}
+```
+
+### Krok 2: Server Component (Szef Kuchni)
+
+Teraz tworzymy stronę (`page.tsx`). To tutaj pobieramy dane. Zauważ, że jest to funkcja `async`!
+
+Plik: `apps/web/app/home/[account]/tickets/page.tsx`
+
+```tsx
+import { getSupabaseServerClient } from '@kit/supabase/server-client';
+import { createTicketsService } from '~/lib/server/tickets/tickets.service';
+import { TicketsDataTable } from './_components/tickets-data-table'; // Nasz Kelner
+
+export default async function TicketsPage(props: { params: { account: string } }) {
+  // 1. Pobieramy "klucz" do bazy (jako zalogowany user)
+  const client = getSupabaseServerClient();
+  const service = createTicketsService(client);
+
+  // 2. Pobieramy dane (CZEKAMY aż baza odpowie)
+  const { data } = await service.getTickets({
+    accountSlug: props.params.account,
+    page: 1,
+  });
+
+  // 3. Renderujemy stronę i przekazujemy dane do komponentu klienckiego
+  return (
+    <div className="p-6">
+      <h1>Zgłoszenia Supportowe</h1>
+      {/* Przekazujemy gotowe dane do "Kelnera" */}
+      <TicketsDataTable data={data} />
+    </div>
+  );
+}
+```
+
+### Krok 3: Client Component (Kelner)
+
+Mamy dane, ale chcemy je wyświetlić w ładnej tabelce, którą można sortować. Do tego potrzebujemy interakcji, więc używamy `use client`.
+
+Plik: `.../_components/tickets-data-table.tsx`
+
+```tsx
+'use client'; // 👈 To oznacza: "Jestem Kelnerem (Komponent Kliencki)"
+
+import { DataTable } from '@kit/ui/enhanced-data-table';
+import { TicketStatusBadge } from './ticket-status-badge';
+
+export function TicketsDataTable({ data }) {
+  // Definiujemy kolumny (jak ma wyglądać tabela)
+  const columns = [
+    {
+      header: 'Tytuł',
+      accessorKey: 'title',
+    },
+    {
+      header: 'Status',
+      // Renderujemy ładny badge dla statusu
+      cell: ({ row }) => <TicketStatusBadge status={row.original.status} />,
+    },
+  ];
+
+  // Wyświetlamy interaktywną tabelę
+  return <DataTable data={data} columns={columns} />;
+}
+```
+
+## 🧠 Dlaczego to jest genialne?
+
+1. **Bezpieczeństwo:** Kod z zapytaniem do bazy (`service.getTickets`) nigdy nie trafia do przeglądarki użytkownika. Nikt nie podejrzy Twojej struktury bazy.
+2. **Szybkość:** Użytkownik dostaje od razu wypełnioną tabelę HTML. Nie musi czekać na dodatkowe zapytania API po załadowaniu strony.
+3. **Czystość:** Frontend (Client Component) zajmuje się tylko wyglądem i klikaniem. Backend (Server Component) zajmuje się danymi.
+
+## 🧭 Routing w Makerkit
+
+Zauważyłeś dziwną ścieżkę pliku? `app/home/[account]/tickets/page.tsx`.
+To jest **Dynamic Routing**.
+
+* **`home`** - Panel po zalogowaniu.
+* **`[account]`** - To "zmienna". Może to być `/home/brandmaker-team` albo `/home/jan-kowalski`.
+* **`tickets`** - Podstrona z ticketami.
+
+Dzięki temu, w komponencie `Page` mamy dostęp do `props.params.account`, co pozwala nam pobrać tickety tylko dla tej konkretnej firmy.
+
+## 💡 Podsumowanie
+
+Dzisiaj nauczyliśmy się:
+
+1. Rozróżniać Szefa Kuchni (Server) od Kelnera (Client).
+2. Pobierać dane z Supabase w bezpieczny sposób (`getSupabaseServerClient`).
+3. Przekazywać dane z serwera do interaktywnej tabeli.
+
+To jest fundament każdej aplikacji w Makerkit. W następnym odcinku pójdziemy o krok dalej: Mutacje. Nauczymy się nie tylko czytać dane, ale też je zmieniać (tworzyć nowe tickety i odpisywać na wiadomości).
+
+Do zobaczenia w kodzie! 👨‍💻
+
+---
+
+**Źródło:** [Makerkit Course - Server Components](https://makerkit.dev/courses/nextjs-turbo/server-components)

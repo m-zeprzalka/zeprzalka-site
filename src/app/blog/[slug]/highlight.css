@@ -18,22 +18,28 @@
   color: #d73a49 !important;
   font-weight: 600;
 }
+
 .hljs-comment {
   color: #6a737d !important;
   font-style: italic;
 }
+
 .hljs-string {
   color: #032f62 !important;
 }
+
 .hljs-meta {
   color: #005cc5 !important;
 }
+
 .hljs-function {
   color: #6f42c1 !important;
 }
+
 .hljs-tag {
   color: #005cc5 !important;
 }
+
 .hljs-tag .hljs-name {
   color: #22863a !important;
 }
@@ -41,21 +47,27 @@
 .dark .hljs-keyword {
   color: #ff7b72 !important;
 }
+
 .dark .hljs-comment {
   color: #8b949e !important;
 }
+
 .dark .hljs-string {
   color: #a5d6ff !important;
 }
+
 .dark .hljs-meta {
   color: #79c0ff !important;
 }
+
 .dark .hljs-function {
   color: #d2a8ff !important;
 }
+
 .dark .hljs-tag {
   color: #79c0ff !important;
 }
+
 .dark .hljs-tag .hljs-name {
   color: #7ee787 !important;
 }

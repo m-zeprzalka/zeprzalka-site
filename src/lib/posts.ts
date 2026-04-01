@@ -82,7 +82,7 @@ export function getPostBySlug(slug: string): Post | null {
 }
 
 function extractHeadings(content: string) {
-  const headingRegex = /^(#{2})\s+(.+)$/gm
+  const headingRegex = /^(#{2,4})\s+(.+)$/gm
   const headings: { id: string; level: number; text: string }[] = []
   const slugger = new GithubSlugger()
   let match

@@ -20,6 +20,7 @@ Prywatna strona portfolio z blogiem technicznym. Zbudowana w Next.js z MDX jako 
 | Syntax highlighting | rehype-highlight | ^7.0.2 |
 | Czcionki | Geist Sans + Geist Mono | Google Fonts |
 | Ikony | lucide-react | ^0.544.0 |
+| Email | nodemailer | latest |
 
 ---
 
@@ -34,42 +35,33 @@ zeprzalka/
 │   │   ├── globals.css               # Tailwind v4 + CSS variables (OKLCH)
 │   │   ├── robots.ts                 # robots.txt (Next.js API)
 │   │   ├── sitemap.ts                # Dynamiczny sitemap.xml
+│   │   ├── actions/
+│   │   │   └── contact.ts            # Server Action — wysyłanie e-mail (nodemailer)
 │   │   └── blog/
-│   │       ├── page.tsx              # Lista artykułów
+│   │       ├── page.tsx              # Lista artykułów z paginacją
 │   │       ├── [slug]/page.tsx       # Pojedynczy artykuł (SSG)
 │   │       ├── tag/[tag]/page.tsx    # Filtrowanie po tagach
-│   │       └── kategoria/page.tsx    # Placeholder (niezaimplementowane)
+│   │       └── kategoria/
+│   │           ├── page.tsx          # Lista wszystkich kategorii
+│   │           └── [kategoria]/page.tsx  # Artykuły po kategorii
 │   │
 │   ├── components/
 │   │   ├── layout/
 │   │   │   ├── Header.tsx            # Navbar z logo i przełącznikiem motywu
 │   │   │   ├── Footer.tsx            # Stopka z nawigacją i social linkami
 │   │   │   ├── Bar.tsx               # Progress bar przewijania (client)
-│   │   │   ├── Logo.tsx              # Animowane logo z losowym symbolem (client)
-│   │   │   └── Full.tsx              # Dekoracyjna warstwa znaków (nieużywana)
+│   │   │   └── Logo.tsx              # Animowane logo z losowym symbolem (client)
 │   │   │
 │   │   ├── alternative/              # Aktywne komponenty sekcji (wersje B/C)
 │   │   │   ├── HeroB.tsx             # Hero z video i CTA
 │   │   │   ├── SkillsB.tsx           # Umiejętności jako accordion
-│   │   │   ├── GalleryB.tsx          # Portfolio (masonry, video preview)
-│   │   │   ├── ContactB.tsx          # Formularz kontaktowy (bez backendu)
-│   │   │   ├── BlogB.tsx             # Podgląd bloga (statyczny)
+│   │   │   ├── GalleryB.tsx          # Portfolio (masonry, lazy video)
+│   │   │   ├── ContactB.tsx          # Formularz kontaktowy (z SMTP backend)
 │   │   │   └── BlogC.tsx             # Podgląd bloga (dynamiczny, używany)
-│   │   │
-│   │   ├── sections/                 # Stare wersje A (nieużywane)
-│   │   │   ├── Hero.tsx
-│   │   │   ├── Skills.tsx
-│   │   │   ├── Gallery.tsx
-│   │   │   └── Contact.tsx
-│   │   │
-│   │   ├── archive/                  # Archiwum starych layoutów stron
-│   │   │   ├── blog-b/page.tsx
-│   │   │   ├── blog-c/page.tsx
-│   │   │   └── page-b/page.tsx
 │   │   │
 │   │   ├── blog/
 │   │   │   ├── CodeBlock.tsx         # Blok kodu z przyciskiem kopiowania (client)
-│   │   │   ├── ActiveTOC.tsx         # Aktywna nawigacja po nagłówkach (client)
+│   │   │   ├── ActiveTOC.tsx         # Aktywna nawigacja po nagłówkach h2/h3/h4 (client)
 │   │   │   └── highlight.css         # Podświetlanie składni (rehype-highlight)
 │   │   │
 │   │   ├── ui/                       # Komponenty shadcn/ui
@@ -101,6 +93,7 @@ zeprzalka/
 │   ├── hero_web.webm / .mp4          # Video hero (primary: webm, fallback: mp4)
 │   └── blog/                         # Obrazy wyróżniające do artykułów
 │
+├── .env.local                        # Zmienne środowiskowe (SITE_URL, SMTP)
 ├── next.config.ts                    # Security headers, Image optimization
 ├── postcss.config.mjs                # @tailwindcss/postcss (v4)
 ├── tsconfig.json                     # strict: true, path alias @/*
@@ -118,6 +111,18 @@ npm run dev        # Turbopack dev server
 npm run build      # Build produkcyjny
 npm run start      # Start serwera produkcyjnego
 npm run lint       # ESLint
+```
+
+### Zmienne środowiskowe (.env.local)
+
+```
+NEXT_PUBLIC_SITE_URL=https://zeprzalka.com
+
+SMTP_HOST=smtp-sh188996.super-host.pl
+SMTP_PORT=465
+SMTP_SECURE=true
+SMTP_USER=twoj@email.pl
+SMTP_PASS=haslo
 ```
 
 ---
@@ -172,20 +177,21 @@ Customowe MDX komponenty: `h2`, `h3`, `h4`, `ul`, `ol`, `code`, `pre` (→ `Code
 | URL | Plik | Opis |
 |-----|------|------|
 | `/` | `app/page.tsx` | Strona główna |
-| `/blog` | `app/blog/page.tsx` | Lista artykułów |
+| `/blog` | `app/blog/page.tsx` | Lista artykułów (paginacja co 12) |
 | `/blog/[slug]` | `app/blog/[slug]/page.tsx` | Artykuł (SSG) |
 | `/blog/tag/[tag]` | `app/blog/tag/[tag]/page.tsx` | Posty po tagu |
-| `/blog/kategoria` | `app/blog/kategoria/page.tsx` | Placeholder |
+| `/blog/kategoria` | `app/blog/kategoria/page.tsx` | Lista kategorii |
+| `/blog/kategoria/[kategoria]` | `app/blog/kategoria/[kategoria]/page.tsx` | Posty po kategorii |
 
 ---
 
 ## SEO i metadane
 
-- **Metadata API** — title template, OpenGraph, Twitter Card
-- **JSON-LD** — schema `Article` na każdym artykule
+- **Metadata API** — title template `%s | Michał Zeprzałka` używany konsekwentnie
+- **JSON-LD** — schema `BlogPosting` na każdym artykule (z `dateModified`, `mainEntityOfPage`)
 - **sitemap.xml** — generowany dynamicznie (`app/sitemap.ts`)
 - **robots.txt** — generowany przez Next.js API (`app/robots.ts`)
-- **metadataBase** — `https://zeprzalka.com` (hardcoded)
+- **metadataBase** — z `NEXT_PUBLIC_SITE_URL` (fallback: `http://localhost:3000`)
 
 ### Security headers (next.config.ts)
 
@@ -221,10 +227,10 @@ Toggle w `Header.tsx` (komponent `Toggle.tsx` — client component).
 | `Bar.tsx` | `window.addEventListener("scroll", ...)` |
 | `Logo.tsx` | `setInterval` — animacja symbolu |
 | `Toggle.tsx` | Interakcja z next-themes |
-| `GalleryB.tsx` | `useState(hoveredId)` |
+| `GalleryB.tsx` | `IntersectionObserver` — lazy loading video |
 | `CodeBlock.tsx` | `clipboard API`, `useState` |
 | `ActiveTOC.tsx` | `IntersectionObserver` |
-| `Full.tsx` | `window.innerWidth`, `useMemo` |
+| `ContactB.tsx` | `useActionState` — formularz z Server Action |
 
 ---
 
@@ -236,10 +242,9 @@ Toggle w `Header.tsx` (komponent `Toggle.tsx` — client component).
 
 ---
 
-## Znane ograniczenia
+## Formularz kontaktowy
 
-1. Formularz kontaktu (`ContactB.tsx`) nie posiada backendu — submit nie wysyła danych
-2. Strona `/blog/kategoria` to placeholder — kategorie niefiltrowane
-3. `metadataBase` i URL w `sitemap.ts`/`robots.ts` są hardcoded (nie z `.env`)
-4. `extractHeadings()` w `posts.ts` obsługuje tylko `##` (h2) — h3/h4 nie trafiają do TOC
-5. Komponenty w `src/components/sections/` i `src/components/archive/` są nieużywane
+Zaimplementowany jako React Server Action (`src/app/actions/contact.ts`):
+- Wysyłka przez SMTP (nodemailer) na `m@zeprzalka.com`
+- Walidacja po stronie serwera (wymagane pola, format e-mail)
+- Konfiguracja przez zmienne środowiskowe `SMTP_*` w `.env.local`

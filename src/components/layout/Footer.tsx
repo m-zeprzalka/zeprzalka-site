@@ -1,5 +1,4 @@
 import Link from "next/link"
-import { Logo } from "@/components/layout/Logo"
 
 export function Footer() {
   return (
@@ -8,7 +7,9 @@ export function Footer() {
         <div className="grid gap-8 md:grid-cols-3">
           {/* Logo & About */}
           <div className="space-y-4">
-            <Logo />
+            <Link href="/" className="font-semibold text-lg tracking-tight hover:text-primary transition-colors">
+              zeprzalka.com
+            </Link>
             <p className="text-sm text-muted-foreground">
               Projektant / Strateg / Full-Stack Developer. <br></br>Tworzę
               rozwiązania, które łączą biznes z technologią.

@@ -27,14 +27,7 @@ export function CodeBlock({
         <pre
           ref={preRef}
           {...props}
-          className={className || ""}
-          style={{
-            margin: 0,
-            padding: "1.5rem", // 24px wszędzie - inline style ZAWSZE działa!
-            background: "transparent",
-            fontSize: "0.875rem",
-            lineHeight: "1.7",
-          }}
+          className={`${className || ""} !m-0 !p-6 bg-transparent text-sm leading-relaxed`}
         >
           {children}
         </pre>

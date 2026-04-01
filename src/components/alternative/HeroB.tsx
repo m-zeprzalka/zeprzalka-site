@@ -16,12 +16,12 @@ export function HeroB() {
       <h1 className="text-4xl sm:text-5xl md:text-6xl xl:text-7xl font-medium max-w-5xl transition-all duration-300">
         Przekształcam ambitne projekty w produkty cyfrowe.
       </h1>
-      <h2 className="sm:text-xl md:text-2xl text-muted-foreground max-w-3xl transition-all duration-300 font-normal">
+      <p className="sm:text-xl md:text-2xl text-muted-foreground max-w-3xl transition-all duration-300 font-normal">
         Digital Solutions Architect
         <span className="text-foreground font-medium"> - ponad 12+ lat </span>
         doświadczenia w tworzeniu innowacyjnych rozwiązań webowych i
         multimedialnych
-      </h2>
+      </p>
       <Button asChild size="lg" className="p-6 w-fit">
         <Link href="#contact">
           <MousePointerClick />

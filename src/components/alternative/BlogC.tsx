@@ -30,7 +30,7 @@ export function BlogC() {
                 href={`/blog/${post.slug}`}
                 className="group block"
               >
-                <Card className="relative h-[450px] overflow-hidden rounded-xl border-2 border-transparent transition-all duration-500 ease-in-out hover:border-primary/50 hover:shadow-2xl hover:shadow-primary/20">
+                <Card className="relative aspect-[4/3] overflow-hidden rounded-xl border-2 border-transparent transition-all duration-500 ease-in-out hover:border-primary/50 hover:shadow-2xl hover:shadow-primary/20">
                   {/* Tło z obrazkiem i efektem zoomu */}
                   {post.frontmatter.image && (
                     <Image

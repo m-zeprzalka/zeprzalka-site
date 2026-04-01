@@ -50,7 +50,7 @@ export const metadata: Metadata = {
     description: "Przekształcam ambitne wizje w cyfrową rzeczywistość",
     siteName: "Michał Zeprzałka Portfolio",
   },
-  metadataBase: new URL("https://zeprzalka.com"), // Twoja domena
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"),
   robots: {
     index: true,
     follow: true,

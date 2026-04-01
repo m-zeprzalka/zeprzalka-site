@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useInView } from "react-intersection-observer"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 
@@ -63,12 +63,47 @@ const galleryItems = [
   },
 ]
 
+function LazyVideo({ src, title, category }: { src: string; title: string; category: string }) {
+  const { ref, inView } = useInView({ triggerOnce: true, rootMargin: "600px" })
+
+  return (
+    <div ref={ref} className="relative -my-6">
+      {!inView && <div className="aspect-video w-full bg-muted/30" />}
+      {inView && (
+        <video
+          className="w-full h-auto block animate-in fade-in duration-700"
+          autoPlay loop muted playsInline
+        >
+          <source src={src} type="video/mp4" />
+        </video>
+      )}
+
+      {/* Dark gradient overlay */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+
+      {/* Category Badge */}
+      <div className="absolute top-3 left-3 pointer-events-none">
+        <Badge
+          variant="secondary"
+          className="px-3 py-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+        >
+          {category}
+        </Badge>
+      </div>
+
+      {/* Title */}
+      <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none">
+        <h3 className="text-white font-medium text-lg">{title}</h3>
+      </div>
+    </div>
+  )
+}
+
 export function GalleryB() {
-  const [hoveredId, setHoveredId] = useState<number | null>(null)
   return (
     <section className="flex flex-col justify-center p-4 py-6 md:py-8 lg:py-12 xl:py-16 xl:min-h-[calc(100vh-4rem)] container mx-auto">
       <div className="grid gap-6 lg:gap-8 xl:gap-10 lg:grid-cols-12">
-        <div className="lg:col-span-3 lg:sticky top-22 self-start ">
+        <div className="lg:col-span-3 lg:sticky top-22 self-start">
           <div>
             <h2 className="text-3xl md:text-4xl md:font-semi-bold font-medium">
               Portfolio
@@ -80,77 +115,14 @@ export function GalleryB() {
         </div>
         <div className="lg:col-span-9">
           <div className="columns-1 md:columns-2 lg:columns-3 gap-4 mt-4">
-            {galleryItems.map((item) => {
-              const isHovered = hoveredId === item.id
-
-              return (
-                <Card
-                  key={item.id}
-                  className="break-inside-avoid mb-4 relative overflow-hidden group cursor-pointer transition-all duration-300 hover:shadow-xl"
-                  onMouseEnter={() => setHoveredId(item.id)}
-                  onMouseLeave={() => setHoveredId(null)}
-                >
-                  {/* Media Container */}
-                  <div className="relative -my-6">
-                    {/* Media Content */}
-                    {item.type === "video" ? (
-                      <video
-                        className="w-full h-auto block"
-                        autoPlay
-                        loop
-                        muted
-                        playsInline
-                      >
-                        <source src={item.src} type="video/mp4" />
-                      </video>
-                    ) : (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
-                        src={item.src}
-                        alt={item.title}
-                        className="w-full h-auto block"
-                        loading="lazy"
-                      />
-                    )}
-
-                    {/* Overlays */}
-                    {/* Dark gradient overlay */}
-                    <div
-                      className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent transition-opacity duration-300 pointer-events-none"
-                      style={{ opacity: isHovered ? 1 : 0 }}
-                    />
-
-                    {/* Category Badge - pokazuje się na hover */}
-                    <div className="absolute top-3 left-3 pointer-events-none">
-                      <Badge
-                        variant="secondary"
-                        className="px-3 py-1"
-                        style={{ opacity: isHovered ? 1 : 0 }}
-                      >
-                        {item.category}
-                      </Badge>
-                    </div>
-
-                    {/* Title and arrow - pokazuje się na hover */}
-                    <div
-                      className="absolute bottom-0 left-0 right-0 p-4 transition-all duration-300 pointer-events-none"
-                      style={{
-                        transform: isHovered
-                          ? "translateY(0)"
-                          : "translateY(8px)",
-                        opacity: isHovered ? 1 : 0,
-                      }}
-                    >
-                      <div className="flex items-end gap-2">
-                        <h3 className="text-white font-medium text-lg">
-                          {item.title}
-                        </h3>
-                      </div>
-                    </div>
-                  </div>
-                </Card>
-              )
-            })}
+            {galleryItems.map((item) => (
+              <Card
+                key={item.id}
+                className="break-inside-avoid mb-4 relative overflow-hidden group cursor-pointer transition-all duration-300 hover:shadow-xl"
+              >
+                <LazyVideo src={item.src} title={item.title} category={item.category} />
+              </Card>
+            ))}
           </div>
         </div>
       </div>

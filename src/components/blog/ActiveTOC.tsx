@@ -2,6 +2,11 @@
 
 import { useEffect, useState } from "react"
 import Link from "next/link"
+import {
+  SidebarMenu,
+  SidebarMenuItem,
+  SidebarMenuButton,
+} from "@/components/ui/sidebar"
 
 interface Heading {
   id: string
@@ -10,6 +15,8 @@ interface Heading {
 }
 
 export function ActiveTOC({ headings }: { headings: Heading[] }) {
+  if (headings.length === 0) return null
+
   const [activeId, setActiveId] = useState<string>("")
 
   useEffect(() => {
@@ -33,24 +40,21 @@ export function ActiveTOC({ headings }: { headings: Heading[] }) {
   }, [headings])
 
   return (
-    <div className="lg:sticky top-24">
-      <h3 className="font-medium text-foreground mb-3">Spis treści</h3>
-      <ul className="space-y-2 text-sm">
-        {headings.map((heading) => (
-          <li key={heading.id}>
-            <Link
-              href={`#${heading.id}`}
-              className={`block transition-colors ${
-                activeId === heading.id
-                  ? "text-primary font-medium border-l-2 border-primary pl-3"
-                  : "text-muted-foreground hover:text-primary"
-              }`}
-            >
-              {heading.text}
-            </Link>
-          </li>
-        ))}
-      </ul>
-    </div>
+    <SidebarMenu>
+      {headings.map((heading) => (
+        <SidebarMenuItem key={heading.id}>
+          <SidebarMenuButton
+            asChild
+            isActive={activeId === heading.id}
+            size="sm"
+            // h-auto + whitespace-normal: pozwala długim tytułom zawijać się w wiele linii
+            className="h-auto whitespace-normal [&>*]:whitespace-normal"
+            style={{ paddingLeft: `${(heading.level - 2) * 12 + 8}px` }}
+          >
+            <Link href={`#${heading.id}`}>{heading.text}</Link>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
+      ))}
+    </SidebarMenu>
   )
 }

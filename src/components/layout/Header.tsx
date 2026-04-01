@@ -11,7 +11,7 @@ import { Logo } from "@/components/layout/Logo"
 export function Header() {
   return (
     <header className="sticky top-1 z-50 w-full border-b bg-background/65 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="mx-auto flex h-16 items-center justify-between px-4 container mx-auto">
+      <div className="container mx-auto flex h-16 items-center justify-between px-4">
         <Logo />
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-4">

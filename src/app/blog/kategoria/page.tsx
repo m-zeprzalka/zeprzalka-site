@@ -2,6 +2,7 @@ import { getAllPosts } from "@/lib/posts"
 import { Badge } from "@/components/ui/badge"
 import Link from "next/link"
 import type { Metadata } from "next"
+import { PageHeader } from "@/components/PageHeader"
 
 export const metadata: Metadata = {
   title: "Kategorie",
@@ -22,25 +23,22 @@ export default function CategoryIndexPage() {
   const categories = Object.entries(categoryCounts).sort((a, b) => b[1] - a[1])
 
   return (
-    <div className="container mx-auto px-4 py-12">
-      <div className="text-center mb-16">
-        <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">
-          Kategorie
-        </h1>
-        <p className="text-xl text-muted-foreground">
-          Przeglądaj artykuły według kategorii
-        </p>
-      </div>
+    <div className="container mx-auto px-4 py-12 md:py-16 lg:py-20">
+      <PageHeader
+        badge="Blog"
+        title="Kategorie"
+        description="Przeglądaj artykuły według kategorii"
+      />
 
-      <div className="flex flex-wrap gap-4 justify-center">
+      <div className="flex flex-wrap gap-3">
         {categories.map(([slug, count]) => (
           <Link key={slug} href={`/blog/kategoria/${slug}`}>
             <Badge
               variant="outline"
-              className="text-sm px-4 py-2 hover:bg-primary hover:text-primary-foreground transition-colors cursor-pointer capitalize"
+              className="text-sm px-4 py-2 hover:bg-primary hover:text-primary-foreground transition-colors cursor-pointer capitalize gap-2"
             >
               {slug.replace(/-/g, " ")}
-              <span className="ml-2 text-muted-foreground">{count}</span>
+              <span className="text-muted-foreground font-normal">{count}</span>
             </Badge>
           </Link>
         ))}

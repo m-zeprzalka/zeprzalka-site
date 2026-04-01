@@ -4,6 +4,7 @@ import { CalendarDays, Clock } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 import type { Metadata } from "next"
+import { PageHeader } from "@/components/PageHeader"
 import {
   Pagination,
   PaginationContent,
@@ -38,27 +39,28 @@ export default async function BlogPage({ searchParams }: PageProps) {
   const allPosts = getAllPosts()
   const featuredPosts = getFeaturedPosts()
 
+  const featuredSlugs = new Set(featuredPosts.slice(0, 2).map((p) => p.slug))
+
   const totalPages = Math.ceil(allPosts.length / PAGE_SIZE)
   const offset = (currentPage - 1) * PAGE_SIZE
   const paginatedPosts = allPosts.slice(offset, offset + PAGE_SIZE)
+  const displayedPosts =
+    currentPage === 1
+      ? paginatedPosts.filter((p) => !featuredSlugs.has(p.slug))
+      : paginatedPosts
 
   return (
-    <div className="container mx-auto px-4 py-12">
-      {/* Header */}
-      <div className="text-center mb-16">
-        <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">
-          Blog Technologiczny
-        </h1>
-        <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-          Odkryj najnowsze trendy w AI, web developmencie i strategiach
-          biznesowych
-        </p>
-      </div>
+    <div className="container mx-auto px-4 py-12 md:py-16 lg:py-20">
+      <PageHeader
+        badge="Blog"
+        title="Blog Technologiczny"
+        description="Odkryj najnowsze trendy w AI, web developmencie i strategiach biznesowych"
+      />
 
       {/* Featured Posts — only on first page */}
       {currentPage === 1 && featuredPosts.length > 0 && (
         <section className="mb-16">
-          <h2 className="text-2xl font-bold mb-8">Wyróżnione artykuły</h2>
+          <h2 className="text-2xl font-semibold mb-8">Wyróżnione artykuły</h2>
           <div className="grid md:grid-cols-2 gap-8">
             {featuredPosts.slice(0, 2).map((post: Post) => (
               <article key={post.slug} className="group relative">
@@ -117,7 +119,7 @@ export default async function BlogPage({ searchParams }: PageProps) {
 
       {/* All Posts */}
       <section>
-        <h2 className="text-2xl font-bold mb-8">
+        <h2 className="text-2xl font-semibold mb-8">
           Wszystkie artykuły
           {totalPages > 1 && (
             <span className="ml-3 text-base font-normal text-muted-foreground">
@@ -126,7 +128,7 @@ export default async function BlogPage({ searchParams }: PageProps) {
           )}
         </h2>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {paginatedPosts.map((post: Post) => (
+          {displayedPosts.map((post: Post) => (
             <article key={post.slug} className="group relative">
               <div>
                 <div className="relative aspect-[16/9] rounded-lg overflow-hidden mb-4">

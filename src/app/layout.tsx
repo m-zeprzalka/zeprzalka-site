@@ -5,6 +5,7 @@ import { ThemeProvider } from "@/components/theme-provider"
 import { Bar } from "@/components/layout/Bar"
 import { Header } from "@/components/layout/Header"
 import { Footer } from "@/components/layout/Footer"
+import { ScrollRestoration } from "@/components/ScrollRestoration"
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -73,6 +74,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
+          <ScrollRestoration />
           <Bar />
           <Header />
           <main role="main">{children}</main>

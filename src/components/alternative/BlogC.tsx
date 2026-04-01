@@ -1,9 +1,10 @@
-// [project]/src/components/alternative/BlogB.tsx
+// [project]/src/components/alternative/BlogC.tsx
 
 import Image from "next/image"
 import Link from "next/link"
-import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { CalendarDays, Clock } from "lucide-react"
 import { getAllPosts } from "@/lib/posts"
 
 export function BlogC() {
@@ -13,74 +14,68 @@ export function BlogC() {
       <div className="grid gap-12 lg:grid-cols-12">
         <aside className="lg:col-span-3 lg:sticky top-24 self-start">
           <div>
-            <h2 className="text-3xl md:text-4xl md:font-semi-bold font-medium">
+            <h2 className="text-3xl md:text-4xl font-medium">
               Blog
             </h2>
             <p className="text-muted-foreground lg:text-lg 2xl:text-xl mt-2 lg:mt-6 max-w-xs">
               Myśli, analizy oraz moje projekty z pogranicza technologii i AI
             </p>
+            <Button asChild variant="outline" size="sm" className="mt-6">
+              <Link href="/blog">Wszystkie artykuły</Link>
+            </Button>
           </div>
         </aside>
 
         <div className="lg:col-span-9">
-          <div className="grid gap-8 leading-relaxed md:grid-cols-2">
+          <div className="grid gap-8 sm:grid-cols-2 xl:grid-cols-3">
             {posts.map((post) => (
-              <div
-                key={post.slug}
-                className="group relative"
-              >
-                <Card className="relative aspect-[4/3] overflow-hidden rounded-xl border-2 border-transparent transition-all duration-500 ease-in-out hover:border-primary/50 hover:shadow-2xl hover:shadow-primary/20">
-                  {/* Tło z obrazkiem i efektem zoomu */}
+              <article key={post.slug} className="group relative">
+                <div className="relative aspect-[16/9] rounded-lg overflow-hidden mb-4">
                   {post.frontmatter.image && (
                     <Image
                       src={post.frontmatter.image}
                       alt={post.frontmatter.title}
                       fill
-                      className="object-cover transition-transform duration-500 ease-in-out group-hover:scale-110"
-                      sizes="(max-width: 768px) 100vw, 50vw"
+                      className="object-cover transition-transform duration-500 ease-in-out group-hover:scale-105"
+                      sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 33vw"
                     />
                   )}
-
-                  {/* Gradient dla czytelności tekstu */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
-
-                  {/* Kontener na treść */}
-                  <div className="relative flex h-full flex-col justify-end px-4 md:px-6 text-white">
-                    <div className="flex-grow"></div>
-                    {/* Tagi z efektem "Glassmorphism" */}
-                    <div className="mb-4 flex flex-wrap gap-2 relative z-10">
-                      {(post.frontmatter.tags || []).map((tag) => (
-                        <Link
-                          key={tag}
-                          href={`/blog/tag/${tag.toLowerCase().replace(/\s+/g, "-")}`}
-                        >
-                          <Badge
-                            className="border-white/20 bg-white/10 py-1 px-3 text-xs font-normal text-white backdrop-blur-md transition-all duration-300 hover:bg-white/30"
-                          >
-                            {tag}
-                          </Badge>
-                        </Link>
-                      ))}
-                    </div>
-                    {/* Tytuł */}
-                    <h3 className="text-2xl font-bold leading-tight tracking-tight transition-colors duration-300">
-                      <Link href={`/blog/${post.slug}`} className="after:absolute after:inset-0">
-                        {post.frontmatter.title}
+                </div>
+                <div className="space-y-2">
+                  <div className="flex flex-wrap gap-1">
+                    {(post.frontmatter.categories || []).slice(0, 2).map((cat) => (
+                      <Link
+                        key={cat}
+                        href={`/blog/kategoria/${cat.toLowerCase().replace(/\s+/g, "-")}`}
+                        className="relative z-10"
+                      >
+                        <Badge variant="outline" className="text-xs hover:bg-secondary/80 cursor-pointer transition-colors">
+                          {cat}
+                        </Badge>
                       </Link>
-                    </h3>
-                    {/* Metadane */}
-                    <div className="mt-4 flex items-center text-sm text-white/70">
-                      <span>
-                        {new Date(post.frontmatter.date).toLocaleDateString(
-                          "pl-PL"
-                        )}
-                      </span>
-                      <span className="mx-2">&middot;</span>
-                      <span>{post.readingTime.replace("min read", "min czytania")}</span>
+                    ))}
+                  </div>
+                  <h3 className="font-bold group-hover:text-primary transition-colors line-clamp-2">
+                    <Link href={`/blog/${post.slug}`} className="after:absolute after:inset-0">
+                      {post.frontmatter.title}
+                    </Link>
+                  </h3>
+                  <p className="text-sm text-muted-foreground line-clamp-2">
+                    {post.frontmatter.description}
+                  </p>
+                  <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                    <div className="flex items-center gap-1">
+                      <CalendarDays className="w-3 h-3" />
+                      {new Date(post.frontmatter.date).toLocaleDateString("pl-PL")}
+                    </div>
+                    <span>·</span>
+                    <div className="flex items-center gap-1">
+                      <Clock className="w-3 h-3" />
+                      {post.readingTime.replace("min read", "min czytania")}
                     </div>
                   </div>
-                </Card>
-              </div>
+                </div>
+              </article>
             ))}
           </div>
         </div>

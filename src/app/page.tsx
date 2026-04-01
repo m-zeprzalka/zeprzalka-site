@@ -9,7 +9,6 @@ export default function Home() {
   return (
     <>
       <HeroB />
-
       <SkillsB />
       <GalleryB />
       <BlogC />

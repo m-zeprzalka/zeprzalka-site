@@ -70,8 +70,8 @@ export default async function TagPage({ params }: PageProps) {
 
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
         {taggedPosts.map((post) => (
-          <article key={post.slug} className="group">
-            <Link href={`/blog/${post.slug}`}>
+          <article key={post.slug} className="group relative">
+            <div>
               <div className="relative aspect-[16/9] rounded-lg overflow-hidden mb-4">
                 <Image
                   src={post.frontmatter.image}
@@ -85,13 +85,21 @@ export default async function TagPage({ params }: PageProps) {
                   {(post.frontmatter.categories || [])
                     .slice(0, 2)
                     .map((cat: string) => (
-                      <Badge key={cat} variant="outline" className="text-xs">
-                        {cat}
-                      </Badge>
+                      <Link
+                        key={cat}
+                        href={`/blog/kategoria/${cat.toLowerCase().replace(/\s+/g, "-")}`}
+                        className="relative z-10"
+                      >
+                        <Badge variant="outline" className="text-xs hover:bg-secondary/80 cursor-pointer transition-colors">
+                          {cat}
+                        </Badge>
+                      </Link>
                     ))}
                 </div>
                 <h3 className="font-bold group-hover:text-primary transition-colors line-clamp-2">
-                  {post.frontmatter.title}
+                  <Link href={`/blog/${post.slug}`} className="after:absolute after:inset-0">
+                    {post.frontmatter.title}
+                  </Link>
                 </h3>
                 <p className="text-sm text-muted-foreground line-clamp-2">
                   {post.frontmatter.description}
@@ -106,11 +114,11 @@ export default async function TagPage({ params }: PageProps) {
                   <span>•</span>
                   <span className="flex items-center gap-1">
                     <Clock className="w-3 h-3" />
-                    {post.readingTime}
+                    {post.readingTime.replace("min read", "min czytania")}
                   </span>
                 </div>
               </div>
-            </Link>
+            </div>
           </article>
         ))}
       </div>

@@ -25,10 +25,9 @@ export function BlogC() {
         <div className="lg:col-span-9">
           <div className="grid gap-8 leading-relaxed md:grid-cols-2">
             {posts.map((post) => (
-              <Link
+              <div
                 key={post.slug}
-                href={`/blog/${post.slug}`}
-                className="group block"
+                className="group relative"
               >
                 <Card className="relative aspect-[4/3] overflow-hidden rounded-xl border-2 border-transparent transition-all duration-500 ease-in-out hover:border-primary/50 hover:shadow-2xl hover:shadow-primary/20">
                   {/* Tło z obrazkiem i efektem zoomu */}
@@ -49,19 +48,25 @@ export function BlogC() {
                   <div className="relative flex h-full flex-col justify-end px-4 md:px-6 text-white">
                     <div className="flex-grow"></div>
                     {/* Tagi z efektem "Glassmorphism" */}
-                    <div className="mb-4 flex flex-wrap gap-2">
+                    <div className="mb-4 flex flex-wrap gap-2 relative z-10">
                       {(post.frontmatter.tags || []).map((tag) => (
-                        <Badge
+                        <Link
                           key={tag}
-                          className="border-white/20 bg-white/10 py-1 px-3 text-xs font-normal text-white backdrop-blur-md transition-all duration-300 group-hover:bg-white/20"
+                          href={`/blog/tag/${tag.toLowerCase().replace(/\s+/g, "-")}`}
                         >
-                          {tag}
-                        </Badge>
+                          <Badge
+                            className="border-white/20 bg-white/10 py-1 px-3 text-xs font-normal text-white backdrop-blur-md transition-all duration-300 hover:bg-white/30"
+                          >
+                            {tag}
+                          </Badge>
+                        </Link>
                       ))}
                     </div>
                     {/* Tytuł */}
                     <h3 className="text-2xl font-bold leading-tight tracking-tight transition-colors duration-300">
-                      {post.frontmatter.title}
+                      <Link href={`/blog/${post.slug}`} className="after:absolute after:inset-0">
+                        {post.frontmatter.title}
+                      </Link>
                     </h3>
                     {/* Metadane */}
                     <div className="mt-4 flex items-center text-sm text-white/70">
@@ -71,11 +76,11 @@ export function BlogC() {
                         )}
                       </span>
                       <span className="mx-2">&middot;</span>
-                      <span>{post.readingTime}</span>
+                      <span>{post.readingTime.replace("min read", "min czytania")}</span>
                     </div>
                   </div>
                 </Card>
-              </Link>
+              </div>
             ))}
           </div>
         </div>

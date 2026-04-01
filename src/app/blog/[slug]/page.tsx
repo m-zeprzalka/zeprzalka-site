@@ -18,6 +18,7 @@ import Image from "next/image"
 import Link from "next/link"
 import type { Metadata } from "next"
 import { ActiveTOC } from "@/components/blog/ActiveTOC"
+import { ScrollToTop } from "@/components/ScrollToTop"
 import { CodeBlock } from "@/components/blog/CodeBlock"
 import {
   Sidebar,
@@ -206,6 +207,7 @@ export default async function BlogPost({ params }: PageProps) {
 
   return (
     <>
+      <ScrollToTop />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -218,10 +220,10 @@ export default async function BlogPost({ params }: PageProps) {
         <div className="container mx-auto p-4 py-6 md:py-8 lg:py-12 xl:py-16">
           <div className="grid grid-cols-1 lg:grid-cols-12 lg:gap-x-12">
             {/* Table of Contents */}
-            <aside className="hidden lg:block lg:col-span-4">
+            <aside className="hidden lg:block lg:col-span-4 xl:col-span-3">
               <Sidebar
                 collapsible="none"
-                className="sticky top-24 !h-auto !w-full bg-transparent"
+                className="sticky top-24 !h-auto !w-full"
               >
                 <SidebarHeader>
                   <SidebarMenu>
@@ -243,7 +245,7 @@ export default async function BlogPost({ params }: PageProps) {
             </aside>
 
             {/* Article Content */}
-            <article className="lg:col-span-8">
+            <article className="lg:col-span-8 xl:col-span-9">
               {/* Header */}
               <header className="mb-12">
                 <Breadcrumb className="mb-6">
@@ -259,21 +261,16 @@ export default async function BlogPost({ params }: PageProps) {
                 </Breadcrumb>
 
                 <div className="flex flex-wrap gap-2 mb-4 lg:col-span-3">
-                  {(post.frontmatter.categories || [])
-                    .slice(0, 3)
-                    .map((cat: string) => (
-                      <Badge key={cat} variant="outline" className="text-xs">
+                  {(post.frontmatter.categories || []).map((cat: string) => (
+                    <Link
+                      key={cat}
+                      href={`/blog/kategoria/${cat.toLowerCase().replace(/\s+/g, "-")}`}
+                    >
+                      <Badge variant="outline" className="text-xs hover:bg-secondary/80 cursor-pointer transition-colors">
                         {cat}
                       </Badge>
-                    ))}
-                  {(post.frontmatter.categories || []).length > 3 && (
-                    <Badge
-                      variant="outline"
-                      className="text-xs text-muted-foreground"
-                    >
-                      +{(post.frontmatter.categories || []).length - 3} więcej
-                    </Badge>
-                  )}
+                    </Link>
+                  ))}
                 </div>
 
                 <h1 className="text-4xl md:text-5xl xl:text-6xl font-bold tracking-tighter mb-4 leading-tight">
@@ -382,26 +379,16 @@ export default async function BlogPost({ params }: PageProps) {
                 {/* Author */}
                 <div className="flex flex-col sm:flex-row items-start gap-6 bg-muted/40 p-6 rounded-lg border">
                   <Avatar className="w-20 h-20 border">
-                    <AvatarImage
-                      src={post.frontmatter.author?.avatar || ""}
-                      alt={post.frontmatter.author?.name || "Autor"}
-                    />
-                    <AvatarFallback>
-                      {(post.frontmatter.author?.name || "A")
-                        .split(" ")
-                        .map((n) => n[0])
-                        .join("")}
-                    </AvatarFallback>
+                    <AvatarImage src="/avatar.png" alt="Michał Zeprzałka" />
+                    <AvatarFallback>MZ</AvatarFallback>
                   </Avatar>
                   <div className="flex-1">
-                    <h4 className="font-semibold text-xl mt-1">
-                      {post.frontmatter.author?.name || "Autor"}
-                    </h4>
+                    <h4 className="font-semibold text-xl mt-1">Michał Zeprzałka</h4>
                     <p className="text-muted-foreground text-sm mt-1">
-                      {post.frontmatter.author?.title || ""}
+                      Digital Solutions Architect
                     </p>
                     <p className="mt-2 text-foreground/80 text-base">
-                      {post.frontmatter.author?.bio || ""}
+                      Tworzę rozwiązania łączące biznes z technologią.
                     </p>
                   </div>
                 </div>

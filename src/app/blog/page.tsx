@@ -61,8 +61,8 @@ export default async function BlogPage({ searchParams }: PageProps) {
           <h2 className="text-2xl font-bold mb-8">Wyróżnione artykuły</h2>
           <div className="grid md:grid-cols-2 gap-8">
             {featuredPosts.slice(0, 2).map((post: Post) => (
-              <article key={post.slug} className="group">
-                <Link href={`/blog/${post.slug}`}>
+              <article key={post.slug} className="group relative">
+                <div>
                   <div className="relative aspect-[16/9] rounded-xl overflow-hidden mb-6">
                     <Image
                       src={post.frontmatter.image}
@@ -75,14 +75,22 @@ export default async function BlogPage({ searchParams }: PageProps) {
                     <div className="flex flex-wrap gap-2">
                       {(post.frontmatter.categories || []).map(
                         (cat: string) => (
-                          <Badge key={cat} variant="secondary">
-                            {cat}
-                          </Badge>
+                          <Link
+                            key={cat}
+                            href={`/blog/kategoria/${cat.toLowerCase().replace(/\s+/g, "-")}`}
+                            className="relative z-10"
+                          >
+                            <Badge variant="secondary" className="hover:bg-secondary/80 cursor-pointer transition-colors">
+                              {cat}
+                            </Badge>
+                          </Link>
                         )
                       )}
                     </div>
                     <h3 className="text-2xl font-bold group-hover:text-primary transition-colors">
-                      {post.frontmatter.title}
+                      <Link href={`/blog/${post.slug}`} className="after:absolute after:inset-0">
+                        {post.frontmatter.title}
+                      </Link>
                     </h3>
                     <p className="text-muted-foreground line-clamp-2">
                       {post.frontmatter.description}
@@ -96,11 +104,11 @@ export default async function BlogPage({ searchParams }: PageProps) {
                       </div>
                       <div className="flex items-center gap-1">
                         <Clock className="w-4 h-4" />
-                        {post.readingTime}
+                        {post.readingTime.replace("min read", "min czytania")}
                       </div>
                     </div>
                   </div>
-                </Link>
+                </div>
               </article>
             ))}
           </div>
@@ -119,8 +127,8 @@ export default async function BlogPage({ searchParams }: PageProps) {
         </h2>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           {paginatedPosts.map((post: Post) => (
-            <article key={post.slug} className="group">
-              <Link href={`/blog/${post.slug}`}>
+            <article key={post.slug} className="group relative">
+              <div>
                 <div className="relative aspect-[16/9] rounded-lg overflow-hidden mb-4">
                   <Image
                     src={post.frontmatter.image}
@@ -134,13 +142,21 @@ export default async function BlogPage({ searchParams }: PageProps) {
                     {(post.frontmatter.categories || [])
                       .slice(0, 2)
                       .map((cat: string) => (
-                        <Badge key={cat} variant="outline" className="text-xs">
-                          {cat}
-                        </Badge>
+                        <Link
+                          key={cat}
+                          href={`/blog/kategoria/${cat.toLowerCase().replace(/\s+/g, "-")}`}
+                          className="relative z-10"
+                        >
+                          <Badge variant="outline" className="text-xs hover:bg-secondary/80 cursor-pointer transition-colors">
+                            {cat}
+                          </Badge>
+                        </Link>
                       ))}
                   </div>
                   <h3 className="font-bold group-hover:text-primary transition-colors line-clamp-2">
-                    {post.frontmatter.title}
+                    <Link href={`/blog/${post.slug}`} className="after:absolute after:inset-0">
+                      {post.frontmatter.title}
+                    </Link>
                   </h3>
                   <p className="text-sm text-muted-foreground line-clamp-2">
                     {post.frontmatter.description}
@@ -152,10 +168,10 @@ export default async function BlogPage({ searchParams }: PageProps) {
                       )}
                     </span>
                     <span>•</span>
-                    <span>{post.readingTime}</span>
+                    <span>{post.readingTime.replace("min read", "min czytania")}</span>
                   </div>
                 </div>
-              </Link>
+              </div>
             </article>
           ))}
         </div>

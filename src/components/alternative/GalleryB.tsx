@@ -56,14 +56,13 @@ const galleryItems = [
     type: "video",
     src: "/berbecki-min.mp4",
   },
-  // TODO: przywrócić po dodaniu pliku public/onelook-min.mp4 (brak kopii po wygaśnięciu socontent.marketing)
-  // {
-  //   id: 8,
-  //   title: "Onelook",
-  //   category: "Design & Deployment",
-  //   type: "video",
-  //   src: "/onelook-min.mp4",
-  // },
+  {
+    id: 8,
+    title: "Onelook",
+    category: "Design & Deployment",
+    type: "video",
+    src: "/onelook-min.mp4",
+  },
 ]
 
 function LazyVideo({ src, title, category }: { src: string; title: string; category: string }) {

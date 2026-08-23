@@ -1,0 +1,305 @@
+---
+title: "Przestań sterować, zacznij zlecać: minimalny setup, w którym Fable 5 buduje SaaS od zera"
+description: "Na przykładzie aplikacji Kadr — generatora planów social media, wpisów i grafik, który ma zarabiać na subskrypcjach. Trzy pliki, jedna bramka i jeden porządny prompt zamiast sterowania modelem."
+date: "2026-08-23"
+categories: ["AI", "Web Development", "Engineering"]
+tags:
+  [
+    "Claude Code",
+    "Fable 5",
+    "AI Agents",
+    "SaaS",
+    "Prompt Engineering",
+    "Kadr",
+  ]
+image: "/blog/ai-automation.jpg"
+imageCaption: "Fakty, bramki i weryfikowalne done — zamiast sterowania."
+featured: true
+author:
+  name: "zeprzalka.com"
+  title: "Digital Solutions Architect"
+  bio: "Tworzę rozwiązania łączące biznes z technologią."
+  avatar: "/avatar.png"
+---
+
+*Na przykładzie aplikacji Kadr — generatora planów social media, wpisów i grafik, który ma zarabiać na subskrypcjach.*
+
+---
+
+Jest taki paradoks, którego większość poradników o agentach jeszcze nie zauważyła: **im mądrzejszy model, tym mniej trzeba mu mówić — a my mówimy mu coraz więcej.** Setupy z 2024 roku (CLAUDE.md na 400 linii, dwunastu subagentów, skille dyktujące każdy krok) były protezami dla modeli, które gubiły wątek. Fable 5 wątku nie gubi. Za to świetnie gubi się w naszych protezach: zbyt nakazowe instrukcje realnie obniżają jakość jego pracy, bo zmuszają go do drogi, którą sam wybrałby lepiej.
+
+Czy to znaczy „wywal wszystkie pliki i pisz jeden prompt"? Nie. To znaczy: naucz się odróżniać trzy rodzaje treści, które w tych plikach siedzą.
+
+## Test trzech warstw
+
+Weź dowolną linijkę ze swojego CLAUDE.md, skilla albo promptu systemowego i zadaj jej jedno pytanie: *czym jesteś?*
+
+**Faktem?** („testy odpalasz `pnpm test`", „spec jest w docs/SPEC.md", „done = te kryteria"). Fakty **zostają** — nie ograniczają, tylko uziemiają. Bez nich model pali tury na odkrywanie rzeczy, które mogłeś mu powiedzieć w trzech linijkach.
+
+**Bramką?** („nie czytaj .env", „schemat tylko przez migracje", „zero prawdziwych płatności"). Bramki **zostają** — i najlepiej, żeby były egzekwowane mechanicznie (permissions, hooki), a nie prośbą w prozie. Bramka nie ogranicza inteligencji modelu; ogranicza koszt jego jednego złego założenia. Im zdolniejszy agent, tym bardziej jej chcesz.
+
+**Sterowaniem?** („zawsze rób w kolejności 1-2-3", „używaj wzorca X", „komponenty pisz w stylu Y", „najpierw przeczytaj A, potem B"). Sterowanie **wylatuje**. To jest dokładnie ta warstwa, która dusi Fable 5 — i której model nie potrzebuje, bo własne decyzje podejmuje trafniej i trzyma się ich konsekwentniej niż cudzych nakazów.
+
+Cała reszta tego wpisu to ten test zastosowany w praktyce: setup skurczony do trzech plików i jednej bramki, plus jeden porządny prompt. A żeby nie było teoretycznie — budujemy konkretną, zarabiającą aplikację.
+
+## Aplikacja: Kadr
+
+**Kadr** to narzędzie dla małych marek i twórców: opisujesz swoją markę raz (branża, ton, kolory, logo), a Kadr generuje tygodniowy plan contentu, pisze wpisy pod każdą platformę w Twoim tonie i renderuje do nich spójne grafiki w formatach na Instagrama, LinkedIna i resztę. Na koniec pobierasz paczkę: grafiki + teksty + harmonogram. Model biznesowy: Free (1 marka, 5 generacji AI miesięcznie, watermark na grafikach) / **Pro 79 zł/mc** (3 marki, bez limitów, bez watermarku). Płatności: Stripe.
+
+Jedna uczciwa decyzja produktowa z góry, bo ona ustawia całą architekturę: w v1 „piękne grafiki" to **render szablonów do PNG** (typografia + kolory marki + layouty), a nie generacja obrazów modelem dyfuzyjnym. Szablony dają spójność wizualną marki, przewidywalny koszt i zero problemów z prawami — a wyglądają jak robota grafika, nie jak AI-papka. Generacja zdjęć AI to feature na v2, świadomie.
+
+## Folder startowy — całość
+
+```
+kadr/
+├── CLAUDE.md            # fakty + bramki (20 linii, poniżej w całości)
+├── LESSONS.md           # pusty; model prowadzi go sam
+├── docs/
+│   └── SPEC.md          # pełny plik w następnej sekcji
+└── .claude/
+    └── settings.json    # tylko bramki + jedna pętla zwrotna
+```
+
+Czego tu **nie ma**: predefiniowanych subagentów, komend, skilli, konwencji kodowania, struktury katalogów `src/`. Jeśli Fable uzna, że któreś z tych narzędzi mu się przyda — stworzy je sam (prompt wprost mu na to pozwala).
+
+### CLAUDE.md — w całości
+
+```markdown
+# Kadr — plany social media + wpisy + grafiki dla małych marek.
+Spec: docs/SPEC.md · Decyzje: docs/DECISIONS.md · Lekcje: LESSONS.md (czytaj przed planowaniem).
+
+## Komendy
+pnpm dev / build / test / test:e2e · pnpm tsc --noEmit · pnpm lint
+typy z bazy: pnpm supabase gen types typescript --local > src/types/database.ts
+
+## Stack
+Next.js (App Router, TS strict) · Supabase (auth + db + Storage, lokalnie przez CLI) ·
+shadcn/ui + Tailwind · Claude API (plan + copy; wyłącznie server-side) ·
+render grafik do PNG (wybór biblioteki: Twoja decyzja → DECISIONS.md) ·
+Stripe (WYŁĄCZNIE tryb testowy) · Playwright (e2e)
+
+## Twarde zasady (tylko te pięć)
+1. Zmiany schematu wyłącznie przez pliki w supabase/migrations.
+2. Każda nowa tabela: RLS włączone + polityki w tej samej migracji;
+   pliki w Storage w folderach per użytkownik, z politykami dostępu.
+3. Sekrety tylko w .env.local — nigdy w kodzie, logach ani commitach.
+4. Wywołania AI tylko po stronie serwera; testy i e2e działają na MOCK_AI=1
+   (zero prawdziwych tokenów w testach).
+5. Nie raportuj rzeczy jako zrobionej bez dowodu z narzędzia w tej sesji.
+
+Resztę konwencji ustalasz sam. Każdą zapisz jedną linią w docs/DECISIONS.md
+i stosuj konsekwentnie w całym projekcie.
+```
+
+### .claude/settings.json — promień rażenia, nie smycz
+
+```json
+{
+  "permissions": {
+    "deny": [
+      "Read(./.env*)",
+      "Bash(supabase db push:*)",
+      "Bash(git push --force:*)"
+    ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [{ "type": "command", "command": "pnpm tsc --noEmit" }]
+      }
+    ]
+  }
+}
+```
+
+Hook z `tsc` to nie sterowanie, tylko natychmiastowy feedback — model widzi błąd typów sekundę po edycji, zamiast odkryć go po godzinie budowania. A trzy `deny` to ubezpieczenie: sekrety nieczytelne, schemat nie ominie migracji, historia gita nieprzepisywalna. Tyle wystarczy.
+
+## docs/SPEC.md — przykładowy plik w całości
+
+```markdown
+# Kadr — specyfikacja v1
+
+## Problem i klient
+Małe marki, twórcy i lokalne biznesy (trenerka, kawiarnia, studio jogi, freelancer)
+wiedzą, że muszą publikować regularnie — ale nie mają czasu wymyślać tematów,
+pisać wpisów i składać grafik. Efekt: publikują chaotycznie albo wcale.
+Kadr zamienia jedną rozmowę o marce w gotowy tydzień contentu.
+
+## Model biznesowy
+- Free: 1 marka, 5 generacji AI/mc, grafiki z watermarkiem "kadr.app".
+- Pro 79 zł/mc: 3 marki, bez limitu generacji, bez watermarku, wszystkie formaty.
+- Płatność: subskrypcja Stripe (checkout + customer portal). V1 w trybie testowym.
+- Ekonomia: każda generacja planu/wpisów kosztuje tokeny — licznik generacji
+  per użytkownik/miesiąc jest częścią rdzenia, nie dodatkiem.
+
+## Przepływy (v1)
+1. Rejestracja/logowanie (Supabase Auth).
+2. Onboarding marki: nazwa, branża, grupa docelowa, ton (3 suwaki/opisy),
+   kolory (2–3), logo (upload do Storage). Razem: "profil marki".
+3. Generator planu: użytkownik wybiera tydzień + platformy (IG/FB/LinkedIn) →
+   AI proponuje 5–7 postów: data, platforma, temat, format, cel/CTA.
+   Plan ląduje w kalendarzu; każdy post można edytować, usunąć, zaakceptować.
+4. Generator wpisów: dla zaakceptowanego posta AI pisze treść pod platformę
+   w tonie marki (+ hashtagi tam, gdzie pasują). Edycja inline.
+5. Generator grafik: dla posta użytkownik wybiera szablon (min. 3 layouty) →
+   render PNG w formatach 1:1 (1080²), 4:5 (1080×1350), 16:9 (1920×1080)
+   z kolorami i typografią marki + nagłówkiem z posta. Podgląd w panelu,
+   pliki w Storage. Na planie Free: watermark.
+6. Eksport: ZIP z grafikami + tekstami (md/txt per post) + harmonogramem CSV.
+7. Upgrade: przekroczenie limitu Free → ekran upsell → Stripe Checkout →
+   webhook ustawia plan w bazie → limity i watermark znikają. Customer portal.
+
+## Model danych (zarys — szczegóły Twoje)
+- profiles (1:1 auth.users; plan free|pro; stripe_customer_id; licznik generacji/mc)
+- brands (właściciel, nazwa, branża, ton, kolory[], logo_path)
+- plans (brand_id, tydzień/zakres dat, status)
+- posts (plan_id, data, platforma, temat, treść, status: draft|approved)
+- graphics (post_id, szablon, format, storage_path)
+Zasada RLS: użytkownik widzi i modyfikuje wyłącznie własne marki, plany, posty
+i grafiki. Storage: foldery per użytkownik, dostęp tylko właściciela.
+
+## AI (uczciwie)
+- Plan + copy: Claude API po stronie serwera; model tańszej klasy wystarcza,
+  jakość robi profil marki w prompcie, nie rozmiar modelu.
+- Grafiki: render szablonów (typografia+kolory), NIE generacja obrazów. Powód:
+  spójność marki, koszt ~0, brak problemów licencyjnych. Diffusion = v2.
+- MOCK_AI=1: deterministyczne odpowiedzi w testach/e2e, zero kosztów tokenów.
+
+## Out of scope v1 (świadomie)
+Auto-publikacja przez API platform (zatwierdzenia Meta = osobny projekt) ·
+generacja zdjęć AI · zespoły/role · analityka wyników · harmonogram
+przypomnień push · biblioteka assetów.
+
+## Sukces v1
+Ścieżka: rejestracja → marka → plan tygodnia → akceptacja 3 postów → wpisy →
+grafiki w 2 formatach → ZIP → upgrade w Stripe test mode. Całość przechodzi
+e2e (na MOCK_AI) bez udziału człowieka poza kliknięciami usera.
+```
+
+## Master prompt — jeden prompt, który buduje Kadr
+
+Wklejasz w Claude Code (model: Fable 5), w świeżym repo z plikami powyżej:
+
+```
+KONTEKST
+Buduję Kadr (docs/SPEC.md) — SaaS, który ma zarabiać na subskrypcjach.
+Cel: działający produkt, na którym pokażę pełną ścieżkę pierwszemu płacącemu
+klientowi. Repo jest świeże; prowadzisz je od zera do wdrożenia.
+
+TWOJA ROLA
+Prowadzisz projekt end-to-end: architektura, implementacja, testy, deploy
+preview. Sam decydujesz o kolejności prac, strukturze katalogów, wyborze
+biblioteki do renderu grafik i konwencjach — każdą przyjętą konwencję zapisz
+jedną linią w docs/DECISIONS.md i trzymaj się jej. Jeśli uznasz, że przyda Ci
+się własna komenda, skill albo subagent — stwórz je; to Twoje narzędzia.
+
+DONE (wszystko weryfikowalne, kolejność Twoja)
+1. `pnpm build` zielony; deploy preview na Vercel działa (vercel CLI).
+2. Auth: rejestracja + logowanie e2e.
+3. Onboarding marki wg SPEC, z uploadem logo do Storage.
+4. Generator planu: tydzień contentu dla marki (AI, mockowalny), kalendarz
+   w panelu, edycja i akceptacja postów.
+5. Generator wpisów: treść per post per platforma w tonie marki (AI, mockowalny).
+6. Grafiki: min. 3 szablony, render PNG w formatach 1:1, 4:5 i 16:9 z kolorami
+   i typografią marki, zapis w Storage, podgląd w panelu, watermark na Free.
+   Dodaj stronę /playground pokazującą wszystkie szablony na przykładowych
+   danych — to Twój i mój podgląd jakości wizualnej.
+7. Eksport ZIP: grafiki + teksty + harmonogram CSV.
+8. Stripe test mode: checkout Pro, webhook ustawia plan w bazie, limity Free
+   (5 generacji/mc, watermark, 1 marka) egzekwowane przed i znikające po
+   upgrade, customer portal z panelu.
+9. Bezpieczeństwo: automatyczny test RLS i Storage — użytkownik A nie ma
+   dostępu do marek, postów, grafik i plików użytkownika B.
+10. E2e ścieżki sukcesu ze SPEC (na MOCK_AI=1) zielone; `tsc --noEmit`
+    i lint zielone.
+
+ZASADY PRACY
+- Działasz autonomicznie; nie oglądam ekranu w trakcie. Dla odwracalnych akcji
+  wynikających z zadania — działaj bez pytania. Zanim zakończysz turę, sprawdź
+  ostatni akapit: jeśli to plan, pytanie albo obietnica — wykonaj tę pracę
+  teraz. Kończ tylko, gdy done jest spełnione albo blokuje Cię wyłącznie input
+  ode mnie.
+- Po ukończeniu punktów 1–5 oraz ponownie po 6–10: odpal świeżego subagenta-
+  weryfikatora, który sprawdzi stan względem listy DONE wyłącznie na podstawie
+  dowodów z narzędzi. Przy punkcie 6 weryfikacja obejmuje OBEJRZENIE
+  wyrenderowanych grafik (pliki PNG / zrzuty /playground) i ocenę: czytelność,
+  kontrast, spójność z kolorami marki, poprawny watermark na Free.
+  Rozbieżności naprawiasz przed dalszą pracą.
+- Prowadź LESSONS.md: jedna lekcja = jeden wpis z jednolinijkowym
+  podsumowaniem; aktualizuj zamiast dublować.
+- Najprostsza rzecz, która dobrze działa. Bez abstrakcji na zapas i feature'ów
+  spoza SPEC — pomysły dopisuj do sekcji "Backlog" w SPEC zamiast implementować.
+- Koszty AI traktuj jak feature: licznik generacji działa od pierwszego dnia,
+  a każde wywołanie modelu ma sens biznesowy (żadnych wywołań "przy okazji").
+
+GRANICE
+- Stripe wyłącznie test mode; zero prawdziwych płatności i prawdziwych danych
+  osobowych (seed = dane zmyślone).
+- Klucz Anthropic API tylko w .env.local i tylko server-side; testy nie palą
+  tokenów (MOCK_AI=1).
+- Zatrzymaj się i zapytaj TYLKO gdy: brakuje Ci wartości z sekcji INPUTY,
+  akcja jest nieodwracalna, albo SPEC jest wewnętrznie sprzeczny.
+
+INPUTY ODE MNIE
+- Stripe test keys: [SK_TEST], [PK_TEST], webhook secret przez `stripe listen`.
+- Anthropic API key: [KEY]. Cena Pro: 79 zł/mc, produkt w Stripe: "Kadr Pro".
+- Vercel: konto podpięte, projekt utwórz sam.
+
+Start. Pierwsza wiadomość ode mnie po tej = odpowiedź na Twoje pytania
+blokujące albo "kontynuuj".
+```
+
+Zwróć uwagę, czego w tym prompcie nie ma: kolejności kroków, struktury
+katalogów, wyboru bibliotek, stylu kodu. Jest intencja, dowody i granice.
+To jest cała różnica między sterowaniem a zleceniem. I jeden smaczek, który
+daje ta konkretna aplikacja: **weryfikator ogląda grafiki**. Fable 5 ma na
+tyle dobry vision, że ocena „czy to wygląda jak robota grafika" jest częścią
+pętli dowodowej, nie Twoim wieczornym obowiązkiem.
+
+## Prompt dnia 2+ (iteracje)
+
+```
+KONTEKST: Kadr po pierwszym przebiegu; stan w LESSONS.md i DECISIONS.md.
+ZADANIE: [np. "czwarty szablon grafiki: cytat klienta na tle gradientu z kolorów
+marki + wariant karuzeli 3 slajdów"] — bo [powód biznesowy, 1 zdanie].
+DONE: [2–4 weryfikowalne punkty, w tym ocena wizualna na /playground].
+Zasady i granice jak w master prompcie. Na koniec świeży subagent-weryfikator.
+```
+
+## Anty-setup: czego tu nie ma i dlaczego
+
+**Konwencje kodowania dyktowane z góry** — wyleciały. Fable ustala własne
+i zapisuje w DECISIONS.md; własnych decyzji trzyma się konsekwentniej niż
+cudzych nakazów, a Ty i tak widzisz wszystkie w jednym pliku.
+
+**Predefiniowane komendy i subagenci** — wyleciały jako wymóg, zostały jako
+pozwolenie. Wyjątek: weryfikator jest w prompcie, bo pętla dowodowa to
+feedback, nie ograniczenie — i to jedyny „proces", na którym nie oszczędzam.
+
+**Bloki behawioralne na pół strony** — skurczone do kilku zdań wplecionych
+w ZASADY (autonomia, dowody, minimalizm, koszty). Domyślne zachowania Fable 5
+są dobre; poprawiaj tylko to, co realnie Ci przeszkadza, po fakcie.
+
+**Kiedy wrócić do grubszej wersji:** gdy nad repo pracuje więcej osób lub
+agentów i potrzebujesz standaryzacji *między ludźmi* — wtedy komendy i skille
+są wspólnym językiem zespołu, nie smyczą modelu. Albo gdy retro pokazuje błąd
+powtarzający się mimo dobrego promptu — jedna celna linijka reguły jest
+tańsza niż poprawianie w kółko.
+
+## Zanim weźmiesz prawdziwe pieniądze (checklista go-live)
+
+Stripe live keys + webhook na domenie produkcyjnej · **rachunek ekonomiczny
+tokenów**: koszt generacji planu+wpisów vs 79 zł/mc — ustaw limity tak, żeby
+najbardziej aktywny użytkownik nadal był rentowny · rate limiting na
+endpointach generacji · **licencje fontów użytych w szablonach** (to grafika
+komercyjna Twoich klientów!) · regulamin + polityka prywatności (RODO — treści
+i logotypy klientów w Storage) · e-maile transakcyjne · backup bazy.
+To lista zadań, nie porada prawna — regulamin i podatki skonsultuj.
+
+---
+
+**Podsumowanie w jednym zdaniu:** daj Fable 5 fakty, bramki i weryfikowalne
+„done", wytnij sterowanie — a folder projektu skurczy się do trzech plików,
+z których żaden nie przeszkadza modelowi być mądrzejszym od Twojego procesu.
+Podmień SPEC na własny pomysł, wklej master prompt i sprawdź sam.

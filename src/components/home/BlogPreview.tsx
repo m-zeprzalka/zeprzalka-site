@@ -1,13 +1,11 @@
-// [project]/src/components/alternative/BlogC.tsx
-
 import Image from "next/image"
 import Link from "next/link"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { CalendarDays, Clock } from "lucide-react"
-import { getAllPosts } from "@/lib/posts"
+import { getAllPosts, slugify } from "@/lib/posts"
 
-export function BlogC() {
+export function BlogPreview() {
   const posts = getAllPosts().slice(0, 6)
   return (
     <section className="container mx-auto flex flex-col justify-center p-4 py-12 md:py-16 lg:py-24">
@@ -47,7 +45,7 @@ export function BlogC() {
                     {(post.frontmatter.categories || []).slice(0, 2).map((cat) => (
                       <Link
                         key={cat}
-                        href={`/blog/kategoria/${cat.toLowerCase().replace(/\s+/g, "-")}`}
+                        href={`/blog/kategoria/${slugify(cat)}`}
                         className="relative z-10"
                       >
                         <Badge variant="outline" className="text-xs hover:bg-secondary/80 cursor-pointer transition-colors">

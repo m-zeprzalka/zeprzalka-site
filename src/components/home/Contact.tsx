@@ -1,9 +1,4 @@
-"use client"
-
-import { useActionState } from "react"
-import { sendContactEmail } from "@/app/actions/contact"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+import { ContactForm } from "@/components/ContactForm"
 import {
   Card,
   CardContent,
@@ -11,13 +6,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { MousePointerClick, CheckCircle, AlertCircle } from "lucide-react"
 
-const initialState = { success: false, message: "" }
-
-export function ContactB() {
-  const [state, formAction, pending] = useActionState(sendContactEmail, initialState)
-
+export function Contact() {
   return (
     <section
       className="flex flex-col justify-center p-4 py-6 md:py-8 lg:py-12 xl:py-16 xl:min-h-[calc(100vh-4rem)] container mx-auto"
@@ -41,96 +31,12 @@ export function ContactB() {
                 Opowiedz o swoim projekcie
               </CardTitle>
               <CardDescription>
-                Wypełnij formularz, im bardziej szczegółowy opis, tym bardziej precyzyjną wycenę otrzymasz.
+                Wypełnij formularz, im bardziej szczegółowy opis, tym bardziej
+                precyzyjną wycenę otrzymasz.
               </CardDescription>
             </CardHeader>
-            <CardContent className="p-0">
-              {state.success ? (
-                <div className="flex items-center gap-3 p-4 rounded-lg bg-green-500/10 border border-green-500/20 text-green-600 dark:text-green-400 mt-4">
-                  <CheckCircle className="w-5 h-5 shrink-0" />
-                  <p>{state.message}</p>
-                </div>
-              ) : (
-                <form action={formAction} className="space-y-4">
-                  {state.message && (
-                    <div className="flex items-center gap-3 p-4 rounded-lg bg-destructive/10 border border-destructive/20 text-destructive">
-                      <AlertCircle className="w-5 h-5 shrink-0" />
-                      <p>{state.message}</p>
-                    </div>
-                  )}
-
-                  <div>
-                    <label
-                      htmlFor="name"
-                      className="text-sm font-medium mb-2 block"
-                    >
-                      Twoje imię <span className="text-destructive">*</span>
-                    </label>
-                    <Input
-                      id="name"
-                      name="name"
-                      type="text"
-                      placeholder="Podaj imię"
-                      required
-                      className="py-6 px-4 mt-4"
-                    />
-                  </div>
-
-                  <div>
-                    <label
-                      htmlFor="email"
-                      className="text-sm font-medium mb-2 block"
-                    >
-                      Email kontaktowy <span className="text-destructive">*</span>
-                    </label>
-                    <Input
-                      id="email"
-                      name="email"
-                      type="email"
-                      placeholder="twoj@email.pl"
-                      required
-                      className="py-6 px-4 mt-4"
-                    />
-                  </div>
-
-                  <div>
-                    <label
-                      htmlFor="project-type"
-                      className="text-sm font-medium mb-2 block"
-                    >
-                      Rodzaj projektu
-                    </label>
-                    <Input
-                      id="project-type"
-                      name="project-type"
-                      type="text"
-                      placeholder="Strona internetowa / Animacja / Grafik..."
-                      className="py-6 px-4 mt-4"
-                    />
-                  </div>
-
-                  <div>
-                    <label
-                      htmlFor="message"
-                      className="text-sm font-medium mb-2 block"
-                    >
-                      Opis szczegółów projektu <span className="text-destructive">*</span>
-                    </label>
-                    <textarea
-                      id="message"
-                      name="message"
-                      required
-                      className="flex min-h-[120px] w-full rounded-md border border-input bg-background p-4 text-sm ring-offset-background placeholder:text-muted-foreground mt-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                      placeholder="Opisz swoje cele, wyzwania lub pytania. Im więcej szczegółów, tym lepiej będę mógł Ci pomóc..."
-                    />
-                  </div>
-
-                  <Button type="submit" size="lg" className="p-6 w-fit" disabled={pending}>
-                    <MousePointerClick />
-                    {pending ? "Wysyłanie..." : "Wyślij wiadomość"}
-                  </Button>
-                </form>
-              )}
+            <CardContent className="p-0 relative">
+              <ContactForm />
             </CardContent>
           </Card>
         </div>

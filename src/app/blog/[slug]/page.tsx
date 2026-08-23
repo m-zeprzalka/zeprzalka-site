@@ -1,5 +1,5 @@
 // src/app/blog/[slug]/page.tsx
-import { getPostBySlug, getAllPosts } from "@/lib/posts"
+import { getPostBySlug, getAllPosts, slugify } from "@/lib/posts"
 import { notFound } from "next/navigation"
 import { MDXRemote } from "next-mdx-remote/rsc"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -18,7 +18,6 @@ import Image from "next/image"
 import Link from "next/link"
 import type { Metadata } from "next"
 import { ActiveTOC } from "@/components/blog/ActiveTOC"
-import { ScrollToTop } from "@/components/ScrollToTop"
 import { CodeBlock } from "@/components/blog/CodeBlock"
 import { YouTubeEmbed } from "@/components/blog/YouTubeEmbed"
 import {
@@ -126,15 +125,15 @@ const mdxComponents = {
       }
     />
   ),
-  img: (props: React.ImgHTMLAttributes<HTMLImageElement>) => {
-    // eslint-disable-next-line jsx-a11y/alt-text, @next/next/no-img-element
-    return (
-      <img
-        {...props}
-        className={"rounded-lg shadow-md my-6 " + (props.className || "")}
-      />
-    )
-  },
+  // Obrazy z treści MDX mają nieznane wymiary — świadomie zwykły <img>
+  img: ({ alt, ...props }: React.ImgHTMLAttributes<HTMLImageElement>) => (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      {...props}
+      alt={alt ?? ""}
+      className={"rounded-lg shadow-md my-6 " + (props.className || "")}
+    />
+  ),
   a: (props: React.AnchorHTMLAttributes<HTMLAnchorElement>) => (
     <a
       {...props}
@@ -177,12 +176,16 @@ export async function generateMetadata({
   return {
     title: post.frontmatter.title,
     description: post.frontmatter.description,
+    alternates: {
+      canonical: `/blog/${post.slug}`,
+    },
     openGraph: {
       title: post.frontmatter.title,
       description: post.frontmatter.description,
       type: "article",
+      url: `${siteUrl}/blog/${post.slug}`,
       publishedTime: post.frontmatter.date,
-      authors: [post.frontmatter.author?.name || "Autor"],
+      authors: [post.frontmatter.author?.name || "Michał Zeprzałka"],
       images: [
         {
           url: imageUrl,
@@ -209,39 +212,56 @@ export default async function BlogPost({ params }: PageProps) {
     notFound()
   }
 
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://zeprzalka.com"
+  const postUrl = `${siteUrl}/blog/${post.slug}`
+  const imageUrl = post.frontmatter.image?.startsWith("http")
+    ? post.frontmatter.image
+    : `${siteUrl}${post.frontmatter.image || "/avatar.png"}`
+
   // JSON-LD Schema for SEO
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
     headline: post.frontmatter.title,
     description: post.frontmatter.description,
-    image: post.frontmatter.image,
+    image: imageUrl,
     datePublished: post.frontmatter.date,
     dateModified: post.frontmatter.date,
+    inLanguage: "pl-PL",
     mainEntityOfPage: {
       "@type": "WebPage",
-      "@id": `${process.env.NEXT_PUBLIC_SITE_URL || "https://zeprzalka.com"}/blog/${post.slug}`,
+      "@id": postUrl,
     },
     author: {
       "@type": "Person",
-      name: post.frontmatter.author?.name || "Autor",
+      name: post.frontmatter.author?.name || "Michał Zeprzałka",
+      url: siteUrl,
     },
     publisher: {
-      "@type": "Organization",
+      "@type": "Person",
       name: "Michał Zeprzałka",
-      logo: {
-        "@type": "ImageObject",
-        url: `${process.env.NEXT_PUBLIC_SITE_URL || "https://zeprzalka.com"}/avatar.png`,
-      },
+      url: siteUrl,
     },
+  }
+
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Blog", item: `${siteUrl}/blog` },
+      { "@type": "ListItem", position: 2, name: post.frontmatter.title, item: postUrl },
+    ],
   }
 
   return (
     <>
-      <ScrollToTop />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
       {/* SidebarProvider z display:contents — nie zmienia layoutu strony */}
       <SidebarProvider
@@ -295,7 +315,7 @@ export default async function BlogPost({ params }: PageProps) {
                   {(post.frontmatter.categories || []).map((cat: string) => (
                     <Link
                       key={cat}
-                      href={`/blog/kategoria/${cat.toLowerCase().replace(/\s+/g, "-")}`}
+                      href={`/blog/kategoria/${slugify(cat)}`}
                     >
                       <Badge variant="outline" className="text-xs hover:bg-secondary/80 cursor-pointer transition-colors">
                         {cat}
@@ -395,7 +415,7 @@ export default async function BlogPost({ params }: PageProps) {
                   {(post.frontmatter.tags || []).map((tag: string) => (
                     <Link
                       key={tag}
-                      href={`/blog/tag/${tag.toLowerCase().replace(/\s+/g, "-")}`}
+                      href={`/blog/tag/${slugify(tag)}`}
                     >
                       <Badge
                         variant="secondary"

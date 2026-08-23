@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge"
 import { MousePointerClick } from "lucide-react"
 import Link from "next/link"
 
-export function HeroB() {
+export function Hero() {
   const [isLoaded, setIsLoaded] = useState(false)
   const videoRef = useRef<HTMLVideoElement>(null)
 

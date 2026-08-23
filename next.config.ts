@@ -1,53 +1,60 @@
 import type { NextConfig } from "next"
 
-const nextConfig: NextConfig = {
-  pageExtensions: ["js", "jsx", "md", "mdx", "ts", "tsx"],
+const securityHeaders = [
+  { key: "X-DNS-Prefetch-Control", value: "on" },
+  {
+    key: "Strict-Transport-Security",
+    value: "max-age=63072000; includeSubDomains; preload",
+  },
+  { key: "X-Frame-Options", value: "SAMEORIGIN" },
+  { key: "X-Content-Type-Options", value: "nosniff" },
+  { key: "Referrer-Policy", value: "origin-when-cross-origin" },
+  {
+    key: "Permissions-Policy",
+    value: "camera=(), microphone=(), geolocation=()",
+  },
+  // Częściowe CSP bez script-src/style-src — pełne (nonce) wymaga proxy,
+  // opisane w docs/ROADMAP.md. Te dyrektywy nie psują niczego, a domykają
+  // realne wektory: osadzanie w ramkach, wstrzykiwanie <base> i <object>,
+  // przekierowanie formularzy na obce originy.
+  {
+    key: "Content-Security-Policy",
+    value: [
+      "object-src 'none'",
+      "base-uri 'self'",
+      "frame-ancestors 'self'",
+      "form-action 'self'",
+      "frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com",
+    ].join("; "),
+  },
+]
 
-  // Security Headers - chroni przed XSS, clickjacking, MIME sniffing
+const nextConfig: NextConfig = {
+  poweredByHeader: false,
+
   async headers() {
     return [
       {
         source: "/:path*",
+        headers: securityHeaders,
+      },
+      {
+        // Wideo portfolio jest wersjonowane nazwą pliku — może być cache'owane bez końca
+        source: "/:file*.(mp4|webm)",
         headers: [
           {
-            key: "X-DNS-Prefetch-Control",
-            value: "on",
-          },
-          {
-            key: "Strict-Transport-Security",
-            value: "max-age=63072000; includeSubDomains; preload",
-          },
-          {
-            key: "X-Frame-Options",
-            value: "SAMEORIGIN",
-          },
-          {
-            key: "X-Content-Type-Options",
-            value: "nosniff",
-          },
-          {
-            key: "X-XSS-Protection",
-            value: "1; mode=block",
-          },
-          {
-            key: "Referrer-Policy",
-            value: "origin-when-cross-origin",
-          },
-          {
-            key: "Permissions-Policy",
-            value: "camera=(), microphone=(), geolocation=()",
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
           },
         ],
       },
     ]
   },
 
-  // Image Optimization - tymczasowo wyłączona (limit Vercel)
+  // Optymalizacja obrazków wyłączona świadomie: limit transformacji na planie
+  // Vercel Hobby. Po przejściu na plan Pro usunąć tę linię (docs/ROADMAP.md).
   images: {
     unoptimized: true,
-    formats: ["image/avif", "image/webp"],
-    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
-    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
   },
 }
 

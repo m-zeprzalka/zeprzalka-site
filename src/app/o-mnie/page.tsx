@@ -1,14 +1,50 @@
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import { Button } from "@/components/ui/button"
-import { MapPin, Mail, Globe, Download, ExternalLink } from "lucide-react"
+import { MapPin, Mail, Globe, ExternalLink } from "lucide-react"
 import Link from "next/link"
 import type { Metadata } from "next"
 
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://zeprzalka.com"
+
 export const metadata: Metadata = {
-  title: "CV",
+  title: "O mnie",
   description:
-    "Curriculum Vitae — Michał Zeprzałka, Digital Solutions Architect z ponad 12 latami doświadczenia.",
+    "Michał Zeprzałka — Digital Solutions Architect z ponad 12 latami doświadczenia. Strony internetowe, aplikacje, design, animacja i integracje AI.",
+  alternates: {
+    canonical: "/o-mnie",
+  },
+}
+
+const personJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "ProfilePage",
+  mainEntity: {
+    "@type": "Person",
+    name: "Michał Zeprzałka",
+    jobTitle: "Digital Solutions Architect",
+    url: SITE_URL,
+    image: `${SITE_URL}/avatar.png`,
+    email: "mailto:m@zeprzalka.com",
+    address: {
+      "@type": "PostalAddress",
+      addressLocality: "Warszawa",
+      addressCountry: "PL",
+    },
+    sameAs: [
+      "https://github.com/m-zeprzalka",
+      "https://www.facebook.com/michalzeprzalka",
+    ],
+    knowsAbout: [
+      "Web Development",
+      "Next.js",
+      "React",
+      "UX/UI Design",
+      "Branding",
+      "Animacja",
+      "Integracje AI",
+    ],
+  },
 }
 
 const experience = [
@@ -75,6 +111,10 @@ const education = [
 export default function CVPage() {
   return (
     <div className="container mx-auto px-4 py-12 md:py-16 lg:py-20 max-w-4xl">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
+      />
       {/* Header */}
       <header className="mb-16">
         <Badge
@@ -94,12 +134,6 @@ export default function CVPage() {
               Digital Solutions Architect - Designer - AI Specialist
             </p>
           </div>
-          <Button asChild variant="outline" size="sm" className="w-fit gap-2 shrink-0">
-            <a href="/cv.pdf" download>
-              <Download className="w-4 h-4" />
-              Pobierz PDF
-            </a>
-          </Button>
         </div>
 
         <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted-foreground">

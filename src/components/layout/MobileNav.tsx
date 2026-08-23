@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { Menu, X } from "lucide-react"
@@ -12,17 +12,13 @@ import { cn } from "@/lib/utils"
 const navLinks = [
   { href: "/", label: "Start" },
   { href: "/blog", label: "Blog" },
-  { href: "/cv", label: "CV" },
+  { href: "/o-mnie", label: "O mnie" },
   { href: "/kontakt", label: "Kontakt" },
 ]
 
 export function MobileNav() {
   const [open, setOpen] = useState(false)
   const pathname = usePathname()
-
-  useEffect(() => {
-    setOpen(false)
-  }, [pathname])
 
   return (
     <>
@@ -50,7 +46,7 @@ export function MobileNav() {
           <SheetTitle className="sr-only">Menu nawigacyjne</SheetTitle>
 
           <div className="flex items-center justify-between h-16 px-4 border-b shrink-0 container mx-auto">
-            <Logo />
+            <Logo onClick={() => setOpen(false)} />
             <div className="flex items-center justify-end gap-2">
               <ModeToggle />
               <button

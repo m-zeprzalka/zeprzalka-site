@@ -1,4 +1,4 @@
-import { getAllPosts, getFeaturedPosts, type Post } from "@/lib/posts"
+import { getAllPosts, getFeaturedPosts, slugify, type Post } from "@/lib/posts"
 import { Badge } from "@/components/ui/badge"
 import { CalendarDays, Clock } from "lucide-react"
 import Image from "next/image"
@@ -18,10 +18,15 @@ import {
 export const metadata: Metadata = {
   title: "Blog",
   description:
-    "Odkryj najnowsze artykuły o AI, Next.js, web developmencie i strategiach biznesowych. Praktyczne porady od ekspertów.",
+    "Artykuły o AI, Next.js, web developmencie i designie. Praktyczne poradniki i przemyślenia z realnych projektów.",
+  alternates: {
+    // Paginacja przez ?page= — canonical zawsze wskazuje na /blog
+    canonical: "/blog",
+  },
   openGraph: {
-    title: "Blog | Zeprzalka.com",
-    description: "Najnowsze trendy w technologii i biznesie",
+    title: "Blog | Michał Zeprzałka",
+    description:
+      "Artykuły o AI, Next.js, web developmencie i designie. Praktyczne poradniki i przemyślenia z realnych projektów.",
     type: "website",
   },
 }
@@ -34,7 +39,8 @@ interface PageProps {
 
 export default async function BlogPage({ searchParams }: PageProps) {
   const { page } = await searchParams
-  const currentPage = Math.max(1, parseInt(page || "1", 10))
+  const parsedPage = parseInt(page || "1", 10)
+  const currentPage = Number.isNaN(parsedPage) ? 1 : Math.max(1, parsedPage)
 
   const allPosts = getAllPosts()
   const featuredPosts = getFeaturedPosts().slice(0, 2)
@@ -78,7 +84,7 @@ export default async function BlogPage({ searchParams }: PageProps) {
                         (cat: string) => (
                           <Link
                             key={cat}
-                            href={`/blog/kategoria/${cat.toLowerCase().replace(/\s+/g, "-")}`}
+                            href={`/blog/kategoria/${slugify(cat)}`}
                             className="relative z-10"
                           >
                             <Badge variant="secondary" className="hover:bg-secondary/80 cursor-pointer transition-colors">
@@ -146,7 +152,7 @@ export default async function BlogPage({ searchParams }: PageProps) {
                       .map((cat: string) => (
                         <Link
                           key={cat}
-                          href={`/blog/kategoria/${cat.toLowerCase().replace(/\s+/g, "-")}`}
+                          href={`/blog/kategoria/${slugify(cat)}`}
                           className="relative z-10"
                         >
                           <Badge variant="outline" className="text-xs hover:bg-secondary/80 cursor-pointer transition-colors">

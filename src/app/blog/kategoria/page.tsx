@@ -1,4 +1,4 @@
-import { getAllPosts } from "@/lib/posts"
+import { getAllPosts, slugify } from "@/lib/posts"
 import { Badge } from "@/components/ui/badge"
 import Link from "next/link"
 import type { Metadata } from "next"
@@ -7,6 +7,9 @@ import { PageHeader } from "@/components/PageHeader"
 export const metadata: Metadata = {
   title: "Kategorie",
   description: "Przeglądaj artykuły według kategorii",
+  alternates: {
+    canonical: "/blog/kategoria",
+  },
 }
 
 export default function CategoryIndexPage() {
@@ -14,7 +17,7 @@ export default function CategoryIndexPage() {
 
   const categoryCounts = posts.reduce<Record<string, number>>((acc, post) => {
     post.frontmatter.categories?.forEach((cat) => {
-      const slug = cat.toLowerCase().replace(/\s+/g, "-")
+      const slug = slugify(cat)
       acc[slug] = (acc[slug] || 0) + 1
     })
     return acc

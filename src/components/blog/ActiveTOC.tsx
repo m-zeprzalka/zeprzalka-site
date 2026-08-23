@@ -15,8 +15,6 @@ interface Heading {
 }
 
 export function ActiveTOC({ headings }: { headings: Heading[] }) {
-  if (headings.length === 0) return null
-
   const [activeId, setActiveId] = useState<string>("")
 
   useEffect(() => {
@@ -38,6 +36,8 @@ export function ActiveTOC({ headings }: { headings: Heading[] }) {
 
     return () => observer.disconnect()
   }, [headings])
+
+  if (headings.length === 0) return null
 
   return (
     <SidebarMenu>

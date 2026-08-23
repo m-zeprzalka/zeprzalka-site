@@ -1,4 +1,4 @@
-import { getPostsByCategory, getAllPosts } from "@/lib/posts"
+import { getPostsByCategory, getAllCategorySlugs, slugify } from "@/lib/posts"
 import { notFound } from "next/navigation"
 import { Badge } from "@/components/ui/badge"
 import { CalendarDays, Clock } from "lucide-react"
@@ -12,16 +12,7 @@ interface PageProps {
 }
 
 export async function generateStaticParams() {
-  const posts = getAllPosts()
-  const categories = new Set<string>()
-
-  posts.forEach((post) => {
-    post.frontmatter.categories?.forEach((cat) => {
-      categories.add(cat.toLowerCase().replace(/\s+/g, "-"))
-    })
-  })
-
-  return Array.from(categories).map((kategoria) => ({ kategoria }))
+  return getAllCategorySlugs().map((kategoria) => ({ kategoria }))
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
@@ -29,8 +20,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const categoryName = decodeURIComponent(kategoria).replace(/-/g, " ")
 
   return {
-    title: categoryName,
+    title: `Kategoria: ${categoryName}`,
     description: `Artykuły w kategorii: ${categoryName}`,
+    alternates: {
+      canonical: `/blog/kategoria/${kategoria}`,
+    },
   }
 }
 
@@ -67,7 +61,7 @@ export default async function KategoriaPage({ params }: PageProps) {
                 {(post.frontmatter.categories || []).slice(0, 2).map((cat: string) => (
                   <Link
                     key={cat}
-                    href={`/blog/kategoria/${cat.toLowerCase().replace(/\s+/g, "-")}`}
+                    href={`/blog/kategoria/${slugify(cat)}`}
                     className="relative z-10"
                   >
                     <Badge variant="outline" className="text-xs hover:bg-secondary/80 cursor-pointer transition-colors">

@@ -177,7 +177,7 @@ function getRandomChar() {
   return chars[Math.floor(Math.random() * chars.length)]
 }
 
-export function Logo() {
+export function Logo({ onClick }: { onClick?: () => void }) {
   const [animated, setAnimated] = useState("⨝")
 
   useEffect(() => {
@@ -186,7 +186,7 @@ export function Logo() {
   }, [])
 
   return (
-    <Link href="/" className="flex items-center gap-2 text-xl">
+    <Link href="/" onClick={onClick} className="flex items-center gap-2 text-xl">
       <span
         className="transition-all duration-150 inline-block"
         style={{ width: "2ch", textAlign: "center" }}

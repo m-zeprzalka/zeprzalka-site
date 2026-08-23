@@ -114,7 +114,7 @@ function LazyVideo({ src, title, category }: { src: string; title: string; categ
   )
 }
 
-export function GalleryB() {
+export function Gallery() {
   return (
     <section className="flex flex-col justify-center p-4 py-6 md:py-8 lg:py-12 xl:py-16 xl:min-h-[calc(100vh-4rem)] container mx-auto">
       <div className="grid gap-6 lg:gap-8 xl:gap-10 lg:grid-cols-12">

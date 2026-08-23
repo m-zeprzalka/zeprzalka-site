@@ -1,6 +1,6 @@
 import { Separator } from "@/components/ui/separator"
 import { Mail, MapPin, Clock } from "lucide-react"
-import { KontaktForm } from "./KontaktForm"
+import { ContactForm } from "@/components/ContactForm"
 import type { Metadata } from "next"
 import { PageHeader } from "@/components/PageHeader"
 
@@ -8,6 +8,9 @@ export const metadata: Metadata = {
   title: "Kontakt",
   description:
     "Skontaktuj się z Michałem Zeprzałką. Bezpłatna konsultacja dla nowych projektów webowych, design systemów i rozwiązań AI.",
+  alternates: {
+    canonical: "/kontakt",
+  },
 }
 
 const info = [
@@ -77,8 +80,8 @@ export default function KontaktPage() {
         </aside>
 
         {/* Formularz */}
-        <div className="lg:col-span-8 xl:col-span-9">
-          <KontaktForm />
+        <div className="lg:col-span-8 xl:col-span-9 relative">
+          <ContactForm />
         </div>
       </div>
     </div>

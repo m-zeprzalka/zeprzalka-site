@@ -1,4 +1,4 @@
-import { getAllPosts } from "@/lib/posts"
+import { getPostsByTag, getAllTagSlugs, slugify } from "@/lib/posts"
 import { notFound } from "next/navigation"
 import { Badge } from "@/components/ui/badge"
 import { CalendarDays, Clock } from "lucide-react"
@@ -12,16 +12,7 @@ interface PageProps {
 }
 
 export async function generateStaticParams() {
-  const posts = getAllPosts()
-  const tags = new Set<string>()
-
-  posts.forEach((post) => {
-    post.frontmatter.tags?.forEach((tag) => {
-      tags.add(tag.toLowerCase().replace(/\s+/g, "-"))
-    })
-  })
-
-  return Array.from(tags).map((tag) => ({ tag }))
+  return getAllTagSlugs().map((tag) => ({ tag }))
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
@@ -31,20 +22,16 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   return {
     title: `#${tagName}`,
     description: `Artykuły o tematyce: ${tagName}`,
+    alternates: {
+      canonical: `/blog/tag/${tag}`,
+    },
   }
 }
 
 export default async function TagPage({ params }: PageProps) {
   const { tag } = await params
-  const posts = getAllPosts()
-  const tagSlug = tag.toLowerCase()
   const tagName = decodeURIComponent(tag).replace(/-/g, " ")
-
-  const taggedPosts = posts.filter((post) =>
-    post.frontmatter.tags?.some(
-      (t) => t.toLowerCase().replace(/\s+/g, "-") === tagSlug
-    )
-  )
+  const taggedPosts = getPostsByTag(tag.toLowerCase())
 
   if (taggedPosts.length === 0) {
     notFound()
@@ -74,7 +61,7 @@ export default async function TagPage({ params }: PageProps) {
                 {(post.frontmatter.categories || []).slice(0, 2).map((cat: string) => (
                   <Link
                     key={cat}
-                    href={`/blog/kategoria/${cat.toLowerCase().replace(/\s+/g, "-")}`}
+                    href={`/blog/kategoria/${slugify(cat)}`}
                     className="relative z-10"
                   >
                     <Badge variant="outline" className="text-xs hover:bg-secondary/80 cursor-pointer transition-colors">

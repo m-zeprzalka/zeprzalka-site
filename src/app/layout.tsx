@@ -23,35 +23,27 @@ export const viewport: Viewport = {
   maximumScale: 5,
 }
 
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://zeprzalka.com"
+
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: {
     default: "Michał Zeprzałka - Digital Solutions Architect",
     template: "%s | Michał Zeprzałka",
   },
   description:
-    "Ponad 12+ lat doświadczenia w tworzeniu innowacyjnych rozwiązań webowych i multimedialnych",
-  keywords: [
-    "web development",
-    "digital architect",
-    "design",
-    "full-stack",
-    "design systems",
-    "UX",
-    "UI",
-    "front-end",
-    "graphic design",
-    "branding",
-    "digital solutions",
-  ],
-  authors: [{ name: "Michał Zeprzałka" }],
+    "Strony internetowe, aplikacje webowe, design i integracje AI. Ponad 12 lat doświadczenia w tworzeniu rozwiązań webowych i multimedialnych dla biznesu.",
+  authors: [{ name: "Michał Zeprzałka", url: SITE_URL }],
+  creator: "Michał Zeprzałka",
   openGraph: {
     type: "website",
     locale: "pl_PL",
+    url: SITE_URL,
     title: "Michał Zeprzałka - Digital Solutions Architect",
-    description: "Przekształcam ambitne wizje w cyfrową rzeczywistość",
-    siteName: "Michał Zeprzałka Portfolio",
+    description:
+      "Strony internetowe, aplikacje webowe, design i integracje AI dla biznesu.",
+    siteName: "Michał Zeprzałka - Portfolio i Blog",
   },
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://zeprzalka.com"),
   robots: {
     index: true,
     follow: true,
@@ -59,7 +51,15 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Michał Zeprzałka - Digital Solutions Architect",
-    description: "Przekształcam ambitne wizje w cyfrową rzeczywistość",
+    description:
+      "Strony internetowe, aplikacje webowe, design i integracje AI dla biznesu.",
+  },
+  alternates: {
+    types: {
+      "application/rss+xml": [
+        { url: "/feed.xml", title: "Blog - Michał Zeprzałka" },
+      ],
+    },
   },
 }
 
@@ -77,7 +77,7 @@ export default function RootLayout({
           <ScrollToTop />
           <Bar />
           <Header />
-          <main role="main">{children}</main>
+          <main>{children}</main>
           <Footer />
         </ThemeProvider>
       </body>

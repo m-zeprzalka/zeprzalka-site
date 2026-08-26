@@ -148,6 +148,33 @@
   }
 }
 
+/*
+ * Wydruk (i eksport do PDF) pomija chrom interfejsu: nagłówek, stopkę, pasek
+ * postępu i przyciski. Zostaje sama treść, na białym tle i czarnym tekstem.
+ */
+@media print {
+  body > div:first-child,
+  header,
+  footer,
+  [data-print-hide] {
+    display: none !important;
+  }
+
+  html,
+  body {
+    background: #fff !important;
+    color: #000 !important;
+  }
+
+  main {
+    padding: 0 !important;
+  }
+
+  a {
+    text-decoration: underline;
+  }
+}
+
 main table {
   display: block;
   width: 100%;

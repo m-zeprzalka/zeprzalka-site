@@ -13,18 +13,38 @@ const securityHeaders = [
     key: "Permissions-Policy",
     value: "camera=(), microphone=(), geolocation=()",
   },
-  // Częściowe CSP bez script-src/style-src — pełne (nonce) wymaga proxy,
-  // opisane w docs/ROADMAP.md. Te dyrektywy nie psują niczego, a domykają
-  // realne wektory: osadzanie w ramkach, wstrzykiwanie <base> i <object>,
-  // przekierowanie formularzy na obce originy.
+  /*
+   * Polityka bezpieczeństwa treści oparta na źródłach.
+   *
+   * Świadomie bez nonce'ów: w App Routerze nonce wymusza renderowanie każdej
+   * strony na żądanie, a serwis ma ponad 200 stron statycznych — zamieniłby
+   * je w dynamiczne, tracąc cache brzegowy. Zamiast tego domykamy origin:
+   * skrypty, style, obrazy, czcionki, media i połączenia wolno pobierać
+   * wyłącznie z własnej domeny (plus YouTube w ramkach i beacon Web Vitals).
+   * To nie zatrzymuje wstrzyknięcia inline, ale odcina wyprowadzenie danych
+   * i ładowanie obcego kodu — realne wektory dla serwisu bez logowania.
+   */
   {
     key: "Content-Security-Policy",
     value: [
+      "default-src 'self'",
+      // Next osadza dane strumienia w inline'owych <script>; bez nonce'a
+      // musi je objąć 'unsafe-inline'. Kluczowe jest to, że lista źródeł
+      // nie zawiera żadnej obcej domeny.
+      "script-src 'self' 'unsafe-inline'",
+      "style-src 'self' 'unsafe-inline'",
+      "img-src 'self' data: blob:",
+      "media-src 'self'",
+      "font-src 'self' data:",
+      "connect-src 'self' https://vitals.vercel-insights.com",
+      "worker-src 'self' blob:",
+      "manifest-src 'self'",
       "object-src 'none'",
       "base-uri 'self'",
       "frame-ancestors 'self'",
       "form-action 'self'",
       "frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com",
+      "upgrade-insecure-requests",
     ].join("; "),
   },
 ]

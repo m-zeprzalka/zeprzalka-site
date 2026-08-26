@@ -1,7 +1,9 @@
 "use server"
 
+import { headers } from "next/headers"
 import nodemailer from "nodemailer"
 import { z } from "zod"
+import { checkRateLimit, clientKey } from "@/lib/rate-limit"
 
 export interface ContactFormState {
   success: boolean
@@ -49,6 +51,17 @@ export async function sendContactEmail(
   // Zwracamy "sukces", aby bot nie wiedział, że został odfiltrowany.
   if (formData.get("company")) {
     return { success: true, message: "Wiadomość wysłana. Odezwę się wkrótce!" }
+  }
+
+  // Limit zgłoszeń z jednego adresu — honeypot zatrzymuje proste boty,
+  // ale nie kogoś, kto po prostu wysyła formularz w kółko.
+  const { allowed, retryAfter } = checkRateLimit(clientKey(await headers()))
+  if (!allowed) {
+    const minutes = Math.max(1, Math.ceil(retryAfter / 60))
+    return {
+      success: false,
+      message: `Za dużo wiadomości z tego adresu. Spróbuj ponownie za ${minutes} min lub napisz na m@zeprzalka.com.`,
+    }
   }
 
   const result = contactSchema.safeParse({

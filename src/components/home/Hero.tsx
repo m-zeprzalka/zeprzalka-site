@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react"
 import { cn } from "@/lib/utils"
+import { useReducedMotion } from "@/hooks/use-reduced-motion"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { MousePointerClick } from "lucide-react"
@@ -10,12 +11,19 @@ import Link from "next/link"
 export function Hero() {
   const [isLoaded, setIsLoaded] = useState(false)
   const videoRef = useRef<HTMLVideoElement>(null)
+  const reducedMotion = useReducedMotion()
 
   useEffect(() => {
     if (videoRef.current && videoRef.current.readyState >= 3) {
       setIsLoaded(true)
     }
   }, [])
+
+  // Zapętlone wideo to ruch ciągły. Przy ustawieniu „ogranicz ruch"
+  // zostaje pierwsza klatka zamiast odtwarzania.
+  useEffect(() => {
+    if (reducedMotion) videoRef.current?.pause()
+  }, [reducedMotion])
 
   return (
     <section className="flex flex-col gap-6 lg:gap-8 xl:gap-10 p-4 py-6 md:py-8 lg:py-12 xl:py-16 min-h-[calc(100vh-4rem)] container mx-auto">
@@ -47,6 +55,9 @@ export function Hero() {
           autoPlay muted loop playsInline 
           poster="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
           onLoadedData={() => setIsLoaded(true)}
+          onPlay={(event) => {
+            if (reducedMotion) event.currentTarget.pause()
+          }}
           className={cn("absolute inset-0 w-full h-full object-cover transition-opacity duration-1000", isLoaded ? "opacity-100" : "opacity-0")}
         >
           {/* WAŻNE: Najpierw lżejszy format WebM */}

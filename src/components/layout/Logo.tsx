@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import Link from "next/link"
+import { useReducedMotion } from "@/hooks/use-reduced-motion"
 
 const chars = [
   "⍤",
@@ -179,11 +180,15 @@ function getRandomChar() {
 
 export function Logo({ onClick }: { onClick?: () => void }) {
   const [animated, setAnimated] = useState("⨝")
+  const reducedMotion = useReducedMotion()
 
   useEffect(() => {
+    // Znak podmienia się co sekundę — to ruch ciągły, więc przy ustawieniu
+    // „ogranicz ruch" sygnet zostaje statyczny.
+    if (reducedMotion) return
     const interval = setInterval(() => setAnimated(getRandomChar()), 1000)
     return () => clearInterval(interval)
-  }, [])
+  }, [reducedMotion])
 
   return (
     <Link href="/" onClick={onClick} className="flex items-center gap-2 text-xl">

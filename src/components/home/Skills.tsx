@@ -84,7 +84,7 @@ export function Skills() {
               >
                 <AccordionTrigger className="py-8 md:py-10 lg:py-12 hover:no-underline">
                   <div className="flex items-center gap-4 lg:gap-6 w-full">
-                    <span className="text-2xl md:text-3xl lg:text-4xl xl:text-5xl text-muted-foreground/30">
+                    <span className="text-2xl md:text-3xl lg:text-4xl xl:text-5xl text-muted-foreground/80">
                       {skill.number}
                     </span>
                     <h2 className="text-xl sm:text-3xl md:text-4xl xl:text-5xl">

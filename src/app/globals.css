@@ -125,8 +125,27 @@
 :where(button, [role="button"]):not([disabled]) {
   cursor: pointer;
 }
-html {
-  scroll-behavior: smooth;
+/* Płynne przewijanie tylko dla osób, które nie prosiły o mniej ruchu. */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+/*
+ * Ustawienie systemowe „ogranicz ruch" wyłącza animacje i przejścia w całym
+ * serwisie. Nie usuwamy ich całkowicie (zerowy czas trwania psułby zdarzenia
+ * transitionend), tylko skracamy do niezauważalnych.
+ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 main table {

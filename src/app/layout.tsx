@@ -69,10 +69,15 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="pl" suppressHydrationWarning>
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+    // Zmienne krojów muszą siedzieć na <html>: Tailwind v4 ustawia
+    // font-family właśnie na tym elemencie, więc deklaracja na <body>
+    // była o poziom za nisko i serwis renderował się krojem systemowym.
+    <html
+      lang="pl"
+      className={`${geistSans.variable} ${geistMono.variable}`}
+      suppressHydrationWarning
+    >
+      <body className="antialiased">
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
           <ScrollToTop />
           <Bar />

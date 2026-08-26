@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { useState, useEffect, useRef } from "react"
 import { cn } from "@/lib/utils"
+import { useReducedMotion } from "@/hooks/use-reduced-motion"
 
 const galleryItems = [
   {
@@ -69,6 +70,7 @@ function LazyVideo({ src, title, category }: { src: string; title: string; categ
   const { ref, inView } = useInView({ triggerOnce: true, rootMargin: "600px" })
   const [isLoaded, setIsLoaded] = useState(false)
   const videoRef = useRef<HTMLVideoElement>(null)
+  const reducedMotion = useReducedMotion()
 
   useEffect(() => {
     if (videoRef.current && videoRef.current.readyState >= 3) {
@@ -76,12 +78,21 @@ function LazyVideo({ src, title, category }: { src: string; title: string; categ
     }
   }, [])
 
+  // Osiem zapętlonych kadrów naraz to dużo ruchu — przy ustawieniu
+  // „ogranicz ruch" każdy zatrzymuje się na pierwszej klatce.
+  useEffect(() => {
+    if (reducedMotion) videoRef.current?.pause()
+  }, [reducedMotion])
+
   return (
     <div ref={ref} className="relative aspect-video w-full bg-muted/30 -my-6">
       {inView && (
         <video
           ref={videoRef}
           onLoadedData={() => setIsLoaded(true)}
+          onPlay={(event) => {
+            if (reducedMotion) event.currentTarget.pause()
+          }}
           poster="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
           className={cn(
             "w-full h-full object-cover block transition-opacity duration-1000",

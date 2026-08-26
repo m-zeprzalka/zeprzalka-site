@@ -11,6 +11,7 @@ import { cn } from "@/lib/utils"
 
 const navLinks = [
   { href: "/", label: "Start" },
+  { href: "/uslugi", label: "Usługi" },
   { href: "/blog", label: "Blog" },
   { href: "/o-mnie", label: "O mnie" },
   { href: "/kontakt", label: "Kontakt" },
@@ -60,7 +61,7 @@ export function MobileNav() {
           </div>
 
           {/* Linki */}
-          <nav className="flex flex-col px-6 py-2">
+          <nav aria-label="Nawigacja mobilna" className="flex flex-col px-6 py-2">
             {navLinks.map(({ href, label }) => {
               const isActive =
                 href === "/" ? pathname === "/" : pathname.startsWith(href)

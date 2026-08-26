@@ -4,6 +4,7 @@ import { ModeToggle } from "@/components/Toggle"
 import { MobileNav } from "@/components/layout/MobileNav"
 
 const navLinks = [
+  { href: "/uslugi", label: "Usługi" },
   { href: "/blog", label: "Blog" },
   { href: "/o-mnie", label: "O mnie" },
   { href: "/kontakt", label: "Kontakt" },
@@ -16,7 +17,10 @@ export function Header() {
         <Logo />
         <div className="flex items-center gap-2">
           {/* Desktop nav */}
-          <nav className="hidden md:flex items-center gap-6 mr-2">
+          <nav
+            aria-label="Nawigacja główna"
+            className="hidden md:flex items-center gap-6 mr-2"
+          >
             {navLinks.map(({ href, label }) => (
               <Link
                 key={href}

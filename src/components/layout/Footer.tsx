@@ -1,4 +1,5 @@
 import Link from "next/link"
+import { SOCIAL_PROFILES } from "@/lib/site"
 
 export function Footer() {
   return (
@@ -18,8 +19,14 @@ export function Footer() {
 
           {/* Navigation Links */}
           <div className="space-y-4">
-            <h3 className="font-semibold">Nawigacja</h3>
-            <nav className="flex flex-col space-y-2">
+            <h2 className="font-semibold" id="footer-nav">Nawigacja</h2>
+            <nav aria-labelledby="footer-nav" className="flex flex-col space-y-2">
+              <Link
+                href="/uslugi"
+                className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+              >
+                Usługi
+              </Link>
               <Link
                 href="/blog"
                 className="text-sm text-muted-foreground hover:text-foreground transition-colors"
@@ -43,24 +50,19 @@ export function Footer() {
 
           {/* Social Links */}
           <div className="space-y-4">
-            <h3 className="font-semibold">Social</h3>
-            <nav className="flex flex-col space-y-2">
-              <Link
-                href="https://github.com/m-zeprzalka"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-              >
-                GitHub
-              </Link>
-              <Link
-                href="https://www.facebook.com/michalzeprzalka"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-              >
-                Facebook
-              </Link>
+            <h2 className="font-semibold" id="footer-social">Social</h2>
+            <nav aria-labelledby="footer-social" className="flex flex-col space-y-2">
+              {SOCIAL_PROFILES.map(({ label, url }) => (
+                <Link
+                  key={label}
+                  href={url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  {label}
+                </Link>
+              ))}
             </nav>
           </div>
         </div>

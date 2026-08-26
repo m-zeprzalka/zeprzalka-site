@@ -1,0 +1,402 @@
+/*
+ * Style wyłącznie dla /main-third (importowane w page.tsx).
+ * Paradygmat: karta katalogowa — widoczna siatka 12 kolumn, linie włosowe,
+ * typografia zmienna Archivo (oś szerokości jako akcent) i ruch sterowany
+ * osią przewijania, bez ani jednej linii JavaScriptu.
+ * Zasięg: selektory `m3-` oraz atrybut `data-rise` wewnątrz `.main-third`.
+ */
+
+.main-third {
+  --m3-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --m3-display: var(--font-m3-display), var(--font-geist-sans), "Helvetica Neue",
+    Arial, sans-serif;
+  --m3-mono: var(--font-geist-mono), ui-monospace, monospace;
+  /*
+   * Geist na tekst. Globalnie `--font-geist-sans` jest deklarowane na <body>,
+   * a Tailwind ustawia font-family na <html> — czyli o poziom wyżej niż
+   * zmienna. Tutaj, wewnątrz <body>, zmienna już istnieje.
+   */
+  font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+}
+
+/* ---------- Typografia ---------- */
+
+.m3-h1,
+.m3-h2,
+.m3-h3,
+.m3-row-title {
+  font-family: var(--m3-display);
+  text-wrap: balance;
+}
+
+.m3-h1 {
+  font-size: clamp(2.75rem, 10.5vw, 9.5rem);
+  font-weight: 500;
+  font-stretch: 78%;
+  line-height: 0.86;
+  letter-spacing: -0.045em;
+}
+
+/* Akcent bez drugiego kroju: ta sama rodzina, inne miejsce na osiach. */
+.m3-strong {
+  font-weight: 800;
+  font-stretch: 96%;
+}
+
+.m3-h2 {
+  font-size: clamp(2rem, 4.6vw, 4rem);
+  font-weight: 600;
+  font-stretch: 84%;
+  line-height: 0.92;
+  letter-spacing: -0.035em;
+}
+
+.m3-h3 {
+  font-size: clamp(1.375rem, 2.8vw, 2.5rem);
+  font-weight: 600;
+  font-stretch: 88%;
+  line-height: 1.02;
+  letter-spacing: -0.03em;
+}
+
+.m3-row-title {
+  font-size: 1rem;
+  font-weight: 600;
+  font-stretch: 92%;
+  line-height: 1.25;
+  letter-spacing: -0.015em;
+  text-wrap: pretty;
+}
+
+@media (min-width: 1024px) {
+  .m3-row-title {
+    font-size: 1.25rem;
+  }
+}
+
+.m3-subtitle {
+  font-size: clamp(1.0625rem, 1.6vw, 1.5rem);
+  line-height: 1.45;
+  color: var(--muted-foreground);
+  text-wrap: pretty;
+}
+
+.m3-lead {
+  font-size: 1rem;
+  line-height: 1.55;
+  color: var(--muted-foreground);
+  text-wrap: pretty;
+}
+
+.m3-body {
+  font-size: 1.0625rem;
+  line-height: 1.6;
+  color: var(--muted-foreground);
+  text-wrap: pretty;
+}
+
+@media (min-width: 768px) {
+  .m3-body {
+    font-size: 1.25rem;
+  }
+}
+
+/* Warstwa techniczna: etykiety, numery, podpisy, listy narzędzi. */
+.m3-label,
+.m3-caption,
+.m3-specs {
+  font-family: var(--m3-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+
+.m3-num {
+  font-variant-numeric: tabular-nums;
+}
+
+.m3-caption {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.m3-caption h3 {
+  font-weight: 500;
+  color: var(--foreground);
+}
+
+.m3-specs {
+  display: flex;
+  flex-direction: column;
+  letter-spacing: 0.08em;
+  color: var(--foreground);
+}
+
+.m3-specs li {
+  padding: 0.625rem 0;
+  border-top: 1px solid color-mix(in oklch, var(--border) 70%, transparent);
+}
+
+.m3-specs li:last-child {
+  border-bottom: 1px solid color-mix(in oklch, var(--border) 70%, transparent);
+}
+
+/* ---------- Wejście hero (keyframes, bez scrolla) ---------- */
+
+@keyframes m3-fade-up {
+  from {
+    opacity: 0;
+    translate: 0 1.25rem;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+.m3-enter {
+  animation: m3-fade-up 0.65s var(--m3-ease) both;
+  animation-delay: calc(40ms + var(--i, 0) * 55ms);
+}
+
+/* Kurtyna: blok nagłówka wjeżdża spod własnej krawędzi. */
+.m3-curtain {
+  display: block;
+  overflow: hidden;
+  /* zapas na znaki podrzędne (j, y, p) — inaczej maska je przycina */
+  padding-bottom: 0.14em;
+  margin-bottom: -0.14em;
+}
+
+@keyframes m3-curtain-up {
+  from {
+    translate: 0 110%;
+  }
+  to {
+    translate: 0 0;
+  }
+}
+
+/*
+ * Czas trwania jest świadomie krótki: dopóki wiersz stoi za maską, przeglądarka
+ * nie liczy go jako namalowanej treści, więc każda dziesiąta sekundy kurtyny
+ * to bezpośrednio gorszy LCP. 0,7 s wystarcza na czytelny gest.
+ */
+.m3-curtain-in {
+  display: block;
+  animation: m3-curtain-up 0.7s var(--m3-ease) both;
+  animation-delay: calc(var(--i, 0) * 60ms);
+}
+
+/* ---------- Ruch sterowany scrollem (zero JS) ---------- */
+
+/*
+ * Klatki startowe celowo NIE ukrywają treści (bez opacity, bez clip do zera).
+ * Oś `view()` bywa nieaktywna — przy druku, w trybie zrzutu całej strony albo
+ * gdy dokument nie ma czego przewijać. Wtedy animacja zatrzymuje się na stanie
+ * początkowym; przy samym przesunięciu jest to niewidoczna różnica, przy
+ * wygaszeniu byłaby to pusta strona.
+ */
+@keyframes m3-rise {
+  from {
+    translate: 0 2.25rem;
+  }
+  to {
+    translate: 0 0;
+  }
+}
+
+@keyframes m3-band {
+  from {
+    clip-path: inset(0 7% 0 7%);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    /* Postęp animacji = pozycja elementu w oknie. Stagger robimy zakresem,
+       nie opóźnieniem — na osi przewijania „czas” płynie z ruchem strony. */
+    [data-rise] {
+      animation: m3-rise linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry calc(36% + var(--rise-i, 0) * 7%);
+    }
+
+    .m3-band {
+      animation: m3-band linear both;
+      animation-timeline: view();
+      animation-range: entry 5% entry 85%;
+    }
+  }
+}
+
+/* ---------- Pas realizacji ---------- */
+
+.m3-strip {
+  --m3-shot-h: clamp(15rem, 44vh, 28rem);
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+  padding-bottom: 0.75rem;
+  scroll-snap-type: x mandatory;
+  overscroll-behavior-x: contain;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+
+.m3-strip:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 6px;
+}
+
+/* Jedna wysokość dla wszystkich, szerokość z proporcji materiału. */
+.m3-shot {
+  flex: none;
+  width: min(86vw, calc(var(--m3-shot-h) * var(--ratio, 1.6)));
+  scroll-snap-align: start;
+}
+
+@media (min-width: 768px) {
+  .m3-strip {
+    gap: 1.5rem;
+  }
+  .m3-shot {
+    width: min(60vw, calc(var(--m3-shot-h) * var(--ratio, 1.6)));
+  }
+}
+
+/* ---------- Detale ---------- */
+
+/* Plus, który przy otwarciu staje się minusem. */
+.m3-toggle {
+  position: relative;
+  display: block;
+  width: 1rem;
+  height: 1rem;
+}
+
+.m3-toggle::before,
+.m3-toggle::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: currentColor;
+  transition: rotate 0.45s var(--m3-ease);
+}
+
+.m3-toggle::after {
+  rotate: 90deg;
+}
+
+[data-state="open"] .m3-toggle::after {
+  rotate: 0deg;
+}
+
+/* Siatka odniesienia — 12 kolumn systemu, tylko na szerokich ekranach. */
+.m3-rules {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0;
+}
+
+@media (min-width: 1280px) {
+  .m3-rules {
+    opacity: 0.55;
+  }
+}
+
+/* ---------- Odwrócony blok (kontakt) ---------- */
+
+/*
+ * Blok przełącza się na paletę przeciwną do aktualnego motywu — wartości są
+ * kopią tokenów z globals.css (baza neutral), więc wszystkie komponenty
+ * shadcn działają bez nadpisywania kolorów.
+ */
+.main-third .m3-invert {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.205 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.205 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.922 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.269 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 18%);
+  --input: oklch(1 0 0 / 25%);
+  --ring: oklch(0.556 0 0);
+  background-color: var(--background);
+  color: var(--foreground);
+}
+
+.dark .main-third .m3-invert {
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  --accent: oklch(0.97 0 0);
+  --accent-foreground: oklch(0.205 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(0.85 0 0);
+  --input: oklch(0.85 0 0);
+  --ring: oklch(0.708 0 0);
+}
+
+/* ---------- Dostępność / degradacja ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .m3-enter,
+  .m3-curtain-in,
+  [data-rise],
+  .m3-band {
+    animation: none;
+  }
+  .m3-toggle::before,
+  .m3-toggle::after {
+    transition: none;
+  }
+  .m3-strip {
+    scroll-snap-type: none;
+  }
+}
+
+@media print {
+  .m3-enter,
+  .m3-curtain-in,
+  [data-rise],
+  .m3-band {
+    animation: none;
+  }
+  .m3-rules {
+    display: none;
+  }
+  .m3-strip {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    overflow: visible;
+  }
+}

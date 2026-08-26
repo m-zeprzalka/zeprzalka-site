@@ -1,0 +1,197 @@
+/*
+ * Style wyłącznie dla /main-secondary (importowane w page.tsx).
+ * Zawierają to, czego nie da się (czytelnie) wyrazić utility-classami:
+ * typografię display, krzywe ruchu, animacje wejścia i scroll-driven.
+ * Zasięg: selektory z prefiksem `ms-` oraz atrybut `data-reveal`.
+ */
+
+.main-secondary {
+  --ms-ease: cubic-bezier(0.2, 0.65, 0.1, 1);
+  --ms-duration: 0.9s;
+  /*
+   * Geist jako font tekstu. Globalnie zmienna --font-geist-sans jest
+   * deklarowana na <body>, a Tailwind ustawia font-family na <html>,
+   * gdzie zmiennej jeszcze nie ma — w efekcie strona renderuje się
+   * fontem systemowym. Tu, wewnątrz <body>, zmienna już istnieje.
+   */
+  font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+}
+
+/* ---------- Typografia ---------- */
+
+.ms-h1,
+.ms-h2,
+.ms-h3 {
+  font-family: var(--font-ms-display), var(--font-geist-sans), sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  text-wrap: balance;
+}
+
+.ms-h1 {
+  max-width: 16ch;
+  font-size: clamp(2.75rem, 8.5vw, 8rem);
+  line-height: 0.92;
+  letter-spacing: -0.035em;
+}
+
+.ms-h2 {
+  font-size: clamp(2.5rem, 6vw, 5.5rem);
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+}
+
+.ms-h3 {
+  font-size: clamp(1.75rem, 4vw, 3.5rem);
+  line-height: 1.02;
+  letter-spacing: -0.025em;
+}
+
+.ms-accent {
+  font-family: var(--font-ms-accent), Georgia, "Times New Roman", serif;
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+}
+
+.ms-lead {
+  max-width: 28rem;
+  font-size: 1.125rem;
+  line-height: 1.5;
+  color: var(--muted-foreground);
+  text-wrap: pretty;
+}
+
+@media (min-width: 768px) {
+  .ms-lead {
+    font-size: 1.25rem;
+  }
+}
+
+/* Numeracja, metadane, podpisy — monospace jako warstwa „techniczna” */
+.ms-index,
+.ms-meta,
+.ms-caption,
+.ms-tags {
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+
+.ms-index {
+  font-variant-numeric: tabular-nums;
+}
+
+.ms-caption {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.ms-caption h3 {
+  font-weight: 500;
+  color: var(--foreground);
+}
+
+.ms-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  color: var(--foreground);
+}
+
+.ms-tags li:not(:last-child)::after {
+  content: "/";
+  margin-left: 1rem;
+  color: color-mix(in oklch, var(--muted-foreground) 50%, transparent);
+}
+
+/* ---------- Wejście (hero, CSS-only) ---------- */
+
+@keyframes ms-rise {
+  from {
+    opacity: 0;
+    translate: 0 0.6em;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+.ms-enter {
+  animation: ms-rise 0.8s var(--ms-ease) both;
+  animation-delay: calc(40ms + var(--i, 0) * 40ms);
+}
+
+/* ---------- Ujawnianie przy scrollu (IntersectionObserver → CSS) ---------- */
+
+[data-reveal] {
+  opacity: 0;
+  translate: 0 1.5rem;
+  transition:
+    opacity var(--ms-duration) var(--ms-ease),
+    translate var(--ms-duration) var(--ms-ease);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+[data-reveal][data-inview] {
+  opacity: 1;
+  translate: 0 0;
+}
+
+/* ---------- Scroll-driven (bez JS) — hero media ---------- */
+
+@keyframes ms-media-in {
+  from {
+    scale: 0.94;
+    opacity: 0.4;
+  }
+  to {
+    scale: 1;
+    opacity: 1;
+  }
+}
+
+@keyframes ms-media-out {
+  to {
+    opacity: 0.35;
+  }
+}
+
+@supports (animation-timeline: view()) {
+  .ms-media {
+    animation:
+      ms-media-in linear both,
+      ms-media-out linear both;
+    animation-timeline: view(), view();
+    animation-range:
+      entry 0% entry 70%,
+      exit 30% exit 100%;
+  }
+}
+
+/* ---------- Dostępność / degradacja ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .ms-enter,
+  .ms-media {
+    animation: none;
+  }
+  [data-reveal] {
+    opacity: 1;
+    translate: none;
+    transition: none;
+  }
+}
+
+/* Bez JavaScriptu nic nie zostaje ukryte */
+@media (scripting: none) {
+  [data-reveal] {
+    opacity: 1;
+    translate: none;
+  }
+}

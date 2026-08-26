@@ -71,10 +71,16 @@ const nextConfig: NextConfig = {
     ]
   },
 
-  // Optymalizacja obrazków wyłączona świadomie: limit transformacji na planie
-  // Vercel Hobby. Po przejściu na plan Pro usunąć tę linię (docs/ROADMAP.md).
+  /*
+   * Optymalizacja obrazków włączona po przejściu na plan Vercel Pro
+   * (wcześniej wyłączona przez limit transformacji na planie Hobby).
+   * Pliki źródłowe są już w WebP, ale dopiero to daje warianty rozmiarowe:
+   * telefon pobiera kadr dopasowany do ekranu, a nie pełne 1600 px.
+   */
   images: {
-    unoptimized: true,
+    formats: ["image/avif", "image/webp"],
+    // Rok — nazwy plików są wersjonowane treścią, więc cache może żyć długo.
+    minimumCacheTTL: 31536000,
   },
 }
 

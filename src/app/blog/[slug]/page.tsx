@@ -360,6 +360,7 @@ export default async function BlogPost({ params }: PageProps) {
                       src={post.frontmatter.image}
                       alt={post.frontmatter.title}
                       fill
+                      sizes="(min-width: 1280px) 60vw, 100vw"
                       className="object-cover transition-transform group-hover:scale-105"
                       priority
                     />

@@ -75,6 +75,7 @@ export default async function BlogPage({ searchParams }: PageProps) {
                       alt={post.frontmatter.title}
                       fill
                       priority
+                      sizes="(min-width: 768px) 50vw, 100vw"
                       className="object-cover transition-transform group-hover:scale-105"
                     />
                   </div>
@@ -142,6 +143,7 @@ export default async function BlogPage({ searchParams }: PageProps) {
                     alt={post.frontmatter.title}
                     fill
                     priority={currentPage === 1 && index < 3}
+                    sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
                     className="object-cover transition-transform group-hover:scale-105"
                   />
                 </div>

@@ -6,6 +6,7 @@ import Image from "next/image"
 import Link from "next/link"
 import type { Metadata } from "next"
 import { PageHeader } from "@/components/PageHeader"
+import { getTagLabel } from "@/lib/posts"
 
 interface PageProps {
   params: Promise<{ tag: string }>
@@ -17,7 +18,7 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { tag } = await params
-  const tagName = decodeURIComponent(tag).replace(/-/g, " ")
+  const tagName = getTagLabel(decodeURIComponent(tag))
 
   return {
     title: `#${tagName}`,
@@ -30,7 +31,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function TagPage({ params }: PageProps) {
   const { tag } = await params
-  const tagName = decodeURIComponent(tag).replace(/-/g, " ")
+  const tagName = getTagLabel(decodeURIComponent(tag))
   const taggedPosts = getPostsByTag(tag.toLowerCase())
 
   if (taggedPosts.length === 0) {
@@ -70,11 +71,11 @@ export default async function TagPage({ params }: PageProps) {
                   </Link>
                 ))}
               </div>
-              <h3 className="font-bold group-hover:text-primary transition-colors line-clamp-2">
+              <h2 className="font-bold group-hover:text-primary transition-colors line-clamp-2">
                 <Link href={`/blog/${post.slug}`} className="after:absolute after:inset-0">
                   {post.frontmatter.title}
                 </Link>
-              </h3>
+              </h2>
               <p className="text-sm text-muted-foreground line-clamp-2">
                 {post.frontmatter.description}
               </p>

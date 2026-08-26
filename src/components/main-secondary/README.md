@@ -20,7 +20,7 @@ Nie dotyka `src/components/home/*`, `src/app/page.tsx`, layoutu ani `globals.css
 Współdzielone z innymi wariantami (poza tym folderem):
 `src/lib/home-content.ts` (treść, metadane sekcji, JSON-LD),
 `src/components/media/SmartVideo.tsx`, `src/hooks/use-reduced-motion.ts`,
-`public/variants/posters/*.webp` (klatki z filmów — LCP i CLS = 0).
+`public/portfolio/*.webp` (klatki z filmów — LCP i CLS = 0).
 
 ## Decyzje
 

@@ -1,101 +1,122 @@
 # Strategia SEO — zeprzalka.com
 
-Cel: pozycja eksperta (web development + design + AI) i stały napływ
-zapytań o zlecenia z wyszukiwarki. Horyzont: pierwsze efekty 2–3 miesiące,
-stabilny ruch 6–12 miesięcy.
+Cel: pozycja eksperta (web development + design + AI) i stały napływ zapytań
+o zlecenia z wyszukiwarki. Horyzont: pierwsze efekty 2–3 miesiące, stabilny
+ruch 6–12 miesięcy.
+
+Stan na: 2026-08-26 (po wdrożeniu strony technicznej).
 
 ---
 
-## 1. Stan techniczny (wdrożone w audycie 2026-08-12)
+## 1. Stan techniczny
 
 | Obszar | Stan |
 | --- | --- |
-| Canonicale na wszystkich podstronach | ✅ (`alternates.canonical`) |
-| `metadataBase` + jeden adres kanoniczny | ✅ (wymaga decyzji www/apex — ROADMAP Etap 1) |
-| sitemap.xml (strony, wpisy, kategorie) | ✅ (tagi celowo poza — thin content) |
+| Adres kanoniczny zgodny z serwowaną domeną | ✅ `www` wszędzie (było: sprzeczne) |
+| Canonicale na wszystkich podstronach | ✅ |
+| `metadataBase` + jedno źródło adresu | ✅ `src/lib/site.ts` |
+| sitemap.xml (strony, wpisy, kategorie) | ✅ 38 adresów, tagi celowo poza |
 | robots.txt | ✅ |
 | RSS `/feed.xml` + `<link rel=alternate>` | ✅ |
 | JSON-LD: WebSite + Person (home) | ✅ |
 | JSON-LD: ProfilePage (/o-mnie) | ✅ |
-| JSON-LD: BlogPosting + BreadcrumbList (wpisy) | ✅ |
-| OG/Twitter cards + domyślny OG image | ✅ |
-| Meta description na każdej podstronie | ✅ |
+| JSON-LD: BlogPosting + BreadcrumbList (wpisy) | ✅ z `dateModified` |
+| JSON-LD: ProfessionalService + OfferCatalog (/uslugi) | ✅ nowe |
+| Dedykowany obraz OG 1200×630 | ✅ osobny dla każdego wpisu |
+| Meta description 140–160 znaków | ✅ wszystkie 27 wpisów |
+| Tytuły ≤ 60 znaków | ✅ wszystkie 27 wpisów |
 | Paginacja: canonical na /blog | ✅ |
 | `lang="pl"`, semantyczny HTML, breadcrumbs | ✅ |
-| Wydajność: SSG 196 stron, cache wideo | ✅ |
+| Dostępność (axe) | ✅ 0 naruszeń na każdym typie strony |
+| Wydajność (Lighthouse) | ✅ desktop 100, mobile 95, CLS 0 |
+| Weryfikacja w GSC / Bing | ⏳ kod gotowy, czeka na tokeny |
 
-**Do zrobienia (techniczne):** weryfikacja w Google Search Console +
-zgłoszenie sitemapy; Rich Results Test; PageSpeed na produkcji;
-dedykowany OG image 1200×630 (obecnie ogólny PNG).
+**Do zrobienia (poza kodem):** weryfikacja w Google Search Console i Bing
+(zmienne `GOOGLE_SITE_VERIFICATION`, `BING_SITE_VERIFICATION`), zgłoszenie
+sitemapy, Rich Results Test po wdrożeniu, PageSpeed na produkcji.
 
-## 2. Fundament: jedna domena, jeden adres
+## 2. Fundament: jedna domena, jeden adres ✅
 
-Najpilniejsza rzecz w całym SEO tego serwisu: **`NEXT_PUBLIC_SITE_URL`
-musi być identyczny z domeną primary w Vercel** (www albo apex — wybierz
-jedno). Dziś canonicale mówią `zeprzalka.com`, a strona żyje na
-`www.zeprzalka.com` — Google dostaje sprzeczne sygnały na każdej stronie.
+**Rozstrzygnięte.** Apex (`zeprzalka.com`) odpowiada przekierowaniem 308 na
+`www.zeprzalka.com` — to `www` jest domeną główną. Kod wskazywał apex, więc
+każda podstrona wysyłała wyszukiwarce sprzeczny sygnał: „mieszkam pod www, ale
+kanoniczny jestem pod apex, który i tak przekierowuje na www".
+
+Adres jest teraz w `src/lib/site.ts` i domyślnie wskazuje `www`. Pozostaje
+ustawić `NEXT_PUBLIC_SITE_URL=https://www.zeprzalka.com` w Vercelu albo usunąć
+tę zmienną (wartość domyślna jest poprawna).
 
 ## 3. Strategia treści — klastry tematyczne
 
-Blog ma już 26 wpisów, głównie edukacyjnych (HTML, CSS, kursy). To buduje
-ruch, ale nie zapytania ofertowe. Docelowa struktura: **3 klastry**, każdy
-z treściami edukacyjnymi (ruch) + komercyjnymi (konwersja):
+Blog ma 27 wpisów, głównie edukacyjnych. To buduje ruch, ale nie zapytania
+ofertowe. Docelowa struktura: **3 klastry**, każdy z treściami edukacyjnymi
+(ruch) i komercyjnymi (konwersja).
 
-**Klaster A — "Strona internetowa dla firmy" (komercyjny, priorytet)**
-- "Ile kosztuje strona internetowa w 2026?" ← najwyższa intencja zakupowa
-- "Strona na WordPressie czy Next.js — co wybrać dla firmy?"
-- "Ile trwa zrobienie strony internetowej? Proces krok po kroku"
-- "Czego wymagać od wykonawcy strony (checklist dla zamawiającego)"
-- Każdy wpis z CTA → /kontakt ("bezpłatna wycena").
+**Klaster A — „Strona internetowa dla firmy" (komercyjny, priorytet)**
+- ✅ `/uslugi` — strona ofertowa z widełkami cen (główny cel klastra).
+- „Ile kosztuje strona internetowa w 2026?" ← najwyższa intencja zakupowa;
+  wpis powinien linkować do `/uslugi`, nie tylko do formularza.
+- „Strona na WordPressie czy Next.js — co wybrać dla firmy?"
+- „Ile trwa zrobienie strony? Proces krok po kroku"
+- „Czego wymagać od wykonawcy strony (checklist dla zamawiającego)"
 
-**Klaster B — "AI w małej firmie" (wyróżnik ekspercki)**
+**Klaster B — „AI w małej firmie" (wyróżnik ekspercki)**
 - Case study aifeed.pl (jak zbudowałem autonomiczny serwis AI)
-- "Automatyzacje AI dla małych firm — 5 realnych wdrożeń"
-- "Integracja ChatGPT/Claude ze stroną firmową — od czego zacząć"
-- Tu jest najmniejsza konkurencja po polsku i najlepszy efekt eksperta.
+- „Automatyzacje AI dla małych firm — 5 realnych wdrożeń"
+- „Integracja modelu językowego ze stroną firmową — od czego zacząć"
 
-**Klaster C — istniejące treści edukacyjne (Next.js, HTML/CSS, Makerkit)**
-- Kontynuować serie (Makerkit #6+, JS/TS #2+) — budują ruch long-tail
-  i zaplecze linkowania wewnętrznego do klastrów A i B.
+**Klaster C — istniejące treści edukacyjne** (Next.js, HTML/CSS, Makerkit)
+- Kontynuować serie; budują ruch long-tail i zaplecze linkowania wewnętrznego.
 
-**Zasada linkowania:** każdy wpis edukacyjny linkuje do min. 1 wpisu
-komercyjnego i do /kontakt lub /o-mnie.
+**Zasada linkowania:** ✅ wdrożona w kodzie — komponent `PostCta` zamyka każdy
+wpis wezwaniem do wyceny z odnośnikami do `/kontakt` i `/o-mnie`. Reguła
+obowiązuje automatycznie także przyszłe artykuły. Do ręcznego dopisania zostają
+odnośniki tematyczne między wpisami (edukacyjny → komercyjny).
 
-## 4. Higiena treści
+## 4. Higiena treści ✅
 
-- **Tagi: max 3–5 na wpis.** Dziś ~110 unikalnych tagów na 26 wpisów —
-  większość stron tagów ma 1 artykuł (thin content). Skonsoliduj do
-  ~15–20 tagów przekrojowych.
-- **Kategorie: docelowo 5–7** (np. AI, Next.js, Web development, Design,
-  Projekty). Kategoria = temat klastra.
-- **Meta description**: 140–160 znaków, z frazą kluczową i korzyścią.
-- **Tytuły**: fraza kluczowa na początku, do ~60 znaków.
-- **Częstotliwość**: 1 wpis/tydzień przez pierwsze 3 miesiące (jest 5
-  szkiców w `content/drafts/` na start), potem min. 2/miesiąc.
+Wykonane 2026-08-26:
+
+- **Kategorie: 48 → 6.** Web development (15), Next.js (10), AI (9), SaaS (5),
+  Design (4), Projekty (2). Wcześniej 30 kategorii miało po jednym wpisie.
+- **Tagi: 114 → 18** przekrojowych. Wcześniej 86 tagów występowało raz.
+- **Tytuły:** 12 skróconych do ≤60 znaków, fraza kluczowa z przodu.
+- **Opisy:** 20 przepisanych; wszystkie mieszczą się w 140–165 znakach.
+- **Efekt:** 207 → 70 stron statycznych. Zniknęły dziesiątki stron z jednym
+  wpisem, które rozpraszały budżet indeksowania i wyglądały jak thin content.
+
+Zasada na przyszłość: **maksymalnie 2 kategorie i 3–5 tagów na wpis**, wyłącznie
+z istniejących list. Nowy tag zakładamy dopiero, gdy ma objąć min. 3 wpisy.
 
 ## 5. E-E-A-T (sygnały eksperckości)
 
-- ✅ Person/ProfilePage schema, bio autora pod każdym wpisem, strona /o-mnie
-  z doświadczeniem i edukacją (Nagroda Rektora — dobry sygnał, zostaw).
-- Do zrobienia: LinkedIn w `sameAs` + widoczny na stronie; realne case
-  studies z nazwami klientów (Orlen, Vinci — masz je w portfolio, opisz je);
-  data aktualizacji przy odświeżanych wpisach.
+- ✅ `Person` / `ProfilePage`, bio autora pod każdym wpisem, strona `/o-mnie`
+  z doświadczeniem i edukacją (Nagroda Rektora — mocny sygnał, zostaw).
+- ✅ **Spójny autor**: dane strukturalne podawały „zeprzalka.com", a strona
+  „Michał Zeprzałka". Teraz jedno źródło (`AUTHOR` w `src/lib/site.ts`).
+- ✅ **Data aktualizacji**: pole `updated` we frontmatterze trafia do
+  `dateModified` i do mapy strony. Używaj przy odświeżaniu starszych wpisów —
+  to jeden z tańszych sposobów na odzyskanie pozycji.
+- ✅ **CV do pobrania** (PDF generowany ze strony `/o-mnie`).
+- ⏳ **LinkedIn**: ustaw `NEXT_PUBLIC_LINKEDIN_URL`, a profil dopisze się do
+  stopki i do `sameAs`. To wciąż najważniejszy brakujący kanał.
+- ⏳ **Case studies z nazwami klientów** (Orlen, Vinci) — masz je w portfolio,
+  brakuje opisu: problem → rozwiązanie → wynik.
 
 ## 6. Pozyskiwanie linków (link building bez spamu)
 
-1. **LinkedIn** — regularne posty PL z linkiem do wpisów (ruch + brand).
-2. **aifeed.pl** — Twój drugi serwis; naturalny cross-link w stopce/o-nas.
+1. **LinkedIn** — regularne posty PL z linkiem do wpisów (ruch + marka).
+2. **aifeed.pl** — Twój drugi serwis; naturalny cross-link w stopce.
 3. **Uczelnie** — bio wykładowcy z linkiem (Civitas, WSR) — mocne domeny .edu.pl.
-4. **Katalogi branżowe / mapy**: Google Business Profile ("usługi tworzenia
-   stron, Warszawa/zdalnie"), Clutch, Useme, dobrzy freelancerzy PL.
-5. **Publikacje gościnne**: JustJoin.it blog, Bulldogjob, dev.to (EN wersje
-   najlepszych wpisów z canonical na oryginał).
-6. **GitHub** — README projektów z linkiem do zeprzalka.com.
+4. **Katalogi branżowe / mapy**: Google Business Profile, Clutch, Useme.
+5. **Publikacje gościnne**: JustJoin.it, Bulldogjob, dev.to (wersje EN
+   z canonicalem na oryginał).
+6. **GitHub** — README projektów z linkiem do serwisu.
 
 ## 7. Pomiar (co miesiąc)
 
-- GSC: wyświetlenia, CTR, pozycje frazy → decyzja o kolejnych tematach.
-- Analytics: ruch na wpisy komercyjne, konwersje formularza (cel: każdy
-  submit formularza = zdarzenie).
+- GSC: wyświetlenia, CTR, pozycje fraz → decyzja o kolejnych tematach.
+- Vercel Analytics: ruch na `/uslugi` i wpisy komercyjne, ścieżka do formularza.
+- Speed Insights: Core Web Vitals z ruchu rzeczywistego (nie z laboratorium).
 - Cel na 3 miesiące: indeksacja 100% sitemapy, 500+ wyświetleń/dzień w GSC,
   pierwsze zapytanie ofertowe z organica.

@@ -6,6 +6,7 @@ import Image from "next/image"
 import Link from "next/link"
 import type { Metadata } from "next"
 import { PageHeader } from "@/components/PageHeader"
+import { getCategoryLabel } from "@/lib/posts"
 
 interface PageProps {
   params: Promise<{ kategoria: string }>
@@ -17,7 +18,7 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { kategoria } = await params
-  const categoryName = decodeURIComponent(kategoria).replace(/-/g, " ")
+  const categoryName = getCategoryLabel(decodeURIComponent(kategoria))
 
   return {
     title: `Kategoria: ${categoryName}`,
@@ -30,7 +31,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function KategoriaPage({ params }: PageProps) {
   const { kategoria } = await params
-  const categoryName = decodeURIComponent(kategoria).replace(/-/g, " ")
+  const categoryName = getCategoryLabel(decodeURIComponent(kategoria))
   const posts = getPostsByCategory(kategoria)
 
   if (posts.length === 0) {
@@ -70,11 +71,11 @@ export default async function KategoriaPage({ params }: PageProps) {
                   </Link>
                 ))}
               </div>
-              <h3 className="font-bold group-hover:text-primary transition-colors line-clamp-2">
+              <h2 className="font-bold group-hover:text-primary transition-colors line-clamp-2">
                 <Link href={`/blog/${post.slug}`} className="after:absolute after:inset-0">
                   {post.frontmatter.title}
                 </Link>
-              </h3>
+              </h2>
               <p className="text-sm text-muted-foreground line-clamp-2">
                 {post.frontmatter.description}
               </p>

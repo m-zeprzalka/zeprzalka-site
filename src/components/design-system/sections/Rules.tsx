@@ -53,19 +53,15 @@ export function RulesSection() {
         title="Dostępność"
         note={
           <>
-            Po poprawkach z 26 sierpnia 2026 audyt osi dostępności daje 100/100
-            na stronie głównej i /o-mnie. Zostały dwie luki:{" "}
-            <strong className="font-medium text-foreground">
-              nawigacja bez etykiety
-            </strong>{" "}
-            (<DsInline>&lt;nav&gt;</DsInline> w nagłówku i w stopce nie mają{" "}
-            <DsInline>aria-label</DsInline>, przez co audyt zgłasza duplikat
-            landmarku na każdej stronie) oraz{" "}
+            Po poprawkach z 26 sierpnia 2026 audyt axe nie zgłasza naruszeń na
+            żadnym typie strony. Została jedna luka:{" "}
             <strong className="font-medium text-foreground">
               wideo bez sterowania
             </strong>{" "}
             — materiały w portfolio odtwarzają się w pętli i osoba bez ustawienia
             „ogranicz ruch&rdquo; nie ma jak ich zatrzymać (WCAG 2.2.2).
+            Komponent <DsInline>media/SmartVideo</DsInline> (używany przez
+            warianty) ma już przycisk pauzy — wystarczy przenieść go do galerii.
           </>
         }
       >
@@ -76,6 +72,7 @@ export function RulesSection() {
             ["Fokus", "Widoczny pierścień na każdym elemencie interaktywnym"],
             ["Obsługa klawiaturą", "Pełna — menu mobilne, akordeon i panel z Radix"],
             ["Teksty alternatywne", "Obrazy wpisów opisane tytułem; kadry portfolio dekoracyjne"],
+            ["Etykiety landmarków", "Każda nawigacja ma własną nazwę"],
             ["Kolejność nagłówków", "Bez przeskoków (H1 → H2 → H3)"],
             [
               "Ograniczony ruch",

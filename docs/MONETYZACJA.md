@@ -11,7 +11,9 @@ Strona już ma portfolio, formularz i CTA "Bezpłatna konsultacja".
 Brakuje jednej rzeczy, która realnie blokuje konwersję: **konkretnej oferty
 z cenami "od"**. Klient nie napisze, jeśli nie wie, czy stać go na usługę.
 
-Rekomendowana struktura pakietów (do sekcji /uslugi lub na stronie głównej):
+Rekomendowana struktura pakietów — **wdrożona 2026-08-26 na stronie `/uslugi`**.
+Ceny żyją w `src/lib/services.ts`; poniższa tabela jest ich źródłem i wymaga
+Twojego potwierdzenia przed wdrożeniem na produkcję:
 
 | Pakiet | Zakres | Cena orientacyjna |
 | --- | --- | --- |
@@ -32,7 +34,7 @@ wycena w 24 h") → rozmowa → oferta z pakietem + opieką.
 ## Filar 2 — Praca etatowa / kontrakt B2B (cel równoległy)
 
 Szukasz pracy — strona jest Twoim najsilniejszym CV:
-- /o-mnie kompletne ✅; dodaj PDF do pobrania (ROADMAP Etap 3).
+- /o-mnie kompletne ✅; PDF do pobrania ✅ (generowany z tej strony).
 - LinkedIn podlinkowany i aktywny (posty z bloga) — rekruterzy szukają tam,
   nie w Google.
 - 2–3 case studies techniczne (aifeed.pl = gotowy materiał: autonomiczny
@@ -65,8 +67,8 @@ Kolejność wg Twoich przewag (byłeś wykładowcą — umiesz uczyć):
 
 | Tydzień | Działanie | Efekt |
 | --- | --- | --- |
-| 1 | Deploy po audycie, GSC, analityka, LinkedIn | fundament mierzalny |
-| 2 | Sekcja usług z cenami + opieka miesięczna | strona zaczyna sprzedawać |
+| 1 | Deploy, GSC, analityka ✅ (kod), LinkedIn | fundament mierzalny |
+| 2 | ~~Sekcja usług z cenami~~ ✅ — zostaje potwierdzić stawki | strona zaczyna sprzedawać |
 | 3–4 | Case study aifeed.pl + wpis "Ile kosztuje strona w 2026" | treści komercyjne |
 | 5–8 | 1 wpis/tydz. (szkice z drafts/), posty LinkedIn 2×/tydz. | ruch + marka |
 | 9–12 | Rekomendacje klientów, oferta szkoleniowa, przegląd GSC | konwersja + drugi filar |

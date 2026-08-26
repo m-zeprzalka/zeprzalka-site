@@ -25,7 +25,7 @@ export function GridSection() {
             [
               "podstrony",
               <DsInline key="b">py-12 md:py-16 lg:py-20</DsInline>,
-              "/blog, /kontakt, /o-mnie, ekran ładowania",
+              "/uslugi, /blog, /kontakt, /o-mnie, ekran ładowania",
             ],
             [
               "sekcje /",
@@ -96,6 +96,7 @@ export function GridSection() {
             ["/kontakt", "4 / 8 → xl 3 / 9", "Dane kontaktowe + formularz"],
             ["/o-mnie", "3 / 9", "Etykieta w wersalikach zamiast H2"],
             ["/blog", "brak podziału", "Siatka kart 2 / 3 kolumny"],
+            ["/uslugi", "brak podziału", "Karty pakietów 2 kolumny, proces 3 kolumny"],
             ["Wpis bloga", "sidebar + treść", "Spis treści w komponencie Sidebar"],
           ]}
         />

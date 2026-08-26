@@ -33,6 +33,7 @@ export function AppKitSection() {
             ["blog/ActiveTOC", "Spis treści wpisu ze śledzeniem pozycji", "Klient"],
             ["blog/CodeBlock", "Blok kodu z przyciskiem kopiowania", "Klient"],
             ["blog/YouTubeEmbed", "Osadzone wideo (youtube-nocookie)", "Serwer"],
+            ["blog/PostCta", "Wezwanie do wyceny pod każdym wpisem", "Serwer"],
           ]}
         />
       </DsBlock>

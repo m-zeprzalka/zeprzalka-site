@@ -27,18 +27,6 @@ const items: Item[] = [
   },
   {
     weight: "średni",
-    title: "Nawigacja bez etykiety",
-    detail: (
-      <>
-        <DsInline>&lt;nav&gt;</DsInline> w nagłówku i w stopce nie mają{" "}
-        <DsInline>aria-label</DsInline>. Audyt dostępności zgłasza duplikat
-        landmarku na każdej stronie serwisu.
-      </>
-    ),
-    where: "layout/Header.tsx, layout/Footer.tsx",
-  },
-  {
-    weight: "średni",
     title: "Dwa różne rozmiary przycisku CTA",
     detail: (
       <>
@@ -99,7 +87,9 @@ const items: Item[] = [
     detail: (
       <>
         <DsInline>images.unoptimized: true</DsInline> — świadome obejście limitu
-        planu Vercel Hobby. Obrazy wpisów idą w pełnym rozmiarze.
+        planu Vercel Hobby. Skutek złagodzony: obrazy wpisów są pre-kompresowane
+        do WebP (4,6 MB → 464 KB), więc brak transformacji w locie nie boli.
+        Pełne rozwiązanie to plan Pro albo zewnętrzny loader.
       </>
     ),
     where: "next.config.ts",
@@ -116,6 +106,8 @@ const fixed = [
   "Serwis renderuje się krojem Geist — zmienne krojów przeniesione z <body> na <html> (layout.tsx).",
   "Ograniczony ruch obsłużony — reguła w globals.css plus zatrzymanie sygnetu i wideo.",
   "Numeracja kompetencji: krycie 30% → 80%, kontrast 1,47:1 → 3,23:1 (jasny motyw).",
+  "Nawigacja w nagłówku, stopce i menu mobilnym ma etykiety — audyt axe czysty na każdej stronie.",
+  "Hierarchia nagłówków na listach kategorii i tagów bez przeskoków; nagłówek kategorii pokazuje nazwę, nie slug.",
 ]
 
 export function DebtSection() {
@@ -133,8 +125,9 @@ export function DebtSection() {
           ))}
         </ul>
         <p className="mt-3 text-sm text-muted-foreground">
-          Po tych zmianach audyt dostępności daje 100/100 na stronie głównej
-          i /o-mnie; jedynym zgłoszeniem zostaje duplikat landmarku (pozycja 02).
+          Po tych zmianach audyt axe nie zgłasza już żadnego naruszenia na
+          żadnym typie strony, a Lighthouse daje 100 na desktopie i 95 na
+          mobile.
         </p>
       </div>
 

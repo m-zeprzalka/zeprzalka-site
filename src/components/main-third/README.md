@@ -26,7 +26,7 @@ zmienny, w którym akcent robi oś szerokości — nie druga rodzina.
 
 Współdzielone (poza tym folderem): `src/lib/home-content.ts` (treść, metadane
 sekcji, JSON-LD), `src/components/media/SmartVideo.tsx`,
-`src/hooks/use-reduced-motion.ts`, `public/variants/posters/*`.
+`src/hooks/use-reduced-motion.ts`, `public/portfolio/*`.
 
 ## Decyzje
 

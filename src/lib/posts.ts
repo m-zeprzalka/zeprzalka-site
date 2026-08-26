@@ -11,17 +11,14 @@ const postsDirectory = path.join(process.cwd(), "content/posts")
 export interface PostFrontmatter {
   title: string
   description: string
+  /** Data publikacji w formacie YYYY-MM-DD. */
   date: string
+  /** Data ostatniej istotnej aktualizacji — trafia do dateModified i mapy strony. */
+  updated?: string
   categories: string[]
   tags: string[]
   image: string
   imageCaption?: string
-  author: {
-    name: string
-    title: string
-    bio: string
-    avatar: string
-  }
   featured?: boolean
 }
 
@@ -110,6 +107,30 @@ export function getPostsByTag(tagSlug: string): Post[] {
 export function getFeaturedPosts(): Post[] {
   return getAllPosts().filter((post) => post.frontmatter.featured)
 }
+
+/**
+ * Oryginalna nazwa kategorii dla danego slugu. Odtwarzanie jej z adresu
+ * („ai" → „ai", „next.js" → „next.js") gubiło wielkość liter i kropki,
+ * przez co nagłówek strony kategorii nie zgadzał się z etykietą przy wpisach.
+ */
+export const getCategoryLabel = cache((slug: string): string => {
+  for (const post of getAllPosts()) {
+    for (const category of post.frontmatter.categories || []) {
+      if (slugify(category) === slug) return category
+    }
+  }
+  return slug
+})
+
+/** To samo dla tagów. */
+export const getTagLabel = cache((slug: string): string => {
+  for (const post of getAllPosts()) {
+    for (const tag of post.frontmatter.tags || []) {
+      if (slugify(tag) === slug) return tag
+    }
+  }
+  return slug
+})
 
 /** Unikalne slugi kategorii ze wszystkich postów. */
 export function getAllCategorySlugs(): string[] {

@@ -46,7 +46,7 @@ kolumna. W wyrenderowanym HTML jest ok. 70 takich spacji.
 
 Współdzielone z pozostałymi wariantami: `src/lib/home-content.ts`,
 `src/components/media/SmartVideo.tsx`, `src/hooks/use-reduced-motion.ts`,
-`public/variants/posters/*`.
+`public/portfolio/*`.
 
 ## Decyzje
 

@@ -1,7 +1,6 @@
 "use client"
 
-import { useState, useEffect, useRef } from "react"
-import { cn } from "@/lib/utils"
+import { useEffect, useRef } from "react"
 import { useReducedMotion } from "@/hooks/use-reduced-motion"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -9,15 +8,8 @@ import { MousePointerClick } from "lucide-react"
 import Link from "next/link"
 
 export function Hero() {
-  const [isLoaded, setIsLoaded] = useState(false)
   const videoRef = useRef<HTMLVideoElement>(null)
   const reducedMotion = useReducedMotion()
-
-  useEffect(() => {
-    if (videoRef.current && videoRef.current.readyState >= 3) {
-      setIsLoaded(true)
-    }
-  }, [])
 
   // Zapętlone wideo to ruch ciągły. Przy ustawieniu „ogranicz ruch"
   // zostaje pierwsza klatka zamiast odtwarzania.
@@ -50,15 +42,22 @@ export function Hero() {
         </Link>
       </Button>
       <div className="relative aspect-video w-full rounded-lg overflow-hidden bg-muted/20">
+        {/*
+          Poster to pierwsza klatka materiału (28 KB WebP). Maluje się od razu,
+          więc największy element strony nie czeka na wideo — a `preload`
+          ograniczony do metadanych zdejmuje kilka megabajtów ze ścieżki
+          krytycznej. Wcześniej posterem był przezroczysty piksel, przez co
+          kadr pozostawał pusty aż do wczytania wideo.
+        */}
         <video 
           ref={videoRef}
           autoPlay muted loop playsInline 
-          poster="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
-          onLoadedData={() => setIsLoaded(true)}
+          preload="metadata"
+          poster="/hero-poster.webp"
           onPlay={(event) => {
             if (reducedMotion) event.currentTarget.pause()
           }}
-          className={cn("absolute inset-0 w-full h-full object-cover transition-opacity duration-1000", isLoaded ? "opacity-100" : "opacity-0")}
+          className="absolute inset-0 w-full h-full object-cover"
         >
           {/* WAŻNE: Najpierw lżejszy format WebM */}
           <source src="/hero_web.webm" type="video/webm" />

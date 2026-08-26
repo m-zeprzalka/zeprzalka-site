@@ -3,8 +3,7 @@
 import { useInView } from "react-intersection-observer"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { useState, useEffect, useRef } from "react"
-import { cn } from "@/lib/utils"
+import { useEffect, useRef } from "react"
 import { useReducedMotion } from "@/hooks/use-reduced-motion"
 
 const galleryItems = [
@@ -14,6 +13,7 @@ const galleryItems = [
     category: "UX/UI Design",
     type: "video",
     src: "/orlen-min.mp4",
+    poster: "/portfolio/orlen-min.webp",
   },
   {
     id: 2,
@@ -21,6 +21,7 @@ const galleryItems = [
     category: "Design & Deployment",
     type: "video",
     src: "/vinci-facilities.mp4",
+    poster: "/portfolio/vinci-facilities.webp",
   },
   {
     id: 3,
@@ -28,6 +29,7 @@ const galleryItems = [
     category: "Design & Deployment",
     type: "video",
     src: "/spartanie-dzieciom.mp4",
+    poster: "/portfolio/spartanie-dzieciom.webp",
   },
   {
     id: 4,
@@ -35,6 +37,7 @@ const galleryItems = [
     category: "UX/UI Design",
     type: "video",
     src: "/orlen-paczka.mp4",
+    poster: "/portfolio/orlen-paczka.webp",
   },
   {
     id: 5,
@@ -42,6 +45,7 @@ const galleryItems = [
     category: "Design & Deployment",
     type: "video",
     src: "/ip.mp4",
+    poster: "/portfolio/ip.webp",
   },
   {
     id: 6,
@@ -49,6 +53,7 @@ const galleryItems = [
     category: "Design & Deployment",
     type: "video",
     src: "/innowator-mazowsza.mp4",
+    poster: "/portfolio/innowator-mazowsza.webp",
   },
   {
     id: 7,
@@ -56,6 +61,7 @@ const galleryItems = [
     category: "Design & Deployment",
     type: "video",
     src: "/berbecki-min.mp4",
+    poster: "/portfolio/berbecki-min.webp",
   },
   {
     id: 8,
@@ -63,20 +69,24 @@ const galleryItems = [
     category: "Design & Deployment",
     type: "video",
     src: "/onelook-min.mp4",
+    poster: "/portfolio/onelook-min.webp",
   },
 ]
 
-function LazyVideo({ src, title, category }: { src: string; title: string; category: string }) {
+function LazyVideo({
+  src,
+  poster,
+  title,
+  category,
+}: {
+  src: string
+  poster: string
+  title: string
+  category: string
+}) {
   const { ref, inView } = useInView({ triggerOnce: true, rootMargin: "600px" })
-  const [isLoaded, setIsLoaded] = useState(false)
   const videoRef = useRef<HTMLVideoElement>(null)
   const reducedMotion = useReducedMotion()
-
-  useEffect(() => {
-    if (videoRef.current && videoRef.current.readyState >= 3) {
-      setIsLoaded(true)
-    }
-  }, [])
 
   // Osiem zapętlonych kadrów naraz to dużo ruchu — przy ustawieniu
   // „ogranicz ruch" każdy zatrzymuje się na pierwszej klatce.
@@ -89,15 +99,12 @@ function LazyVideo({ src, title, category }: { src: string; title: string; categ
       {inView && (
         <video
           ref={videoRef}
-          onLoadedData={() => setIsLoaded(true)}
           onPlay={(event) => {
             if (reducedMotion) event.currentTarget.pause()
           }}
-          poster="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
-          className={cn(
-            "w-full h-full object-cover block transition-opacity duration-1000",
-            isLoaded ? "opacity-100" : "opacity-0"
-          )}
+          preload="metadata"
+          poster={poster}
+          className="w-full h-full object-cover block"
           autoPlay loop muted playsInline
         >
           <source src={src} type="video/mp4" />
@@ -146,7 +153,12 @@ export function Gallery() {
                 key={item.id}
                 className="break-inside-avoid mb-4 relative overflow-hidden group cursor-pointer transition-all duration-300 hover:shadow-xl"
               >
-                <LazyVideo src={item.src} title={item.title} category={item.category} />
+                <LazyVideo
+                  src={item.src}
+                  poster={item.poster}
+                  title={item.title}
+                  category={item.category}
+                />
               </Card>
             ))}
           </div>

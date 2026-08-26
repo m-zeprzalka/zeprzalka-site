@@ -18,6 +18,11 @@ Legenda: `[x]` zrobione · `[~]` zrobione inaczej niż zakładano (z uzasadnieni
       **Do zrobienia u Ciebie:** ustaw w Vercelu `NEXT_PUBLIC_SITE_URL` na
       `https://www.zeprzalka.com` **albo usuń tę zmienną** — wartość domyślna
       jest już poprawna.
+- [ ] **Ponowne powiązanie projektu z nowym kontem Vercel (Pro, `m-5643`).**
+      Katalog `.vercel` wskazywał jeszcze poprzednią organizację — plik został
+      odsunięty (`.vercel/project.json.stare-konto`), żeby przypadkowe
+      `vercel deploy --prod` nie trafiło na stare konto. Do zrobienia:
+      `vercel login`, potem `vercel link` (wybierz zakres `m-5643`).
 - [ ] **Zmienne środowiskowe w Vercel (Production):** `SMTP_HOST`, `SMTP_PORT`,
       `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASS`, opcjonalnie `CONTACT_EMAIL`,
       `NEXT_PUBLIC_LINKEDIN_URL`, `GOOGLE_SITE_VERIFICATION`,
@@ -79,10 +84,12 @@ Legenda: `[x]` zrobione · `[~]` zrobione inaczej niż zakładano (z uzasadnieni
 
 ## Etap 4 — Wydajność i bezpieczeństwo
 
-- [x] **Optymalizacja obrazków** — wariant (b) z tego dokumentu: pre-kompresja
-      w `public/`. 22 pliki JPEG → WebP przy zachowaniu jakości:
-      **4,6 MB → 464 KB (−90%)**. Odwołania w treści i frontmatterze
-      przepisane, `images.unoptimized: true` zostaje (limit planu Hobby).
+- [x] **Optymalizacja obrazków** — zrobione dwutorowo. Najpierw pre-kompresja
+      w `public/`: 22 pliki JPEG → WebP, **4,6 MB → 464 KB (−90%)**. Następnie,
+      po przejściu na plan **Vercel Pro**, włączona optymalizacja w locie
+      (`images.unoptimized` usunięte, formaty AVIF/WebP, roczny cache) wraz
+      z atrybutami `sizes` na wszystkich listach — telefon pobiera teraz kadr
+      dopasowany do ekranu, a nie pełne 1600 px. Wydajność `/blog` na mobile: 96.
 - [x] **Wideo hero**: ponowna kompresja **4,0 → 1,8 MB** (VP9) i
       **5,8 → 3,2 MB** (H.264), bez widocznej różnicy w jakości. Do tego
       prawdziwy poster (28 KB WebP) zamiast przezroczystego piksela,
@@ -105,6 +112,30 @@ Legenda: `[x]` zrobione · `[~]` zrobione inaczej niż zakładano (z uzasadnieni
 - [x] **Dedykowany obraz Open Graph 1200×630** generowany kodem — osobny dla
       serwisu i **osobny dla każdego wpisu**, z jego tytułem, kategoriami
       i czasem czytania. Wcześniej wszystko dzieliło jeden PNG 300×300.
+
+## Etap 6 — Bezpieczeństwo zależności ✅
+
+- [x] **44 podatności → 0.** Audyt produkcyjny wykazał 20 wysokich, 21 średnich
+      i 3 niskie — głównie SSRF, obejście middleware i DoS w Next.js, do tego
+      nodemailer, postcss i parsery YAML.
+      - `next` 16.1.6 → **16.3.3** (advisory wymagały ≥16.2.11)
+      - `nodemailer` 8 → **9.0.5** (API zgodne, sprawdzone)
+      - `eslint-config-next` podniesione do tej samej wersji co Next
+      - `js-yaml@3` → `^3.15.1` i `yaml@^2` → `^2.8.3` przez `pnpm.overrides`;
+        obie paczki wchodzą pośrednio (gray-matter, next-mdx-remote), a ich
+        rodzice nie wydali aktualizacji. Zakres nadpisania jest wersjonowany,
+        więc nie rusza `js-yaml` 4.x używanego przez ESLint.
+
+      Po aktualizacji: `pnpm audit --prod` → **No known vulnerabilities found**.
+
+- [x] **Gałęzie `vercel/*` w repozytorium: NIE scalać.**
+      Vercel wypchnął dwie gałęzie naprawcze (`react-flight-rce-vulnerability`,
+      `react-server-components-cve`). Obie powstały ze **stanu repozytorium
+      sprzed audytu** i scalenie cofnęłoby kilkaset plików: usunęłoby
+      `src/lib/site.ts`, `services.ts`, `rate-limit.ts` i analitykę, a
+      przywróciło zależności skasowane w sierpniu. Same łatki są przy tym
+      nieaktualne: pierwsza podnosi Next 15.5.3 → 15.5.7, druga 16.0.8 →
+      16.0.10, podczas gdy serwis jest już na 16.3.3. Gałęzie można usunąć.
 
 ## Etap 5 — Maszyna treści (proces ciągły)
 

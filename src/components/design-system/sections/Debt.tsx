@@ -81,19 +81,6 @@ const items: Item[] = [
     ),
     where: "components/home/Contact.tsx",
   },
-  {
-    weight: "niski",
-    title: "Optymalizacja obrazków wyłączona",
-    detail: (
-      <>
-        <DsInline>images.unoptimized: true</DsInline> — świadome obejście limitu
-        planu Vercel Hobby. Skutek złagodzony: obrazy wpisów są pre-kompresowane
-        do WebP (4,6 MB → 464 KB), więc brak transformacji w locie nie boli.
-        Pełne rozwiązanie to plan Pro albo zewnętrzny loader.
-      </>
-    ),
-    where: "next.config.ts",
-  },
 ]
 
 const weightStyles: Record<Item["weight"], string> = {
@@ -108,6 +95,8 @@ const fixed = [
   "Numeracja kompetencji: krycie 30% → 80%, kontrast 1,47:1 → 3,23:1 (jasny motyw).",
   "Nawigacja w nagłówku, stopce i menu mobilnym ma etykiety — audyt axe czysty na każdej stronie.",
   "Hierarchia nagłówków na listach kategorii i tagów bez przeskoków; nagłówek kategorii pokazuje nazwę, nie slug.",
+  "Optymalizacja obrazków włączona po przejściu na plan Vercel Pro — do tego pre-kompresja do WebP (4,6 MB → 464 KB) i atrybuty sizes na listach.",
+  "Zależności: 44 podatności (20 wysokich) → 0. Next 16.3.3, nodemailer 9, nadpisania dla parserów YAML.",
 ]
 
 export function DebtSection() {

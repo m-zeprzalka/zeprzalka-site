@@ -28,7 +28,9 @@ Stan na: 2026-08-26 (po wdrożeniu strony technicznej).
 | Paginacja: canonical na /blog | ✅ |
 | `lang="pl"`, semantyczny HTML, breadcrumbs | ✅ |
 | Dostępność (axe) | ✅ 0 naruszeń na każdym typie strony |
-| Wydajność (Lighthouse) | ✅ desktop 100, mobile 95, CLS 0 |
+| Wydajność (Lighthouse) | ✅ desktop 100, mobile 91–96, CLS 0 |
+| Optymalizacja obrazków | ✅ AVIF/WebP w locie (plan Pro) + `sizes` na listach |
+| Podatności zależności | ✅ 44 → 0 (`pnpm audit --prod`) |
 | Weryfikacja w GSC / Bing | ⏳ kod gotowy, czeka na tokeny |
 
 **Do zrobienia (poza kodem):** weryfikacja w Google Search Console i Bing

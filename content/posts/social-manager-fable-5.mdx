@@ -1,6 +1,6 @@
 ---
-title: "Przestań sterować, zacznij zlecać: minimalny setup, w którym Fable 5 buduje SaaS od zera"
-description: "Na przykładzie aplikacji Kadr — generatora planów social media, wpisów i grafik, który ma zarabiać na subskrypcjach. Trzy pliki, jedna bramka i jeden porządny prompt zamiast sterowania modelem."
+title: "Fable 5 - Budowa aplikacji w oparciu o nowy setup"
+description: "Na przykładzie aplikacji SocialManager — generatora planów social media, wpisów i grafik, który ma zarabiać na subskrypcjach. Trzy pliki, jedna bramka i jeden porządny prompt, zamiast wielokrotnego sterowania modelem."
 date: "2026-08-23"
 categories: ["AI", "Web Development", "Engineering"]
 tags:
@@ -10,10 +10,10 @@ tags:
     "AI Agents",
     "SaaS",
     "Prompt Engineering",
-    "Kadr",
+    "SocialManager",
   ]
 image: "/blog/ai-automation.jpg"
-imageCaption: "Fakty, bramki i weryfikowalne done — zamiast sterowania."
+imageCaption: "Fakty, bramki i weryfikowalne dane — zamiast ciągłego instruowania."
 featured: true
 author:
   name: "zeprzalka.com"
@@ -22,17 +22,17 @@ author:
   avatar: "/avatar.png"
 ---
 
-*Na przykładzie aplikacji Kadr — generatora planów social media, wpisów i grafik, który ma zarabiać na subskrypcjach.*
+*Na przykładzie aplikacji SocialManager — generatora planów social media, wpisów i grafik, który ma za zadnie zarabiać na subskrypcjach.*
 
 ---
 
-Jest taki paradoks, którego większość poradników o agentach jeszcze nie zauważyła: **im mądrzejszy model, tym mniej trzeba mu mówić — a my mówimy mu coraz więcej.** Setupy z 2024 roku (CLAUDE.md na 400 linii, dwunastu subagentów, skille dyktujące każdy krok) były protezami dla modeli, które gubiły wątek. Fable 5 wątku nie gubi. Za to świetnie gubi się w naszych protezach: zbyt nakazowe instrukcje realnie obniżają jakość jego pracy, bo zmuszają go do drogi, którą sam wybrałby lepiej.
+Jest pewien paradoks, którego większość przewodników o modelach AI jeszcze nie zauważyła: **im mądrzejszy model, tym mniej trzeba mu mówić — a my mówimy mu coraz więcej.** Setupy z 2024 roku (CLAUDE.md na 400 linii, dwunastu subagentów, skille dyktujące każdy krok) były nakładkami dla modeli, które miały nauczyć je pewnych specjalnych umiejętności, lklub postępowania w odpowiedni sposób. Dodatkowo minimalizowały np. gubienie wątku. Fable 5 wątku nie gubi, w takim stopniu jak było to obecne w przypadku wcześniejszych wersji. Za to świetnie gubi się w naszych "nakładkach": zbyt nakazowe instrukcje mogą realnie obniżajć jakość jego pracy, bo zmuszają go często do rowzwiązań, których sam wybrałby lepiej.
 
-Czy to znaczy „wywal wszystkie pliki i pisz jeden prompt"? Nie. To znaczy: naucz się odróżniać trzy rodzaje treści, które w tych plikach siedzą.
+Czy to znaczy „wywal wszystkie pliki typu SKILLS itd. i pisz jeden prompt"? Nie. To znaczy: naucz się odróżniać trzy rodzaje treści, które znajdują się w naszych plikach.
 
 ## Test trzech warstw
 
-Weź dowolną linijkę ze swojego CLAUDE.md, skilla albo promptu systemowego i zadaj jej jedno pytanie: *czym jesteś?*
+Weź dowolną linijkę ze swojego CLAUDE.md, skilla albo promptu systemowego i zadaj jej jedno proste pytanie: *czym jesteś?*
 
 **Faktem?** („testy odpalasz `pnpm test`", „spec jest w docs/SPEC.md", „done = te kryteria"). Fakty **zostają** — nie ograniczają, tylko uziemiają. Bez nich model pali tury na odkrywanie rzeczy, które mogłeś mu powiedzieć w trzech linijkach.
 
@@ -42,16 +42,16 @@ Weź dowolną linijkę ze swojego CLAUDE.md, skilla albo promptu systemowego i z
 
 Cała reszta tego wpisu to ten test zastosowany w praktyce: setup skurczony do trzech plików i jednej bramki, plus jeden porządny prompt. A żeby nie było teoretycznie — budujemy konkretną, zarabiającą aplikację.
 
-## Aplikacja: Kadr
+## Aplikacja: SocialManager
 
-**Kadr** to narzędzie dla małych marek i twórców: opisujesz swoją markę raz (branża, ton, kolory, logo), a Kadr generuje tygodniowy plan contentu, pisze wpisy pod każdą platformę w Twoim tonie i renderuje do nich spójne grafiki w formatach na Instagrama, LinkedIna i resztę. Na koniec pobierasz paczkę: grafiki + teksty + harmonogram. Model biznesowy: Free (1 marka, 5 generacji AI miesięcznie, watermark na grafikach) / **Pro 79 zł/mc** (3 marki, bez limitów, bez watermarku). Płatności: Stripe.
+**SocialManager** to narzędzie dla małych marek i twórców: opisujesz swoją markę raz (branża, ton, kolory, logo), a SocialManager generuje tygodniowy plan contentu, pisze wpisy pod każdą platformę w Twoim tonie i renderuje do nich spójne grafiki w formatach na Instagrama, LinkedIna i resztę. Na koniec pobierasz paczkę: grafiki + teksty + harmonogram. Model biznesowy: Free (1 marka, 5 generacji AI miesięcznie, watermark na grafikach) / **Pro 79 zł/mc** (3 marki, bez limitów, bez watermarku). Płatności: Stripe.
 
 Jedna uczciwa decyzja produktowa z góry, bo ona ustawia całą architekturę: w v1 „piękne grafiki" to **render szablonów do PNG** (typografia + kolory marki + layouty), a nie generacja obrazów modelem dyfuzyjnym. Szablony dają spójność wizualną marki, przewidywalny koszt i zero problemów z prawami — a wyglądają jak robota grafika, nie jak AI-papka. Generacja zdjęć AI to feature na v2, świadomie.
 
 ## Folder startowy — całość
 
 ```
-kadr/
+SocialManager/
 ├── CLAUDE.md            # fakty + bramki (20 linii, poniżej w całości)
 ├── LESSONS.md           # pusty; model prowadzi go sam
 ├── docs/
@@ -65,7 +65,7 @@ Czego tu **nie ma**: predefiniowanych subagentów, komend, skilli, konwencji kod
 ### CLAUDE.md — w całości
 
 ```markdown
-# Kadr — plany social media + wpisy + grafiki dla małych marek.
+# SocialManager — plany social media + wpisy + grafiki dla małych marek.
 Spec: docs/SPEC.md · Decyzje: docs/DECISIONS.md · Lekcje: LESSONS.md (czytaj przed planowaniem).
 
 ## Komendy
@@ -118,16 +118,16 @@ Hook z `tsc` to nie sterowanie, tylko natychmiastowy feedback — model widzi b�
 ## docs/SPEC.md — przykładowy plik w całości
 
 ```markdown
-# Kadr — specyfikacja v1
+# SocialManager — specyfikacja v1
 
 ## Problem i klient
 Małe marki, twórcy i lokalne biznesy (trenerka, kawiarnia, studio jogi, freelancer)
 wiedzą, że muszą publikować regularnie — ale nie mają czasu wymyślać tematów,
 pisać wpisów i składać grafik. Efekt: publikują chaotycznie albo wcale.
-Kadr zamienia jedną rozmowę o marce w gotowy tydzień contentu.
+SocialManager zamienia jedną rozmowę o marce w gotowy tydzień contentu.
 
 ## Model biznesowy
-- Free: 1 marka, 5 generacji AI/mc, grafiki z watermarkiem "kadr.app".
+- Free: 1 marka, 5 generacji AI/mc, grafiki z watermarkiem "SocialManager.app".
 - Pro 79 zł/mc: 3 marki, bez limitu generacji, bez watermarku, wszystkie formaty.
 - Płatność: subskrypcja Stripe (checkout + customer portal). V1 w trybie testowym.
 - Ekonomia: każda generacja planu/wpisów kosztuje tokeny — licznik generacji
@@ -177,13 +177,13 @@ grafiki w 2 formatach → ZIP → upgrade w Stripe test mode. Całość przechod
 e2e (na MOCK_AI) bez udziału człowieka poza kliknięciami usera.
 ```
 
-## Master prompt — jeden prompt, który buduje Kadr
+## Master prompt — jeden prompt, który buduje SocialManager
 
 Wklejasz w Claude Code (model: Fable 5), w świeżym repo z plikami powyżej:
 
 ```
 KONTEKST
-Buduję Kadr (docs/SPEC.md) — SaaS, który ma zarabiać na subskrypcjach.
+Buduję SocialManager (docs/SPEC.md) — SaaS, który ma zarabiać na subskrypcjach.
 Cel: działający produkt, na którym pokażę pełną ścieżkę pierwszemu płacącemu
 klientowi. Repo jest świeże; prowadzisz je od zera do wdrożenia.
 
@@ -243,7 +243,7 @@ GRANICE
 
 INPUTY ODE MNIE
 - Stripe test keys: [SK_TEST], [PK_TEST], webhook secret przez `stripe listen`.
-- Anthropic API key: [KEY]. Cena Pro: 79 zł/mc, produkt w Stripe: "Kadr Pro".
+- Anthropic API key: [KEY]. Cena Pro: 79 zł/mc, produkt w Stripe: "SocialManager Pro".
 - Vercel: konto podpięte, projekt utwórz sam.
 
 Start. Pierwsza wiadomość ode mnie po tej = odpowiedź na Twoje pytania
@@ -260,7 +260,7 @@ pętli dowodowej, nie Twoim wieczornym obowiązkiem.
 ## Prompt dnia 2+ (iteracje)
 
 ```
-KONTEKST: Kadr po pierwszym przebiegu; stan w LESSONS.md i DECISIONS.md.
+KONTEKST: SocialManager po pierwszym przebiegu; stan w LESSONS.md i DECISIONS.md.
 ZADANIE: [np. "czwarty szablon grafiki: cytat klienta na tle gradientu z kolorów
 marki + wariant karuzeli 3 slajdów"] — bo [powód biznesowy, 1 zdanie].
 DONE: [2–4 weryfikowalne punkty, w tym ocena wizualna na /playground].

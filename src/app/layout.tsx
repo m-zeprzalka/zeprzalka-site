@@ -6,6 +6,9 @@ import { Bar } from "@/components/layout/Bar"
 import { Header } from "@/components/layout/Header"
 import { Footer } from "@/components/layout/Footer"
 import { ScrollToTop } from "@/components/ScrollToTop"
+import { Analytics } from "@vercel/analytics/next"
+import { SpeedInsights } from "@vercel/speed-insights/next"
+import { SITE_URL } from "@/lib/site"
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -23,7 +26,6 @@ export const viewport: Viewport = {
   maximumScale: 5,
 }
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://zeprzalka.com"
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -53,6 +55,14 @@ export const metadata: Metadata = {
     title: "Michał Zeprzałka - Digital Solutions Architect",
     description:
       "Strony internetowe, aplikacje webowe, design i integracje AI dla biznesu.",
+  },
+  // Potwierdzenie własności domeny w Google Search Console i Bing.
+  // Tokeny są danymi wdrożeniowymi, nie kodem — wystarczy ustawić zmienne.
+  verification: {
+    google: process.env.GOOGLE_SITE_VERIFICATION,
+    other: process.env.BING_SITE_VERIFICATION
+      ? { "msvalidate.01": process.env.BING_SITE_VERIFICATION }
+      : undefined,
   },
   alternates: {
     types: {
@@ -85,6 +95,13 @@ export default function RootLayout({
           <main>{children}</main>
           <Footer />
         </ThemeProvider>
+        {/*
+          Pomiar ruchu i Core Web Vitals. Oba skrypty ładują się z tej samej
+          domeny (/_vercel/...), nie ustawiają ciasteczek i nie profilują
+          użytkowników — nie wymagają więc zgody na ciasteczka.
+        */}
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   )

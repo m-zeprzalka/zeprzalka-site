@@ -1,11 +1,11 @@
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import { Button } from "@/components/ui/button"
-import { MapPin, Mail, Globe, ExternalLink } from "lucide-react"
+import { MapPin, Mail, Globe, ExternalLink, Download } from "lucide-react"
 import Link from "next/link"
 import type { Metadata } from "next"
+import { SAME_AS, SITE_URL } from "@/lib/site"
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://zeprzalka.com"
 
 export const metadata: Metadata = {
   title: "O mnie",
@@ -31,10 +31,7 @@ const personJsonLd = {
       addressLocality: "Warszawa",
       addressCountry: "PL",
     },
-    sameAs: [
-      "https://github.com/m-zeprzalka",
-      "https://www.facebook.com/michalzeprzalka",
-    ],
+    sameAs: SAME_AS,
     knowsAbout: [
       "Web Development",
       "Next.js",
@@ -146,14 +143,14 @@ export default function CVPage() {
             className="flex items-center gap-2 hover:text-foreground transition-colors"
           >
             <Mail className="w-4 h-4 shrink-0" />
-            m@zeprzalka.com
+            m@www.zeprzalka.com
           </a>
           <a
-            href="https://zeprzalka.com"
+            href={SITE_URL}
             className="flex items-center gap-2 hover:text-foreground transition-colors"
           >
             <Globe className="w-4 h-4 shrink-0" />
-            zeprzalka.com
+            www.zeprzalka.com
           </a>
         </div>
 
@@ -293,14 +290,21 @@ export default function CVPage() {
       <Separator className="mb-12" />
 
       {/* CTA */}
-      <div className="flex flex-col sm:flex-row gap-3">
+      <div className="flex flex-col sm:flex-row gap-3" data-print-hide>
         <Button asChild size="lg" className="w-fit">
           <Link href="/kontakt">
             Porozmawiajmy o projekcie
           </Link>
         </Button>
+        {/* PDF jest generowany z tej strony — jedna treść, dwa formaty. */}
         <Button asChild variant="outline" size="lg" className="w-fit gap-2">
-          <a href="https://zeprzalka.com" target="_blank" rel="noopener noreferrer">
+          <a href="/cv-michal-zeprzalka.pdf" download>
+            <Download className="w-4 h-4" />
+            Pobierz CV (PDF)
+          </a>
+        </Button>
+        <Button asChild variant="ghost" size="lg" className="w-fit gap-2">
+          <a href={SITE_URL} target="_blank" rel="noopener noreferrer">
             <ExternalLink className="w-4 h-4" />
             Portfolio online
           </a>

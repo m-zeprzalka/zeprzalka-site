@@ -1,8 +1,8 @@
 import { MetadataRoute } from "next"
 import { getAllPosts, getAllCategorySlugs } from "@/lib/posts"
+import { SITE_URL } from "@/lib/site"
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://zeprzalka.com"
   const posts = getAllPosts()
 
   // Data ostatniego posta — stabilniejsza niż new Date() przy każdym buildzie
@@ -12,29 +12,35 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   const staticPages: MetadataRoute.Sitemap = [
     {
-      url: siteUrl,
+      url: SITE_URL,
       lastModified: newestPostDate,
       changeFrequency: "weekly",
       priority: 1,
     },
     {
-      url: `${siteUrl}/blog`,
+      url: `${SITE_URL}/blog`,
       lastModified: newestPostDate,
       changeFrequency: "weekly",
       priority: 0.9,
     },
     {
-      url: `${siteUrl}/o-mnie`,
+      // Strona ofertowa — najwyższa intencja zakupowa po stronie głównej.
+      url: `${SITE_URL}/uslugi`,
+      changeFrequency: "monthly",
+      priority: 0.9,
+    },
+    {
+      url: `${SITE_URL}/o-mnie`,
       changeFrequency: "monthly",
       priority: 0.8,
     },
     {
-      url: `${siteUrl}/kontakt`,
+      url: `${SITE_URL}/kontakt`,
       changeFrequency: "monthly",
       priority: 0.7,
     },
     {
-      url: `${siteUrl}/blog/kategoria`,
+      url: `${SITE_URL}/blog/kategoria`,
       lastModified: newestPostDate,
       changeFrequency: "weekly",
       priority: 0.5,
@@ -42,15 +48,15 @@ export default function sitemap(): MetadataRoute.Sitemap {
   ]
 
   const blogPosts: MetadataRoute.Sitemap = posts.map((post) => ({
-    url: `${siteUrl}/blog/${post.slug}`,
-    lastModified: new Date(post.frontmatter.date),
+    url: `${SITE_URL}/blog/${post.slug}`,
+    lastModified: new Date(post.frontmatter.updated || post.frontmatter.date),
     changeFrequency: "monthly",
     priority: 0.8,
   }))
 
   const categories: MetadataRoute.Sitemap = getAllCategorySlugs().map(
     (slug) => ({
-      url: `${siteUrl}/blog/kategoria/${slug}`,
+      url: `${SITE_URL}/blog/kategoria/${slug}`,
       lastModified: newestPostDate,
       changeFrequency: "weekly",
       priority: 0.5,

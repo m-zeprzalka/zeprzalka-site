@@ -20,6 +20,7 @@ import type { Metadata } from "next"
 import { ActiveTOC } from "@/components/blog/ActiveTOC"
 import { CodeBlock } from "@/components/blog/CodeBlock"
 import { YouTubeEmbed } from "@/components/blog/YouTubeEmbed"
+import { PostCta } from "@/components/blog/PostCta"
 import {
   Sidebar,
   SidebarContent,
@@ -37,6 +38,7 @@ import rehypeAutolinkHeadings from "rehype-autolink-headings"
 import remarkGfm from "remark-gfm"
 import remarkEmoji from "remark-emoji"
 import "./highlight.css"
+import { AUTHOR, SITE_URL } from "@/lib/site"
 
 // MDX Components
 const mdxComponents = {
@@ -168,10 +170,9 @@ export async function generateMetadata({
     return {}
   }
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://zeprzalka.com"
   const imageUrl = post.frontmatter.image 
-    ? (post.frontmatter.image.startsWith("http") ? post.frontmatter.image : `${siteUrl}${post.frontmatter.image}`)
-    : `${siteUrl}/avatar.png`
+    ? (post.frontmatter.image.startsWith("http") ? post.frontmatter.image : `${SITE_URL}${post.frontmatter.image}`)
+    : `${SITE_URL}/avatar.png`
 
   return {
     title: post.frontmatter.title,
@@ -183,9 +184,9 @@ export async function generateMetadata({
       title: post.frontmatter.title,
       description: post.frontmatter.description,
       type: "article",
-      url: `${siteUrl}/blog/${post.slug}`,
+      url: `${SITE_URL}/blog/${post.slug}`,
       publishedTime: post.frontmatter.date,
-      authors: [post.frontmatter.author?.name || "Michał Zeprzałka"],
+      authors: [AUTHOR.name],
       images: [
         {
           url: imageUrl,
@@ -212,11 +213,10 @@ export default async function BlogPost({ params }: PageProps) {
     notFound()
   }
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://zeprzalka.com"
-  const postUrl = `${siteUrl}/blog/${post.slug}`
+  const postUrl = `${SITE_URL}/blog/${post.slug}`
   const imageUrl = post.frontmatter.image?.startsWith("http")
     ? post.frontmatter.image
-    : `${siteUrl}${post.frontmatter.image || "/avatar.png"}`
+    : `${SITE_URL}${post.frontmatter.image || "/avatar.png"}`
 
   // JSON-LD Schema for SEO
   const jsonLd = {
@@ -226,7 +226,8 @@ export default async function BlogPost({ params }: PageProps) {
     description: post.frontmatter.description,
     image: imageUrl,
     datePublished: post.frontmatter.date,
-    dateModified: post.frontmatter.date,
+    // Data aktualizacji, jeśli wpis był odświeżany — inaczej data publikacji.
+    dateModified: post.frontmatter.updated || post.frontmatter.date,
     inLanguage: "pl-PL",
     mainEntityOfPage: {
       "@type": "WebPage",
@@ -234,13 +235,13 @@ export default async function BlogPost({ params }: PageProps) {
     },
     author: {
       "@type": "Person",
-      name: post.frontmatter.author?.name || "Michał Zeprzałka",
-      url: siteUrl,
+      name: AUTHOR.name,
+      url: SITE_URL,
     },
     publisher: {
       "@type": "Person",
-      name: "Michał Zeprzałka",
-      url: siteUrl,
+      name: AUTHOR.name,
+      url: SITE_URL,
     },
   }
 
@@ -248,7 +249,7 @@ export default async function BlogPost({ params }: PageProps) {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Blog", item: `${siteUrl}/blog` },
+      { "@type": "ListItem", position: 1, name: "Blog", item: `${SITE_URL}/blog` },
       { "@type": "ListItem", position: 2, name: post.frontmatter.title, item: postUrl },
     ],
   }
@@ -427,19 +428,21 @@ export default async function BlogPost({ params }: PageProps) {
                   ))}
                 </div>
 
+                <PostCta />
+
                 {/* Author */}
                 <div className="flex flex-col sm:flex-row items-start gap-6 bg-muted/40 p-6 rounded-lg border">
                   <Avatar className="w-20 h-20 border">
-                    <AvatarImage src="/avatar.png" alt="Michał Zeprzałka" />
+                    <AvatarImage src={AUTHOR.avatar} alt={AUTHOR.name} />
                     <AvatarFallback>MZ</AvatarFallback>
                   </Avatar>
                   <div className="flex-1">
-                    <h4 className="font-semibold text-xl mt-1">Michał Zeprzałka</h4>
+                    <p className="font-semibold text-xl mt-1">{AUTHOR.name}</p>
                     <p className="text-muted-foreground text-sm mt-1">
-                      Digital Solutions Architect
+                      {AUTHOR.jobTitle}
                     </p>
                     <p className="mt-2 text-foreground/80 text-base">
-                      Tworzę rozwiązania łączące biznes z technologią.
+                      {AUTHOR.bio}
                     </p>
                   </div>
                 </div>

@@ -1,11 +1,12 @@
+import { SAME_AS, SITE_URL } from "@/lib/site"
+
 /**
  * Jedno źródło treści dla /main-secondary.
  * Teksty są 1:1 z obecną stroną główną (src/components/home) — zmienia się
  * wyłącznie forma, nie treść ani kolejność sekcji.
  */
 
-export const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL || "https://zeprzalka.com"
+export { SITE_URL } from "@/lib/site"
 
 export interface SectionMeta {
   id: string
@@ -71,7 +72,7 @@ export const hero = {
   cta: { label: "Zarezerwuj Bezpłatną Konsultację", href: "/kontakt" },
   video: {
     label: "Prezentacja realizacji Michała Zeprzałki",
-    poster: "/variants/posters/hero.webp",
+    poster: "/hero-poster.webp",
     aspect: "16 / 9",
     sources: [
       { src: "/hero_web.webm", type: "video/webm" },
@@ -148,7 +149,7 @@ export interface PortfolioItem {
   aspect: string
 }
 
-const poster = (name: string) => `/variants/posters/${name}.webp`
+const poster = (name: string) => `/portfolio/${name}.webp`
 
 export const portfolio: PortfolioItem[] = [
   { id: "orlen-min", title: "Orlen Mistrzowie Podwórek", category: "UX/UI Design", src: "/orlen-min.mp4", poster: poster("orlen-min"), aspect: "771 / 500" },
@@ -207,9 +208,6 @@ export const jsonLd = [
     jobTitle: "Digital Solutions Architect",
     url: SITE_URL,
     image: `${SITE_URL}/avatar.png`,
-    sameAs: [
-      "https://github.com/m-zeprzalka",
-      "https://www.facebook.com/michalzeprzalka",
-    ],
+    sameAs: SAME_AS,
   },
 ]

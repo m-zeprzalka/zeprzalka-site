@@ -5,14 +5,17 @@ import { sendContactEmail } from "@/app/actions/contact"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { MousePointerClick, CheckCircle, AlertCircle } from "lucide-react"
+import type { Locale } from "@/i18n/config"
+import { getCommon } from "@/i18n/content/common"
 
 const initialState = { success: false, message: "" }
 
-export function ContactForm() {
+export function ContactForm({ locale }: { locale: Locale }) {
   const [state, formAction, pending] = useActionState(
     sendContactEmail,
     initialState
   )
+  const copy = getCommon(locale).form
 
   if (state.success) {
     return (
@@ -32,9 +35,16 @@ export function ContactForm() {
         </div>
       )}
 
+      {/*
+        Język formularza jedzie razem ze zgłoszeniem: komunikaty walidacji
+        wracają w tym samym języku, w którym czytelnik wypełniał pola,
+        a temat maila dostaje znacznik wersji angielskiej.
+      */}
+      <input type="hidden" name="locale" value={locale} />
+
       {/* Honeypot — pole niewidoczne dla ludzi, wypełniają je tylko boty */}
       <div className="absolute opacity-0 -z-10 h-0 overflow-hidden" aria-hidden="true">
-        <label htmlFor="company">Nie wypełniaj tego pola</label>
+        <label htmlFor="company">{copy.honeypot}</label>
         <input
           id="company"
           name="company"
@@ -47,13 +57,13 @@ export function ContactForm() {
       <div className="grid sm:grid-cols-2 gap-5">
         <div>
           <label htmlFor="name" className="text-sm font-medium mb-2 block">
-            Imię <span className="text-destructive">*</span>
+            {copy.name} <span className="text-destructive">*</span>
           </label>
           <Input
             id="name"
             name="name"
             type="text"
-            placeholder="Twoje imię"
+            placeholder={copy.namePlaceholder}
             required
             maxLength={100}
             className="py-6 px-4"
@@ -61,13 +71,13 @@ export function ContactForm() {
         </div>
         <div>
           <label htmlFor="email" className="text-sm font-medium mb-2 block">
-            Email <span className="text-destructive">*</span>
+            {copy.email} <span className="text-destructive">*</span>
           </label>
           <Input
             id="email"
             name="email"
             type="email"
-            placeholder="twoj@email.pl"
+            placeholder={copy.emailPlaceholder}
             required
             maxLength={200}
             className="py-6 px-4"
@@ -77,13 +87,13 @@ export function ContactForm() {
 
       <div>
         <label htmlFor="project-type" className="text-sm font-medium mb-2 block">
-          Rodzaj projektu
+          {copy.projectType}
         </label>
         <Input
           id="project-type"
           name="project-type"
           type="text"
-          placeholder="Strona internetowa / Animacja / Grafika..."
+          placeholder={copy.projectTypePlaceholder}
           maxLength={200}
           className="py-6 px-4"
         />
@@ -91,7 +101,7 @@ export function ContactForm() {
 
       <div>
         <label htmlFor="message" className="text-sm font-medium mb-2 block">
-          Wiadomość <span className="text-destructive">*</span>
+          {copy.message} <span className="text-destructive">*</span>
         </label>
         <textarea
           id="message"
@@ -100,7 +110,7 @@ export function ContactForm() {
           rows={6}
           maxLength={5000}
           className="flex w-full rounded-md border border-input bg-background p-4 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 resize-none"
-          placeholder="Opisz swój projekt lub pytanie. Im więcej szczegółów, tym lepiej..."
+          placeholder={copy.messagePlaceholder}
         />
       </div>
 
@@ -111,7 +121,7 @@ export function ContactForm() {
         disabled={pending}
       >
         <MousePointerClick className="w-4 h-4" />
-        {pending ? "Wysyłanie..." : "Wyślij wiadomość"}
+        {pending ? copy.submitting : copy.submit}
       </Button>
     </form>
   )

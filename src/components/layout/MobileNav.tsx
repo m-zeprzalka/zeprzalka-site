@@ -8,25 +8,29 @@ import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet"
 import { ModeToggle } from "@/components/Toggle"
 import { Logo } from "@/components/layout/Logo"
 import { cn } from "@/lib/utils"
+import { ROUTES, type Locale } from "@/i18n/config"
+import { getCommon } from "@/i18n/content/common"
 
-const navLinks = [
-  { href: "/", label: "Start" },
-  { href: "/uslugi", label: "Usługi" },
-  { href: "/blog", label: "Blog" },
-  { href: "/o-mnie", label: "O mnie" },
-  { href: "/kontakt", label: "Kontakt" },
-]
-
-export function MobileNav() {
+export function MobileNav({ locale }: { locale: Locale }) {
   const [open, setOpen] = useState(false)
   const pathname = usePathname()
+  const copy = getCommon(locale)
+
+  const home = ROUTES.home[locale]
+  const navLinks = [
+    { href: home, label: copy.nav.home },
+    { href: ROUTES.services[locale], label: copy.nav.services },
+    { href: ROUTES.blog[locale], label: copy.nav.blog },
+    { href: ROUTES.about[locale], label: copy.nav.about },
+    { href: ROUTES.contact[locale], label: copy.nav.contact },
+  ]
 
   return (
     <>
       {/* Hamburger — otwiera panel */}
       <button
         onClick={() => setOpen(true)}
-        aria-label="Otwórz menu"
+        aria-label={copy.nav.openMenu}
         className="md:hidden flex items-center justify-center w-9 h-9 rounded-md hover:bg-muted transition-colors"
       >
         <Menu className="w-5 h-5" />
@@ -44,15 +48,15 @@ export function MobileNav() {
           className="flex flex-col p-0 gap-0 w-full h-screen bg-background"
         >
           {/* Wymagany przez Radix dla screen readerów */}
-          <SheetTitle className="sr-only">Menu nawigacyjne</SheetTitle>
+          <SheetTitle className="sr-only">{copy.nav.menuTitle}</SheetTitle>
 
           <div className="flex items-center justify-between h-16 px-4 border-b shrink-0 container mx-auto">
-            <Logo onClick={() => setOpen(false)} />
+            <Logo locale={locale} onClick={() => setOpen(false)} />
             <div className="flex items-center justify-end gap-2">
-              <ModeToggle />
+              <ModeToggle label={copy.ui.themeToggle} />
               <button
                 onClick={() => setOpen(false)}
-                aria-label="Zamknij menu"
+                aria-label={copy.nav.closeMenu}
                 className="flex items-center justify-center w-9 h-9 rounded-md hover:bg-muted transition-colors"
               >
                 <X className="w-5 h-5" />
@@ -61,10 +65,12 @@ export function MobileNav() {
           </div>
 
           {/* Linki */}
-          <nav aria-label="Nawigacja mobilna" className="flex flex-col px-6 py-2">
+          <nav aria-label={copy.nav.mobileAria} className="flex flex-col px-6 py-2">
             {navLinks.map(({ href, label }) => {
+              // Strona główna jest aktywna tylko przy dokładnym trafieniu —
+              // inaczej „/en" świeciłoby się na każdej angielskiej podstronie.
               const isActive =
-                href === "/" ? pathname === "/" : pathname.startsWith(href)
+                href === home ? pathname === home : pathname.startsWith(href)
               return (
                 <Link
                   key={href}

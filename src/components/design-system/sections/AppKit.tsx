@@ -9,6 +9,7 @@ import {
   DsSection,
   DsTable,
 } from "@/components/design-system/primitives"
+import { getCommon } from "@/i18n/content/common"
 
 export function AppKitSection() {
   return (
@@ -47,10 +48,10 @@ export function AppKitSection() {
             label="Logo"
             code="Znak losowany z listy 170 symboli, podmieniany co 1 s"
           >
-            <Logo />
+            <Logo locale="pl" />
           </DsPreview>
           <DsPreview label="Przełącznik motywu" code='variant="outline" size="icon"'>
-            <ModeToggle />
+            <ModeToggle label={getCommon("pl").ui.themeToggle} />
           </DsPreview>
         </div>
       </DsBlock>

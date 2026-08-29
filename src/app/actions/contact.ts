@@ -4,33 +4,45 @@ import { headers } from "next/headers"
 import nodemailer from "nodemailer"
 import { z } from "zod"
 import { checkRateLimit, clientKey } from "@/lib/rate-limit"
+import { DEFAULT_LOCALE, locales, type Locale } from "@/i18n/config"
+import { fill, getCommon } from "@/i18n/content/common"
 
 export interface ContactFormState {
   success: boolean
   message: string
 }
 
-const contactSchema = z.object({
-  name: z
-    .string()
-    .trim()
-    .min(2, "Imię musi mieć minimum 2 znaki.")
-    .max(100, "Imię może mieć maksymalnie 100 znaków."),
-  email: z
-    .email("Podaj poprawny adres e-mail.")
-    .trim()
-    .max(200, "Adres e-mail jest za długi."),
-  projectType: z
-    .string()
-    .trim()
-    .max(200, "Rodzaj projektu jest za długi.")
-    .optional(),
-  message: z
-    .string()
-    .trim()
-    .min(5, "Wiadomość musi mieć minimum 5 znaków.")
-    .max(5000, "Wiadomość może mieć maksymalnie 5000 znaków."),
-})
+/**
+ * Formularz stoi na dwóch wersjach językowych serwisu, więc komunikat musi
+ * wrócić w tym samym języku, w którym czytelnik wypełniał pola. Język jedzie
+ * w ukrytym polu; nieznana wartość spada do polskiego.
+ */
+function readLocale(value: FormDataEntryValue | null): Locale {
+  return locales.includes(value as Locale) ? (value as Locale) : DEFAULT_LOCALE
+}
+
+function schemaFor(locale: Locale) {
+  const copy = getCommon(locale).contactAction
+
+  return z.object({
+    name: z
+      .string()
+      .trim()
+      .min(2, copy.nameMin)
+      .max(100, copy.nameMax),
+    email: z.email(copy.emailInvalid).trim().max(200, copy.emailMax),
+    projectType: z
+      .string()
+      .trim()
+      .max(200, copy.projectTypeMax)
+      .optional(),
+    message: z
+      .string()
+      .trim()
+      .min(5, copy.messageMin)
+      .max(5000, copy.messageMax),
+  })
+}
 
 // Treść pól trafia do HTML maila — bez escapowania odbiorca wykonałby
 // dowolny znacznik wstrzyknięty przez nadawcę formularza.
@@ -47,10 +59,13 @@ export async function sendContactEmail(
   _prevState: ContactFormState,
   formData: FormData
 ): Promise<ContactFormState> {
+  const locale = readLocale(formData.get("locale"))
+  const copy = getCommon(locale).contactAction
+
   // Honeypot: pole niewidoczne dla ludzi — wypełniają je tylko boty.
   // Zwracamy "sukces", aby bot nie wiedział, że został odfiltrowany.
   if (formData.get("company")) {
-    return { success: true, message: "Wiadomość wysłana. Odezwę się wkrótce!" }
+    return { success: true, message: copy.success }
   }
 
   // Limit zgłoszeń z jednego adresu — honeypot zatrzymuje proste boty,
@@ -60,11 +75,11 @@ export async function sendContactEmail(
     const minutes = Math.max(1, Math.ceil(retryAfter / 60))
     return {
       success: false,
-      message: `Za dużo wiadomości z tego adresu. Spróbuj ponownie za ${minutes} min lub napisz na m@zeprzalka.com.`,
+      message: fill(copy.rateLimited, { minutes }),
     }
   }
 
-  const result = contactSchema.safeParse({
+  const result = schemaFor(locale).safeParse({
     name: formData.get("name"),
     email: formData.get("email"),
     projectType: formData.get("project-type"),
@@ -84,8 +99,7 @@ export async function sendContactEmail(
     console.error("Contact form: missing SMTP configuration (SMTP_HOST/SMTP_USER/SMTP_PASS)")
     return {
       success: false,
-      message:
-        "Formularz jest chwilowo niedostępny. Napisz bezpośrednio na m@zeprzalka.com.",
+      message: copy.unavailable,
     }
   }
 
@@ -99,13 +113,16 @@ export async function sendContactEmail(
   // Nagłówki mailowe nie mogą zawierać znaków nowej linii (header injection).
   const safeName = name.replace(/[\r\n"]/g, " ").trim()
   const safeSubject = (projectType || "Brak tematu").replace(/[\r\n]/g, " ")
+  // Sama wiadomość zostaje po polsku — czyta ją jedna osoba. Znacznik [EN]
+  // w temacie mówi tylko tyle, że odpowiedź ma pójść po angielsku.
+  const localeTag = locale === "pl" ? "" : "[EN] "
 
   try {
     await transporter.sendMail({
       from: `"${safeName}" <${SMTP_USER}>`,
       to: process.env.CONTACT_EMAIL || "m@zeprzalka.com",
       replyTo: email,
-      subject: `Wiadomość z formularza: ${safeSubject}`,
+      subject: `${localeTag}Wiadomość z formularza: ${safeSubject}`,
       text: `Imię: ${name}\nEmail: ${email}\nRodzaj projektu: ${projectType || "-"}\n\n${message}`,
       html: `
         <p><strong>Imię:</strong> ${escapeHtml(name)}</p>
@@ -119,10 +136,9 @@ export async function sendContactEmail(
     console.error("Contact form: sendMail failed", error)
     return {
       success: false,
-      message:
-        "Nie udało się wysłać wiadomości. Spróbuj ponownie lub napisz na m@zeprzalka.com.",
+      message: copy.failed,
     }
   }
 
-  return { success: true, message: "Wiadomość wysłana. Odezwę się wkrótce!" }
+  return { success: true, message: copy.success }
 }

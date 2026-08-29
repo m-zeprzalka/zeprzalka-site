@@ -6,8 +6,9 @@ import { Check, Copy } from "lucide-react"
 export function CodeBlock({
   children,
   className,
+  copyLabel,
   ...props
-}: React.HTMLAttributes<HTMLPreElement>) {
+}: React.HTMLAttributes<HTMLPreElement> & { copyLabel: string }) {
   const [copied, setCopied] = useState(false)
   const preRef = useRef<HTMLPreElement>(null)
 
@@ -36,7 +37,7 @@ export function CodeBlock({
       <button
         onClick={handleCopy}
         className="absolute top-3 right-3 p-2 rounded-md bg-background/80 border hover:bg-background transition-all opacity-0 group-hover:opacity-100 focus:opacity-100"
-        aria-label="Kopiuj kod"
+        aria-label={copyLabel}
         type="button"
       >
         {copied ? (

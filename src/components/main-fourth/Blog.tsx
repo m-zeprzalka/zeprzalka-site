@@ -65,7 +65,7 @@ function Row({ post, index }: { post: Post; index: number }) {
 }
 
 export function Blog() {
-  const posts = getAllPosts().slice(0, blog.postsLimit)
+  const posts = getAllPosts("pl").slice(0, blog.postsLimit)
 
   return (
     <Section meta={sections.blog}>

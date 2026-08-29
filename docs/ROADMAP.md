@@ -33,12 +33,15 @@ Legenda: `[x]` zrobione · `[~]` zrobione inaczej niż zakładano (z uzasadnieni
       testach nie wysyłaj więcej niż 5 wiadomości na 10 minut z jednego adresu.
 - [x] **Commit i push zmian** — historia rozbita na commity tematyczne.
       Deploy: `vercel deploy --prod` (push na GitHub nie wyzwala builda).
-- [ ] **Decyzja o 7 nieużywanych filmach w `public/`**
-      (Polish-Ukrainian-Israeli-Tech-Summit, Realizacje-motoryzacyjne,
-      White-Paintings-Black-Paintings, banana-socks-min, cellove, content-sport,
-      rolki-lifestyle — ~13 MB). Nadal leżą poza repozytorium.
-      **Potrzebuję od Ciebie tytułów i kategorii**, żeby dodać je do portfolio —
-      sam nie przypiszę im nazw klientów. Alternatywa: usuwamy pliki.
+- [~] **7 nieużywanych filmów w `public/`** — trafiły na stronę `/portfolio`
+      w sekcji „Wideo i animacja". Tytuły wziąłem z nazw plików, kategorie
+      z obejrzenia materiału (relacja z wydarzenia / wideo wizerunkowe /
+      wideo produktowe / content social media). **Potwierdź jedno i drugie**
+      w `src/lib/portfolio.ts` — zwłaszcza „Content sportowy", gdzie w kadrze
+      jest szyld 4F, ale nie wiem, czy to realizacja dla tej marki.
+      Do rozważenia osobno: `content-sport.mp4` (3,7 MB) i `rolki-lifestyle.mp4`
+      (2,8 MB) mają 2400 kb/s przy kadrze 636×750 — kompresja do ~900 kb/s
+      byłaby niezauważalna, a odchudziłaby stronę o połowę.
 
 ## Etap 2 — Widoczność w Google
 

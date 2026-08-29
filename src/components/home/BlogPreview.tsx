@@ -4,22 +4,33 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { CalendarDays, Clock } from "lucide-react"
 import { getAllPosts, slugify } from "@/lib/posts"
+import {
+  ROUTES,
+  categoryPath,
+  formatDate,
+  formatReadingTime,
+  postPath,
+  type Locale,
+} from "@/i18n/config"
+import { getHome } from "@/i18n/content/home"
 
-export function BlogPreview() {
-  const posts = getAllPosts().slice(0, 6)
+export function BlogPreview({ locale }: { locale: Locale }) {
+  const posts = getAllPosts(locale).slice(0, 6)
+  const copy = getHome(locale).blog
+
   return (
     <section className="container mx-auto flex flex-col justify-center p-4 py-12 md:py-16 lg:py-24">
       <div className="grid gap-12 lg:grid-cols-12">
         <aside className="lg:col-span-3 lg:sticky top-24 self-start">
           <div>
             <h2 className="text-3xl md:text-4xl font-medium">
-              Blog
+              {copy.title}
             </h2>
             <p className="text-muted-foreground lg:text-lg 2xl:text-xl mt-2 lg:mt-6 max-w-xs">
-              Moje projekty i przemyślenia z pogranicza technologii i AI
+              {copy.lead}
             </p>
             <Button asChild variant="outline" size="sm" className="mt-6">
-              <Link href="/blog">Wszystkie artykuły</Link>
+              <Link href={ROUTES.blog[locale]}>{copy.cta}</Link>
             </Button>
           </div>
         </aside>
@@ -45,7 +56,7 @@ export function BlogPreview() {
                     {(post.frontmatter.categories || []).slice(0, 2).map((cat) => (
                       <Link
                         key={cat}
-                        href={`/blog/kategoria/${slugify(cat)}`}
+                        href={categoryPath(locale, slugify(cat))}
                         className="relative z-10"
                       >
                         <Badge variant="outline" className="text-xs hover:bg-secondary/80 cursor-pointer transition-colors">
@@ -55,7 +66,7 @@ export function BlogPreview() {
                     ))}
                   </div>
                   <h3 className="font-bold group-hover:text-primary transition-colors line-clamp-2">
-                    <Link href={`/blog/${post.slug}`} className="after:absolute after:inset-0">
+                    <Link href={postPath(locale, post.slug)} className="after:absolute after:inset-0">
                       {post.frontmatter.title}
                     </Link>
                   </h3>
@@ -65,12 +76,12 @@ export function BlogPreview() {
                   <div className="flex items-center gap-3 text-xs text-muted-foreground">
                     <div className="flex items-center gap-1">
                       <CalendarDays className="w-3 h-3" />
-                      {new Date(post.frontmatter.date).toLocaleDateString("pl-PL")}
+                      {formatDate(post.frontmatter.date, locale)}
                     </div>
                     <span>·</span>
                     <div className="flex items-center gap-1">
                       <Clock className="w-3 h-3" />
-                      {post.readingTime.replace("min read", "min czytania")}
+                      {formatReadingTime(post.readingTime, locale)}
                     </div>
                   </div>
                 </div>

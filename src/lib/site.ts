@@ -9,14 +9,20 @@
  * Zmienna środowiskowa nadal ma pierwszeństwo (przydaje się w podglądach
  * i środowiskach testowych), ale wartość domyślna jest już poprawna.
  */
+import type { Localized } from "@/i18n/config"
+
 export const SITE_URL = (
   process.env.NEXT_PUBLIC_SITE_URL || "https://www.zeprzalka.com"
 ).replace(/\/$/, "")
 
 export const SITE_NAME = "Michał Zeprzałka"
 export const SITE_TITLE = "Michał Zeprzałka - Digital Solutions Architect"
-export const SITE_DESCRIPTION =
-  "Strony internetowe, aplikacje webowe, design i integracje AI. Ponad 12 lat doświadczenia w tworzeniu rozwiązań webowych i multimedialnych dla biznesu."
+
+/** Opis serwisu — trafia do metadanych, manifestu i kanału RSS. */
+export const SITE_DESCRIPTION: Localized<string> = {
+  pl: "Strony internetowe, aplikacje webowe, design i integracje AI. Ponad 12 lat doświadczenia w tworzeniu rozwiązań webowych i multimedialnych dla biznesu.",
+  en: "Websites, web applications, design and AI integrations. Over 12 years of building web and multimedia solutions for business.",
+}
 
 /** Bezwzględny adres dla metadanych i danych strukturalnych. */
 export function absoluteUrl(path = "/"): string {
@@ -31,7 +37,10 @@ export function absoluteUrl(path = "/"): string {
 export const AUTHOR = {
   name: SITE_NAME,
   jobTitle: "Digital Solutions Architect",
-  bio: "Tworzę rozwiązania łączące biznes z technologią.",
+  bio: {
+    pl: "Tworzę rozwiązania łączące biznes z technologią.",
+    en: "I build solutions that connect business with technology.",
+  } satisfies Localized<string>,
   avatar: "/avatar.png",
 } as const
 

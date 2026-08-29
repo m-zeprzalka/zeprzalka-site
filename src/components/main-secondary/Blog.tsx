@@ -110,7 +110,7 @@ function PostRow({ post }: { post: Post }) {
 }
 
 export function Blog() {
-  const [featured, ...rest] = getAllPosts().slice(0, blog.postsLimit)
+  const [featured, ...rest] = getAllPosts("pl").slice(0, blog.postsLimit)
 
   return (
     <Section meta={sections.blog}>

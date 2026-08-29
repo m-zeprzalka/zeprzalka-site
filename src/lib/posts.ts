@@ -5,8 +5,24 @@ import { cache } from "react"
 import matter from "gray-matter"
 import readingTime from "reading-time"
 import GithubSlugger from "github-slugger"
+import type { Locale, Localized } from "@/i18n/config"
 
-const postsDirectory = path.join(process.cwd(), "content/posts")
+/**
+ * Wpisy leżą w katalogu na język: polskie w `content/posts`, angielskie
+ * w `content/en/posts`. Para „ten sam tekst w dwóch językach" nie jest
+ * zapisana w plikach, tylko w `src/i18n/blog-map.ts` — jedno miejsce,
+ * z którego korzystają `hreflang`, mapa strony i przełącznik języka.
+ *
+ * Trzymamy tu sam podkatalog, a ścieżkę składamy przy każdym odczycie jako
+ * `path.join(process.cwd(), "content", …)`. To nie ozdobnik: gdy Turbopack
+ * dostaje gotową zmienną ze ścieżką, przestaje umieć zawęzić śledzenie
+ * plików i wrzuca do paczki serwerowej cały projekt razem z `public/`
+ * (kilkadziesiąt megabajtów wideo).
+ */
+const POSTS_SUBDIR: Localized<string> = {
+  pl: "posts",
+  en: "en/posts",
+}
 
 export interface PostFrontmatter {
   title: string
@@ -24,6 +40,7 @@ export interface PostFrontmatter {
 
 export interface Post {
   slug: string
+  locale: Locale
   content: string
   frontmatter: PostFrontmatter
   readingTime: string
@@ -35,39 +52,47 @@ export function slugify(value: string): string {
   return value.toLowerCase().replace(/\s+/g, "-")
 }
 
-export const getPostBySlug = cache((slug: string): Post | null => {
-  try {
-    const fullPath = path.join(postsDirectory, `${slug}.mdx`)
+export const getPostBySlug = cache(
+  (locale: Locale, slug: string): Post | null => {
+    try {
+      const fullPath = path.join(
+        process.cwd(),
+        "content",
+        POSTS_SUBDIR[locale],
+        `${slug}.mdx`
+      )
 
-    if (!fs.existsSync(fullPath)) {
+      if (!fs.existsSync(fullPath)) {
+        return null
+      }
+
+      const fileContents = fs.readFileSync(fullPath, "utf8")
+      const { data, content } = matter(fileContents)
+
+      return {
+        slug,
+        locale,
+        content,
+        frontmatter: data as PostFrontmatter,
+        readingTime: readingTime(content).text,
+        headings: extractHeadings(content),
+      }
+    } catch (error) {
+      console.error(`Error loading post ${locale}/${slug}:`, error)
       return null
     }
-
-    const fileContents = fs.readFileSync(fullPath, "utf8")
-    const { data, content } = matter(fileContents)
-
-    return {
-      slug,
-      content,
-      frontmatter: data as PostFrontmatter,
-      readingTime: readingTime(content).text,
-      headings: extractHeadings(content),
-    }
-  } catch (error) {
-    console.error(`Error loading post ${slug}:`, error)
-    return null
   }
-})
+)
 
-export const getAllPosts = cache((): Post[] => {
-  if (!fs.existsSync(postsDirectory)) {
+export const getAllPosts = cache((locale: Locale): Post[] => {
+  if (!fs.existsSync(path.join(process.cwd(), "content", POSTS_SUBDIR[locale]))) {
     return []
   }
 
   return fs
-    .readdirSync(postsDirectory)
+    .readdirSync(path.join(process.cwd(), "content", POSTS_SUBDIR[locale]))
     .filter((name) => name.endsWith(".mdx"))
-    .map((name) => getPostBySlug(name.replace(/\.mdx$/, "")))
+    .map((name) => getPostBySlug(locale, name.replace(/\.mdx$/, "")))
     .filter((post): post is Post => post !== null)
     .sort(
       (a, b) =>
@@ -92,20 +117,23 @@ function extractHeadings(content: string) {
   return headings
 }
 
-export function getPostsByCategory(categorySlug: string): Post[] {
-  return getAllPosts().filter((post) =>
+export function getPostsByCategory(
+  locale: Locale,
+  categorySlug: string
+): Post[] {
+  return getAllPosts(locale).filter((post) =>
     post.frontmatter.categories?.some((cat) => slugify(cat) === categorySlug)
   )
 }
 
-export function getPostsByTag(tagSlug: string): Post[] {
-  return getAllPosts().filter((post) =>
+export function getPostsByTag(locale: Locale, tagSlug: string): Post[] {
+  return getAllPosts(locale).filter((post) =>
     post.frontmatter.tags?.some((tag) => slugify(tag) === tagSlug)
   )
 }
 
-export function getFeaturedPosts(): Post[] {
-  return getAllPosts().filter((post) => post.frontmatter.featured)
+export function getFeaturedPosts(locale: Locale): Post[] {
+  return getAllPosts(locale).filter((post) => post.frontmatter.featured)
 }
 
 /**
@@ -113,18 +141,20 @@ export function getFeaturedPosts(): Post[] {
  * („ai" → „ai", „next.js" → „next.js") gubiło wielkość liter i kropki,
  * przez co nagłówek strony kategorii nie zgadzał się z etykietą przy wpisach.
  */
-export const getCategoryLabel = cache((slug: string): string => {
-  for (const post of getAllPosts()) {
-    for (const category of post.frontmatter.categories || []) {
-      if (slugify(category) === slug) return category
+export const getCategoryLabel = cache(
+  (locale: Locale, slug: string): string => {
+    for (const post of getAllPosts(locale)) {
+      for (const category of post.frontmatter.categories || []) {
+        if (slugify(category) === slug) return category
+      }
     }
+    return slug
   }
-  return slug
-})
+)
 
 /** To samo dla tagów. */
-export const getTagLabel = cache((slug: string): string => {
-  for (const post of getAllPosts()) {
+export const getTagLabel = cache((locale: Locale, slug: string): string => {
+  for (const post of getAllPosts(locale)) {
     for (const tag of post.frontmatter.tags || []) {
       if (slugify(tag) === slug) return tag
     }
@@ -133,18 +163,18 @@ export const getTagLabel = cache((slug: string): string => {
 })
 
 /** Unikalne slugi kategorii ze wszystkich postów. */
-export function getAllCategorySlugs(): string[] {
+export function getAllCategorySlugs(locale: Locale): string[] {
   const slugs = new Set<string>()
-  getAllPosts().forEach((post) =>
+  getAllPosts(locale).forEach((post) =>
     post.frontmatter.categories?.forEach((cat) => slugs.add(slugify(cat)))
   )
   return Array.from(slugs)
 }
 
 /** Unikalne slugi tagów ze wszystkich postów. */
-export function getAllTagSlugs(): string[] {
+export function getAllTagSlugs(locale: Locale): string[] {
   const slugs = new Set<string>()
-  getAllPosts().forEach((post) =>
+  getAllPosts(locale).forEach((post) =>
     post.frontmatter.tags?.forEach((tag) => slugs.add(slugify(tag)))
   )
   return Array.from(slugs)

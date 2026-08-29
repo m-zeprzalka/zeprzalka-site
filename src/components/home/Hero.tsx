@@ -6,10 +6,15 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { MousePointerClick } from "lucide-react"
 import Link from "next/link"
+import { ROUTES, type Locale } from "@/i18n/config"
+import { getHome } from "@/i18n/content/home"
+import { getCommon } from "@/i18n/content/common"
 
-export function Hero() {
+export function Hero({ locale }: { locale: Locale }) {
   const videoRef = useRef<HTMLVideoElement>(null)
   const reducedMotion = useReducedMotion()
+  const copy = getHome(locale).hero
+  const ui = getCommon(locale).ui
 
   // Zapętlone wideo to ruch ciągły. Przy ustawieniu „ogranicz ruch"
   // zostaje pierwsza klatka zamiast odtwarzania.
@@ -24,21 +29,20 @@ export function Hero() {
         className="flex items-center gap-2 text-sm px-4 py-2"
       >
         <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-        <span>Gotowy do współpracy</span>
+        <span>{copy.status}</span>
       </Badge>
       <h1 className="text-4xl sm:text-5xl md:text-6xl xl:text-7xl font-medium max-w-5xl transition-all duration-300">
-        Przekształcam ambitne projekty w produkty cyfrowe.
+        {copy.title}
       </h1>
       <p className="sm:text-xl md:text-2xl text-muted-foreground max-w-3xl transition-all duration-300 font-normal">
-        Digital Solutions Architect
-        <span className="text-foreground font-medium"> - ponad 12+ lat </span>
-        doświadczenia w tworzeniu innowacyjnych rozwiązań webowych i
-        multimedialnych
+        {copy.subtitleRole}
+        <span className="text-foreground font-medium">{copy.subtitleHighlight}</span>
+        {copy.subtitleRest}
       </p>
       <Button asChild size="lg" className="p-6 w-fit">
-        <Link href="/kontakt">
+        <Link href={ROUTES.contact[locale]}>
           <MousePointerClick />
-          Zarezerwuj Bezpłatną Konsultację
+          {copy.cta}
         </Link>
       </Button>
       <div className="relative aspect-video w-full rounded-lg overflow-hidden bg-muted/20">
@@ -64,7 +68,7 @@ export function Hero() {
           {/* WAŻNE: MP4 jako fallback dla starszych przeglądarek (np. Safari) */}
           <source src="/hero_web.mp4" type="video/mp4" />
           {/* Komunikat dla bardzo starych przeglądarek */}
-          Twoja przeglądarka nie obsługuje wideo.
+          {ui.videoFallback}
         </video>
       </div>
     </section>

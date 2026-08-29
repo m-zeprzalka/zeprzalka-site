@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import { useReducedMotion } from "@/hooks/use-reduced-motion"
+import { ROUTES, type Locale } from "@/i18n/config"
 
 const chars = [
   "⍤",
@@ -178,7 +179,13 @@ function getRandomChar() {
   return chars[Math.floor(Math.random() * chars.length)]
 }
 
-export function Logo({ onClick }: { onClick?: () => void }) {
+export function Logo({
+  locale,
+  onClick,
+}: {
+  locale: Locale
+  onClick?: () => void
+}) {
   const [animated, setAnimated] = useState("⨝")
   const reducedMotion = useReducedMotion()
 
@@ -191,7 +198,7 @@ export function Logo({ onClick }: { onClick?: () => void }) {
   }, [reducedMotion])
 
   return (
-    <Link href="/" onClick={onClick} className="flex items-center gap-2 text-xl">
+    <Link href={ROUTES.home[locale]} onClick={onClick} className="flex items-center gap-2 text-xl">
       <span
         className="transition-all duration-150 inline-block"
         style={{ width: "2ch", textAlign: "center" }}

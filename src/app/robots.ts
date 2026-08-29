@@ -6,7 +6,9 @@ export default function robots(): MetadataRoute.Robots {
     rules: [
       {
         userAgent: "*",
-        allow: ["/", "/blog", "/blog/*"],
+        // Obie wersje językowe są otwarte dla robotów; `/en` to pełna
+        // wersja serwisu, nie duplikat — pary opisuje `hreflang`.
+        allow: ["/", "/blog", "/blog/*", "/en", "/en/*"],
         disallow: ["/api/", "/admin/"],
       },
     ],

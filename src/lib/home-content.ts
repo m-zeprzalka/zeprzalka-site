@@ -1,9 +1,14 @@
 import { SAME_AS, SITE_URL } from "@/lib/site"
 
 /**
- * Jedno źródło treści dla /main-secondary.
- * Teksty są 1:1 z obecną stroną główną (src/components/home) — zmienia się
- * wyłącznie forma, nie treść ani kolejność sekcji.
+ * Jedno źródło treści dla odrzuconych wariantów strony głównej
+ * (/main-secondary, /main-third, /main-fourth).
+ *
+ * UWAGA: to nie jest źródło treści działającej strony głównej. Od czasu
+ * wprowadzenia dwujęzyczności copy strony głównej mieszka w
+ * `src/i18n/content/home.ts` (pary polski + angielski). Ten plik obsługuje
+ * wyłącznie trzy wewnętrzne warianty wizualne, które są jednojęzyczne
+ * i nie stoją w nawigacji ani w mapie strony — dlatego został po polsku.
  */
 
 export { SITE_URL } from "@/lib/site"

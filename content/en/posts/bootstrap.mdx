@@ -1,0 +1,493 @@
+---
+title: "Bootstrap: Build a Simple Site in an Hour"
+description: "The fourth lesson of the frontend course: what Bootstrap is, how its grid and components work. We build a responsive landing page for a mobile app."
+date: "2025-11-05"
+categories: ["Web development"]
+tags: ["Course", "CSS", "Landing Page", "Basics"]
+image: "/blog/bootstrap.svg"
+imageCaption: "The Bootstrap framework logo"
+featured: true
+---
+
+Welcome to part four of our course! 🎉 In the previous lessons we learned to build solid, semantic HTML skeletons and style them from scratch in plain CSS. We built responsive sections using Flexbox and Grid.
+
+You now know how much work goes into creating your own button, a responsive card grid or a form. It is a great exercise… but what if I told you that 80–90% of that work can be automated? (In the next lessons we automate the whole process.)
+
+It is time to stop reinventing the wheel and reach for the tools professionals use. Enter **CSS frameworks** — and we start with the most popular of them: **Bootstrap**.
+
+## 🚀 What is Bootstrap?
+
+Put simply, Bootstrap is a **free, open-source CSS framework**.
+
+Imagine that instead of building a house by pouring the foundations and laying every brick, you are handed ready-made, professionally designed modules: finished walls, windows, doors, even a whole kitchen. All you have to do is assemble them sensibly.
+
+That is what Bootstrap is. A vast set of ready-made:
+
+- **Components:** buttons, navigation bars, cards, forms, modals.
+- **Grid system:** an extremely powerful system for building responsive layouts in minutes.
+- **Utility classes:** thousands of classes such as `mt-3` (margin-top) or `d-flex` (display: flex) that let you style without writing a single line of CSS.
+
+> 💻 Bootstrap was created by Twitter's developers to unify the look of their internal tools. In 2011 they released it to the world. Today it powers millions of websites.
+
+## 💡 Why use a framework?
+
+Before we get to the project, let us answer the key question: "why do I need this if I already know CSS?"
+
+1. **Speed:** the most important reason. A landing page that would take two days in plain CSS can be assembled in Bootstrap in two hours. Time is money.
+2. **Consistency:** you are guaranteed that every element fits with the others. Your site looks professional from the start because it uses a considered design system.
+3. **Responsiveness:** Bootstrap's grid has been tested on thousands of devices. You do not have to worry about every breakpoint — it does that for you.
+4. **Documentation:** Bootstrap has some of the best documentation in the world. Every component is described with copy-and-paste examples.
+5. **Focus:** instead of fighting to centre a div, you can concentrate on the application's architecture and business logic.
+
+## 🛠️ How do you add Bootstrap to a project?
+
+There are two main methods. We will use the faster one (CDN), but both are worth knowing.
+
+### 1. CDN (Content Delivery Network) — the way for today
+
+The simplest method. We paste links to the finished files (CSS and JavaScript) into the `<head>` and at the end of the `<body>` of our HTML. The browser downloads them from a fast external server.
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Bootstrap Page</title>
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+      crossorigin="anonymous"
+    />
+  </head>
+  <body>
+    <h1>Hello, Bootstrap!</h1>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+      crossorigin="anonymous"
+    ></script>
+  </body>
+</html>
+```
+
+### 2. NPM (Node Package Manager) — the "pro" way
+
+When you work on a large project — in React or Angular, say — you will install Bootstrap as a package through Node.js's package manager. For now that is just a note; we will come back to it when we reach JavaScript.
+
+## 💎 The foundations of Bootstrap
+
+Bootstrap rests on three pillars. Understand them and you will understand everything you need to work efficiently in this framework.
+
+### 1. The grid system
+
+The most important concept. It differs a little from the CSS Grid we already met.
+
+**All space in Bootstrap is divided into 12 virtual columns.**
+
+You decide how many of those 12 columns your element occupies at different screen sizes.
+
+**The structure: container -> row -> col-\***
+
+| Class        | Meaning                                                                |
+| ------------ | ---------------------------------------------------------------------- |
+| `.container` | Centres the content and gives it a maximum width.                      |
+| `.row`       | A row (it behaves like display: flex). Columns go inside it.            |
+| `.col-12`    | The element takes 12 of 12 columns (the full width).                    |
+| `.col-6`     | The element takes 6 of 12 columns (half the width).                     |
+| `.col-4`     | The element takes 4 of 12 columns (a third of the width).               |
+
+The magic starts with **breakpoints**:
+
+- `col-sm-*` — styles for small screens (>576px)
+- `col-md-*` — styles for medium screens (>768px)
+- `col-lg-*` — styles for large screens (>992px)
+
+**An example:** we want a layout that is:
+
+- One column on phones (XS, the default).
+- Two columns on tablets (MD).
+- Three columns on desktops (LG).
+
+```html
+<div class="container">
+  <div class="row">
+    <div class="col-lg-4 col-md-6">Content A</div>
+    <div class="col-lg-4 col-md-6">Content B</div>
+    <div class="col-lg-4 col-md-6">Content C</div>
+  </div>
+</div>
+```
+
+### 2. Components
+
+Ready-made, styled bricks. You find them in the documentation and paste them in.
+
+**Remember our button from the CSS lesson?** It took ten lines of code.
+
+In Bootstrap:
+
+```html
+<button class="btn btn-primary">Click me</button>
+
+<button class="btn btn-outline-success">Success</button>
+
+<a href="#" class="btn btn-danger btn-lg">Delete</a>
+```
+
+**Remember our card?** In Bootstrap:
+
+```html
+<div class="card" style="width: 18rem;">
+  <img src="..." class="card-img-top" alt="..." />
+  <div class="card-body">
+    <h5 class="card-title">Card title</h5>
+    <p class="card-text">Some text describing the card.</p>
+    <a href="#" class="btn btn-primary">Go somewhere</a>
+  </div>
+</div>
+```
+
+### 3. Utility classes
+
+This is the game changer. Instead of writing `style.css`, you add styles directly in the HTML.
+
+- Want a top margin? Add `mt-3` (margin-top, step 3 of 5).
+- Want to centre the text? Add `text-center`.
+- Want a red background and white text? Add `bg-danger text-white`.
+- Want to use Flexbox? Add `d-flex justify-content-center`.
+
+**An example:**
+
+**Traditionally:**
+
+```html
+<div class="my-div">My text</div>
+
+<style>
+  .my-div {
+    background-color: #007bff;
+    color: white;
+    padding: 20px;
+    margin-top: 15px;
+    border-radius: 10px;
+  }
+</style>
+```
+
+**Bootstrap:**
+
+```html
+<div class="bg-primary text-white p-4 mt-3 rounded-3">My text</div>
+```
+
+This approach — known as atomic CSS — speeds up the work remarkably.
+
+## 📱 The project: a landing page for the "AppFlow" app
+
+Enough theory. Let us build a landing page for a fictional task management app called "AppFlow".
+
+### Step 0: Preparation (the starter file)
+
+Create an `index.html` file and paste in this starter template. It already contains the CDN links and one `style.css` file for our own touches.
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AppFlow - Organise Your Life</title>
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    />
+
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>
+```
+
+### Step 1: Navigation (navbar)
+
+Every site needs a menu. We open the Bootstrap documentation (Components > Navbar) and copy the finished component.
+
+Paste this into the `<body>`:
+
+```html
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+  <div class="container">
+    <a class="navbar-brand fw-bold" href="#">
+      <i class="bi bi-kanban-fill"></i> AppFlow
+    </a>
+
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navMenu"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navMenu">
+      <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link active" href="#hero">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#features">Features</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#cta">Download</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link btn btn-primary text-white ms-lg-2" href="#"
+            >Sign in</a
+          >
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+```
+
+**What happened here?**
+
+- `navbar-expand-lg`: the menu becomes a hamburger on screens smaller than LG (large).
+- `navbar-dark bg-dark`: a dark theme.
+- `fixed-top`: pins the menu to the top of the screen.
+- `data-bs-toggle="collapse"`: a JS attribute that handles showing and hiding the menu.
+- `ms-auto`: the magic class — margin-start: auto pushes the menu to the right.
+
+### Step 2: The hero section
+
+We want a section with a title, some text and a button on the left, and an image on the right. On mobile the image should sit below the text.
+
+Paste this below the `<nav>`:
+
+```html
+<section
+  id="hero"
+  class="py-5 text-center text-md-start"
+  style="padding-top: 100px;"
+>
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-md-6">
+        <h1 class="display-3 fw-bold">Organise the chaos</h1>
+        <p class="lead my-4">
+          AppFlow is the only app you need to manage tasks, projects and your
+          whole life. Simply and effectively.
+        </p>
+        <a href="#cta" class="btn btn-primary btn-lg">Download the app</a>
+        <a href="#" class="btn btn-outline-secondary btn-lg ms-2"
+          >See the demo</a
+        >
+      </div>
+
+      <div class="col-md-6">
+        <img
+          src="https://via.placeholder.com/500x500"
+          alt="AppFlow on a phone"
+          class="img-fluid d-none d-md-block"
+        />
+      </div>
+    </div>
+  </div>
+</section>
+```
+
+**What happened here?**
+
+- `py-5`: a utility class (vertical padding, step 5).
+- `text-center text-md-start`: centred text on mobile, left-aligned from md upward.
+- `row align-items-center`: uses Flexbox (inside `.row`) to centre the columns vertically.
+- `col-md-6`: two columns, each 6/12 (half) of the width on md screens and larger. On smaller screens they stack automatically at full width.
+- `img-fluid`: the image is responsive.
+- `d-none d-md-block`: the image is hidden on mobile and visible from md upward, so it does not clutter a small screen.
+
+### Step 3: The features section
+
+We want three cards with icons and descriptions. A perfect place for the grid.
+
+Paste this below the hero section:
+
+```html
+<section id="features" class="py-5 bg-light">
+  <div class="container">
+    <div class="row text-center mb-4">
+      <div class="col">
+        <h2>Why AppFlow?</h2>
+        <p class="lead">Everything you need, in one place.</p>
+      </div>
+    </div>
+
+    <div class="row text-center">
+      <div class="col-md-4 mb-4">
+        <div class="card shadow-sm h-100 p-4">
+          <i class="bi bi-check-circle-fill display-3 text-primary"></i>
+          <h3 class="h4 mt-3">Simple tasks</h3>
+          <p class="text-muted">
+            Add and manage tasks quickly. You will never forget a deadline
+            again.
+          </p>
+        </div>
+      </div>
+      <div class="col-md-4 mb-4">
+        <div class="card shadow-sm h-100 p-4">
+          <i class="bi bi-bar-chart-fill display-3 text-success"></i>
+          <h3 class="h4 mt-3">Track your progress</h3>
+          <p class="text-muted">
+            Visualise how far you have come with clear charts and statistics.
+          </p>
+        </div>
+      </div>
+      <div class="col-md-4 mb-4">
+        <div class="card shadow-sm h-100 p-4">
+          <i class="bi bi-people-fill display-3 text-warning"></i>
+          <h3 class="h4 mt-3">Teamwork</h3>
+          <p class="text-muted">
+            Share projects with your team and reach your goals together.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+```
+
+**What happened here?**
+
+- `bg-light`: a lightly grey section background.
+- `col-md-4`: three columns, each 4/12 (a third) of the width from md upward.
+- `.card`: we use the card component.
+- `shadow-sm`: a small shadow (a utility class).
+- `h-100`: makes every card 100% height, so they all match.
+- `bi bi-*`: icons from the Bootstrap Icons library.
+- `display-3 text-primary`: utility classes styling the icons (large size, primary colour).
+
+### Step 4: The CTA section and footer
+
+Finally, a simple call to action and a footer.
+
+Paste this at the end:
+
+```html
+<section id="cta" class="py-5">
+  <div class="container text-center">
+    <div class="row">
+      <div class="col-lg-8 mx-auto">
+        <h2 class="display-5 fw-bold">Ready to start?</h2>
+        <p class="lead">
+          Download AppFlow today and take back control of your time.
+          Available on iOS and Android.
+        </p>
+        <a href="#" class="btn btn-primary btn-lg">Download for free</a>
+        <a href="#" class="btn btn-outline-secondary btn-lg ms-2"
+          >Get in touch</a
+        >
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="py-4 bg-dark text-white text-center">
+  <div class="container">
+    <p class="mb-0">
+      &copy; 2025 AppFlow. Built for educational purposes using Bootstrap.
+    </p>
+  </div>
+</footer>
+```
+
+**What happened here?**
+
+- `col-lg-8 mx-auto`: we centre a column 8/12 wide on large screens (mx-auto is margin-x: auto).
+
+## 🎨 Customisation (making it your own)
+
+"But now my site looks like every other Bootstrap site!"
+
+Quite right. Bootstrap gives you the base. Now it is time to override it. Create the `style.css` file we linked in step 0 and add your own styles.
+
+```css
+/* style.css */
+
+/* Overriding Bootstrap's default colours properly requires Sass,
+   but we can easily override specific elements. */
+
+/* Change the typeface */
+body {
+  font-family: "Inter", sans-serif; /* Assuming we import it from Google Fonts */
+}
+
+/* Change the main button colour */
+.btn-primary {
+  background-color: #6a11cb;
+  border: none;
+}
+
+.btn-primary:hover {
+  background-color: #2575fc;
+}
+
+/* Add a gradient to the hero section */
+#hero {
+  background: linear-gradient(to right, #6a11cb, #2575fc);
+  color: white; /* Bootstrap would not set a colour here, it knows nothing of our background */
+}
+
+/* Bootstrap's `.lead` is grey; we want white on this background */
+#hero .lead {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* Override the outline button in the hero */
+#hero .btn-outline-secondary {
+  color: white;
+  border-color: white;
+}
+
+#hero .btn-outline-secondary:hover {
+  background-color: white;
+  color: #6a11cb;
+}
+```
+
+## ✅ Summary
+
+Congratulations — you have just built a fully responsive, good-looking landing page in under an hour.
+
+- ✅ Frameworks like Bootstrap save a great deal of time by giving you finished components and a grid system.
+- ✅ The grid (12 columns, container, row, col-\*) is the heart of Bootstrap.
+- ✅ Utility classes (p-5, m-3, d-flex) let you style without writing CSS.
+- ✅ Customisation means linking your own `style.css` AFTER Bootstrap's file and overriding its styles.
+
+Bootstrap is a powerful tool. It will not replace knowing CSS — you still have to know what you want to override — but it speeds the work up enormously.
+
+## Next steps
+
+1. **Explore the documentation:** look through every component (modal, carousel, alerts).
+2. **Tailwind CSS:** you will meet a different, even more utility-driven framework.
+3. **Bootstrap + JavaScript:** we will learn to open modals dynamically and change content with JS.
+
+## Useful links
+
+- [Official Bootstrap 5 documentation](https://getbootstrap.com/docs/5.3/getting-started/introduction/) — your new bible.
+- [Official Bootstrap examples](https://getbootstrap.com/docs/5.3/examples/) — finished layouts to study.
+- [Bootstrap Icons](https://icons.getbootstrap.com/) — the official icon set.
+
+**Questions? Problems? Write to me at m@zeprzalka.com**

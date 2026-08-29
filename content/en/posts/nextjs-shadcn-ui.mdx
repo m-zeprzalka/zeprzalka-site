@@ -1,0 +1,213 @@
+---
+title: "Next.js + Shadcn UI: Your First Serious Stack"
+description: "Goodbye static HTML. Meet the trinity of the modern frontend: Next.js, Tailwind CSS and Shadcn UI. We build an interactive app straight in the browser."
+date: "2025-12-28"
+categories: ["Next.js", "Web development"]
+tags: ["Next.js", "Shadcn UI", "Tailwind CSS", "React"]
+image: "/blog/next-js.webp"
+imageCaption: "The architecture of a modern application: Next.js as the engine, Tailwind as the style, Shadcn as the fittings."
+featured: true
+---
+
+Hello! 👋
+
+We have been through [HTML](/en/blog/html-basics) (the skeleton) and [Tailwind CSS](/en/blog/tailwind-css-with-ai) (the skin). Now it is time to breathe life and intelligence into all of it.
+Today we enter the world of **React**, wrapped in the **Next.js** framework.
+
+Why does this step matter so much? Because in 2025 people rarely write "plain" HTML pages.
+The market runs on **components**, **interactivity** and **speed**.
+
+I will show you my favourite technology stack, the one most modern startups are built on. Best of all — we will do it in the cloud, without installing Node.js on your computer.
+
+---
+
+## 🏗️ Part 1: the frontend's "holy trinity"
+
+Before we open the editor, you need to understand who is who on this team.
+
+### 1. Next.js (the engine) 🚅
+
+React is a library. Next.js is a **framework**.
+Imagine you are building a car.
+
+- **React** is the engine.
+- **Next.js** is everything else: the chassis, the wheels, the steering wheel and the navigation.
+  It gives us routing (subpages), image optimisation and server-side rendering (SSR), which Google loves.
+
+### 2. Tailwind CSS (the style) 🎨
+
+You know this one already. It is our way of styling quickly without leaving the HTML/JSX files.
+
+### 3. shadcn/ui (the interior fittings) 🛋️
+
+This is **NOT** an ordinary component library like Bootstrap or Material UI.
+It is a collection of beautifully designed, ready-made elements (buttons, cards, inputs) that you **copy** into your project.
+
+- **A traditional library:** you install a large package and you are stuck with their look.
+- **shadcn/ui:** you copy the button's code into your own folder and have 100% control over it. Change it however you like.
+
+---
+
+## ☁️ Part 2: the working environment (CodeSandbox)
+
+We will not fight the terminal on Windows. We will use **CodeSandbox**, a powerful cloud environment.
+
+### ⚠️ The critical step: FORK
+
+This is the most important point of today's lesson.
+When you open a ready-made template you are in read-only mode. The terminal will be locked.
+
+To be able to work you must create **your own copy** of the project:
+
+1.  Open the starter link (below).
+2.  Look at the top right corner (or the top bar).
+3.  Click the **"Fork"** button (or "Fork Devbox").
+4.  Only now do you have your own environment, with a working terminal.
+
+---
+
+## 🚀 Part 3: installation and configuration, step by step
+
+Let us do it together.
+
+### Step 1: starting the project
+
+Open this link (plain Next.js + Tailwind):
+👉 **[Next.js starter template](https://codesandbox.io/p/sandbox/github/vercel/next.js/tree/canary/examples/hello-world)**
+_(Remember to click FORK!)_
+
+### Step 2: initialising shadcn/ui
+
+Open the terminal in CodeSandbox (at the bottom of the screen) and type the magic command:
+
+```bash
+npx shadcn@latest init
+```
+
+The wizard will ask you a few questions. You can hit Enter blindly and take the defaults:
+
+- **Which style would you like to use?** -> New York
+- **Which color would you like to use?** -> Zinc
+- **Do you want to use CSS variables?** -> Yes
+
+### Step 3: adding the first "bricks"
+
+Shadcn does not install everything at once — that is why it stays light. We install only what we need. Let us add a button and a card. Type in the terminal:
+
+```bash
+npx shadcn@latest add button card input
+```
+
+Now look at the `components/ui` folder in the project files. New files have appeared. That code belongs to you.
+
+---
+
+## 🧑‍💻 Part 4: building a waitlist page
+
+We are going to create a modern sign-up section for a waiting list, in the file `app/page.tsx`.
+
+### Understanding the file structure (JSX)
+
+Next.js uses JSX — HTML combined with JavaScript.
+
+- CSS classes are now `className="..."`.
+- Components are imported at the top of the file.
+
+### The code to paste
+
+Open `app/page.tsx`, delete everything and paste this in:
+
+```typescript
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
+import { Mail } from "lucide-react" // An icon (usually installed with shadcn)
+
+export default function Home() {
+  return (
+    // Main container - centred on the screen (Tailwind)
+    <main className="flex min-h-screen items-center justify-center bg-gray-50 p-4">
+      {/* The shadcn Card component */}
+      <Card className="w-full max-w-md shadow-xl">
+        <CardHeader className="text-center">
+          <CardTitle className="text-2xl font-bold">Join us 🚀</CardTitle>
+          <CardDescription>
+            Be the first to hear when our course launches.
+          </CardDescription>
+        </CardHeader>
+
+        <CardContent>
+          <div className="flex flex-col gap-4">
+            <div className="flex gap-2">
+              {/* The shadcn Input */}
+              <Input type="email" placeholder="you@email.com" />
+
+              {/* The shadcn Button */}
+              <Button>Sign up</Button>
+            </div>
+
+            <p className="text-xs text-gray-500 text-center">
+              No spam. Unsubscribe whenever you like.
+            </p>
+          </div>
+        </CardContent>
+      </Card>
+    </main>
+  )
+}
+```
+
+### What happened here?
+
+- **Imports**: we imported ready-made bricks (Card, Button, Input).
+- **Composition**: instead of writing `div class="border rounded shadow..."` we used a finished `<Card>`.
+- **Speed**: building this in plain HTML/CSS would take 30 minutes. It took us three.
+
+---
+
+## 🧠 Part 5: an important concept — "client" vs "server"
+
+In Next.js (in the App Router we are using) everything renders on the server by default. That is extremely fast, but… a server cannot handle a mouse click.
+
+If you want to add click handling (`onClick={() => alert('It works!')}`, say), you have to add one magic line at the very top of the file:
+
+```typescript
+"use client"
+
+import { Button } from...
+```
+
+💡 **Pro tip**: if you see the error "Event handlers cannot be passed to Client Component props", it means you forgot `"use client"`.
+
+---
+
+## ⚔️ Homework (challenge)
+
+You have a working environment on CodeSandbox. Your task:
+
+1. **Fork** the project (if you have not already).
+2. Add a new component from the shadcn library: **Accordion** (a collapsible FAQ list).
+   - Command: `npx shadcn@latest add accordion`
+3. Below the sign-up form, create an FAQ section with two questions ("When does the course start?", "How much does it cost?").
+4. **Requirement**: the FAQ must live inside a new `<Card>`.
+
+---
+
+## 🎯 Summary
+
+You have just built an application on the stack used by Netflix, Nike and OpenAI.
+
+- **Next.js** takes care of the structure.
+- **Tailwind** takes care of the layout.
+- **shadcn/ui** hands you finished, good-looking elements.
+- **CodeSandbox** lets you do it on any computer with an internet connection.
+
+This is contemporary web development. Less writing code from scratch, more assembling proven pieces.
+
+Happy coding! And if you get stuck with the terminal — remember the **Fork** button. 🍴

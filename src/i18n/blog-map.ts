@@ -48,14 +48,11 @@ export const POST_SLUGS: readonly Localized<string>[] = [
  */
 export const CATEGORY_LABELS: readonly Localized<string>[] = [
   { pl: "Web development", en: "Web development" },
-  { pl: "Web Dev", en: "Web Dev" },
   { pl: "Next.js", en: "Next.js" },
   { pl: "AI", en: "AI" },
   { pl: "SaaS", en: "SaaS" },
   { pl: "Design", en: "Design" },
   { pl: "Projekty", en: "Projects" },
-  { pl: "React", en: "React" },
-  { pl: "MDX", en: "MDX" },
 ]
 
 /** To samo dla tagów. */
@@ -76,10 +73,8 @@ export const TAG_LABELS: readonly Localized<string>[] = [
   { pl: "Figma", en: "Figma" },
   { pl: "CSS", en: "CSS" },
   { pl: "TypeScript", en: "TypeScript" },
-  { pl: "MDX", en: "MDX" },
   { pl: "WordPress", en: "WordPress" },
   { pl: "Social Media", en: "Social Media" },
-  { pl: "Blog", en: "Blog" },
 ]
 
 /** Ta sama reguła slugów co w lib/posts.ts — powielona, bo tam siedzi `fs`. */

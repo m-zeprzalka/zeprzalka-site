@@ -1,0 +1,57 @@
+---
+title: "aifeed.pl - a news service from the world of AI"
+description: "A look at my new project: a website that aggregates, writes and publishes news from the world of artificial intelligence."
+date: "2026-04-29"
+categories: ["Projects", "AI"]
+tags: ["Next.js", "Supabase", "Prompt Engineering"]
+image: "/blog/ai-feed.webp"
+imageCaption: "aifeed.pl"
+featured: true
+---
+
+I had been planning an AI news service for a long time. My first attempts date back about a year, built on top of APIs such as https://newsapi.org/. This time I wanted to go a step further. What if I could build an autonomous service that scans and analyses the biggest publications worldwide every day, ranks what it finds, and then rewrites the best of it in Polish — pulling out the substance and linking back to the source?
+
+That is how https://www.aifeed.pl/ came about, partly as a weapon against project procrastination 🙂 I did not set out to make everything perfect at this stage. Refining the service and chasing perfection is still the long-term plan, but for a while now I have been guided by a simple rule: a bird in the hand beats two in the bush.
+
+Dozens of cobweb-covered repositories on Git and hundreds of similar folders on my drive — even holding the cleanest, best code I have written — will always be worth less than a tangible app or website going through real testing. A few days of honest work toward a finished goal always beats months of reluctant tinkering with nothing to show for it.
+
+---
+
+## ⚙️ How the service works
+
+First of all, it has to work 😅 I did not start with a mental image of perfect code, extraordinary UX/UI design and a groundbreaking use of SEO. I simply wanted a working feed in the shape of an online news service. Broken down into the crudest pseudocode, it comes to a handful of key instructions:
+
+- three times a day the service scans around thirty of the most popular AI publications and blogs — both news magazines and the company blogs of brands working in artificial intelligence
+- everything it reads goes into a ranking driven by a precise algorithm that assigns point weights to each article. An article that falls short of the standard and scores below the publication threshold is rejected
+- the surviving items — often from foreign outlets — become Polish-language articles with a link back to the original. Here too there are rules meant to raise conversion, among them a summary of the most important points right at the top of the post
+- the finished article goes into a Supabase database and is archived. aifeed.pl runs on Next.js, which connects to that database and pulls the entries onto the site
+
+What we have here is fully automated content generation. I remember little from my master's degree, but one thing from those lectures comes back to me at this point: Lev Manovich, who predicted this turn of events many years ago. To paraphrase, he said that in the near future websites and databases would generate themselves automatically, without needing a human being at certain stages. With the rise of AI, we have arrived exactly there.
+
+---
+
+## 🎯 Goals of the project
+
+The main idea driving me was synthesis: taking the newest information about artificial intelligence and condensing it. There are probably dozens of tools like this that I have never heard of, but most of the ones I know are cut for the English-speaking market. I also understand that the language barrier is no longer much of an obstacle — and yet I still often prefer to browse Polish services and feeds.
+
+In effect I am building a service for myself. An agent able to go through many different publications, pick out the most interesting items and present them as engaging content is an appealing alternative for anyone who wants a dose of the most important AI news in an accessible form.
+
+Many of the sites my service analyses are highly specialised portals about research and technology, often written in impenetrable academic jargon. So another important element here was democratising that content and translating it into less specialised language.
+
+On top of that, owning a service like this is an investment and leaves room to manoeuvre on several fronts: building a personal brand (I dislike the phrase, but let it stand), taking part in industry events, and running experiments around data collection in a field I am tying my future to.
+
+---
+
+## 🚀 Where the project goes next
+
+Above all, a general polish. The service is in a testing and improvement phase. As I said, I did not want to lose hundreds of hours to endless detail work. So the coming weeks go to testing, validating the code and optimising it, SEO in particular.
+
+The next stage is wiring the service into social media and reposting content on every available channel. Perhaps in the future I will attempt more engaging formats — reels for Instagram and TikTok generated from my own posts.
+
+The third interesting angle for monetising the venture comes out of my fondness for data analysis and prediction. Holding a database of analysed AI news opens the door to experimenting with the information inside it. On that basis I would like to build an algorithm that produces sentiment analysis across different areas of artificial intelligence, giving readers an interesting view of the possible trajectories of companies, technologies and phenomena in the world of neural networks.
+
+---
+
+## ✅ Summary
+
+Do try https://www.aifeed.pl/ — every remark about the service is valuable to me. At this stage it is only an MVP, but over the next few weeks it should grow into a full production version with a polished design and structure. I will post updates now and then on how the plan and the application are progressing. Follow along, and get in touch if you would like to work together on where this goes next.

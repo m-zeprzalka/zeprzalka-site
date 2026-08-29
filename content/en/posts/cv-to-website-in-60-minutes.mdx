@@ -1,0 +1,137 @@
+---
+title: "Your First Project: Turn a CV Into an App in 60 Minutes"
+description: "Turn an ordinary CV into a professional website with the help of AI. From an empty file to a published page — in an hour, using a single prompt."
+date: "2026-01-24"
+categories: ["Web development", "AI"]
+tags: ["Course", "Tailwind CSS", "Deployment", "HTML"]
+image: "/blog/tailwind-netlify.webp"
+imageCaption: "Your digital business card, ready in an hour."
+featured: true
+---
+
+Welcome to today's class! 🚀
+
+The job market — in media and marketing especially — asks for something more than a PDF or DOC file sent by email. What counts today is **personal branding**.
+
+Imagine that instead of an ordinary document you send a recruiter a link to a modern, interactive page that displays perfectly on their phone. That is exactly what we are going to build over the next 60 minutes.
+
+You do not have to be a programmer. We will take a hybrid approach: your knowledge of yourself plus the power of AI, to produce something at senior level.
+
+---
+
+## 🧰 What are we using? (a glossary for the layperson)
+
+Before we start, let us clarify three concepts that will make you feel more confident. We touched on them in earlier posts:
+
+1.  **HTML**: the skeleton of your page. This is where the content lives — your details, your experience, links and anything else you need.
+2.  **Tailwind CSS (via CDN)**: a magic box of appearance options for your app. It lets us give the page a look — colours, fonts, spacing — without creating separate, complicated stylesheet files. Everything happens inside one file.
+3.  **Netlify**: our "CV display program". A free platform that takes the file from your computer and, in a few seconds, publishes it to the global network under a unique address (a subdomain).
+
+---
+
+## 📝 The plan, step by step
+
+### Step 1: Prepare the input (your CV)
+
+Open your current CV. Copy the most important sections out of it: About me, Experience, Education, Skills and Contact. The AI needs this data to know what it is building a page about. You could just as well paste the whole CV, but that is cutting corners. I suggest refining what you actually want on your page as much as you can — good input equals good output.
+
+### Step 2: Use the "master prompt"
+
+This prompt is built on the professional **CRISPE** framework. There are many methods and names for this now; do not worry about the terminology, focus on the content and the specification.
+
+> **THE MASTER PROMPT FOR YOUR PERSONAL SITE:**
+>
+> **(CR) ROLE:** You are an elite UI/UX designer and lead frontend developer. Your goal is to create a modern, minimalist personal branding page (a digital business card / personal website) that looks like work featured on Awwwards or Behance.
+>
+> **(I) CONTEXT:** The user is a student who wants this new website to help them find a better job and impress a future employer. The page is their interactive CV. It has to build trust, show professionalism and a modern approach to technology.
+> Style inspiration: a clean layout, plenty of breathing room (whitespace), elegant typography. Follow the principles behind the best design systems and UI kits.
+>
+> **(S) TASK:** Generate **one complete index.html file**.
+>
+> - Use **Tailwind CSS imported via CDN** (everything must work from a single HTML file).
+> - The entire page must live in that one file (no additional .css or .js files; any extras go directly into the HTML).
+> - Structure:
+>   1. **Hero section**: my name, a catchy headline, a button to download the PDF, and links to LinkedIn/social media (the button should link to /CV.pdf placed in the site's root folder, with no subfolders).
+>   2. **About me**: a short, engaging biography.
+>   3. **Experience & education**: an elegant timeline, grid or bulleted list, depending on the volume of work and study.
+>   4. **Skills**: modern tags or pills listing the skills.
+>   5. **Contact**: a simple section with an email address and phone number.
+>
+> **(P) STYLE AND DESIGN SYSTEM:**
+>
+> - **Colours**: primary colour: [insert a colour, e.g. deep navy #0f172a], background: light/white, accent: [insert a colour, e.g. gold or blue].
+> - **Typography**: headings — serif (Playfair Display, say), body — sans-serif (Inter, say).
+> - **Effects**: soft shadows, smooth transitions on button hover.
+> - **Responsiveness**: the page must be perfect on a phone (mobile-first) and on every other device. Fully responsive.
+>
+> **(E) DATA TO INSERT:** [PASTE THE CONTENT OF YOUR CV HERE]
+
+To turn that text into finished code you need access to a language model or a dedicated visual generator. Here are the best options available in 2026:
+
+#### 1. The best language models (chatbots)
+
+- **[Claude.ai (Anthropic)](https://claude.ai/)** — **👑 the coding king.** Currently regarded as the most accurate model for writing clean Tailwind CSS and HTML. The "Artifacts" feature lets you preview the page straight in the chat window.
+- **[DeepSeek](https://chat.deepseek.com/)** — **🦄 the dark horse.** A model that shook the market with remarkable performance, often entirely free. It handles logic and quick scripts very well.
+- **[ChatGPT (OpenAI)](https://chatgpt.com/)** — **🛠️ the Swiss army knife.** The best at analysing the CV file you upload and pulling out the essence. If you have a screenshot of your old CV, its vision model will read it precisely.
+- **[Gemini (Google)](https://gemini.google.com/)** — **📚 the librarian.** With an enormous context window you can paste in not only your CV but dozens of your projects as source material for a portfolio.
+- **[LM Arena (LMSYS)](https://lmarena.ai/)** — an open ranking arena where the community picks the best models. Under "Direct Chat" you can test the world's leading models entirely for free.
+
+#### 2. Generative UI (you see the code in real time)
+
+Tools built specifically to construct interfaces live from a text description:
+
+- **[v0.dev (Vercel)](https://v0.dev/)** — **the React/Tailwind standard.** A tool from the makers of Next.js that generates optimised components fitting the modern stack perfectly.
+- **[Bolt.new (StackBlitz)](https://bolt.new/)** — **full-stack in the browser.** It lets you edit code, install libraries and preview the project in real time without leaving the browser.
+- **[Lovable.dev](https://lovable.dev/)** — a tool that puts **aesthetics and UX** first. Ideal when you want professional design and a "wow" effect from the first second.
+
+#### 3. "Secret" free access and aggregators
+
+If you run out of free messages on the sites above, try these:
+
+- **[Google AI Studio](https://aistudio.google.com/)** — a professional tool from Google giving free programmatic access to the most powerful Gemini models.
+- **[Phind](https://www.phind.com/)** — an AI search engine built specifically for developers. Very precise at solving technical problems in code.
+- **[Poe.com](https://poe.com/)** — a platform giving access to many models (GPT-4, Claude, Llama) in one place, with generous daily limits.
+- **[HuggingChat](https://huggingface.co/chat/)** — a completely free platform from Hugging Face giving access to the best open-source models (Llama 3, Qwen and others).
+
+#### 4. Instant landing page generators
+
+For anyone who needs a complete structure in a few seconds:
+
+- **[Durable](https://durable.co/)** — builds the basic skeleton of a business site in about 30 seconds.
+- **[Loopple AI](https://loopple.com/ai)** — lets you build page sections from ready-made blocks using simple text commands.
+
+---
+
+**💡 Pro tip:** if the model gets stuck or produces an error in the code, simply copy the error text from the browser and paste it back into the chat. The AI will fix its own mistake and hand you a corrected version of the file in seconds.
+
+### Corrections and polish
+
+If something does not appeal to you, do not edit the code by hand. Write to the AI: _"Change the background colour to a soft grey"_ or _"Increase the spacing between the experience sections"_. What matters is communicating with the model clearly, plainly and precisely.
+
+---
+
+## 🚀 Publishing: your site live in five seconds
+
+Have the code from the AI? Save it on your computer in a folder as a file named **index.html**. You can do that in Visual Studio Code, or even in an ordinary text editor.
+
+1.  Go to **[Netlify](https://app.netlify.com)** and create an account.
+2.  Go to **[Netlify Drop](https://app.netlify.com/drop)**.
+3.  Drag the folder containing your `index.html` file straight into the browser window.
+4.  **That's it!** Your page is now available under a public link.
+5.  Send the link to your phone and see how professional your business card looks on mobile and on desktop.
+
+---
+
+## 💡 Why does this approach win?
+
+In 2026, building websites is a **dialogue with technology**. Through this exercise you have learned:
+
+- How to talk to an AI using the language of design (colour, visual hierarchy, typography).
+- How modern design systems work.
+- How to ship projects instantly, through prompts, without unnecessary technical barriers.
+
+**Get to it. May your digital business cards help you land the internships and jobs you want. Good luck! 🟢**
+
+---
+
+_Questions? Something not working? Write to me at m@zeprzalka.com_

@@ -1,0 +1,281 @@
+---
+title: "Fable 5 - Building an App on the New Setup"
+description: "Using SocialManager — a generator of social media plans and graphics — as the example. Three files, one guardrail and one solid prompt instead of steering the model."
+date: "2026-08-23"
+categories: ["Projects", "AI"]
+tags: ["Prompt Engineering", "Next.js"]
+image: "/blog/ai-automation.webp"
+imageCaption: "Facts, guardrails and verifiable evidence — instead of constant instruction."
+featured: true
+---
+
+*Using SocialManager as the example — a generator of social media plans, posts and graphics, meant to earn its keep through subscriptions.*
+
+---
+
+There is a paradox most guides to AI models have yet to notice: **the smarter the model, the less you need to tell it — and we keep telling it more.** The setups of 2024 (a 400-line CLAUDE.md, a dozen subagents, skills dictating every step) were scaffolding for models that had to be taught particular abilities or ways of proceeding. They also cut down on things like losing the thread. Fable 5 does not lose the thread the way earlier versions did. It does, however, get thoroughly lost in our scaffolding: overly prescriptive instructions can genuinely lower the quality of its work, because they force it into choices it would have made better on its own.
+
+Does that mean "throw away every SKILLS file and write one prompt"? No. It means: learn to tell apart the three kinds of content sitting in those files.
+
+## The three-layer test
+
+Take any line from your CLAUDE.md, a skill or a system prompt, and ask it one simple question: *what are you?*
+
+**A fact?** ("you run the tests with `pnpm test`", "the spec is in docs/SPEC.md", "done means these criteria"). Facts **stay** — they do not constrain, they ground. Without them the model burns turns discovering things you could have told it in three lines.
+
+**A guardrail?** ("do not read .env", "schema changes only through migrations", "no real payments"). Guardrails **stay** — and are best enforced mechanically (permissions, hooks) rather than requested in prose. A guardrail does not limit the model's intelligence; it limits the cost of one bad assumption. The more capable the agent, the more you want it.
+
+**Steering?** ("always work in the order 1-2-3", "use pattern X", "write components in style Y", "read A first, then B"). Steering **goes**. That is exactly the layer that suffocates Fable 5 — and the one the model does not need, because it makes its own decisions more accurately and sticks to them more consistently than to someone else's orders.
+
+The rest of this post is that test applied in practice: a setup shrunk to three files and one guardrail, plus one solid prompt. And so it does not stay theoretical, we build a specific, revenue-earning application.
+
+## The application: SocialManager
+
+**SocialManager** is a tool for small brands and creators: you describe your brand once (industry, tone, colours, logo) and SocialManager generates a weekly content plan, writes posts for each platform in your tone of voice, and renders matching graphics in formats for Instagram, LinkedIn and the rest. At the end you download a package: graphics, copy and a schedule. The business model: Free (1 brand, 5 AI generations a month, watermarked graphics) / **Pro 79 PLN a month** (3 brands, no limits, no watermark). Payments through Stripe.
+
+One honest product decision up front, because it sets the whole architecture: in v1 "beautiful graphics" means **rendering templates to PNG** (typography + brand colours + layouts), not image generation with a diffusion model. Templates give visual consistency, a predictable cost and no rights problems — and they look like a designer's work rather than AI mush. AI image generation is a v2 feature, deliberately.
+
+## The starting folder — all of it
+
+```
+SocialManager/
+├── CLAUDE.md            # facts + guardrails (20 lines, in full below)
+├── LESSONS.md           # empty; the model keeps it itself
+├── docs/
+│   └── SPEC.md          # the full file in the next section
+└── .claude/
+    └── settings.json    # guardrails only, plus one feedback loop
+```
+
+What is **not** here: predefined subagents, commands, skills, coding conventions, a `src/` directory structure. If Fable decides one of those would help, it will create it itself — the prompt explicitly allows that.
+
+### CLAUDE.md — in full
+
+```markdown
+# SocialManager — social media plans + posts + graphics for small brands.
+Spec: docs/SPEC.md · Decisions: docs/DECISIONS.md · Lessons: LESSONS.md (read before planning).
+
+## Commands
+pnpm dev / build / test / test:e2e · pnpm tsc --noEmit · pnpm lint
+types from the database: pnpm supabase gen types typescript --local > src/types/database.ts
+
+## Stack
+Next.js (App Router, TS strict) · Supabase (auth + db + Storage, locally via the CLI) ·
+shadcn/ui + Tailwind · Claude API (plan + copy; server-side only) ·
+rendering graphics to PNG (library choice: yours → DECISIONS.md) ·
+Stripe (TEST MODE ONLY) · Playwright (e2e)
+
+## Hard rules (these five only)
+1. Schema changes exclusively through files in supabase/migrations.
+2. Every new table: RLS enabled + policies in the same migration;
+   Storage files in per-user folders, with access policies.
+3. Secrets only in .env.local — never in code, logs or commits.
+4. AI calls server-side only; tests and e2e run with MOCK_AI=1
+   (no real tokens in tests).
+5. Do not report anything as done without evidence from a tool in this session.
+
+You settle the rest of the conventions yourself. Record each one on a single line
+in docs/DECISIONS.md and apply it consistently across the project.
+```
+
+### .claude/settings.json — blast radius, not a leash
+
+```json
+{
+  "permissions": {
+    "deny": [
+      "Read(./.env*)",
+      "Bash(supabase db push:*)",
+      "Bash(git push --force:*)"
+    ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [{ "type": "command", "command": "pnpm tsc --noEmit" }]
+      }
+    ]
+  }
+}
+```
+
+The `tsc` hook is not steering but immediate feedback — the model sees a type error a second after the edit instead of discovering it an hour into the build. And the three `deny` entries are insurance: secrets unreadable, the schema unable to bypass migrations, git history unrewritable. That is enough.
+
+## docs/SPEC.md — the example file in full
+
+```markdown
+# SocialManager — v1 specification
+
+## Problem and customer
+Small brands, creators and local businesses (a personal trainer, a café, a yoga
+studio, a freelancer) know they have to publish regularly — but have no time to
+think up topics, write posts and lay out graphics. The result: they publish
+erratically or not at all. SocialManager turns one conversation about a brand
+into a finished week of content.
+
+## Business model
+- Free: 1 brand, 5 AI generations a month, graphics watermarked "SocialManager.app".
+- Pro 79 PLN a month: 3 brands, unlimited generations, no watermark, every format.
+- Payment: a Stripe subscription (checkout + customer portal). V1 in test mode.
+- Economics: every plan/post generation costs tokens — a per-user monthly
+  generation counter is part of the core, not an add-on.
+
+## Flows (v1)
+1. Sign-up / sign-in (Supabase Auth).
+2. Brand onboarding: name, industry, audience, tone (3 sliders/descriptions),
+   colours (2-3), logo (uploaded to Storage). Together: the "brand profile".
+3. Plan generator: the user picks a week and platforms (IG/FB/LinkedIn) →
+   the AI proposes 5-7 posts: date, platform, topic, format, goal/CTA.
+   The plan lands in a calendar; each post can be edited, deleted or approved.
+4. Post generator: for an approved post the AI writes platform-specific copy
+   in the brand's tone (plus hashtags where they fit). Inline editing.
+5. Graphics generator: for a post the user picks a template (at least 3 layouts) →
+   a PNG render in 1:1 (1080²), 4:5 (1080×1350) and 16:9 (1920×1080) formats
+   using the brand's colours and typography plus the post's headline. Preview in
+   the panel, files in Storage. On the Free plan: a watermark.
+6. Export: a ZIP of graphics + copy (md/txt per post) + a CSV schedule.
+7. Upgrade: exceeding the Free limit → an upsell screen → Stripe Checkout →
+   a webhook sets the plan in the database → limits and watermark disappear.
+   Customer portal.
+
+## Data model (an outline — the details are yours)
+- profiles (1:1 with auth.users; plan free|pro; stripe_customer_id; monthly generation counter)
+- brands (owner, name, industry, tone, colours[], logo_path)
+- plans (brand_id, week/date range, status)
+- posts (plan_id, date, platform, topic, content, status: draft|approved)
+- graphics (post_id, template, format, storage_path)
+RLS rule: a user sees and modifies only their own brands, plans, posts and
+graphics. Storage: per-user folders, owner access only.
+
+## AI (honestly)
+- Plan + copy: the Claude API server-side; a cheaper model tier is enough,
+  the quality comes from the brand profile in the prompt, not the model size.
+- Graphics: template rendering (typography + colours), NOT image generation.
+  Why: brand consistency, a cost near zero, no licensing problems. Diffusion = v2.
+- MOCK_AI=1: deterministic responses in tests and e2e, zero token cost.
+
+## Out of scope for v1 (deliberately)
+Auto-publishing through the platforms' APIs (Meta approvals are a project of
+their own) · AI photo generation · teams and roles · performance analytics ·
+push reminders · an asset library.
+
+## Success for v1
+The path: sign-up → brand → weekly plan → approving 3 posts → copy →
+graphics in 2 formats → ZIP → upgrade in Stripe test mode. The whole thing
+passes e2e (on MOCK_AI) with no human involvement beyond the user's clicks.
+```
+
+## The master prompt — one prompt that builds SocialManager
+
+You paste it into Claude Code (model: Fable 5), in a fresh repository holding the files above:
+
+```
+CONTEXT
+I am building SocialManager (docs/SPEC.md) — a SaaS meant to earn through
+subscriptions. The goal: a working product on which I can show the full path to
+the first paying customer. The repository is fresh; you take it from zero to
+deployment.
+
+YOUR ROLE
+You run the project end to end: architecture, implementation, tests, preview
+deploy. You decide the order of work, the directory structure, the choice of
+graphics rendering library and the conventions — record every convention you
+adopt on one line in docs/DECISIONS.md and stick to it. If you decide a command,
+a skill or a subagent of your own would help, create it; those are your tools.
+
+DONE (all verifiable, in the order you choose)
+1. `pnpm build` green; a preview deploy on Vercel works (the vercel CLI).
+2. Auth: sign-up and sign-in end to end.
+3. Brand onboarding per the SPEC, with the logo uploaded to Storage.
+4. Plan generator: a week of content for a brand (AI, mockable), a calendar in
+   the panel, editing and approving posts.
+5. Post generator: copy per post per platform in the brand's tone (AI, mockable).
+6. Graphics: at least 3 templates, PNG renders in 1:1, 4:5 and 16:9 with the
+   brand's colours and typography, saved to Storage, previewed in the panel,
+   watermarked on Free. Add a /playground page showing every template on sample
+   data — that is your visual quality check, and mine.
+7. ZIP export: graphics + copy + a CSV schedule.
+8. Stripe test mode: Pro checkout, a webhook that sets the plan in the database,
+   Free limits (5 generations a month, watermark, 1 brand) enforced before and
+   lifted after the upgrade, the customer portal reachable from the panel.
+9. Security: an automated RLS and Storage test — user A has no access to user
+   B's brands, posts, graphics or files.
+10. The e2e success paths from the SPEC (on MOCK_AI=1) green; `tsc --noEmit`
+    and lint green.
+
+WORKING RULES
+- You work autonomously; I am not watching the screen. For reversible actions
+  that follow from the task, act without asking. Before ending a turn, check
+  your last paragraph: if it is a plan, a question or a promise, do that work
+  now. Finish only when done is met or when the only thing blocking you is
+  input from me.
+- After completing points 1-5, and again after 6-10: launch a fresh verifier
+  subagent to check the state against the DONE list using tool evidence alone.
+  At point 6 the verification includes LOOKING AT the rendered graphics (the
+  PNG files / screenshots of /playground) and judging legibility, contrast,
+  consistency with the brand colours, and the correct watermark on Free.
+  You fix any discrepancies before continuing.
+- Keep LESSONS.md: one lesson = one entry with a one-line summary; update
+  rather than duplicate.
+- The simplest thing that works well. No abstraction in advance and no features
+  outside the SPEC — add ideas to a "Backlog" section in the SPEC instead of
+  implementing them.
+- Treat AI costs as a feature: the generation counter works from day one, and
+  every model call has a business reason (no calls "while we are here").
+
+BOUNDARIES
+- Stripe in test mode only; no real payments and no real personal data
+  (seed = invented data).
+- The Anthropic API key only in .env.local and only server-side; tests do not
+  burn tokens (MOCK_AI=1).
+- Stop and ask ONLY when: a value from the INPUTS section is missing, an action
+  is irreversible, or the SPEC contradicts itself.
+
+INPUTS FROM ME
+- Stripe test keys: [SK_TEST], [PK_TEST], webhook secret via `stripe listen`.
+- Anthropic API key: [KEY]. Pro price: 79 PLN a month, Stripe product:
+  "SocialManager Pro".
+- Vercel: the account is connected, create the project yourself.
+
+Start. My first message after this one will be either the answer to your
+blocking questions or "continue".
+```
+
+Notice what is not in that prompt: an order of steps, a directory structure, library choices, a code style. There is intent, evidence and boundaries. That is the whole difference between steering and commissioning. And one detail this particular application gives us: **the verifier looks at the graphics**. Fable 5's vision is good enough that judging "does this look like a designer's work" becomes part of the evidence loop rather than your evening chore.
+
+## The day-2 prompt (iterations)
+
+```
+CONTEXT: SocialManager after the first pass; state in LESSONS.md and DECISIONS.md.
+TASK: [e.g. "a fourth graphic template: a customer quote over a gradient built
+from the brand colours, plus a 3-slide carousel variant"] — because [a business
+reason, one sentence].
+DONE: [2-4 verifiable points, including a visual check on /playground].
+Rules and boundaries as in the master prompt. Finish with a fresh verifier subagent.
+```
+
+## The anti-setup: what is missing here, and why
+
+**Coding conventions dictated in advance** — gone. Fable settles its own and records them in DECISIONS.md; it sticks to its own decisions more consistently than to someone else's orders, and you still see all of them in one file.
+
+**Predefined commands and subagents** — gone as a requirement, kept as a permission. The exception is the verifier, which is in the prompt because an evidence loop is feedback rather than constraint — and it is the one "process" I do not economise on.
+
+**Half-page behavioural blocks** — shrunk to a few sentences woven into the RULES (autonomy, evidence, minimalism, cost). Fable 5's default behaviour is good; correct only what genuinely gets in your way, and only after the fact.
+
+**When to go back to a heavier version:** when several people or agents work on the repository and you need standardisation *between humans* — then commands and skills are the team's shared language rather than a leash on the model. Or when a retrospective shows a mistake recurring despite a good prompt — one well-aimed line of rule is cheaper than correcting the same thing over and over.
+
+## Before you take real money (a go-live checklist)
+
+Stripe live keys plus a webhook on the production domain · **the token
+economics**: the cost of generating a plan and posts against 79 PLN a month —
+set the limits so that even your most active user stays profitable · rate
+limiting on the generation endpoints · **licences for the fonts used in the
+templates** (this is commercial artwork for your customers) · terms of service
+and a privacy policy (your customers' content and logos live in Storage) ·
+transactional email · database backups.
+That is a task list, not legal advice — consult someone on the terms and the tax.
+
+---
+
+**The summary in one sentence:** give Fable 5 facts, guardrails and verifiable "done", cut out the steering — and the project folder shrinks to three files, none of which stops the model being smarter than your process. Swap the SPEC for your own idea, paste in the master prompt and see for yourself.

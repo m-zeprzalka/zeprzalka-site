@@ -1,0 +1,725 @@
+---
+title: "Tailwind CSS: Building UI Faster With AI"
+description: "Forget jumping between HTML and CSS. Tailwind CSS is the framework that became the standard in the AI era. Learn to build responsive layouts faster."
+date: "2025-12-10"
+categories: ["Web development", "AI"]
+tags: ["Course", "Tailwind CSS", "Prompt Engineering"]
+image: "/blog/tailwind.webp"
+imageCaption: "Tailwind - building interfaces directly in the HTML"
+featured: true
+---
+
+Hello! 👋
+
+After the last few classes you know [HTML](/en/blog/html-basics) and can write your own [CSS](/en/blog/css-basics). You have probably noticed a problem, though.
+
+Constantly switching between `index.html` and `style.css`, inventing class names (`.wrapper-inner-container-left` 🤯) and fighting the cascade can wear you down.
+
+Today you meet a tool that solves those problems and is currently the **market standard**.
+What is more, it is **artificial intelligence's favourite framework**. If you want to generate code effectively with Claude or GitHub Copilot, you need to know Tailwind CSS.
+
+Let's speed up! 🚀
+
+## What is Tailwind CSS? (utility-first)
+
+Tailwind is a **utility-first** CSS framework.
+Unlike [Bootstrap](/en/blog/bootstrap), which hands you finished components such as a `.btn` button, Tailwind gives you Lego bricks — small classes that each do one specific thing.
+
+Instead of writing CSS:
+
+```css
+/* Traditional CSS */
+.chat-notification {
+  display: flex;
+  max-width: 24rem;
+  margin: 0 auto;
+  padding: 1.5rem;
+  border-radius: 0.75rem;
+  background-color: white;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+```
+
+We write in the HTML:
+
+```html
+<div class="mx-auto flex max-w-sm rounded-xl bg-white p-6 shadow-lg">...</div>
+```
+
+Sounds like a mess in the HTML? At first, yes.
+But after an hour of work you will understand that you no longer have to invent class names or jump between files. You see structure and style in one place.
+
+## Why are Tailwind and AI a perfect match? 🤖
+
+In the article on [prompting](/en/blog/building-websites-with-ai) I mentioned that AI changes the rules. Tailwind is the best example of that.
+
+Why do AI models (Claude, GPT, Gemini) write better code in Tailwind than in plain CSS?
+
+1. **The context is in one place**: the model sees structure (HTML) and appearance (classes) on the same line. It does not have to guess what is in the CSS file.
+2. **Fewer hallucinations**: Tailwind has a finite set of classes. The model invents non-existent properties less often.
+3. **Tokenisation**: Tailwind's classes are short (`p-4`, `flex`), which is cheaper and faster for a model to generate.
+
+💡 **The takeaway**: if you ask an AI to generate a landing page, add to your prompt: _"Use Tailwind for the styling / import it from a CDN / build the landing page in a single HTML file"_. The result will be far better.
+
+## Installation (the educational version)
+
+In professional projects (React, Next.js) Tailwind is installed through the terminal. For learning and prototyping we will use the **CDN** method.
+
+Paste this script into the `<head>` of your HTML file:
+
+```html
+<script src="https://cdn.tailwindcss.com"></script>
+```
+
+That is all. You can start using Tailwind classes.
+
+⚠️ **Note**: this method is for learning and testing only. Do not use it in real production, because it is slower than compiled CSS.
+
+## The basic classes you have to know
+
+Tailwind has thousands of classes, but 80% of the time you will use the same dozen or so. Here is your essential kit:
+
+### 1. Spacing and sizing
+
+Tailwind uses a scale. `1` is usually `0.25rem` (4px).
+
+- `m-4` = margin: 1rem (16px)
+- `p-2` = padding: 0.5rem (8px)
+- `w-full` = width: 100%
+- `h-screen` = height: 100vh (the full screen height)
+
+### 2. Colours and text
+
+- `bg-blue-500` — a blue background (shade 500)
+- `text-white` — white text
+- `text-xl` — larger type
+- `font-bold` — bold
+
+### 3. Flexbox (layout)
+
+Remember CSS Flexbox? In Tailwind it is delightfully simple:
+
+```html
+<div class="flex h-screen items-center justify-center bg-gray-100">
+  <div class="p-10 bg-white shadow-lg">I am in the middle!</div>
+</div>
+```
+
+- `flex` — turns on Flexbox
+- `justify-center` — horizontal alignment (the main axis)
+- `items-center` — vertical alignment (the cross axis)
+- `gap-4` — the gap between items
+
+## Responsiveness: mobile first 📱
+
+Tailwind has built-in prefixes for different screen sizes.
+They work on the principle: _"apply this style FROM this size upward"_.
+
+| Prefix   | Screen size                |
+| -------- | -------------------------- |
+| (none)   | Default (phone)            |
+| `md:`    | Tablet (min-width: 768px)  |
+| `lg:`    | Laptop (min-width: 1024px) |
+
+**An example:**
+
+We want a grid that is one column on a phone and three on a computer.
+
+```html
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+  <div class="bg-red-200 p-4">Column 1</div>
+  <div class="bg-green-200 p-4">Column 2</div>
+  <div class="bg-blue-200 p-4">Column 3</div>
+</div>
+```
+
+Read it like this: _"By default make one column. But (md:) on medium and larger screens switch to three."_
+
+## States: hover, focus, active
+
+Interaction with the reader matters. In Tailwind we add the `hover:` prefix and we are done.
+
+```html
+<button
+  class="bg-blue-500 text-white px-4 py-2 rounded 
+               hover:bg-blue-700 transition duration-300"
+>
+  Hover over me
+</button>
+```
+
+I also added `transition` and `duration-300` so the colour change is smooth. Simple, isn't it?
+
+## Good practice (do not make a mess of your HTML)
+
+A frequent complaint about Tailwind is that the HTML becomes unreadable under a pile of classes.
+
+Here is how to deal with that:
+
+1. **Formatting**: use the "Tailwind CSS IntelliSense" extension in VS Code. It suggests classes and shows colours.
+2. **Prettier**: install the `prettier-plugin-tailwindcss` plugin. It sorts your classes into a logical order automatically when you save the file.
+3. **Do not overuse @apply**: many people try to use Tailwind like the old CSS, creating classes such as `.btn { @apply bg-blue-500 ... }`. Avoid that unless you know what you are doing. Tailwind's strength is in the HTML.
+
+## Practice exercises 🛠️
+
+### Exercise 1: a product card (refactoring)
+
+Take plain HTML and build a product card containing:
+
+- An image at the top (rounded corners).
+- A title (`text-xl`, `font-bold`).
+- A price in a distinctive colour, e.g. `text-green-600`.
+- A "Buy now" button with a hover effect.
+- A shadow on the whole card (`shadow-lg`).
+
+### Exercise 2: a responsive menu
+
+Build a navbar that:
+
+- Shows the links stacked vertically on a phone.
+- On desktop (`md:`) shows them side by side and pushes them to the right (`justify-end`).
+
+### Exercise 3: an AI challenge (prompting)
+
+Go back to the lesson on generating pages with AI.
+
+Use ChatGPT or Claude and enter this prompt:
+
+> "Create a hero section for a university website (or any company you like) using Tailwind CSS. The section should have a background photo, a dark overlay, centred white text and two buttons (or another design). The code must be ready to paste into an HTML file using the CDN."
+
+Study the code you get back. Look at which classes the AI used.
+
+## Summary
+
+Tailwind CSS is not just "another framework". It is a change in how you think about building interfaces.
+
+✅ **Speed**: you lose no time inventing class names.  
+✅ **Consistency**: you work within a defined system (colours, spacing).  
+✅ **AI-ready**: it is the best language for talking to code generators.
+
+## Bonus: a complete landing page 🎁
+
+Time for something concrete. Below is **production code** for a full landing page in Tailwind.
+
+This is not tutorial code — it is the structure I use in real projects, generated with AI. Semantic HTML5, accessibility, mobile-first responsiveness and clean separation of sections.
+
+Copy it, paste it into an HTML file, open it in the browser and see Tailwind at work.
+
+```html
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Your Company - Professional Solutions</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="font-sans antialiased text-gray-900">
+    <!-- Hero Section -->
+    <header
+      class="relative h-screen flex items-center justify-center bg-gradient-to-br from-blue-600 to-purple-700 text-white"
+    >
+      <div class="absolute inset-0 bg-black/40"></div>
+
+      <div class="relative z-10 max-w-4xl mx-auto px-6 text-center">
+        <h1 class="text-4xl md:text-6xl font-bold mb-6 leading-tight">
+          We Build Solutions That
+          <span class="text-yellow-300">Work</span>
+        </h1>
+        <p class="text-lg md:text-xl mb-8 text-gray-100 max-w-2xl mx-auto">
+          We specialise in building modern web applications that help companies
+          grow in the digital era.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+          <a
+            href="#contact"
+            class="px-8 py-4 bg-yellow-400 text-gray-900 font-semibold rounded-lg 
+                  hover:bg-yellow-300 transition-all duration-300 shadow-lg hover:shadow-xl"
+          >
+            Start a Project
+          </a>
+          <a
+            href="#about"
+            class="px-8 py-4 bg-white/10 backdrop-blur-sm border-2 border-white 
+                  hover:bg-white/20 transition-all duration-300 rounded-lg"
+          >
+            Find Out More
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <!-- About Section -->
+    <section id="about" class="py-20 bg-white">
+      <div class="max-w-6xl mx-auto px-6">
+        <div class="text-center mb-16">
+          <h2 class="text-3xl md:text-4xl font-bold mb-4">Who Are We?</h2>
+          <div class="w-20 h-1 bg-blue-600 mx-auto"></div>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-12 items-center">
+          <div>
+            <h3 class="text-2xl font-bold mb-4 text-gray-800">
+              Over 20 Years in the Industry
+            </h3>
+            <p class="text-gray-600 leading-relaxed mb-4">
+              For two decades we have helped companies through digital
+              transformation. Our solutions combine modern technology with a deep
+              understanding of business needs.
+            </p>
+            <p class="text-gray-600 leading-relaxed">
+              We have worked with startups, mid-sized businesses and corporations,
+              delivering everything from MVPs to scalable enterprise
+              platforms.
+            </p>
+          </div>
+
+          <div
+            class="bg-gradient-to-br from-blue-50 to-purple-50 p-8 rounded-2xl"
+          >
+            <ul class="space-y-4">
+              <li class="flex items-start gap-3">
+                <svg
+                  class="w-6 h-6 text-green-500 flex-shrink-0 mt-1"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+                <div>
+                  <strong class="text-gray-900">500+ Projects</strong>
+                  <p class="text-gray-600 text-sm">Delivered successfully</p>
+                </div>
+              </li>
+              <li class="flex items-start gap-3">
+                <svg
+                  class="w-6 h-6 text-green-500 flex-shrink-0 mt-1"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+                <div>
+                  <strong class="text-gray-900">99.9% Uptime</strong>
+                  <p class="text-gray-600 text-sm">Uptime guarantee</p>
+                </div>
+              </li>
+              <li class="flex items-start gap-3">
+                <svg
+                  class="w-6 h-6 text-green-500 flex-shrink-0 mt-1"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+                <div>
+                  <strong class="text-gray-900">24/7 Support</strong>
+                  <p class="text-gray-600 text-sm">
+                    Always at your disposal
+                  </p>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Services Cards -->
+    <section class="py-20 bg-gray-50">
+      <div class="max-w-6xl mx-auto px-6">
+        <div class="text-center mb-16">
+          <h2 class="text-3xl md:text-4xl font-bold mb-4">Our Services</h2>
+          <p class="text-gray-600 max-w-2xl mx-auto">
+            Complete solutions shaped around your business needs
+          </p>
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-8">
+          <!-- Card 1 -->
+          <article
+            class="bg-white p-8 rounded-xl shadow-md hover:shadow-2xl transition-shadow duration-300 group"
+          >
+            <div
+              class="w-14 h-14 bg-blue-100 rounded-lg flex items-center justify-center mb-6 group-hover:bg-blue-600 transition-colors duration-300"
+            >
+              <svg
+                class="w-7 h-7 text-blue-600 group-hover:text-white transition-colors duration-300"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                />
+              </svg>
+            </div>
+            <h3 class="text-xl font-bold mb-3">Web Applications</h3>
+            <p class="text-gray-600 leading-relaxed">
+              We build fast, responsive applications using React, Next.js and
+              other modern technologies.
+            </p>
+          </article>
+
+          <!-- Card 2 -->
+          <article
+            class="bg-white p-8 rounded-xl shadow-md hover:shadow-2xl transition-shadow duration-300 group"
+          >
+            <div
+              class="w-14 h-14 bg-purple-100 rounded-lg flex items-center justify-center mb-6 group-hover:bg-purple-600 transition-colors duration-300"
+            >
+              <svg
+                class="w-7 h-7 text-purple-600 group-hover:text-white transition-colors duration-300"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"
+                />
+              </svg>
+            </div>
+            <h3 class="text-xl font-bold mb-3">Mobile-First Design</h3>
+            <p class="text-gray-600 leading-relaxed">
+              We design interfaces that look perfect on every device, from a phone
+              to a desktop.
+            </p>
+          </article>
+
+          <!-- Card 3 -->
+          <article
+            class="bg-white p-8 rounded-xl shadow-md hover:shadow-2xl transition-shadow duration-300 group"
+          >
+            <div
+              class="w-14 h-14 bg-green-100 rounded-lg flex items-center justify-center mb-6 group-hover:bg-green-600 transition-colors duration-300"
+            >
+              <svg
+                class="w-7 h-7 text-green-600 group-hover:text-white transition-colors duration-300"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M13 10V3L4 14h7v7l9-11h-7z"
+                />
+              </svg>
+            </div>
+            <h3 class="text-xl font-bold mb-3">SEO Optimisation</h3>
+            <p class="text-gray-600 leading-relaxed">
+              We take care of search visibility - structure, meta tags, performance
+              and Core Web Vitals.
+            </p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact Form -->
+    <section id="contact" class="py-20 bg-white">
+      <div class="max-w-4xl mx-auto px-6">
+        <div class="text-center mb-12">
+          <h2 class="text-3xl md:text-4xl font-bold mb-4">
+            Get In Touch
+          </h2>
+          <p class="text-gray-600">
+            Describe your project - we answer within 24 hours
+          </p>
+        </div>
+
+        <form
+          class="bg-gray-50 p-8 md:p-12 rounded-2xl shadow-lg"
+          method="POST"
+          action="#"
+        >
+          <div class="grid md:grid-cols-2 gap-6 mb-6">
+            <div>
+              <label
+                for="name"
+                class="block text-sm font-medium text-gray-700 mb-2"
+              >
+                Full name <span class="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                id="name"
+                name="name"
+                required
+                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                placeholder="John Smith"
+              />
+            </div>
+
+            <div>
+              <label
+                for="email"
+                class="block text-sm font-medium text-gray-700 mb-2"
+              >
+                Email <span class="text-red-500">*</span>
+              </label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                required
+                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                placeholder="john@example.com"
+              />
+            </div>
+          </div>
+
+          <div class="mb-6">
+            <label
+              for="message"
+              class="block text-sm font-medium text-gray-700 mb-2"
+            >
+              Message <span class="text-red-500">*</span>
+            </label>
+            <textarea
+              id="message"
+              name="message"
+              rows="6"
+              required
+              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 resize-none"
+              placeholder="Describe your project, requirements and expectations..."
+            ></textarea>
+          </div>
+
+          <button
+            type="submit"
+            class="w-full md:w-auto px-8 py-4 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 transition-all duration-300 shadow-lg hover:shadow-xl"
+          >
+            Send Message
+          </button>
+        </form>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-gray-300 py-12">
+      <div class="max-w-6xl mx-auto px-6">
+        <div class="grid md:grid-cols-3 gap-8 mb-8">
+          <!-- Company Info -->
+          <div>
+            <h3 class="text-white text-lg font-bold mb-4">Your Company</h3>
+            <p class="text-sm leading-relaxed mb-4">
+              We build modern web solutions that help companies reach their
+              business goals.
+            </p>
+            <div class="flex gap-4">
+              <a
+                href="#"
+                class="hover:text-white transition-colors duration-200"
+                aria-label="Facebook"
+              >
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                  <path
+                    d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"
+                  />
+                </svg>
+              </a>
+              <a
+                href="#"
+                class="hover:text-white transition-colors duration-200"
+                aria-label="Twitter"
+              >
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                  <path
+                    d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"
+                  />
+                </svg>
+              </a>
+              <a
+                href="#"
+                class="hover:text-white transition-colors duration-200"
+                aria-label="LinkedIn"
+              >
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                  <path
+                    d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"
+                  />
+                </svg>
+              </a>
+            </div>
+          </div>
+
+          <!-- Quick Links -->
+          <div>
+            <h3 class="text-white text-lg font-bold mb-4">Quick Links</h3>
+            <ul class="space-y-2 text-sm">
+              <li>
+                <a
+                  href="#about"
+                  class="hover:text-white transition-colors duration-200"
+                  >About Us</a
+                >
+              </li>
+              <li>
+                <a
+                  href="#services"
+                  class="hover:text-white transition-colors duration-200"
+                  >Services</a
+                >
+              </li>
+              <li>
+                <a
+                  href="#portfolio"
+                  class="hover:text-white transition-colors duration-200"
+                  >Portfolio</a
+                >
+              </li>
+              <li>
+                <a
+                  href="#contact"
+                  class="hover:text-white transition-colors duration-200"
+                  >Contact</a
+                >
+              </li>
+            </ul>
+          </div>
+
+          <!-- Contact Info -->
+          <div>
+            <h3 class="text-white text-lg font-bold mb-4">Contact</h3>
+            <ul class="space-y-2 text-sm">
+              <li class="flex items-start gap-2">
+                <svg
+                  class="w-5 h-5 flex-shrink-0 mt-0.5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                  />
+                </svg>
+                <a
+                  href="mailto:hello@yourcompany.com"
+                  class="hover:text-white transition-colors duration-200"
+                >
+                  hello@yourcompany.com
+                </a>
+              </li>
+              <li class="flex items-start gap-2">
+                <svg
+                  class="w-5 h-5 flex-shrink-0 mt-0.5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
+                  />
+                </svg>
+                <a
+                  href="tel:+48123456789"
+                  class="hover:text-white transition-colors duration-200"
+                >
+                  +48 123 456 789
+                </a>
+              </li>
+              <li class="flex items-start gap-2">
+                <svg
+                  class="w-5 h-5 flex-shrink-0 mt-0.5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                  />
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                  />
+                </svg>
+                <span>Warsaw, Poland</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="border-t border-gray-800 pt-8 text-center text-sm">
+          <p>&copy; 2025 Your Company. All rights reserved.</p>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
+```
+
+### What is worth noticing in this code? 🔍
+
+**Semantic HTML:**
+
+- `<header>`, `<section>`, `<article>`, `<footer>` — a structure that bots and screen readers understand
+- `aria-label` attributes on the social icons
+- A correct heading hierarchy (h1→h2→h3)
+
+**Accessibility:**
+
+- Focus states (`focus:ring-4`)
+- Sufficient colour contrast
+- Required fields marked (`*`)
+- Alternative text for icons
+
+**Mobile-first responsiveness:**
+
+- The `md:` breakpoint used deliberately
+- The grid moves from one to three columns automatically
+- Buttons stack vertically, then go horizontal
+
+**Performance:**
+
+- `scroll-smooth` for smooth scrolling
+- Transitions only where they are needed
+- No external fonts (system fonts = 0 KB of extra loading)
+
+**Real-world practice:**
+
+- `group` hover on the cards (an effect on the icon and the background at once)
+- `backdrop-blur` on the ghost button
+- Separated components (every card is an `<article>`)
+
+---
+
+## What next?
+
+You now have a powerful arsenal: HTML, CSS, AI and Tailwind.
+Next we combine all of it to publish your first serious project on the web.
+
+Trouble with a layout? Grid falling apart?
+Write to me at **m@zeprzalka.com**, or paste your code into ChatGPT with the note _"Fix styling using Tailwind"_ and experiment — the best learning is practice. 😉
+
+Good luck! 🎨

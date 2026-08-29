@@ -1,0 +1,428 @@
+---
+title: "HTML from Scratch: A Quick Guide"
+description: "A practical HTML course - from document structure to semantic tags. Everything you need to start building websites."
+date: "2025-10-14"
+categories: ["Web development"]
+tags: ["Course", "HTML", "Basics"]
+image: "/blog/html.webp"
+imageCaption: "The logo of the HTML markup language"
+featured: true
+---
+
+Welcome to a complete HTML guide for beginners! 🎉 This post was written for my students, but anyone who wants to learn HTML or put their existing knowledge in order will find something here. HTML (HyperText Markup Language) is the foundation of every website. Without it there is no internet as we know it. Let's begin.
+
+## What is HTML?
+
+HTML is a **markup language**, not a programming language. What does that mean?
+
+- 🏗️ It lets you describe the structure of the information on a page
+- 🎯 We tell the browser what to display: "show a heading", "show a paragraph", "show a link"
+- 📝 We do not write algorithms or logic in it
+
+### History in a nutshell
+
+| Year  | Version              | Key changes                       |
+| ----- | -------------------- | --------------------------------- |
+| 1991  | HTML 1.0             | The first tags (22 of them)       |
+| 1995  | HTML 2.0             | Forms, tables                     |
+| 1997  | HTML 4.0             | CSS, scripting, accessibility     |
+| 2014  | HTML5                | Semantic tags, multimedia, APIs   |
+| Now   | HTML Living Standard | A living standard                 |
+
+> :computer: HTML was born of need, not profit. The physicist [Tim Berners-Lee](https://en.wikipedia.org/wiki/Tim_Berners-Lee) created it in 1991 at CERN so that scientists could finally share research results easily.
+
+## The anatomy of an HTML document
+
+Every HTML document has an **identical structure**. It is a skeleton — always the same:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My First Page</title>
+  </head>
+  <body>
+    <h1>Hello, world!</h1>
+    <p>This is my first HTML document.</p>
+  </body>
+</html>
+```
+
+### Let us break it down:
+
+1. **`<!DOCTYPE html>`** — the document type declaration (it tells the browser: "this is HTML5!")
+2. **`<html lang="en">`** — the root of the document (the `lang` attribute improves SEO and accessibility)
+3. **`<head>`** — metadata (information _about_ the page, invisible to the reader)
+4. **`<body>`** — the page content (everything the reader sees)
+
+## Tags — your working tools
+
+### The structure of a tag
+
+```html
+<tag attribute="value">Content</tag>
+```
+
+**Kinds of tags:**
+
+- **Paired tags (standard elements):** `<p>text</p>`, `<div>...</div>`, `<h1>...</h1>`
+- **Self-closing tags (empty elements):** `<img />`, `<br />`, `<input />`
+
+### The most important text tags
+
+#### Headings (h1–h6)
+
+```html
+<h1>The most important heading (only one per page!)</h1>
+<h2>A section heading</h2>
+<h3>A subsection</h3>
+<h4>A smaller heading</h4>
+<h5>Smaller still</h5>
+<h6>The smallest</h6>
+```
+
+**The golden SEO rule:** :bulb: one page = one `<h1>`. Headings have to be **hierarchical** (do not jump from h1 to h4).
+
+#### Paragraphs and formatting
+
+```html
+<p>This is a paragraph. It contains ordinary text.</p>
+<p>We can <strong>make text bold</strong> or <em>italicise it</em>.</p>
+<p>We can also add a <mark>highlight</mark> or a <del>strikethrough</del>.</p>
+```
+
+**The difference between `<strong>` and `<b>`:**
+
+- `<strong>` = **semantic** emphasis (it matters for SEO)
+- `<b>` = **visual** boldness only
+
+### Lists — bring order to your content
+
+#### Unordered list (bulleted)
+
+```html
+<ul>
+  <li>Coffee</li>
+  <li>Tea</li>
+  <li>Juice</li>
+</ul>
+```
+
+The result:
+
+- Coffee
+- Tea
+- Juice
+
+#### Ordered list (numbered)
+
+```html
+<ol>
+  <li>Open the editor</li>
+  <li>Write the HTML</li>
+  <li>Save it as .html</li>
+  <li>Open it in the browser</li>
+</ol>
+```
+
+The result:
+
+1. Open the editor
+2. Write the HTML
+3. Save it as .html
+4. Open it in the browser
+
+## Links — connect your pages
+
+Links are the **heart of the internet**. Without them every page would be a lonely island.
+
+### Basic syntax
+
+```html
+<!-- A basic link -->
+<a href="https://google.com">Go to Google</a>
+<!-- A link with attributes -->
+<a href="https://github.com" target="_blank" rel="noopener noreferrer">
+  GitHub (new tab)
+</a>
+```
+
+**Link attributes:**
+
+- `href` — where the link goes
+- `target="_blank"` — open in a new tab
+- `rel="noopener noreferrer"` — security (always use it with `target="_blank"`)
+
+### Kinds of links
+
+```html
+<!-- External link (absolute) -->
+<a href="https://example.com">An external site</a>
+
+<!-- Internal link (relative) -->
+<a href="/about.html">About us</a>
+
+<!-- Link to a section of the page -->
+<a href="#contact">Jump to contact</a>
+
+<!-- Email link -->
+<a href="mailto:hello@example.com">Write to us</a>
+
+<!-- Telephone link -->
+<a href="tel:+48123456789">Call us</a>
+```
+
+## Images — add the visuals
+
+```html
+<img src="/images/logo.png" alt="XYZ company logo" width="300" height="200" />
+```
+
+**The `alt` attribute is MANDATORY.** :warning:
+
+Why?
+
+1. **Accessibility** — screen readers read the description aloud for blind users
+2. **SEO** — Google indexes images by their alt text (and now visually as well)
+3. **Fallback** — if the image fails to load, the reader sees the description
+
+### Figure and figcaption — professional captions
+
+```html
+<figure>
+  <img src="/chart.png" alt="Sales chart 2024" />
+  <figcaption>Fig. 1: Sales growth in Q1 2024</figcaption>
+</figure>
+```
+
+## Semantic HTML5 tags
+
+HTML5 introduced **semantic tags** that describe the **meaning** of content, not merely its appearance.
+
+### Semantic structure
+
+```html
+<header>
+  <nav>
+    <ul>
+      <li><a href="/">Home</a></li>
+      <li><a href="/blog">Blog</a></li>
+      <li><a href="/contact">Contact</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main>
+  <article>
+    <h1>Article title</h1>
+    <p>The article's content...</p>
+  </article>
+
+  <aside>
+    <h2>Related articles</h2>
+    <ul>
+      <li><a href="#">Article 1</a></li>
+      <li><a href="#">Article 2</a></li>
+    </ul>
+  </aside>
+</main>
+
+<footer>
+  <p>&copy; 2025 My Company. All rights reserved.</p>
+</footer>
+```
+
+### What do semantic tags give you?
+
+| Tag         | Meaning                                     |
+| ----------- | ------------------------------------------- |
+| `<header>`  | The header of the page or a section         |
+| `<nav>`     | Navigation                                  |
+| `<main>`    | The main content of the page (only one!)    |
+| `<article>` | A self-contained piece of content           |
+| `<section>` | A thematic section                          |
+| `<aside>`   | Side content (a sidebar)                    |
+| `<footer>`  | The footer of the page or a section         |
+
+**The benefits:**
+
+- ✅ Better SEO (Google understands the structure)
+- ✅ Accessibility (screen readers know what is what)
+- ✅ Cleaner code (it is immediately obvious what each section does)
+
+## Tables — structured data
+
+We use tables for **tabular data**, not for laying out a page.
+
+```html
+<table>
+  <thead>
+    <tr>
+      <th>Language</th>
+      <th>Year created</th>
+      <th>Creator</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>HTML</td>
+      <td>1991</td>
+      <td>Tim Berners-Lee</td>
+    </tr>
+    <tr>
+      <td>CSS</td>
+      <td>1996</td>
+      <td>Håkon Wium Lie</td>
+    </tr>
+    <tr>
+      <td>JavaScript</td>
+      <td>1995</td>
+      <td>Brendan Eich</td>
+    </tr>
+  </tbody>
+</table>
+```
+
+## Forms — collect data
+
+Forms are how visitors communicate with your site.
+
+```html
+<form action="/submit" method="POST">
+  <label for="name">Name:</label>
+  <input type="text" id="name" name="name" required />
+
+  <label for="email">Email:</label>
+  <input type="email" id="email" name="email" required />
+
+  <label for="message">Message:</label>
+  <textarea id="message" name="message" rows="5"></textarea>
+
+  <button type="submit">Send</button>
+</form>
+```
+
+### Kinds of inputs
+
+```html
+<!-- Text -->
+<input type="text" />
+<!-- Email (with validation!) -->
+<input type="email" />
+<!-- Password (hidden characters) -->
+<input type="password" />
+<!-- Number -->
+<input type="number" />
+<!-- Date (with a picker!) -->
+<input type="date" />
+<!-- Checkbox -->
+<input type="checkbox" />
+<!-- Radio button -->
+<input type="radio" />
+<!-- File upload -->
+<input type="file" />
+```
+
+## Good HTML practice
+
+### 1. Always use semantic tags
+
+❌ **Bad:**
+
+```html
+<div class="header">
+  <div class="navigation">...</div>
+</div>
+```
+
+✅ **Good:**
+
+```html
+<header>
+  <nav>...</nav>
+</header>
+```
+
+### 2. Accessibility is essential
+
+```html
+<!-- Always add alt text to images -->
+<img src="logo.png" alt="Company logo" />
+
+<!-- Use labels with inputs -->
+<label for="username">Username:</label>
+<input type="text" id="username" name="username" />
+
+<!-- ARIA attributes for interactive elements -->
+<button aria-label="Close window">×</button>
+```
+
+## Tools for a web developer
+
+### The basics:
+
+- **VS Code** — the most widely used code editor :rocket:
+- **Chrome DevTools** — inspection and debugging (F12)
+- **Live Server** — a VS Code extension for live reload
+
+## Practice exercises
+
+### Exercise 1: build your business card
+
+Create an HTML page with:
+
+- An `<h1>` heading with your name
+- A `<p>` paragraph with a short description
+- A `<ul>` list of your skills
+- A link to GitHub or LinkedIn
+
+### Exercise 2: a blog post
+
+Create the structure of an article with:
+
+- Semantic tags (`<article>`, `<header>`, `<footer>`)
+- At least three sections (`<section>`)
+- An image inside `<figure>` with a `<figcaption>`
+- A table of data
+
+### Exercise 3: a contact form
+
+Build a form with the fields:
+
+- Name (text, required)
+- Email (email, required)
+- Message (textarea)
+- A checkbox consenting to data processing
+- A submit button
+
+## Summary
+
+HTML is the foundation of web development. The key points:
+
+1. ✅ HTML is a **markup language**, not a programming language
+2. ✅ The structure: `<!DOCTYPE html>` → `<html>` → `<head>` + `<body>`
+3. ✅ Use **semantic tags** (better SEO and accessibility)
+4. ✅ Validate your code and keep it readable
+
+### Next steps
+
+Once you have HTML under control, it is time for:
+
+1. **CSS** — styling and layout
+2. **JavaScript** — interactivity
+3. **Frameworks** (React, Next.js) — modern applications
+
+## Useful links
+
+- [MDN Web Docs](https://developer.mozilla.org/en-US/docs/Web/HTML) — the best HTML documentation
+- [W3Schools](https://www.w3schools.com/html/) — interactive tutorials
+- [Can I Use](https://caniuse.com/) — check browser support
+- [HTML Living Standard](https://html.spec.whatwg.org/) — the official specification
+
+---
+
+**Questions? Problems?** Write to me at m@zeprzalka.com
+
+Good luck with your learning! 🚀

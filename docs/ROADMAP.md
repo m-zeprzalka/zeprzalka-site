@@ -148,6 +148,40 @@ Legenda: `[x]` zrobione · `[~]` zrobione inaczej niż zakładano (z uzasadnieni
 
 ---
 
+## Co zostało zrobione 2026-08-29 — wersja angielska
+
+Serwis ma pełną wersję angielską pod `/en`. Polskie adresy nie zmieniły się
+ani o znak — są zaindeksowane, więc polska wersja została w katalogu głównym.
+Szczegóły: [docs/DWUJEZYCZNOSC.md](DWUJEZYCZNOSC.md).
+
+- **Jedno źródło prawdy dla tekstów.** Żaden napis nie może istnieć tylko
+  w jednym języku i pilnuje tego kompilator: moduły w `src/i18n/content/*`
+  to lustrzane drzewa, gdzie `en` ma typ `typeof pl`, a teksty należące do
+  danych (realizacje, pakiety) są parami `{ pl, en }` w miejscu deklaracji.
+- **Widoki wspólne dla obu języków** (`src/components/views/*`) — zmiana
+  układu podstrony to nadal jedna zmiana, nie dwie.
+- **27 wpisów bloga przetłumaczonych** (~39 000 słów) z własnymi, angielskimi
+  slugami; pary polski↔angielski w `src/i18n/blog-map.ts`.
+- **SEO**: `hreflang` z `x-default` na polską wersję, mapa strony z parami
+  językowymi (40 → 80 adresów), osobny kanał RSS `/en/feed.xml`, karty
+  Open Graph i dane strukturalne w obu językach.
+- **Dwa układy główne** (`(pl)` i `en`), bo `lang` na `<html>` ustawia
+  w App Routerze tylko układ główny. Nieznany adres obsługuje
+  `global-not-found.tsx` — pełna strona ze stylami i statusem 404.
+- **Polska wersja zweryfikowana strona po stronie** względem stanu sprzed
+  zmiany: w widocznym tekście 63 wygenerowanych stron jedyną różnicą jest
+  nowy przycisk przełącznika języka.
+
+**Do zrobienia u Ciebie:**
+- Zgłoś obie wersje w Google Search Console (właściwość domenowa obejmuje
+  `/en` automatycznie, ale warto sprawdzić raport „Wersje międzynarodowe").
+- CV w PDF jest tylko po polsku — przycisk na `/en/about` mówi o tym wprost.
+  Angielską wersję wygenerujesz drukując `/en/about` do PDF.
+- Potwierdź angielskie tytuły realizacji wideo w `src/lib/portfolio.ts`
+  („Automotive productions", „Sports content", „Rollerblading lifestyle").
+
+---
+
 ## Co zostało zrobione 2026-08-26
 
 **Adresy i dane strukturalne**

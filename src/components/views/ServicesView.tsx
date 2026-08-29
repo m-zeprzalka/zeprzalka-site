@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { PageHeader } from "@/components/PageHeader"
 import { formatPrice, packages, process } from "@/lib/services"
-import { SITE_NAME, SITE_URL, absoluteUrl } from "@/lib/site"
+import { SITE_NAME, absoluteUrl } from "@/lib/site"
 import { ROUTES, t, type Locale } from "@/i18n/config"
 import { getPages } from "@/i18n/content/pages"
 

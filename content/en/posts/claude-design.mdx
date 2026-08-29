@@ -1,0 +1,99 @@
+---
+title: "Claude Design – will it replace Figma?"
+description: "Claude Design is Anthropic's new tool — a Figma rival, or closer to Google Stitch? I put it through a few practical tests to see what it can really do."
+date: "2026-04-23"
+categories: ["AI", "Design"]
+tags: ["Figma", "Prompt Engineering", "Landing Page"]
+image: "/blog/socontent-new.webp"
+imageCaption: "The Claude Design logo"
+featured: true
+---
+
+Do designers — UX/UI designers in particular — have something new to worry about? Claude Design is not quite a design tool in the strict sense. It is more a tool for one-off tasks that can generate an interesting visual base to build a project on.
+
+In reality it is the base Claude model supplemented with the right guidelines in `.md` files. The application generates React code, which Claude handles very well.
+
+---
+
+## 🎬 Two perspectives — watch before reading on
+
+Before I get to my own tests and thoughts, it is worth seeing two points of view. The first is a critical analysis, the second an enthusiastic take focused on production potential.
+
+### Malewicz — a critical look at Claude Design
+
+<YouTubeEmbed id="IkspcJdeP3U" title="Malewicz – Is Claude Design any good?" />
+
+Michał Malewicz takes the view that this is still a tool that does not produce designs at the level of even a mid-level designer. He points out plenty of mistakes and shortcomings in what it generates. At bottom, Claude Design really is only a layer on top of Claude — one that adds fields for quickly editing the design and the ability to select and comment on particular elements of the layout.
+
+I also understand the argument that this is a tool which removes the need to browse the web and creates a false sense of building a website interactively in partnership with an AI. Underneath the process there are still templates and off-the-shelf solutions that the model interprets and redefines. In the past you simply picked a template off the internet, paid $20 for it, reworked it to the client's brief and were done. In some cases the time and the result were comparable; this is not an enormous revolution in designing and shipping websites.
+
+People frequently do not even know what to put in the prompt. They cannot define what they actually need and end up buying prompts in order to generate a page. On top of that, anyone who has done any coding or vibe coding knows perfectly well that these projects need a great many corrections, and that technical knowledge is often required to reach an acceptable result.
+
+### Or perhaps it is the remedy for everything?
+
+<YouTubeEmbed id="2vWVGIQF5S0" title="AI enthusiasts – Claude Design as a milestone for vibe coding" />
+
+On the other side of the barricade are the AI enthusiasts, who argue that this is another milestone accelerating vibe-coding-based delivery. My sense is that opinions of this sort are considerably more common. From a certain angle I agree with many of the arguments pointing that way.
+
+In a few minutes I get a result I would have spent several hours reaching by hand. I am not sure I would have arrived at a comparable level of creativity, and on top of that I have several interesting concepts ready to go. They may have plenty of flaws, but those can be fixed later in the project, and the generated layout is a good foundation for the creative idea and the direction to take it.
+
+---
+
+## 🧪 Practical tests of Claude Design
+
+Whichever position you start from, the fact remains that this is a tool that can be very useful when building websites and applications. I put Claude Design through a few basic trials. Let us look at the results.
+
+### Test 1 – redesigning the socontent site
+
+[socontent.marketing](https://socontent.marketing)
+
+<Image src="/blog/socontent.webp" alt="socontent website" />
+
+A site I wrote by hand in semantic HTML and SCSS over a few days. From concept through copy to a finished deployment, in the fastest way possible. A simple, minimalist page made to show work to clients.
+
+I started with a simple redesign prompt, and here is the interesting part: Claude Design generates a basic brief on its own, which makes it easier to reach the result you want. It asks for details and, like a designer working with a client, puts the key questions about the project.
+
+For a one-shot with no prompt editing I think the result is very good. The page does have plenty of shortcomings, but as a creative idea it is a strong proposal.
+
+<Image src="/blog/socontent-new.webp" alt="Claude Design proposition" />
+
+Problems begin after export: the HTML is really just a wrapper that pulls in a `.jsx` file. The page also has fairly serious responsiveness issues. As a concept it is very interesting and could serve as a base for further work; as a finished, publishable design, less so.
+
+I went a step further, though. I exported the file from Claude Design, dropped it into an IDE, and in the Claude CLI wrote a prompt asking it to convert the whole thing into a responsive site built on Next.js, Tailwind and shadcn. I would call the result good at the very least, arguably very good. Demo links below:
+
+- [socontent.marketing – test 1](https://socontent-test.vercel.app/)
+- [socontent.marketing – test 2](https://socontent-test.vercel.app/landing-b)
+- [socontent.marketing – test 3](https://socontent-test.vercel.app/landing-c)
+
+### Test 2 – a hero section for an AI company
+
+Another one-shot, with no strictly defined rules. A company working on AI automation. The generated examples — draggable tiles visualising an automation process, or an animated modal showing an automation running as a task list — are strong creative ideas. The build quality does leave a lot to be desired, but a few prompts combined with hands-on work in code, moving it into Tailwind and shadcn and continuing from there, could deliver an interesting, solid result quickly.
+
+<Image src="/blog/ai-automation.webp" alt="Claude Design proposition" />
+
+### Test 3 – redesigning zeprzalka.com
+
+<Image src="/blog/zeprzalka-com.webp" alt="zeprzalka" />
+
+The cobbler's children go barefoot. The current version of my site was an exercise in Next.js + shadcn and came about mainly to give students teaching material. I sat down and wrote it almost entirely by hand from scratch in a few days.
+
+The same situation as in the first test. A prompt with no reference images, mostly a description aimed at preserving the simple character of the current site. The result was better than I expected. Several concepts came out very interesting, and I will certainly use some of the component ideas in the site's coming rebuild. Some elements look highly polished and have a senior touch to them. As before, there are problems with overlapping elements and with some things not displaying quite correctly. Even so, it is a good foundation to build on, and several of the creative elements are worth keeping.
+
+- [zeprzalka.com – test 1](https://zeprzalka-test.vercel.app/)
+- [zeprzalka.com – test 2](https://zeprzalka-test.vercel.app/landing-page-b)
+- [zeprzalka.com – test 3](https://zeprzalka-test.vercel.app/landing-page-c)
+- [zeprzalka.com – test 4](https://zeprzalka-test.vercel.app/landing-page-d)
+
+---
+
+## ✅ Summary
+
+### Is this a breakthrough for shipping sites and applications?
+
+I do not think it is any enormous breakthrough. It is certainly another brick that speeds up and simplifies shipping a visually interesting site or application. Nor is it likely to replace Figma; it belongs to a somewhat different segment.
+
+It is, on the other hand, a very interesting tool from a vibe coder's point of view, as an addition to the stack. Before we type a prompt for Claude in the terminal, we can sketch the layout visually. That removes a good deal of work in the code editor. The other thing is that the tool will probably keep getting better. Perhaps before long it becomes part of some larger Claude ecosystem for generating whole sites and applications complete with code and deployment. Time will tell. For now it is an interesting proposition — another collaborator that will always hand you an idea and add its own two cents to your project's visual concept.
+
+---
+
+**Questions?** Write to me at m@zeprzalka.com

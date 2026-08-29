@@ -1,0 +1,179 @@
+---
+title: 'Makerkit #3 - How Do You Turn a Template Into Your Own Product?'
+description: "Does your app still look like a template? Meet Makerkit's configuration architecture, Zod validation and feature flags — and fit the branding to your own product."
+date: "2026-02-10"
+categories: ["SaaS", "Next.js"]
+tags: ["Makerkit", "Shadcn UI", "Next.js"]
+image: "/blog/makerkit.webp"
+imageCaption: "From a generic template to a distinct brand — the customisation process."
+featured: false
+---
+
+Welcome to part three of our SaaS-building saga! 👋
+
+In the [previous post](/en/blog/makerkit-installation) we got the boilerplate running. We have a working Next.js app, a Supabase database in Docker, and everything runs on localhost.
+There is one problem, though: **your application looks exactly like the thousands of other applications built on Makerkit.**
+
+Today we change that. We are going through **customisation**.
+But be warned — in Makerkit this is not just about changing colours in CSS. It is an advanced system built on environment variables, type validation and feature flags.
+
+Understanding this stage matters, so that you do not block yourself from easy updates later. Ready? Let's go. 🎨
+
+## 🧠 The brain of the operation: configuration architecture
+
+Makerkit approaches configuration in a very "enterprise" way. Nothing is hardcoded.
+Instead, information flows like this:
+
+1.  **Environment variables (`.env`)** — where you define the values.
+2.  **Zod validation (`config/*`)** — where we check that the values are correct.
+3.  **Application layer** — the app only ever uses verified data.
+
+### Why Zod? (our guard)
+
+Makerkit uses the **Zod** library to validate the configuration file.
+If you put a bad URL in `.env` or forget an API key, the application **will not start**.
+
+That can be irritating when you see errors in the terminal, but believe me — it is for your own good. Better that the app blows up locally for you than in production for a user, because you forgot one variable or gave it the wrong type.
+
+An example from `apps/web/config/app.config.ts`:
+
+```typescript
+const AppConfigSchema = z.object({
+  name: z.string().min(1),
+  url: z.string().url(),
+  // ...the rest of the configuration
+})
+```
+
+### Where do you put what? (`.env`)
+
+In the `apps/web/` folder you will find a `.env` file. This is where you define your SaaS's identity:
+
+```bash
+NEXT_PUBLIC_PRODUCT_NAME="BrandMaker"
+NEXT_PUBLIC_SITE_TITLE="BrandMaker - Branding Automation for Companies"
+NEXT_PUBLIC_SITE_DESCRIPTION="A platform for creators..."
+NEXT_PUBLIC_SITE_URL=http://localhost:3000
+NEXT_PUBLIC_DEFAULT_LOCALE=en
+```
+
+> **Pro tip:** remember the difference between public and private variables.
+>
+> - `NEXT_PUBLIC_...` — visible to the browser (the site name, for instance).
+> - No prefix — visible only on the server (`STRIPE_SECRET_KEY`, for instance). Never put secrets into public variables.
+
+## 🎨 Branding: colours and Shadcn UI
+
+Makerkit uses **Shadcn UI** — currently the most popular standard in the React and Next.js world.
+That means there is no single enormous `theme.js` file; you work with **CSS variables** instead.
+
+Want to change your application's primary colour?
+Do not go looking through React components. Open:
+📂 **`apps/web/styles/shadcn-ui.css`**
+
+You will find colour definitions there in HSL:
+
+```css
+:root {
+  /* This is Makerkit's default purple */
+  --primary: 262.1 83.3% 57.8%;
+  --primary-foreground: 210 20% 98%;
+  /* ... */
+}
+```
+
+To fit it to your brand you simply swap the colour values.
+You can take a ready-made theme from [Shadcn UI Themes](https://ui.shadcn.com/create) and paste it straight into this file.
+
+## 🖼️ Logo, favicons and fonts
+
+These are the details that build trust and finish the look of your application.
+
+### 1. Logo
+
+The logo is not an image file dropped separately into every place it appears. It is a React component.
+You will find it in: 📂 **`apps/web/components/app-logo.tsx`**.
+
+There you can:
+
+- Paste in your SVG code (the best option for performance).
+- Use Next.js's `<Image />` tag.
+- Simply return text, if you are at the MVP stage.
+
+### 2. Favicons
+
+Nothing gives away a template quite like the Makerkit or Next.js logo sitting in the browser tab (I often leave them there long after finishing an app myself 🤦).
+Replace the files in:
+📂 **`apps/web/public/images/favicon`**.
+Overwriting the existing files with your own is enough — use something like [Favicon Generator](https://favicon.io/).
+
+### 3. Fonts
+
+Makerkit uses `next/font` — a game changer for performance (zero layout shift).
+By default that is `Inter` for body text and `Urbanist` for headings.
+
+Want to change it? Edit:
+📂 **`apps/web/lib/fonts.ts`**
+
+```typescript
+import { Quicksand as HeadingFont, Inter as SansFont } from "next/font/google"
+// Swap the import and the configuration, and the rest takes care of itself.
+```
+
+## 📝 Editing the landing page
+
+You have your colours and your logo, but the home page still greets people with copy about a "SaaS Starter Kit". Let us change it into the **BrandMaker** pitch.
+
+The marketing pages (the ones visible without logging in) live in the `(marketing)` folder.
+Edit: 📂 **`apps/web/app/(marketing)/page.tsx`**.
+
+You will find components there such as `<HeroTitle>` and `<Heading>`. The code may look somewhat different from this example — Makerkit changes over time — but the concepts hold. This is where your copy goes:
+
+```tsx
+<HeroTitle>
+  <span className={"text-primary"}>BrandMaker</span>
+  <span>
+    <span>Branding Automation</span>
+  </span>
+</HeroTitle>
+```
+
+Because you are using ready-made components, you do not have to worry about responsiveness or font sizes — it all looks right on its own. Later in the project it is worth building your own components, but remember: better a deployed application built on a template than no application at all.
+
+## 🎛️ Feature flags: managing functionality
+
+This is one of my favourite things about this boilerplate.
+Instead of deleting code you do not need — "I do not want team accounts, only individual ones" — you can simply **switch it off** in the configuration.
+
+File: 📂 **`apps/web/config/feature-flags.config.ts`**
+
+Building a B2B-only SaaS?
+
+```bash
+# In the .env file
+NEXT_PUBLIC_ENABLE_PERSONAL_ACCOUNT_BILLING="false"
+NEXT_PUBLIC_ENABLE_TEAM_ACCOUNTS="true"
+```
+
+The code stays in the application (in case you change your mind in six months) but users never see it. Clean and safe.
+
+## 💡 Summary
+
+Once you have been through this stage, your project stops being "a template". It has your name, your colours, your logo, and only the features you actually need.
+
+**What did we do?**
+
+1.  ✅ Configured the project metadata through `.env`.
+2.  ✅ Adapted the design system (Shadcn UI) in the CSS file.
+3.  ✅ Replaced the logo, favicons and fonts.
+4.  ✅ Rewrote the content on the landing page.
+5.  ✅ Set feature flags to match our business model.
+
+In the next post we head down to the back end — the **database**. 🗄️
+We will learn how to modify the Supabase schema, add our own tables and manage migrations. That is where the real logic of your SaaS begins.
+
+See you there! 🚀
+
+---
+
+**Source:** [Makerkit Course - Customization](https://makerkit.dev/courses/nextjs-turbo/customization)

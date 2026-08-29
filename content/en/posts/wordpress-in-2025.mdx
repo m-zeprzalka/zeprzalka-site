@@ -1,0 +1,165 @@
+---
+title: "WordPress in 2025: Installing Without Admin Rights, and the Architecture"
+description: "How do you learn WordPress for free, without your own hosting? A survey of modern methods (Playground, InstaWP), the anatomy of the CMS, and an introduction to Full Site Editing."
+date: "2025-12-18"
+categories: ["Web development"]
+tags: ["WordPress", "Course", "Deployment"]
+image: "/blog/wp.webp"
+imageCaption: "WordPress powers 43% of the web — time to understand how it works underneath."
+featured: true
+---
+
+Hello! 👋
+
+Today we take on the technology that powers **more than 43% of all websites on the internet**.
+If you think WordPress is just "a blogging tool" from 2010, your knowledge needs an update. In 2025 it is a powerful ecosystem serving as a headless CMS for React applications, an eCommerce platform (WooCommerce) and the foundation for corporate sites.
+
+At universities and schools, though, we keep running into the same problem: **no administrator rights**.
+How do you install a local server (XAMPP/WAMP), a database and PHP when the system shouts "Access Denied"? 🤯
+
+I have good news. Technology has moved on. Today I will show you how to run a professional WordPress environment in the browser — without installing anything on disk. Then we will look under the bonnet of the system.
+
+---
+
+## 🏗️ Part 1: WordPress.com vs WordPress.org (the great trap)
+
+Before we begin, we have to explain the most important distinction in the WP world. Ninety per cent of beginners get this wrong.
+
+### WordPress.com (the service)
+
+A commercial hosting platform, like Wix or Squarespace.
+
+- **Advantages:** create an account and you have a site.
+- **Disadvantages (crucial for students):** on the free plan you **CANNOT** install plugins or upload your own themes.
+- **Verdict:** if you want to learn how to _run_ a CMS, avoid it.
+
+### WordPress.org (the software)
+
+The open-source code you download and install on a server.
+
+- **Advantages:** full control. You can edit the PHP, install any plugin, change the database.
+- **Verdict:** this is what we are going to learn.
+
+---
+
+## 🛠️ Part 2: Where do you host WordPress for free (without admin rights)?
+
+At home, do try Laragon. On university machines, forget installing XAMPP. Here is a survey of cloud and browser-based options for 2025.
+
+### 1. WordPress Playground — WebAssembly magic 🪄
+
+An absolute game changer. This technology runs PHP and a database **directly in your browser**. Everything happens in RAM.
+
+- **How it works:** you open a link and the system virtualises a server.
+- **Advantages:** starts in two seconds. No login required.
+- **Disadvantages:** it is ephemeral. Refresh the page without exporting and your data is gone.
+- **Good for:** a quick demonstration on a projector, testing a single plugin.
+- **Address:** `playground.wordpress.net`
+
+### 2. InstaWP and TasteWP — sandboxes ⏳
+
+Services that spin up a temporary but fully functional server in the cloud for you.
+
+#### **InstaWP** (the industry standard)
+
+- **Limit:** the free version lasts about 48 hours (longer with an account).
+- **Advantages:** file access, database access, an excellent manager interface.
+- **Address:** `instawp.com`
+
+#### **TasteWP** (the fastest)
+
+- **Limit:** two days without an account, seven days signed in.
+- **Advantages:** one click and you have a site. It does not even ask for an email address.
+- **Address:** `tastewp.com`
+
+### 3. Pantheon.io — for the long haul 🏛️
+
+If you have a semester project, you need something that will not vanish over the weekend.
+
+- **What it is:** professional hosting with a free "Sandbox" plan for developers.
+- **Advantages:** it does not expire. A professional environment (Git, Dev/Test/Live).
+- **Disadvantages:** more complicated — aimed at future engineers.
+- **Address:** `pantheon.io`
+
+### ⚠️ Classic free hosting
+
+A word of warning about _InfinityFree_ and _000webhost_. They often inject adverts, run slowly and impose limits that make working with modern page builders impossible. For learning, they are not worth the frustration. They remain an alternative, though.
+
+### The options, summarised
+
+| Option            | Lifetime          | Registration? | Plugins? | Good for              |
+| :---------------- | :---------------- | :------------ | :------- | :-------------------- |
+| **WP Playground** | Browser session   | **NO**        | YES      | Quick demo / testing  |
+| **TasteWP**       | 2–7 days          | **NO**        | YES      | Workshops, right now  |
+| **InstaWP**       | 48h+              | YES           | YES      | Learning configuration |
+| **Pantheon**      | No limit          | YES           | YES      | A project to submit   |
+| **WordPress.com** | No limit          | YES           | **NO**   | Writing content only  |
+
+---
+
+## 🧬 Part 3: The anatomy of WordPress (what is inside?)
+
+As engineers we need to know more than where to click "Publish". We need to understand the file structure. Once WP is installed (on InstaWP, say), open the file manager.
+
+### The directory structure
+
+1.  **`/wp-admin`** — the control panel. This holds the admin interface code. **Do not touch it.**
+2.  **`/wp-includes`** — the brain of the operation. API libraries, PHP classes. **Do not touch this either.**
+3.  **`/wp-content`** — 🟢 **this is your kingdom.**
+    - `/themes` — where themes land.
+    - `/plugins` — where plugins land.
+    - `/uploads` — where images and user-uploaded files go.
+
+> **💡 Pro tip:** if you ever break the site — the famous White Screen of Death — because of a faulty plugin, connect over FTP to `/wp-content/plugins` and rename that plugin's folder. WordPress will disable it automatically and the site should start working again.
+
+### The database structure
+
+WordPress runs on an SQL database, usually MySQL or MariaDB. The most important tables are:
+
+- `wp_posts` — not only blog posts but also pages, menus, even revisions. Everything is a "post".
+- `wp_options` — site settings (name, URL, plugin configuration).
+- `wp_users` and `wp_usermeta` — user data and permissions.
+
+---
+
+## 🎨 Part 4: Modern WordPress (Full Site Editing)
+
+Forget the old themes, where you had to know PHP to change the footer. Since version 6.0 we have been in the era of **FSE (Full Site Editing)**.
+
+### The Block Editor (Gutenberg)
+
+Now everything is a block. The header is a block. The menu is a block. The logo is a block.
+We edit the whole page visually, much as in a tool like _Figma_, but straight in the browser.
+
+**Why does that matter?**
+Because the market is moving away from heavy page builders (the old Elementor or Divi) toward light, native blocks. Learning blocks is an investment in the future.
+
+---
+
+## ⚔️ Part 5: A practical exercise (15 minutes)
+
+We have the theory and the tools. Let's do it.
+
+**The exercise:**
+
+1.  **Start:** go to [TasteWP.com](https://tastewp.com) and click "I agree... Set it up!".
+    - _Time:_ 30 seconds.
+2.  **Tidy up:** log into the panel (the credentials appear on screen). Go to `Plugins` and delete everything there. We like a clean start.
+3.  **A modern theme:**
+    - Go to `Appearance` -> `Themes` -> `Add New`.
+    - Search for and install any theme you like (for a blog), or **"Twenty Twenty-Four"**.
+4.  **The first piece of content:**
+    - Go to `Posts` -> `Add New`.
+    - Use an AI model (ChatGPT, say) to generate text on "The benefits of drinking coffee while coding".
+    - Paste the text in. Notice that WordPress turns the paragraphs into blocks automatically.
+    - Add a photo (the Image block).
+5.  **Publish:** click "Publish" and see your page live.
+
+---
+
+## 🎯 Summary
+
+Not having admin rights on a university computer is no longer an excuse.
+You have **Playground** and **InstaWP** at your disposal, and in a few seconds they give you an environment identical to the one running the biggest sites in the world — from the White House to Sony Music.
+
+Spin up your first instance on TasteWP or somewhere similar. Good luck! 🚀

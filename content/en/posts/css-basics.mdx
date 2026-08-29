@@ -1,0 +1,339 @@
+---
+title: "CSS from Scratch: A Quick Guide"
+description: "The second lesson of our web development course. Master CSS from selectors and the box model to the basics of responsiveness and the key concept of specificity."
+date: "2025-10-21"
+categories: ["Web development"]
+tags: ["Course", "CSS", "Basics"]
+image: "/blog/css.webp"
+imageCaption: "The CSS logo"
+featured: true
+---
+
+Welcome to the second lesson of our course! 🎉 It is time to bring that bare HTML skeleton to life and give it a style. You will meet CSS — the tool that gives your pages colour and a professional look. You will master selectors, learn to arrange elements with the box model, and finally discover the key rule of specificity, which explains why some styles are "more important" than others. Ready to become a frontend developer?
+
+If HTML is the skeleton of a page, CSS is its clothing, its appearance and everything else about its styling. Let's begin.
+
+## What is CSS?
+
+CSS is a **declarative language** for describing the appearance of a document written in a markup language such as HTML. Unlike HTML, which defines the _meaning_ of content, CSS defines its _presentation_.
+
+- 🎨 We set colours, fonts, margins, backgrounds.
+- 📐 We build layouts, from simple ones to complex grids.
+- 📱 We create responsive designs that look right on every device.
+
+The key word is **"cascading"**. It means that styles are applied in a particular hierarchy, which we will come to later. It is one of the most important — and most confusing — concepts in CSS.
+
+### History in a nutshell
+
+| Year  | Version | Key changes                                              |
+| ----- | ------- | -------------------------------------------------------- |
+| 1996  | CSS 1   | Basic properties: fonts, colours, margins.               |
+| 1998  | CSS 2   | Positioning, `z-index`, media types.                     |
+| 2011+ | CSS 3   | Modules: Flexbox, Grid, animation, custom properties.    |
+| Today | -       | CSS is a "living standard", developed module by module.  |
+
+> :computer: The first draft of CSS was proposed in 1994 by [Håkon Wium Lie](https://en.wikipedia.org/wiki/H%C3%A5kon_Wium_Lie).
+
+## The anatomy of a CSS rule
+
+Every CSS rule has two main parts: a **selector** and a **declaration block**.
+
+```css
+/* This is a comment in CSS */
+
+h1 {
+  color: #1a2b3c;
+  font-size: 32px;
+  font-family: "Arial", sans-serif;
+}
+```
+
+**Let us break it down:**
+
+1. **`h1`** — the **selector**. It tells the browser which HTML elements we want to style. In this case, every `<h1>` heading.
+2. **`{ ... }`** — the **declaration block**, containing one or more declarations.
+3. **`color: #1a2b3c;`** — a **declaration**. It consists of:
+   - **`color`** — the property: what we want to change.
+   - **`#1a2b3c`** — the value: how we want to change it.
+
+## How do you add CSS to a page? (three ways)
+
+There are three ways to add styles to an HTML document. Each has its place.
+
+1. **An external stylesheet — BEST PRACTICE**
+
+   We create a separate `.css` file and link it in the `<head>` of our HTML.
+
+   ```html
+   <head>
+     <link rel="stylesheet" href="style.css" />
+   </head>
+   ```
+
+   **Advantages:**
+
+   - ✅ Structure (HTML) is separated from presentation (CSS).
+   - ✅ The same `.css` file can be used by many pages.
+   - ✅ The browser can cache the file, speeding up subsequent pages.
+
+2. **An internal stylesheet**
+
+   Styles go directly into the `<head>` inside a `<style>` tag.
+
+   ```html
+   <head>
+     <style>
+       body {
+         background-color: #f0f0f0;
+       }
+     </style>
+   </head>
+   ```
+
+   **Use it when:** the styles are unique to this one page. It is sometimes used for quick prototyping.
+
+3. **Inline styles**
+
+   Styles are added straight onto the HTML tag through the `style` attribute.
+
+   ```html
+   <p style="color: red; font-size: 20px;">
+     This text is red and enlarged.
+   </p>
+   ```
+
+   **Use it when:** :warning: **avoid this method.** It has the highest priority (specificity), which makes styles hard to manage. Use it only as a last resort, or when the styles are generated dynamically by JavaScript.
+
+## Selectors — the heart of CSS
+
+Selectors are a powerful way to target specific elements. Understanding them is essential.
+
+### Basic selectors
+
+```css
+/* Type (tag) selector */
+p {
+  line-height: 1.6;
+}
+
+/* Class selector */
+.btn-primary {
+  background-color: blue;
+  color: white;
+}
+
+/* ID selector (unique on the page!) */
+#main-header {
+  border-bottom: 1px solid #ccc;
+}
+```
+
+**The golden rule:** :bulb: use classes for styling you repeat, and IDs for unique elements such as the main header or the footer.
+
+### Combinators
+
+They allow precise styling based on relationships between elements.
+
+```css
+/* Descendant selector (a space) - any 'a' inside 'nav' */
+nav a {
+  text-decoration: none;
+}
+
+/* Child selector (>) - only an 'li' that is a direct child of 'ul' */
+ul > li {
+  padding-left: 15px;
+}
+
+/* Adjacent sibling selector (+) - a 'p' immediately after an 'h2' */
+h2 + p {
+  margin-top: 0;
+}
+```
+
+### Pseudo-classes and pseudo-elements
+
+They let you style elements in a particular state, or add elements that do not exist in the HTML.
+
+```css
+/* Pseudo-class - link style on hover */
+a:hover {
+  color: darkred;
+  text-decoration: underline;
+}
+
+/* Pseudo-class - style every other list item (great for tables!) */
+li:nth-child(even) {
+  background-color: #eee;
+}
+
+/* Pseudo-element - adds content BEFORE the element */
+.important::before {
+  content: "⚠️ ";
+}
+
+/* Pseudo-element - styling a paragraph's first letter */
+article p::first-letter {
+  font-size: 2em;
+  font-weight: bold;
+}
+```
+
+The full list of selectors is in the MDN documentation — required reading.
+
+## The box model
+
+Every element on a page is a rectangular box. Understanding how it is built is **absolutely fundamental**.
+
+It has four layers (from the inside out):
+
+1. **Content** — the content (text, an image)
+2. **Padding** — inner spacing (between the content and the border)
+3. **Border** — the border
+4. **Margin** — outer spacing (the room around the element, separating it from others)
+
+```css
+.box {
+  width: 200px;
+  height: 100px;
+  padding: 20px;
+  border: 5px solid black;
+  margin: 30px;
+}
+```
+
+### `box-sizing: border-box` — the holy grail of layout
+
+By default, `width` and `height` apply only to the **content** layer. That means `padding` and `border` _add to_ the final size of the box. In our example `.box` will take up 250px of width (`200px` + `2 × 20px padding` + `2 × 5px border`). Historically this caused endless trouble.
+
+**The solution:**
+
+```css
+* {
+  box-sizing: border-box;
+}
+```
+
+This simple rule changes how size is calculated. From now on `width` and `height` cover **content, padding and border**. Our `.box` will be exactly `200px` wide. It makes building layouts far easier. Most modern frameworks use it as standard.
+
+## Specificity — who is in charge here?
+
+Remember the "cascading" part? Specificity is the mechanism that decides which CSS rule applies when several of them target the same element.
+
+**The hierarchy of power (weakest to strongest):**
+
+1. **Elements and pseudo-elements** (`p`, `::before`) — the lowest priority
+2. **Classes, pseudo-classes, attributes** (`.class`, `:hover`, `[type="text"]`)
+3. **IDs** (`#main-header`)
+4. **Inline styles** (`style="..."`) — very high priority
+5. **`!important`** — the nuclear option, overriding everything else. **Use it with enormous care.**
+
+```css
+/* This style loses, because a type selector has low specificity */
+p {
+  color: blue;
+}
+
+/* This style wins, because a class beats a type */
+.description {
+  color: green;
+}
+```
+
+**Good practice:** try to keep specificity low. Instead of writing `div#main .content > p.description`, `.description` alone is often enough. It makes the code far easier to manage.
+
+## Layout basics: Flexbox and Grid
+
+Layouts used to be built with tables, `float` and `position`. Today we have two powerful tools dedicated to constructing layouts.
+
+- **Flexbox (Flexible Box Layout):** ideal for arranging elements in **one dimension** (a row or a column). Great for navigation, aligning items in a container, and forms.
+- **Grid Layout:** designed for building complex **two-dimensional** grids (rows and columns at once). Ideal for the whole page layout.
+
+We dive into both in later lessons, but it is worth knowing now that they exist and what they are for. They are the absolute standard in modern CSS. I recommend the excellent guides from CSS-Tricks: [A Complete Guide to Flexbox](https://css-tricks.com/snippets/css/a-guide-to-flexbox/) and [A Complete Guide to Grid](https://css-tricks.com/snippets/css/a-guide-to-grid/).
+
+## Responsiveness and media queries
+
+Pages today have to work on phones, tablets and desktops. **Media queries** exist for this. They let you apply styles only when certain conditions are met — a given screen width, for instance.
+
+**The mobile-first approach:** we start with styles for the smallest screens and then add styles for larger ones.
+
+```css
+/* Default styles (for phones) */
+.container {
+  width: 100%;
+}
+
+/* Styles for screens at least 768px wide (tablets) */
+@media (min-width: 768px) {
+  .container {
+    width: 750px;
+    margin: 0 auto; /* Centring */
+  }
+}
+
+/* Styles for screens at least 1200px wide (desktop) */
+@media (min-width: 1200px) {
+  .container {
+    width: 1170px;
+  }
+}
+```
+
+## Good CSS practice
+
+1. **Use external stylesheets:** keep the project tidy.
+2. **Start with a reset or normalisation:** browsers have their own default styles. Use something like [Normalize.css](https://necolas.github.io/normalize.css/) to level them out.
+3. **Use meaningful class names:** `btn-danger` is better than `red-button`. Consider naming methodologies such as BEM for larger projects.
+4. **Do not overuse `!important`:** it is a sign that something is wrong with your CSS architecture.
+5. **Comment your code:** especially complicated selectors and "magic" values.
+
+## Practice exercises
+
+### Exercise 1: style your business card
+
+Go back to the HTML file from the previous lesson. Create a `style.css` file and:
+
+- Centre all the content on the page.
+- Give the `<h1>` heading a different colour and a larger font size.
+- Remove the bullets from the skills list (`list-style-type: none;`).
+- Turn the list into a row of buttons using Flexbox (`display: flex;`).
+
+### Exercise 2: build an interactive button
+
+Add `<button class="my-button">Click me</button>` to your HTML. In the CSS:
+
+- Give it a background, a text colour and padding, and remove the default border.
+- Use the `:hover` pseudo-class so the button changes background colour on hover.
+- Add `cursor: pointer;` to show it is clickable.
+
+### Exercise 3: introduce responsiveness
+
+Use a media query. Make the page background (`body`) light grey on screens narrower than 600px, and white on larger ones.
+
+## Summary
+
+CSS is a powerful tool that takes practice. The most important concepts from this lesson:
+
+1. ✅ **Separate CSS from HTML** by using external stylesheets.
+2. ✅ Master **selectors** so you can target elements precisely.
+3. ✅ Understand the **box model** and always use `box-sizing: border-box`.
+4. ✅ Understand **specificity** to avoid frustration when overriding styles.
+5. ✅ Think **responsively** from the very start (mobile first).
+
+### Next steps
+
+1. **A deep dive into Flexbox and Grid**
+2. **Positioning and `z-index`**
+3. **Transitions and animation**
+4. **An introduction to JavaScript**
+
+## Useful links
+
+- [MDN Web Docs: CSS](https://developer.mozilla.org/en-US/docs/Web/CSS) — the best CSS documentation
+- [CSS-Tricks](https://css-tricks.com/) — articles, guides, snippets
+- [Can I Use](https://caniuse.com/) — check browser support for CSS properties
+- [CSS Zen Garden](http://www.csszengarden.com/) — see what can be achieved with CSS alone
+
+---
+
+**Questions? Problems?** Write to me at m@zeprzalka.com

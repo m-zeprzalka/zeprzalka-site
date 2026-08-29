@@ -1,0 +1,108 @@
+---
+title: "Modern Image Formats: How to Speed Up a Next.js Blog"
+description: "A guide to modern image formats (AVIF, WebP) and how to optimise them in Next.js with the Image component. Speed up your blog without losing quality."
+date: "2025-09-25"
+categories: ["Next.js", "Web development"]
+tags: ["Next.js", "Graphics"]
+image: "/blog/przyspieszanie.webp"
+featured: true
+---
+
+How quickly images load and how much they weigh are among the most important things about putting pictures on the web. As both a developer and a designer, I know how much depends on marrying looks to performance. In this post I focus on the most common formats and walk through today's "modern" methods of optimising images.
+
+What follows is a complete guide to serving images at the highest quality for the smallest possible file.
+
+## The End of the Classics? A Quick Look at the Traditional Formats
+
+Before we dive into what is new, let us put in order the formats that dominated the web for years.
+
+- **<a href="https://en.wikipedia.org/wiki/JPEG" target="_blank" rel="noopener noreferrer">JPEG (Joint Photographic Experts Group)</a>:** the king of photography. Perfect for photos and images with complex colour thanks to lossy compression. No transparency support.
+- **PNG (Portable Network Graphics):** the best friend of any graphic that needs transparency. Excellent for logos and icons thanks to lossless compression, though often at the cost of a bigger file.
+- **GIF (Graphics Interchange Format):** once a synonym for animation. Today, with its 256-colour palette, it is largely an archaic technology.
+
+## The New Generation: WebP and AVIF — the Real Game Changers
+
+Today's web demands speed and efficiency. Fortunately we have next-generation formats that offer a far better compression-to-quality ratio.
+
+### WebP: Google's Versatile Standard
+
+WebP was designed to replace JPEG, PNG and GIF, combining the best of all three:
+
+- **Great compression:** WebP files are on average **25–35% smaller** than JPEG at the same quality.
+- **Versatility:** it handles both lossy and lossless compression.
+- **Transparency and animation:** it offers an alpha channel like PNG and animation like GIF, at a considerably smaller size.
+
+Support for WebP today is **universal** — every modern browser handles it without a problem.
+
+### AVIF: the Compression King
+
+AVIF (AV1 Image File Format) is the most modern player on the market. It is built on the AV1 video codec and leaves the competition far behind.
+
+- **Extreme compression:** AVIF can cut file size by roughly **50% compared with JPEG** and by 20–30% compared with WebP, all while keeping the same visual quality.
+- **Modern features:** it supports HDR and 12-bit colour depth, and it is ideal for sites where every kilobyte counts.
+
+AVIF support is already very good (Chrome, Firefox, Safari from v16.4) and still growing, which makes it the format of the future.
+
+### SVG: Irreplaceable for Vectors
+
+Let us not forget SVG (Scalable Vector Graphics). It is the ideal format for:
+
+- logos
+- icons
+- simple illustrations
+
+Its main advantage? **Infinite scaling with no loss of quality** and an extremely small file.
+
+## How to Pick the Right Format? A Simple Cheat Sheet
+
+| Kind of graphic              | Recommended format     | Fallback        |
+| :--------------------------- | :--------------------- | :-------------- |
+| **Photos, complex graphics** | `AVIF`                 | `WebP` / `JPEG` |
+| **Graphics with transparency** | `AVIF`               | `WebP` / `PNG`  |
+| **Logos, icons, illustrations** | `SVG`               | `PNG`           |
+| **Animations**               | Animated `WebP` / `AVIF` | `GIF`         |
+
+## Next.js and `<Image>`: Your Secret Weapon
+
+As a Next.js developer you have an enormous advantage — the built-in `<Image>` component. This powerful tool automates almost the whole optimisation process.
+
+**How does it work?**
+
+1.  **Automatic format conversion:** Next.js detects whether the browser supports AVIF or WebP and serves the image in the best available format.
+2.  **Size optimisation:** it automatically generates smaller versions of the image for different devices.
+3.  **Lazy loading:** images load only once the visitor scrolls near them.
+4.  **CLS prevention:** it reserves space for the image, so the layout does not jump while loading.
+
+### An Example in Code
+
+Using the `<Image>` component in your code is as simple as this:
+
+```jsx
+import Image from "next/image"
+import blogPhoto from "../public/images/my-photo.jpg"
+
+function MyBlogPost() {
+  return (
+    <div>
+      <h1>Post title</h1>
+      <p>Post content...</p>
+
+      {/* Using an image from the public folder */}
+      <Image
+        src="/images/another-graphic.png"
+        alt="Image description for SEO and accessibility"
+        width={800}
+        height={600}
+        quality={75} // Optional quality (1-100)
+      />
+
+      {/* Using a statically imported image with a blur placeholder */}
+      <Image
+        src={blogPhoto}
+        alt="Description of my photo"
+        placeholder="blur"
+      />
+    </div>
+  )
+}
+```

@@ -1,0 +1,116 @@
+---
+title: "JS and TS from Scratch #1 - Variables, Memory, Types"
+description: "The first lesson of our JavaScript and TypeScript course. Learn how a computer remembers data, why we have abandoned the keyword 'var', and how TS keeps our mistakes in check."
+date: "2026-02-24"
+categories: ["Web development"]
+tags: ["Course", "TypeScript", "Basics"]
+image: "/blog/ts.webp"
+imageCaption: "The foundations of programming: how to control data in the browser."
+featured: true
+---
+
+Welcome to the first lesson of a simple JavaScript course with an emphasis on TypeScript! 🎉
+
+If you can already build the skeleton of a page in HTML and style it with CSS, it is time for the step that separates static pages from real, interactive web applications. Before you send a user's data to a database or animate something on click, you need to know how to **store information**.
+
+Today we learn how a computer remembers data (JavaScript) and how it makes sure we do not make a mess of it (TypeScript). One important note: TypeScript is really a superset of JavaScript that adds types on top, and those types protect us from mistakes. TS supports every modern JS feature, so compatibility is not something we need to worry about.
+
+Let's begin! 🚀
+
+## Variables – Boxes with Labels
+
+Picture a variable as a box in the computer's memory. We put data inside it (a user's name, say), stick a label on it (the name), and that lets us use the data later in our code.
+
+In modern JavaScript — and in frameworks such as React or Next.js (which is itself a framework built on React) — we use two main keywords for this:
+
+### 1. `const` (constant) — your default choice
+We use `const` in most cases. Once you put something in this "box", you cannot swap it for something else. That protects the code from accidental changes.
+
+```javascript
+const userName = "Adam";
+// userName = "Peter"; // ERROR! const does not allow a new value to be assigned.
+```
+
+### 2. `let` (variable)
+We use `let` when we know up front that the value in the box will change — a click counter on the page, the open state of a menu.
+
+```javascript
+let clickCount = 0;
+clickCount = 1; // Fine, let allows this.
+```
+
+## A Ghost of the Past: Why Don't We Use `var`?
+
+Before `const` and `let` were invented, programmers had only one keyword at their disposal: `var`. Why did we move away from it? Because of two things: the absence of block scope, and **hoisting**.
+
+`let` and `const` variables "live" only inside their block of code — between the braces `{ }` of a conditional, for instance. `var` ignored that and leaked outside, which caused dozens of hard-to-find bugs in large projects. On top of that, the JS engine moved `var` declarations to the top of the file, which let you use variables… before they had been created at all.
+
+Today we stick to the rule: **`var` is a relic. We use only `const` and `let`.**
+
+## Enter TypeScript: the Guardian of the Boxes
+
+JavaScript is a dynamic language. A variable defined with `let` can hold text first and a number one line below. That sounds convenient, but in production applications it is asking for a serious outage.
+
+TypeScript (TS) is a layer on top of JS that adds static typing. It introduces one iron rule: **if you create a box, you must declare what type of data it will hold.**
+
+### The Basic Types (Primitives)
+In TS we work with three absolutely fundamental types:
+* `string` (text)
+* `number` (integers and decimals)
+* `boolean` (true/false — `true` / `false`)
+
+How do you write it down? (Explicit typing):
+
+```typescript
+const appName: string = "My Next.js App";
+let maxUsers: number = 100;
+let isActive: boolean = false;
+```
+
+### The Magic of TypeScript: Inference
+
+TypeScript is clever. If you assign a value at the moment you create the variable, TS "guesses" its type by itself — that is inference. Writing `: string` is often entirely redundant.
+
+```typescript
+let score = 10; // TS already "knows" this is a 'number'
+
+// If we try this:
+// score = "a lot";
+// TS underlines it in red in the editor: "Type 'string' is not assignable to type 'number'."
+```
+Code with a type error will not compile at all. And that is the beauty of TS — it catches mistakes before the code ever reaches a user.
+
+## Practice Exercises
+
+Try writing the code for the tasks below yourself, in any editor (VS Code, for example):
+
+### Exercise 1: Explicit typing
+Write TypeScript that explicitly (using `: type`) declares:
+1. A constant named `projectName` with the value "Supabase CMS".
+2. A variable named `version` with the value 1.
+
+### Exercise 2: Changing state
+Imagine you are checking whether a user has admin privileges.
+1. Create a variable (choose the right keyword!), name it `isAdmin`, give it an explicit boolean type and the initial value `false`.
+2. On the next line, "change your mind" and assign `true` to it.
+
+### Exercise 3: An inference error
+1. Create a variable `userRole` and assign it the text "guest" without stating the type (use inference).
+2. On a new line, try to assign the number `404` to it.
+3. What will the editor do, and why?
+
+## Summary
+
+1. ✅ Use **`const`** by default and **`let`** only when the value has to change. Forget `var`.
+2. ✅ **JavaScript** stores data in memory.
+3. ✅ **TypeScript** puts types on that data (`string`, `number`, `boolean`) so the code stays predictable and safe.
+
+### Next Steps
+
+In the next lesson in this series we go deeper. Now that we can hold data, we will learn how to operate on it. We will meet **functions and scope**, and find out how to type what goes into a function and what comes out.
+
+---
+
+**Questions? Problems?** Write to me at m@zeprzalka.com
+
+Happy coding! 🚀

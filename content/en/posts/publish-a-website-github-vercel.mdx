@@ -1,0 +1,287 @@
+---
+title: "How to Publish a Website: GitHub Pages and Vercel"
+description: "Got working HTML and CSS? Time to show it to the world. We publish a page for free on GitHub Pages and Vercel, and generate its starting point with AI."
+date: "2025-11-14"
+categories: ["Web development", "AI"]
+tags: ["Course", "Deployment", "HTML"]
+image: "/blog/github-vercel.webp"
+imageCaption: "From your computer straight to the global network. Time to deploy."
+featured: true
+---
+
+Hello! 🎉 So far we have built solid foundations. You have **HTML** under control, you can style it with **CSS**, and you know how to speed the work up dramatically with **[Bootstrap](/en/blog/bootstrap)**.
+
+Your projects are evolving, but they have one problem: **nobody can see them**.
+
+For now they live only on your computers, at a path like `C:\Users\Student\MyGreatSite`. Today we change that. We go through a process absolutely central to every developer: **deployment**. I will show you how, in a few minutes and for exactly nothing, you can put your work in front of the whole world.
+
+We will not use complicated commands, `npm`, or anything that has to be installed. Only a browser and the power of free tools.
+
+## 💾 A short history: how was it done before? (FTP)
+
+Ask an older colleague and they will tell you about programs like **Total Commander** and the **FTP** protocol. To publish a page you once had to copy files onto a server by hand through a special client. It was slow, clunky and easy to get wrong. Today, for simple static sites, we have other methods. Classic FTP is still around, but there are better ways to deploy.
+
+## 🚀 Method 1 (the foundation): GitHub and GitHub Pages
+
+This is the absolute standard today. Every developer has a GitHub account.
+
+**What is GitHub?** A "Dropbox for code". A place to keep your projects (repositories), track changes and collaborate with others.
+
+But GitHub also has a brilliant free feature: **GitHub Pages**. It lets you turn any repository into a working website.
+
+### Step 1: Create a GitHub account
+
+If you do not have one yet, that is your first compulsory step. Go to [github.com](https://github.com/) and register. Then visit [GitHub Pages](https://pages.github.com/).
+
+### Step 2: Create a new repository
+
+1. Once signed in, click the `+` icon in the top right and choose **"New repository"**.
+2. **Repository name:** enter your project's name. The name matters! It has to follow the pattern "username.github.io".
+3. **Public/Private:** select **"Public"**. (Free GitHub Pages works only for public repositories.)
+4. Click **"Create repository"**.
+
+### Step 3: Upload the files (no command line!)
+
+You now have an empty repository. Time to put your files in it (`index.html`, `style.css`, images).
+
+1. In your new repository, click the **"uploading an existing file"** link.
+2. A page opens where you can **drag and drop** your whole project folder.
+3. Wait for the files to upload.
+4. At the bottom of the page, in **"Commit changes"**, write a short description such as "First upload" and click the green button.
+
+Congratulations — your code is on GitHub.
+
+### Step 4: Switch on GitHub Pages
+
+1. In your repository, click the **"Settings"** tab (at the top, next to "Code" and "Issues").
+2. In the left-hand menu find and click **"Pages"** (under "Code and automation").
+3. Under "Branch", change "None" to **"main"** (or "master", if that is what your main branch is called) and leave the folder as `/root`.
+4. Click **"Save"**.
+
+A blue bar appears at the top of the page saying "Your site is being built...". After a minute or two it turns green with a link.
+
+Your link will look like this: `https://[YourUsername].github.io/[RepositoryName]/`
+
+**Done!** You have a working site on the internet.
+
+---
+
+## 🌩️ Method 2 (the professional one): Vercel
+
+GitHub Pages is great, but Vercel is a rocket. It is a platform built specifically to host modern websites. It is lightning fast, gives you a better (shorter) free link and does everything automatically.
+
+The best part? **Vercel integrates with your GitHub account.** You do not have to upload anything a second time.
+
+### Step 1: Create a Vercel account (through GitHub)
+
+1. Go to [vercel.com](https://vercel.com/).
+2. Click "Sign Up" and choose **"Continue with GitHub"**.
+3. Authorise Vercel to access your repositories (you can choose all of them or only the one you have just created).
+
+### Step 2: Import the project
+
+1. Once signed in you land on your dashboard.
+2. Click **"Add New... > Project"**.
+3. Vercel automatically shows a list of your GitHub repositories.
+4. Find yours (`my-portfolio`, say) and click **"Import"**.
+
+### Step 3: Deploy
+
+1. Vercel is smart. It recognises that this is a simple HTML/CSS project and will not ask about a "Framework Preset".
+2. Simply scroll down and click **"Deploy"**.
+3. That is all.
+
+Vercel starts building your site. A dozen or so seconds later it shows you… confetti! 🎊
+You get a free link on the `.vercel.app` domain.
+
+> **Vercel's magic:** from now on, every time you update your files on GitHub — pushing a new version of `index.html`, for instance — Vercel detects it and updates your site by itself. That is called **CI/CD** (continuous integration / continuous deployment), and you have just met its foundations.
+
+---
+
+## 🤫 Phase 3: How do you "game the system"? (ready-made templates)
+
+Right, you can code HTML and Bootstrap. You can publish pages too. But writing everything from scratch takes time, and professionals rarely do it.
+
+Time for a cheat code: **using ready-made templates**.
+
+There is nothing wrong with it. You take a finished, professional template, swap the text and images, change the colours in the CSS, and you have a finished project in an hour rather than a week.
+
+### Where do you find good, free templates?
+
+- **[HTML5 UP](https://html5up.net/):** beautiful, modern and very light. Perfect for a portfolio.
+- **[Start Bootstrap](https://startbootstrap.com/):** finished templates and components built entirely on the Bootstrap you already know.
+- **[One Page Love](https://onepagelove.com/):** an enormous gallery of inspiration for one-page sites.
+
+**The process:**
+
+1. Download the template (a ZIP).
+2. Unpack it.
+3. Open `index.html` and `style.css` in VS Code.
+4. Adapt it to your needs.
+5. Upload the finished files to GitHub (Method 1, step 3).
+
+## 🤖 Phase 4: "Gaming the system" 2.0 (generating pages with AI)
+
+Ready-made templates are great, but what if you want something _genuinely_ unique and still do not want to write all the code?
+
+Welcome to a new era. Instead of _searching_ for a template, you can **generate** one.
+
+AI tools can now take your description (a prompt) and produce complete, working HTML and CSS.
+
+### Tools worth knowing:
+
+**1. Code generators (LLMs):**
+
+- **[ChatGPT](https://chat.openai.com/), [Claude](https://claude.ai/), [Gemini](https://gemini.google.com/):** you can write "Give me HTML and CSS for a hero section in the style of Apple" and get finished code to paste in.
+- **[Chatbot Arena](https://lmarena.ai/):** not sure which model is best? This is an arena where you can test and compare which model understands your instructions best and produces better code.
+
+**2. Page generators (AI-powered):**
+
+- **[Lovable](https://lovable.ai/):** an excellent tool that generates beautiful landing pages from a prompt.
+- **[Bolt](https://bolt.new/):** similar, focused on building business sites quickly.
+- **[Base 44](https://www.base44.com/):** creates a whole page skeleton in seconds.
+- **[Durable](https://durable.co/):** claims to build a site in 30 seconds.
+
+---
+
+## 📝 Phase 5: The perfect prompt (a skeleton for generating pages)
+
+The problem with AI? Garbage in, garbage out. Write a weak prompt and you get weak code.
+
+Here is a useful prompt skeleton you can use to generate whole pages. Copy it and fill in your own details in the `[ ]` brackets.
+
+> **Goal:** we want to generate a complete, single `index.html` file with the CSS inside a `<style>` tag, using Bootstrap 5.
+
+```text
+ROLE:
+You are a frontend development expert specialising in clean, responsive HTML and Bootstrap 5.
+
+TASK:
+Create a complete, single `index.html` file for a landing page. The page must be fully responsive. Use Bootstrap 5 for the layout and components. Put all the CSS inside a `<style>` tag in the `<head>`.
+
+TECHNOLOGIES:
+- HTML5
+- Bootstrap 5 (included via CDN)
+- Custom CSS (in a `<style>` tag)
+- Fonts (use Google Fonts, e.g. 'Poppins')
+
+PAGE STRUCTURE:
+Please build a page consisting of the following sections, in this order:
+
+1.  **Navbar:**
+    * Logo on the left: [your site's name, e.g. "AppFlow"]
+    * Links on the right: [e.g. "Features", "Pricing", "Contact"]
+    * Background: [e.g. "changing colour on scroll"]
+
+2.  **Hero section:**
+    * A large heading (H1): [your main slogan, e.g. "Manage your finances in one place"]
+    * A paragraph (description): [short text below the slogan, e.g. "Our app is a revolution..."]
+    * Two buttons:
+        * Primary: [e.g. "Download the app"]
+        * Secondary: [e.g. "See the demo"]
+    * Background: [e.g. "a soft gradient" or "a background photo"]
+
+3.  **Features section:**
+    * A heading (H2): [e.g. "Why choose us?"]
+    * A three-column layout (Bootstrap grid `col-md-4`).
+    * Each column should contain: [e.g. an icon (use Bootstrap Icons), a short title and a description].
+
+4.  **Call to action section:**
+    * A simple section with a heading [e.g. "Ready to start?"] and one large button [e.g. "Sign up for free"].
+
+5.  **Footer:**
+    * Simple text: [e.g. "© 2025 [your name]. All rights reserved."]
+    * Social media links: [e.g. "Facebook, Twitter, LinkedIn"]
+
+STYLE AND COLOUR:
+* **Primary colour:** [your main colour, e.g. "#6a11cb" (purple)]
+* **Font:** [e.g. "Poppins" from Google Fonts]
+* **Overall style:** [e.g. "modern, clean, minimalist, with rounded corners"]
+
+Please generate the complete code, ready to paste in and run.
+```
+
+---
+
+## 🏆 Phase 6: THE FINAL ASSIGNMENT (your brief)
+
+Time for your final project. The task is simple: **build, publish and present your own landing page**.
+
+The subject is up to you, but it has to be professional. It could be:
+
+- Your developer portfolio.
+- A landing page for a fictional mobile app.
+- A site for a small business (a local café, a photographer).
+- A page promoting your hobby.
+
+To make a start easier, here is a basic **project brief**. Fill it in for yourself before you begin. It will help you keep the goal in view.
+
+### Project brief template (to fill in)
+
+Copy this template and fill it in for your final project.
+
+```text
+PROJECT BRIEF: [enter your project's name]
+
+**0. A short description of the site**
+What the site is about and how it should look. Three or four sentences at most.
+
+**1. The goal of the site (conversion):**
+(What is the ONE main action a visitor should take?)
+* Example: "Persuade a recruiter to download my CV and get in touch."
+* Your goal: [..........................................................]
+
+**2. Target audience:**
+(Who are you speaking to? Be specific.)
+* Example: "IT recruiters at software houses and HR managers."
+* Your audience: [..........................................................]
+
+**3. Value proposition (slogan):**
+(Your main H1 heading. What do you offer?)
+* Example: "John Smith: a creative junior developer ready to work."
+* Your slogan: [..........................................................]
+
+**4. How you will build it:**
+(Mark how you will create the page. You can mix approaches.)
+* [ ] Coding 100% from scratch (HTML/CSS/Bootstrap)
+* [ ] Using a ready-made template (from HTML5 UP, say) and adapting it
+* [ ] Generating it with AI (phase 5) and fixing it by hand
+
+**5. Required sections (structure):**
+(List at least four or five sections your page must contain.)
+1.  [e.g. hero section with the slogan]
+2.  [e.g. about me (a short bio)]
+3.  [e.g. portfolio (my three best projects)]
+4.  [e.g. skills (the technologies I know)]
+5.  [e.g. contact (a simple form or a LinkedIn link)]
+
+**6. Link to the finished page (GitHub Pages or Vercel):**
+(Paste the link here once the page is finished and published.)
+* Link: [..........................................................]
+```
+
+---
+
+## ✅ Summary: what did we achieve today?
+
+Congratulations! 🎉 Today you learned to:
+
+1. ✅ **Publish sites for free** on GitHub Pages and Vercel
+2. ✅ **Use ready-made** HTML/Bootstrap templates
+3. ✅ **Generate code with AI** using well-built prompts
+4. ✅ **Write a project brief**
+5. ✅ **Understand the basics of CI/CD** (automatic deployment)
+
+### Next steps:
+
+1. **Create a GitHub account** (if you do not have one)
+2. **Fill in the project brief** for your final project
+3. **Choose your method** (code from scratch / template / AI)
+4. **Build the page** and publish it
+5. **Send the link** in for marking
+
+---
+
+**Questions? Deployment problems?** Write to me at m@zeprzalka.com
+
+Good luck with your projects! 🚀✨

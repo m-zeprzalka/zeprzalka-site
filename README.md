@@ -8,6 +8,7 @@ Next.js 16 (App Router) + MDX, deploy na Vercel.
 - [docs/ROADMAP.md](docs/ROADMAP.md) — ścieżka do wersji produkcyjnej krok po kroku
 - [docs/SEO.md](docs/SEO.md) — strategia SEO (stan techniczny + plan treści)
 - [docs/MONETYZACJA.md](docs/MONETYZACJA.md) — jak zarabiać na serwisie
+- [docs/DWUJEZYCZNOSC.md](docs/DWUJEZYCZNOSC.md) — wersja polska i angielska: gdzie mieszkają teksty
 
 ---
 
@@ -24,6 +25,7 @@ Next.js 16 (App Router) + MDX, deploy na Vercel.
 | Markdown pipeline   | remark-gfm, remark-emoji, rehype-slug/-highlight  |
 | Motywy              | next-themes (dark/light)                          |
 | E-mail (formularz)  | nodemailer (SMTP) + zod (walidacja)               |
+| Wersje językowe     | polska (`/`) i angielska (`/en`), bez bibliotek i18n |
 
 ## Uruchomienie
 

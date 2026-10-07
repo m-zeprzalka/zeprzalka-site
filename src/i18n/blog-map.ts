@@ -17,6 +17,10 @@ export const POST_SLUGS: readonly Localized<string>[] = [
   { pl: "bootstrap", en: "bootstrap" },
   { pl: "claude-design", en: "claude-design" },
   { pl: "css", en: "css-basics" },
+  {
+    pl: "czy-da-sie-zyc-wiecznie-transcendencja",
+    en: "can-we-live-forever-transcendence",
+  },
   { pl: "dashboard", en: "drone-dashboard-nextjs-ai" },
   { pl: "grafiki", en: "modern-image-formats-nextjs" },
   { pl: "html", en: "html-basics" },

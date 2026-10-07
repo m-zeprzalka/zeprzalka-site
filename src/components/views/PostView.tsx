@@ -377,23 +377,25 @@ export function PostView({ post, locale }: { post: Post; locale: Locale }) {
 
               {/* Footer */}
               <footer className="mt-16 pt-10 border-t space-y-12">
-                {/* Tags */}
-                <div className="flex flex-wrap items-center gap-2">
-                  <Hash className="w-5 h-5 text-muted-foreground" />
-                  {(post.frontmatter.tags || []).map((tag: string) => (
-                    <Link
-                      key={tag}
-                      href={tagPath(locale, slugify(tag))}
-                    >
-                      <Badge
-                        variant="secondary"
-                        className="hover:bg-secondary/80 cursor-pointer transition-colors"
+                {/* Tags — wpis spoza istniejących tagów nie dostaje samotnej ikony */}
+                {post.frontmatter.tags?.length > 0 && (
+                  <div className="flex flex-wrap items-center gap-2">
+                    <Hash className="w-5 h-5 text-muted-foreground" />
+                    {post.frontmatter.tags.map((tag: string) => (
+                      <Link
+                        key={tag}
+                        href={tagPath(locale, slugify(tag))}
                       >
-                        {tag}
-                      </Badge>
-                    </Link>
-                  ))}
-                </div>
+                        <Badge
+                          variant="secondary"
+                          className="hover:bg-secondary/80 cursor-pointer transition-colors"
+                        >
+                          {tag}
+                        </Badge>
+                      </Link>
+                    ))}
+                  </div>
+                )}
 
                 <PostCta locale={locale} />
 

@@ -48,6 +48,9 @@ const pl = {
       "Opisz swój projekt lub pytanie. Im więcej szczegółów, tym lepiej...",
     submit: "Wyślij wiadomość",
     submitting: "Wysyłanie...",
+    privacyNote:
+      "Dane z formularza wykorzystam wyłącznie do odpowiedzi na wiadomość.",
+    privacyLink: "Polityka prywatności",
   },
   contactAction: {
     success: "Wiadomość wysłana. Odezwę się wkrótce!",
@@ -79,6 +82,8 @@ const pl = {
   },
   ui: {
     themeToggle: "Zmień motyw",
+    skipToContent: "Przejdź do treści",
+    youtubePlay: "Odtwórz film (YouTube)",
     copyCode: "Kopiuj kod",
     tableOfContents: "Spis treści",
     noImage: "Brak obrazka",
@@ -92,7 +97,7 @@ const pl = {
     description:
       "Projektuję i wdrażam strony, aplikacje oraz integracje AI. Napisz, co chcesz zbudować — odpowiem z propozycją rozwiązania i wyceną.",
     primary: "Bezpłatna wycena",
-    secondary: "Zobacz, czym się zajmuję",
+    secondary: "Zobacz ofertę i ceny",
   },
 }
 
@@ -134,6 +139,8 @@ const en: typeof pl = {
       "Describe your project or question. The more detail, the better...",
     submit: "Send message",
     submitting: "Sending...",
+    privacyNote: "I will use the details you send only to reply to your message.",
+    privacyLink: "Privacy policy",
   },
   contactAction: {
     success: "Message sent. I'll get back to you shortly!",
@@ -164,6 +171,8 @@ const en: typeof pl = {
   },
   ui: {
     themeToggle: "Toggle theme",
+    skipToContent: "Skip to content",
+    youtubePlay: "Play video (YouTube)",
     copyCode: "Copy code",
     tableOfContents: "Table of contents",
     noImage: "No image",
@@ -176,7 +185,7 @@ const en: typeof pl = {
     description:
       "I design and build websites, applications and AI integrations. Tell me what you want to build — you will get a proposed solution and a quote.",
     primary: "Free quote",
-    secondary: "See what I do",
+    secondary: "See services and pricing",
   },
 }
 

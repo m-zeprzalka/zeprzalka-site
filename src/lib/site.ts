@@ -34,6 +34,9 @@ export function absoluteUrl(path = "/"): string {
  * w dodatku pod nazwą domeny zamiast imieniem i nazwiskiem — przez co dane
  * strukturalne mówiły co innego niż widoczna nota pod wpisem.
  */
+/** Adres, na który przychodzą wiadomości i który widnieje na stronach. */
+export const CONTACT_EMAIL = "m@zeprzalka.com"
+
 export const AUTHOR = {
   name: SITE_NAME,
   jobTitle: "Digital Solutions Architect",
@@ -41,7 +44,10 @@ export const AUTHOR = {
     pl: "Tworzę rozwiązania łączące biznes z technologią.",
     en: "I build solutions that connect business with technology.",
   } satisfies Localized<string>,
+  /** Pełny portret — dane strukturalne i karty. */
   avatar: "/avatar.png",
+  /** Ten sam portret w 160 px (2× slotu 80 px pod wpisem): 4 KB zamiast 68 KB. */
+  avatarSmall: "/avatar-160.webp",
 } as const
 
 /**
@@ -59,3 +65,13 @@ export const SOCIAL_PROFILES: { label: string; url: string }[] = [
 ]
 
 export const SAME_AS = SOCIAL_PROFILES.map((profile) => profile.url)
+
+/**
+ * Adres bezwzględny obrazu z frontmattera albo danych. Podgląd linku
+ * w komunikatorze i dane strukturalne nie znają kontekstu strony, więc
+ * ścieżka względna byłaby dla nich bezużyteczna.
+ */
+export function absoluteImage(src: string | undefined, fallback = AUTHOR.avatar): string {
+  const value = src || fallback
+  return value.startsWith("http") ? value : absoluteUrl(value)
+}

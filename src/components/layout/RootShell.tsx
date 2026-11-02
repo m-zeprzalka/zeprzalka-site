@@ -8,15 +8,26 @@ import { ScrollToTop } from "@/components/ScrollToTop"
 import { Analytics } from "@vercel/analytics/next"
 import { SpeedInsights } from "@vercel/speed-insights/next"
 import { HTML_LANG, type Locale } from "@/i18n/config"
+import { getCommon } from "@/i18n/content/common"
 
+/*
+ * `latin-ext` jest konieczny: ą, ę, ł, ś, ż… leżą poza podstawowym zakresem
+ * łacińskim. Bez tego plik z polskimi znakami był wykrywany dopiero po
+ * zbudowaniu układu i doczytywany osobno — ogonki pojawiały się z opóźnieniem.
+ */
 const geistSans = Geist({
   variable: "--font-geist-sans",
-  subsets: ["latin"],
+  subsets: ["latin", "latin-ext"],
 })
 
+/*
+ * Krój mono pojawia się wyłącznie w blokach kodu wpisów, więc nie ma powodu
+ * pobierać go z wyprzedzeniem na każdej stronie serwisu.
+ */
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
-  subsets: ["latin"],
+  subsets: ["latin", "latin-ext"],
+  preload: false,
 })
 
 /**
@@ -46,10 +57,20 @@ export function RootShell({
     >
       <body className="antialiased">
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
+          {/* Widoczny tylko po wejściu klawiszem Tab — omija nagłówek (WCAG 2.4.1). */}
+          <a
+            href="#main"
+            data-print-hide
+            className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[70] focus:rounded-md focus:bg-background focus:px-4 focus:py-2 focus:text-sm focus:font-medium focus:shadow-md focus:ring-2 focus:ring-ring"
+          >
+            {getCommon(locale).ui.skipToContent}
+          </a>
           <ScrollToTop />
           <Bar />
           <Header locale={locale} />
-          <main>{children}</main>
+          <main id="main" tabIndex={-1} className="outline-none">
+            {children}
+          </main>
           <Footer locale={locale} />
         </ThemeProvider>
         {/*

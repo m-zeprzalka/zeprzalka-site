@@ -1,32 +1,53 @@
 "use client"
 
-import React, { useEffect, useState } from "react"
+import { useEffect, useRef } from "react"
 
+/**
+ * Pasek postępu czytania.
+ *
+ * Szerokość jest ustawiana bezpośrednio na elemencie, raz na klatkę
+ * (`requestAnimationFrame`), a nasłuch przewijania jest pasywny. Wcześniej
+ * każde zdarzenie `scroll` zmieniało stan Reacta, czyli wywoływało
+ * renderowanie komponentu kilkadziesiąt razy na sekundę — na słabszym
+ * telefonie to realny koszt dla płynności (INP). Wygląd bez zmian.
+ */
 export function Bar() {
-  const [scrollProgress, setScrollProgress] = useState(0)
+  const fillRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    const handleScroll = () => {
-      const scrollY = window.scrollY
+    let frame = 0
+
+    const update = () => {
+      frame = 0
       const totalHeight = document.body.scrollHeight - window.innerHeight
-      if (totalHeight > 0) {
-        const progress = (scrollY / totalHeight) * 100
-        setScrollProgress(progress)
+      if (totalHeight > 0 && fillRef.current) {
+        fillRef.current.style.width = `${(window.scrollY / totalHeight) * 100}%`
       }
     }
 
-    window.addEventListener("scroll", handleScroll)
+    const onScroll = () => {
+      if (!frame) frame = requestAnimationFrame(update)
+    }
+
+    update()
+    window.addEventListener("scroll", onScroll, { passive: true })
 
     return () => {
-      window.removeEventListener("scroll", handleScroll)
+      window.removeEventListener("scroll", onScroll)
+      if (frame) cancelAnimationFrame(frame)
     }
   }, [])
 
   return (
-    <div className="sticky top-0 z-60 h-1 bg-background/65 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <div
+      aria-hidden="true"
+      data-print-hide
+      className="sticky top-0 z-60 h-1 bg-background/65 backdrop-blur supports-[backdrop-filter]:bg-background/60"
+    >
       <div
+        ref={fillRef}
         className="h-full bg-gradient-to-r from-primary/20 to-primary"
-        style={{ width: `${scrollProgress}%` }}
+        style={{ width: "0%" }}
       />
     </div>
   )

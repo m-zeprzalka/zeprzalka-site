@@ -6,10 +6,26 @@ import { z } from "zod"
 import { checkRateLimit, clientKey } from "@/lib/rate-limit"
 import { DEFAULT_LOCALE, locales, type Locale } from "@/i18n/config"
 import { fill, getCommon } from "@/i18n/content/common"
+import { CONTACT_EMAIL } from "@/lib/site"
 
 export interface ContactFormState {
   success: boolean
   message: string
+  /**
+   * Wpisane wartości, odsyłane przy błędzie. React 19 czyści formularz po
+   * każdej akcji, więc bez tego jedna literówka w adresie kasowała całą
+   * napisaną wiadomość.
+   */
+  fields?: {
+    name: string
+    email: string
+    projectType: string
+    message: string
+  }
+}
+
+function text(value: FormDataEntryValue | null, max: number): string {
+  return typeof value === "string" ? value.slice(0, max) : ""
 }
 
 /**
@@ -30,7 +46,13 @@ function schemaFor(locale: Locale) {
       .trim()
       .min(2, copy.nameMin)
       .max(100, copy.nameMax),
-    email: z.email(copy.emailInvalid).trim().max(200, copy.emailMax),
+    // Najpierw obcięcie spacji, potem format — odwrotna kolejność odrzucała
+    // adres ze spacją na końcu (częste przy autouzupełnianiu na telefonie).
+    email: z
+      .string()
+      .trim()
+      .max(200, copy.emailMax)
+      .pipe(z.email(copy.emailInvalid)),
     projectType: z
       .string()
       .trim()
@@ -61,6 +83,12 @@ export async function sendContactEmail(
 ): Promise<ContactFormState> {
   const locale = readLocale(formData.get("locale"))
   const copy = getCommon(locale).contactAction
+  const fields = {
+    name: text(formData.get("name"), 100),
+    email: text(formData.get("email"), 200),
+    projectType: text(formData.get("project-type"), 200),
+    message: text(formData.get("message"), 5000),
+  }
 
   // Honeypot: pole niewidoczne dla ludzi — wypełniają je tylko boty.
   // Zwracamy "sukces", aby bot nie wiedział, że został odfiltrowany.
@@ -76,18 +104,21 @@ export async function sendContactEmail(
     return {
       success: false,
       message: fill(copy.rateLimited, { minutes }),
+      fields,
     }
   }
 
   const result = schemaFor(locale).safeParse({
-    name: formData.get("name"),
-    email: formData.get("email"),
-    projectType: formData.get("project-type"),
-    message: formData.get("message"),
+    name: formData.get("name") ?? "",
+    email: formData.get("email") ?? "",
+    // Pole opcjonalne: brak w zgłoszeniu to `undefined`, nie `null`
+    // (inaczej użytkownik dostawał angielski komunikat zod).
+    projectType: formData.get("project-type") ?? undefined,
+    message: formData.get("message") ?? "",
   })
 
   if (!result.success) {
-    return { success: false, message: result.error.issues[0].message }
+    return { success: false, message: result.error.issues[0].message, fields }
   }
 
   const { name, email, projectType, message } = result.data
@@ -100,6 +131,7 @@ export async function sendContactEmail(
     return {
       success: false,
       message: copy.unavailable,
+      fields,
     }
   }
 
@@ -107,7 +139,14 @@ export async function sendContactEmail(
     host: SMTP_HOST,
     port: Number(SMTP_PORT) || 465,
     secure: SMTP_SECURE !== "false",
+    // Na porcie 587 (bez `secure`) połączenie musi przejść na TLS.
+    requireTLS: SMTP_SECURE === "false",
     auth: { user: SMTP_USER, pass: SMTP_PASS },
+    // Krócej niż limit czasu funkcji — zawieszony serwer pocztowy kończy się
+    // komunikatem dla użytkownika, a nie przerwanym żądaniem.
+    connectionTimeout: 8_000,
+    greetingTimeout: 5_000,
+    socketTimeout: 8_000,
   })
 
   // Nagłówki mailowe nie mogą zawierać znaków nowej linii (header injection).
@@ -119,8 +158,10 @@ export async function sendContactEmail(
 
   try {
     await transporter.sendMail({
-      from: `"${safeName}" <${SMTP_USER}>`,
-      to: process.env.CONTACT_EMAIL || "m@zeprzalka.com",
+      // Stały prefiks: nazwa wyświetlana nadawcy pochodzi z formularza, więc
+      // bez niego wiadomość mogła udawać np. „Bank — dział bezpieczeństwa".
+      from: { name: `Formularz: ${safeName}`.slice(0, 120), address: SMTP_USER },
+      to: process.env.CONTACT_EMAIL || CONTACT_EMAIL,
       replyTo: email,
       subject: `${localeTag}Wiadomość z formularza: ${safeSubject}`,
       text: `Imię: ${name}\nEmail: ${email}\nRodzaj projektu: ${projectType || "-"}\n\n${message}`,
@@ -137,6 +178,7 @@ export async function sendContactEmail(
     return {
       success: false,
       message: copy.failed,
+      fields,
     }
   }
 

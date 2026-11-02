@@ -42,15 +42,17 @@ export function Skills({ locale }: { locale: Locale }) {
                     <span className="text-2xl md:text-3xl lg:text-4xl xl:text-5xl text-muted-foreground/80">
                       {skill.number}
                     </span>
-                    <h2 className="text-xl sm:text-3xl md:text-4xl xl:text-5xl">
+                    {/* Nagłówkiem (h3) jest już element Radix wokół przycisku —
+                        drugi nagłówek w środku przycisku był błędem składni. */}
+                    <span className="text-xl sm:text-3xl md:text-4xl xl:text-5xl">
                       {t(skill.title, locale)}
-                    </h2>
+                    </span>
                   </div>
                 </AccordionTrigger>
                 <AccordionContent className="flex flex-col gap-4 text-balance">
-                  <h3 className="text-lg md:text-xl lg:text-2xl text-base md:text-lg lg:text-xl text-muted-foreground max-w-5xl leading-relaxed">
+                  <p className="text-lg md:text-xl lg:text-2xl text-base md:text-lg lg:text-xl text-muted-foreground max-w-5xl leading-relaxed">
                     {t(skill.description, locale)}
-                  </h3>
+                  </p>
                   <div className="flex flex-wrap gap-2 py-4">
                     {t(skill.tools, locale).map((tool) => (
                       <Badge variant="outline" className="px-3 py-1" key={tool}>

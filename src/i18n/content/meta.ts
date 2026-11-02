@@ -35,6 +35,11 @@ const pl = {
     description:
       "Skontaktuj się z Michałem Zeprzałką. Bezpłatna konsultacja dla nowych projektów webowych, design systemów i rozwiązań AI.",
   },
+  privacy: {
+    title: "Polityka prywatności",
+    description:
+      "Jakie dane trafiają do mnie przez formularz i serwis zeprzalka.com, w jakim celu, jak długo je przechowuję i jakie masz prawa. Bez plików cookie i bez śledzenia.",
+  },
   portfolio: {
     title: "Portfolio",
     description:
@@ -73,6 +78,44 @@ const pl = {
     /** {count} to liczba realizacji. */
     portfolioFooter: "{count} realizacji · ponad 30 klientów",
     blogFallbackEyebrow: "Blog",
+    /** Karty Open Graph podstron: nadtytuł, tytuł, stopka. {count} = „29 artykułów”. */
+    cards: {
+      services: {
+        eyebrow: "Usługi i cennik",
+        title: "Strony, aplikacje i wdrożenia AI — widełki cen",
+        footer: "Wycena w 24 godziny",
+      },
+      about: {
+        eyebrow: "O mnie",
+        title: "Michał Zeprzałka",
+        footer: "Digital Solutions Architect · Warszawa",
+      },
+      contact: {
+        eyebrow: "Kontakt",
+        title: "Porozmawiajmy o Twoim projekcie",
+        footer: "Odpowiedź w 24 godziny w dni robocze",
+      },
+      blog: {
+        eyebrow: "Blog",
+        title: "AI, Next.js, web development i design",
+        footer: "{count}",
+      },
+      categories: {
+        eyebrow: "Blog · Kategorie",
+        title: "Artykuły według tematów",
+        footer: "{count}",
+      },
+      category: {
+        eyebrow: "Blog · Kategoria",
+        title: "{name}",
+        footer: "{count}",
+      },
+      privacy: {
+        eyebrow: "Polityka prywatności",
+        title: "Jak traktuję Twoje dane",
+        footer: "Bez plików cookie i bez śledzenia",
+      },
+    },
   },
 }
 
@@ -102,6 +145,11 @@ const en: typeof pl = {
     title: "Contact",
     description:
       "Get in touch with Michał Zeprzałka. A free consultation for new web projects, design systems and AI solutions.",
+  },
+  privacy: {
+    title: "Privacy policy",
+    description:
+      "What data reaches me through the contact form and zeprzalka.com, why, how long I keep it and what your rights are. No cookies and no tracking.",
   },
   portfolio: {
     title: "Portfolio",
@@ -139,6 +187,43 @@ const en: typeof pl = {
     portfolioTitle: "Websites, applications and video",
     portfolioFooter: "{count} projects · 30+ clients",
     blogFallbackEyebrow: "Blog",
+    cards: {
+      services: {
+        eyebrow: "Services and pricing",
+        title: "Websites, applications and AI deployments — price ranges",
+        footer: "A quote within 24 hours",
+      },
+      about: {
+        eyebrow: "About",
+        title: "Michał Zeprzałka",
+        footer: "Digital Solutions Architect · Warsaw",
+      },
+      contact: {
+        eyebrow: "Contact",
+        title: "Let's talk about your project",
+        footer: "A reply within 24 hours on business days",
+      },
+      blog: {
+        eyebrow: "Blog",
+        title: "AI, Next.js, web development and design",
+        footer: "{count}",
+      },
+      categories: {
+        eyebrow: "Blog · Categories",
+        title: "Articles by topic",
+        footer: "{count}",
+      },
+      category: {
+        eyebrow: "Blog · Category",
+        title: "{name}",
+        footer: "{count}",
+      },
+      privacy: {
+        eyebrow: "Privacy policy",
+        title: "How I handle your data",
+        footer: "No cookies and no tracking",
+      },
+    },
   },
 }
 

@@ -9,6 +9,9 @@ interface PageProps {
   params: Promise<{ slug: string }>
 }
 
+/** Wszystkie adresy powstają przy buildzie — nieznany to od razu 404. */
+export const dynamicParams = false
+
 export async function generateStaticParams() {
   return getAllPosts("pl").map((post) => ({ slug: post.slug }))
 }

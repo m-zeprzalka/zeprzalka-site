@@ -1,4 +1,8 @@
-import { SITE_NAME } from "@/lib/site"
+import { ImageResponse } from "next/og"
+import { SITE_NAME, SITE_TITLE } from "@/lib/site"
+import { getPostBySlug } from "@/lib/posts"
+import { formatReadingTime, type Locale } from "@/i18n/config"
+import { getMeta } from "@/i18n/content/meta"
 
 /**
  * Wspólny układ kart Open Graph. Renderowany przez Satori (next/og), które
@@ -83,5 +87,34 @@ export function OgCard({ title, eyebrow, footer }: CardProps) {
         </div>
       </div>
     </div>
+  )
+}
+
+/**
+ * Karta konkretnego wpisu — wspólna dla obu wersji językowych. Wywoływana
+ * przy buildzie dla każdego wpisu (patrz `generateStaticParams` w plikach
+ * `opengraph-image.tsx`), więc w produkcji to zwykły statyczny PNG.
+ */
+export function postOgCard(locale: Locale, slug: string) {
+  const post = getPostBySlug(locale, slug)
+  const fallback = getMeta(locale).og.blogFallbackEyebrow
+
+  return new ImageResponse(
+    (
+      <OgCard
+        eyebrow={(post?.frontmatter.categories || [fallback]).slice(0, 3).join(" · ")}
+        title={post?.frontmatter.title ?? SITE_TITLE}
+        footer={post ? formatReadingTime(post.readingTime, locale) : undefined}
+      />
+    ),
+    OG_SIZE
+  )
+}
+
+/** Karta podstrony z gotowego zestawu tekstów (src/i18n/content/meta.ts → og.cards). */
+export function pageOgCard(card: { eyebrow: string; title: string; footer?: string }) {
+  return new ImageResponse(
+    <OgCard eyebrow={card.eyebrow} title={card.title} footer={card.footer} />,
+    OG_SIZE
   )
 }

@@ -1,22 +1,12 @@
 /**
  * Budowanie metadanych dla obu wersji językowych.
  *
- * Cała różnica między polską a angielską wersją nagłówka dokumentu siedzi
- * tutaj — układy główne tylko wołają `rootMetadata(locale)`, a podstrony
- * `pageAlternates(...)`. Dzięki temu `hreflang` nie może wypaść z żadnej
- * strony przez przeoczenie w JSX-ie.
+ * Układy główne wołają `rootMetadata(locale)`; metadane podstron buduje
+ * `buildMetadata` w `src/i18n/page-metadata.ts`, więc `hreflang`, RSS
+ * i karta Open Graph nie mogą wypaść z żadnej strony przez przeoczenie.
  */
 import type { Metadata } from "next"
-import {
-  OG_LOCALE,
-  ROUTES,
-  alternatesFor,
-  locales,
-  otherLocale,
-  type Locale,
-  type Localized,
-  type RouteKey,
-} from "@/i18n/config"
+import { OG_LOCALE, ROUTES, otherLocale, type Locale } from "@/i18n/config"
 import { getMeta } from "@/i18n/content/meta"
 import { SITE_DESCRIPTION, SITE_NAME, SITE_URL, absoluteUrl } from "@/lib/site"
 
@@ -66,34 +56,4 @@ export function rootMetadata(locale: Locale): Metadata {
       },
     },
   }
-}
-
-/** `canonical` + `hreflang` dla strony, która istnieje w obu językach. */
-export function pageAlternates(locale: Locale, key: RouteKey) {
-  return alternatesFor(locale, ROUTES[key])
-}
-
-/**
- * To samo dla adresów budowanych z segmentu (wpis, kategoria, tag).
- * `null` po jednej stronie oznacza brak tłumaczenia — wtedy `hreflang`
- * dla tego języka po prostu nie powstaje.
- */
-export function dynamicAlternates(
-  locale: Locale,
-  paths: Localized<string | null>
-) {
-  return alternatesFor(locale, paths)
-}
-
-/** Skrót do budowania pary ścieżek przez funkcję na slugu. */
-export function pathsBySlug(
-  slugs: Localized<string | null>,
-  build: (locale: Locale, slug: string) => string
-): Localized<string | null> {
-  const result = {} as Record<Locale, string | null>
-  for (const locale of locales) {
-    const slug = slugs[locale]
-    result[locale] = slug ? build(locale, slug) : null
-  }
-  return result
 }

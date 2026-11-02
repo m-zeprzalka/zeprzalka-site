@@ -1,11 +1,14 @@
-// src/lib/posts.ts
 import fs from "fs"
 import path from "path"
 import { cache } from "react"
 import matter from "gray-matter"
 import readingTime from "reading-time"
 import GithubSlugger from "github-slugger"
+import { z } from "zod"
 import type { Locale, Localized } from "@/i18n/config"
+import { slugify } from "@/lib/slug"
+
+export { slugify }
 
 /**
  * Wpisy leżą w katalogu na język: polskie w `content/posts`, angielskie
@@ -24,19 +27,36 @@ const POSTS_SUBDIR: Localized<string> = {
   en: "en/posts",
 }
 
-export interface PostFrontmatter {
-  title: string
-  description: string
-  /** Data publikacji w formacie YYYY-MM-DD. */
-  date: string
+const isoDate = z
+  .string()
+  .regex(/^\d{4}-\d{2}-\d{2}$/, "data musi mieć format YYYY-MM-DD")
+
+/**
+ * Kontrakt frontmattera. Sprawdzany przy każdym odczycie, więc literówka
+ * w nazwie pola albo data w złym formacie zatrzymuje build z nazwą pliku —
+ * zamiast po cichu wyprodukować wpis bez obrazka czy z datą „Invalid Date".
+ */
+const frontmatterSchema = z.object({
+  title: z.string().min(1),
+  description: z.string().min(1),
+  /** Data publikacji. */
+  date: isoDate,
   /** Data ostatniej istotnej aktualizacji — trafia do dateModified i mapy strony. */
-  updated?: string
-  categories: string[]
-  tags: string[]
-  image: string
-  imageCaption?: string
-  featured?: boolean
-}
+  updated: isoDate.optional(),
+  categories: z.array(z.string().min(1)).min(1),
+  tags: z.array(z.string().min(1)).default([]),
+  /** Ścieżka w `public/` albo pełny adres. */
+  image: z.string().regex(/^(\/|https?:\/\/)/, "obraz musi zaczynać się od / albo http"),
+  imageCaption: z.string().optional(),
+  featured: z.boolean().default(false),
+  /**
+   * Szkic: wpis istnieje w repozytorium, ale nie trafia na produkcję
+   * (ani na listy, ani pod własny adres). Lokalnie (`pnpm dev`) jest widoczny.
+   */
+  draft: z.boolean().default(false),
+})
+
+export type PostFrontmatter = z.infer<typeof frontmatterSchema>
 
 export interface Post {
   slug: string
@@ -44,42 +64,52 @@ export interface Post {
   content: string
   frontmatter: PostFrontmatter
   readingTime: string
+  /** Liczba słów — do danych strukturalnych (`wordCount`). */
+  wordCount: number
   headings: { id: string; level: number; text: string }[]
 }
 
-/** Jedna, wspólna reguła slugów dla kategorii i tagów (URL-e i filtrowanie). */
-export function slugify(value: string): string {
-  return value.toLowerCase().replace(/\s+/g, "-")
-}
+const showDrafts = process.env.NODE_ENV === "development"
 
 export const getPostBySlug = cache(
   (locale: Locale, slug: string): Post | null => {
-    try {
-      const fullPath = path.join(
-        process.cwd(),
-        "content",
-        POSTS_SUBDIR[locale],
-        `${slug}.mdx`
-      )
+    const fullPath = path.join(
+      process.cwd(),
+      "content",
+      POSTS_SUBDIR[locale],
+      `${slug}.mdx`
+    )
 
-      if (!fs.existsSync(fullPath)) {
-        return null
-      }
-
-      const fileContents = fs.readFileSync(fullPath, "utf8")
-      const { data, content } = matter(fileContents)
-
-      return {
-        slug,
-        locale,
-        content,
-        frontmatter: data as PostFrontmatter,
-        readingTime: readingTime(content).text,
-        headings: extractHeadings(content),
-      }
-    } catch (error) {
-      console.error(`Error loading post ${locale}/${slug}:`, error)
+    if (!fs.existsSync(fullPath)) {
       return null
+    }
+
+    const { data, content } = matter(fs.readFileSync(fullPath, "utf8"))
+    const parsed = frontmatterSchema.safeParse(data)
+
+    if (!parsed.success) {
+      const issues = parsed.error.issues
+        .map((issue) => `  - ${issue.path.join(".") || "(całość)"}: ${issue.message}`)
+        .join("\n")
+      throw new Error(
+        `Niepoprawny frontmatter w content/${POSTS_SUBDIR[locale]}/${slug}.mdx:\n${issues}`
+      )
+    }
+
+    if (parsed.data.draft && !showDrafts) {
+      return null
+    }
+
+    const stats = readingTime(content)
+
+    return {
+      slug,
+      locale,
+      content,
+      frontmatter: parsed.data,
+      readingTime: stats.text,
+      wordCount: stats.words,
+      headings: extractHeadings(content),
     }
   }
 )
@@ -102,13 +132,15 @@ export const getAllPosts = cache((locale: Locale): Post[] => {
 })
 
 function extractHeadings(content: string) {
+  // Bloki kodu są pomijane: `# komentarz` w bashu to nie nagłówek wpisu.
+  const withoutCode = content.replace(/^```[\s\S]*?^```/gm, "")
   const headingRegex = /^(#{2,4})\s+(.+)$/gm
   const headings: { id: string; level: number; text: string }[] = []
   // Ten sam algorytm co rehype-slug (github-slugger) — id muszą się zgadzać z TOC
   const slugger = new GithubSlugger()
   let match
 
-  while ((match = headingRegex.exec(content)) !== null) {
+  while ((match = headingRegex.exec(withoutCode)) !== null) {
     const level = match[1].length
     const text = match[2].trim()
     headings.push({ id: slugger.slug(text), level, text })
@@ -122,18 +154,45 @@ export function getPostsByCategory(
   categorySlug: string
 ): Post[] {
   return getAllPosts(locale).filter((post) =>
-    post.frontmatter.categories?.some((cat) => slugify(cat) === categorySlug)
+    post.frontmatter.categories.some((cat) => slugify(cat) === categorySlug)
   )
 }
 
 export function getPostsByTag(locale: Locale, tagSlug: string): Post[] {
   return getAllPosts(locale).filter((post) =>
-    post.frontmatter.tags?.some((tag) => slugify(tag) === tagSlug)
+    post.frontmatter.tags.some((tag) => slugify(tag) === tagSlug)
   )
 }
 
 export function getFeaturedPosts(locale: Locale): Post[] {
   return getAllPosts(locale).filter((post) => post.frontmatter.featured)
+}
+
+/**
+ * Wpisy powiązane: wspólna kategoria waży więcej niż wspólny tag, remis
+ * rozstrzyga świeżość. Gdy podobnych tekstów jest mniej niż `limit`, lista
+ * dopełnia się najnowszymi — czytelnik zawsze dostaje kolejny krok,
+ * a wyszukiwarka sieć linków wewnętrznych między wpisami.
+ */
+export function getRelatedPosts(post: Post, limit = 3): Post[] {
+  const categories = new Set(post.frontmatter.categories.map(slugify))
+  const tags = new Set(post.frontmatter.tags.map(slugify))
+
+  const scored = getAllPosts(post.locale)
+    .filter((other) => other.slug !== post.slug)
+    .map((other, index) => ({
+      other,
+      index,
+      score:
+        other.frontmatter.categories.filter((c) => categories.has(slugify(c)))
+          .length *
+          2 +
+        other.frontmatter.tags.filter((t) => tags.has(slugify(t))).length,
+    }))
+    // getAllPosts jest już posortowane od najnowszych — indeks to świeżość.
+    .sort((a, b) => b.score - a.score || a.index - b.index)
+
+  return scored.slice(0, limit).map(({ other }) => other)
 }
 
 /**
@@ -144,7 +203,7 @@ export function getFeaturedPosts(locale: Locale): Post[] {
 export const getCategoryLabel = cache(
   (locale: Locale, slug: string): string => {
     for (const post of getAllPosts(locale)) {
-      for (const category of post.frontmatter.categories || []) {
+      for (const category of post.frontmatter.categories) {
         if (slugify(category) === slug) return category
       }
     }
@@ -155,7 +214,7 @@ export const getCategoryLabel = cache(
 /** To samo dla tagów. */
 export const getTagLabel = cache((locale: Locale, slug: string): string => {
   for (const post of getAllPosts(locale)) {
-    for (const tag of post.frontmatter.tags || []) {
+    for (const tag of post.frontmatter.tags) {
       if (slugify(tag) === slug) return tag
     }
   }
@@ -166,7 +225,7 @@ export const getTagLabel = cache((locale: Locale, slug: string): string => {
 export function getAllCategorySlugs(locale: Locale): string[] {
   const slugs = new Set<string>()
   getAllPosts(locale).forEach((post) =>
-    post.frontmatter.categories?.forEach((cat) => slugs.add(slugify(cat)))
+    post.frontmatter.categories.forEach((cat) => slugs.add(slugify(cat)))
   )
   return Array.from(slugs)
 }
@@ -175,7 +234,25 @@ export function getAllCategorySlugs(locale: Locale): string[] {
 export function getAllTagSlugs(locale: Locale): string[] {
   const slugs = new Set<string>()
   getAllPosts(locale).forEach((post) =>
-    post.frontmatter.tags?.forEach((tag) => slugs.add(slugify(tag)))
+    post.frontmatter.tags.forEach((tag) => slugs.add(slugify(tag)))
   )
   return Array.from(slugs)
+}
+
+/** Kategorie z liczbą wpisów, od najliczniejszej — dla indeksu kategorii. */
+export function getCategoryCounts(
+  locale: Locale
+): { slug: string; label: string; count: number }[] {
+  const counts = new Map<string, { label: string; count: number }>()
+  for (const post of getAllPosts(locale)) {
+    for (const category of post.frontmatter.categories) {
+      const slug = slugify(category)
+      const entry = counts.get(slug)
+      if (entry) entry.count += 1
+      else counts.set(slug, { label: category, count: 1 })
+    }
+  }
+  return [...counts.entries()]
+    .map(([slug, entry]) => ({ slug, ...entry }))
+    .sort((a, b) => b.count - a.count)
 }

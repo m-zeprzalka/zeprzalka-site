@@ -1,35 +1,26 @@
-import { ImageResponse } from "next/og"
-import { OG_SIZE, OgCard } from "@/components/og"
-import { getPostBySlug } from "@/lib/posts"
+import { OG_SIZE, postOgCard } from "@/components/og"
+import { getAllPosts } from "@/lib/posts"
 import { SITE_TITLE } from "@/lib/site"
-import { formatReadingTime } from "@/i18n/config"
-import { getMeta } from "@/i18n/content/meta"
 
 export const alt = SITE_TITLE
 export const size = OG_SIZE
 export const contentType = "image/png"
+/** Karty powstają przy buildzie; nieznany slug to 404, nie renderowanie na żądanie. */
+export const dynamicParams = false
 
-interface Props {
-  params: Promise<{ slug: string }>
+export function generateStaticParams() {
+  return getAllPosts("pl").map((post) => ({ slug: post.slug }))
 }
 
 /**
  * Karta wpisu z jego tytułem i kategoriami. Bez tego każdy artykuł
  * udostępniał się z tą samą, ogólną grafiką serwisu.
  */
-export default async function OpengraphImage({ params }: Props) {
+export default async function OpengraphImage({
+  params,
+}: {
+  params: Promise<{ slug: string }>
+}) {
   const { slug } = await params
-  const post = getPostBySlug("pl", slug)
-  const fallback = getMeta("pl").og.blogFallbackEyebrow
-
-  return new ImageResponse(
-    (
-      <OgCard
-        eyebrow={(post?.frontmatter.categories || [fallback]).slice(0, 3).join(" · ")}
-        title={post?.frontmatter.title ?? SITE_TITLE}
-        footer={post ? formatReadingTime(post.readingTime, "pl") : undefined}
-      />
-    ),
-    size
-  )
+  return postOgCard("pl", slug)
 }

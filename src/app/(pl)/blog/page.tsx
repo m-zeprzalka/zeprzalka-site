@@ -4,11 +4,7 @@ import { blogMetadata } from "@/i18n/page-metadata"
 
 export const metadata: Metadata = blogMetadata("pl")
 
-interface PageProps {
-  searchParams: Promise<{ page?: string }>
-}
-
-export default async function BlogPage({ searchParams }: PageProps) {
-  const { page } = await searchParams
-  return <BlogIndexView locale="pl" page={page} />
+/** Pierwsza strona archiwum — statyczna; kolejne pod /blog/strona/[n]. */
+export default function BlogPage() {
+  return <BlogIndexView locale="pl" />
 }

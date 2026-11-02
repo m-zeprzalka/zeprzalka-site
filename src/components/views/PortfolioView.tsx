@@ -10,8 +10,10 @@ import {
   portfolioGroups,
   portfolioItems,
 } from "@/lib/portfolio"
+import { JsonLd } from "@/components/JsonLd"
 import { SITE_NAME, absoluteUrl } from "@/lib/site"
-import { ROUTES, t, type Locale } from "@/i18n/config"
+import { PERSON_ID } from "@/lib/schema"
+import { BCP47, ROUTES, t, type Locale } from "@/i18n/config"
 import { fill } from "@/i18n/content/common"
 import { getPages } from "@/i18n/content/pages"
 
@@ -26,6 +28,8 @@ export function PortfolioView({ locale }: { locale: Locale }) {
   const portfolioJsonLd = {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
+    inLanguage: BCP47[locale],
+    author: { "@id": PERSON_ID },
     name: fill(copy.collectionName, { name: SITE_NAME }),
     url: absoluteUrl(ROUTES.portfolio[locale]),
     about: portfolioGroups.map((group) => t(group.label, locale)),
@@ -40,7 +44,7 @@ export function PortfolioView({ locale }: { locale: Locale }) {
           name: t(item.title, locale),
           genre: t(item.category, locale),
           image: absoluteUrl(item.poster),
-          creator: { "@type": "Person", name: SITE_NAME },
+          creator: { "@id": PERSON_ID },
         },
       })),
     },
@@ -48,10 +52,7 @@ export function PortfolioView({ locale }: { locale: Locale }) {
 
   return (
     <div className="container mx-auto px-4 py-12 md:py-16 lg:py-20">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(portfolioJsonLd) }}
-      />
+      <JsonLd data={portfolioJsonLd} />
 
       <PageHeader
         badge={copy.badge}

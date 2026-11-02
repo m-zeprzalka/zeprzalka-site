@@ -13,7 +13,7 @@ function Pagination({ className, ...props }: React.ComponentProps<"nav">) {
   return (
     <nav
       role="navigation"
-      aria-label="pagination"
+      aria-label="Pagination"
       data-slot="pagination"
       className={cn("mx-auto flex w-full justify-center", className)}
       {...props}
@@ -66,35 +66,42 @@ function PaginationLink({
   )
 }
 
+/*
+ * Etykiety przychodzą z treści serwisu (src/i18n), bo komponent stoi na obu
+ * wersjach językowych. Nazwa dostępna jest równa widocznemu napisowi —
+ * wcześniej angielskie aria-label przy polskim napisie łamało WCAG 2.5.3.
+ */
 function PaginationPrevious({
   className,
+  label,
   ...props
-}: React.ComponentProps<typeof PaginationLink>) {
+}: React.ComponentProps<typeof PaginationLink> & { label: string }) {
   return (
     <PaginationLink
-      aria-label="Go to previous page"
+      aria-label={label}
       size="default"
       className={cn("gap-1 px-2.5 sm:pl-2.5", className)}
       {...props}
     >
       <ChevronLeftIcon />
-      <span className="hidden sm:block">Poprzednia</span>
+      <span className="hidden sm:block">{label}</span>
     </PaginationLink>
   )
 }
 
 function PaginationNext({
   className,
+  label,
   ...props
-}: React.ComponentProps<typeof PaginationLink>) {
+}: React.ComponentProps<typeof PaginationLink> & { label: string }) {
   return (
     <PaginationLink
-      aria-label="Go to next page"
+      aria-label={label}
       size="default"
       className={cn("gap-1 px-2.5 sm:pr-2.5", className)}
       {...props}
     >
-      <span className="hidden sm:block">Następna</span>
+      <span className="hidden sm:block">{label}</span>
       <ChevronRightIcon />
     </PaginationLink>
   )
@@ -112,7 +119,7 @@ function PaginationEllipsis({
       {...props}
     >
       <MoreHorizontalIcon className="size-4" />
-      <span className="sr-only">More pages</span>
+      <span className="sr-only">…</span>
     </span>
   )
 }

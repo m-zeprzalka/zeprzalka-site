@@ -7,8 +7,8 @@ import { getCommon } from "@/i18n/content/common"
 /**
  * Zamknięcie każdego wpisu wezwaniem do rozmowy.
  *
- * docs/SEO.md §3 wymaga, żeby każdy tekst edukacyjny prowadził do strony
- * ofertowej — bez tego blog buduje ruch, ale nie zapytania. Komponent stoi
+ * docs/SEO.md wymaga, żeby każdy tekst edukacyjny prowadził do strony
+ * ofertowej (z cenami) — bez tego blog buduje ruch, ale nie zapytania. Stoi
  * w szablonie wpisu, więc reguła obowiązuje wszystkie artykuły naraz,
  * także te napisane w przyszłości.
  */
@@ -31,7 +31,7 @@ export function PostCta({ locale }: { locale: Locale }) {
           </Link>
         </Button>
         <Button asChild variant="outline">
-          <Link href={ROUTES.about[locale]}>{copy.secondary}</Link>
+          <Link href={ROUTES.services[locale]}>{copy.secondary}</Link>
         </Button>
       </div>
     </aside>

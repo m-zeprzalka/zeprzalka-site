@@ -37,7 +37,7 @@ export function BlogPreview({ locale }: { locale: Locale }) {
 
         <div className="lg:col-span-9">
           <div className="grid gap-8 sm:grid-cols-2">
-            {posts.map((post, index) => (
+            {posts.map((post) => (
               <article key={post.slug} className="group relative">
                 <div className="relative aspect-[16/9] rounded-lg overflow-hidden mb-4">
                   {post.frontmatter.image && (
@@ -45,7 +45,6 @@ export function BlogPreview({ locale }: { locale: Locale }) {
                       src={post.frontmatter.image}
                       alt={post.frontmatter.title}
                       fill
-                      priority={index < 2}
                       className="object-cover transition-transform duration-500 ease-in-out group-hover:scale-105"
                       sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 33vw"
                     />

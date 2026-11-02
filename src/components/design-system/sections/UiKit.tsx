@@ -67,10 +67,8 @@ const inventory: [string, string, string][] = [
   ["pagination", "Lista bloga", "W użyciu"],
   ["separator", "Nagłówki stron, /o-mnie, /kontakt", "W użyciu"],
   ["sheet", "Menu mobilne", "W użyciu"],
-  ["sidebar", "Spis treści wpisu blogowego", "W użyciu"],
   ["skeleton", "Ekran ładowania", "W użyciu"],
-  ["tooltip", "Wyłącznie wewnątrz komponentu sidebar", "Pośrednio"],
-  ["alert · field · label · spinner · textarea", "—", "Zainstalowane, nieużywane"],
+  ["tooltip", "Wyłącznie w tym katalogu (próbka poniżej)", "Nieużywany w serwisie"],
 ]
 
 export function UiKitSection() {
@@ -353,7 +351,7 @@ export function UiKitSection() {
             <Pagination>
               <PaginationContent>
                 <PaginationItem>
-                  <PaginationPrevious href="#ui" />
+                  <PaginationPrevious href="#ui" label="Poprzednia" />
                 </PaginationItem>
                 <PaginationItem>
                   <PaginationLink href="#ui" isActive>
@@ -364,7 +362,7 @@ export function UiKitSection() {
                   <PaginationLink href="#ui">2</PaginationLink>
                 </PaginationItem>
                 <PaginationItem>
-                  <PaginationNext href="#ui" />
+                  <PaginationNext href="#ui" label="Następna" />
                 </PaginationItem>
               </PaginationContent>
             </Pagination>

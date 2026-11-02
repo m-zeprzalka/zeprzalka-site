@@ -5,8 +5,11 @@ import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { PageHeader } from "@/components/PageHeader"
 import { formatPrice, packages, process } from "@/lib/services"
-import { SITE_NAME, absoluteUrl } from "@/lib/site"
+import { JsonLd } from "@/components/JsonLd"
+import { AUTHOR, CONTACT_EMAIL, SITE_NAME, absoluteImage, absoluteUrl } from "@/lib/site"
+import { PERSON_ID, breadcrumbSchema, graph } from "@/lib/schema"
 import { ROUTES, t, type Locale } from "@/i18n/config"
+import { getCommon } from "@/i18n/content/common"
 import { getPages } from "@/i18n/content/pages"
 
 /**
@@ -20,37 +23,44 @@ export function ServicesView({ locale }: { locale: Locale }) {
    * Katalog usług w danych strukturalnych. Wyszukiwarka dostaje wprost, co
    * i za ile jest oferowane, zamiast domyślać się z treści strony.
    */
-  const offerJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "ProfessionalService",
-    name: SITE_NAME,
-    url: absoluteUrl(ROUTES.services[locale]),
-    areaServed: "PL",
-    priceRange: "1500-15000 PLN",
-    hasOfferCatalog: {
-      "@type": "OfferCatalog",
-      name: copy.offerCatalog,
-      itemListElement: packages.map((pack) => ({
-        "@type": "Offer",
-        name: t(pack.name, locale),
-        description: t(pack.scope, locale),
-        priceCurrency: "PLN",
-        price: pack.from,
-        priceSpecification: {
-          "@type": "PriceSpecification",
-          minPrice: pack.from,
-          priceCurrency: "PLN",
-        },
-      })),
+  const minPrice = Math.min(...packages.map((pack) => pack.from))
+  const offerJsonLd = graph(
+    {
+      "@type": "ProfessionalService",
+      "@id": `${absoluteUrl(ROUTES.services[locale])}#service`,
+      name: SITE_NAME,
+      url: absoluteUrl(ROUTES.services[locale]),
+      image: absoluteImage(AUTHOR.avatar),
+      email: `mailto:${CONTACT_EMAIL}`,
+      areaServed: "PL",
+      // Pole tekstowe — podajemy próg wejścia z cennika, nie wymyślony sufit.
+      priceRange: `od ${minPrice} PLN`,
+      founder: { "@id": PERSON_ID },
+      provider: { "@id": PERSON_ID },
+      hasOfferCatalog: {
+        "@type": "OfferCatalog",
+        name: copy.offerCatalog,
+        itemListElement: packages.map((pack) => ({
+          "@type": "Offer",
+          name: t(pack.name, locale),
+          description: t(pack.scope, locale),
+          priceSpecification: {
+            "@type": "PriceSpecification",
+            minPrice: pack.from,
+            priceCurrency: "PLN",
+          },
+        })),
+      },
     },
-  }
+    breadcrumbSchema([
+      { name: getCommon(locale).nav.home, path: ROUTES.home[locale] },
+      { name: getCommon(locale).nav.services, path: ROUTES.services[locale] },
+    ])
+  )
 
   return (
     <div className="container mx-auto px-4 py-12 md:py-16 lg:py-20">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(offerJsonLd) }}
-      />
+      <JsonLd data={offerJsonLd} />
 
       <PageHeader
         badge={copy.badge}
@@ -158,6 +168,9 @@ export function ServicesView({ locale }: { locale: Locale }) {
             </Link>
           </Button>
           <Button asChild variant="outline" size="lg" className="w-fit">
+            <Link href={ROUTES.portfolio[locale]}>{copy.quotePortfolio}</Link>
+          </Button>
+          <Button asChild variant="ghost" size="lg" className="w-fit">
             <Link href={ROUTES.about[locale]}>{copy.quoteSecondary}</Link>
           </Button>
         </div>

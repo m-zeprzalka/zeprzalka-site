@@ -33,7 +33,7 @@ export function AppKitSection() {
             ["ScrollToTop", "Przewija na górę po zmianie ścieżki", "Klient"],
             ["blog/ActiveTOC", "Spis treści wpisu ze śledzeniem pozycji", "Klient"],
             ["blog/CodeBlock", "Blok kodu z przyciskiem kopiowania", "Klient"],
-            ["blog/YouTubeEmbed", "Osadzone wideo (youtube-nocookie)", "Serwer"],
+            ["blog/YouTubeEmbed", "Fasada „kliknij, by wczytać” + youtube-nocookie", "Klient"],
             ["blog/PostCta", "Wezwanie do wyceny pod każdym wpisem", "Serwer"],
           ]}
         />

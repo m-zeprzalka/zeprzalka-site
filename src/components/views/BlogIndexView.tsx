@@ -4,6 +4,7 @@ import { CalendarDays, Clock } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 import { PageHeader } from "@/components/PageHeader"
+import { PostListView } from "@/components/views/PostListView"
 import {
   Pagination,
   PaginationContent,
@@ -14,7 +15,7 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination"
 import {
-  ROUTES,
+  blogPagePath,
   categoryPath,
   formatDate,
   formatReadingTime,
@@ -25,45 +26,56 @@ import { fill } from "@/i18n/content/common"
 import { getPages } from "@/i18n/content/pages"
 
 const PAGE_SIZE = 12
+/** Ile wyróżnionych wpisów stoi nad listą na pierwszej stronie. */
+const FEATURED_COUNT = 2
+
+/**
+ * Podział wpisów na strony. Wyróżnione stoją tylko na pierwszej stronie
+ * i nie są liczone do paginacji — inaczej pojawiałyby się dwa razy.
+ *
+ * Strony są statyczne (`/blog`, `/blog/strona/2`…), a nie sterowane
+ * parametrem `?page=`: odczyt parametru wymuszał renderowanie indeksu
+ * bloga przy każdym żądaniu, bez cache CDN.
+ */
+function paginate(locale: Locale) {
+  const featured = getFeaturedPosts(locale).slice(0, FEATURED_COUNT)
+  const featuredSlugs = new Set(featured.map((p) => p.slug))
+  const rest = getAllPosts(locale).filter((p) => !featuredSlugs.has(p.slug))
+  const totalPages = Math.max(1, Math.ceil(rest.length / PAGE_SIZE))
+  return { featured, rest, totalPages }
+}
+
+export function getBlogPageCount(locale: Locale): number {
+  return paginate(locale).totalPages
+}
 
 export function BlogIndexView({
   locale,
-  page,
+  page = 1,
 }: {
   locale: Locale
-  page?: string
+  page?: number
 }) {
   const copy = getPages(locale).blog
-  const blogHref = ROUTES.blog[locale]
-
-  const parsedPage = parseInt(page || "1", 10)
-  const currentPage = Number.isNaN(parsedPage) ? 1 : Math.max(1, parsedPage)
-
-  const allPosts = getAllPosts(locale)
-  const featuredPosts = getFeaturedPosts(locale).slice(0, 2)
-  const featuredSlugs = new Set(featuredPosts.map((p) => p.slug))
-
-  // Wykluczamy wyróżnione artykuły ze wszystkich, aby nie wpływały na paginację
-  const nonFeaturedPosts = allPosts.filter((p) => !featuredSlugs.has(p.slug))
-
-  const totalPages = Math.ceil(nonFeaturedPosts.length / PAGE_SIZE)
+  const { featured, rest, totalPages } = paginate(locale)
+  const currentPage = Math.min(Math.max(1, page), totalPages)
   const offset = (currentPage - 1) * PAGE_SIZE
-  const displayedPosts = nonFeaturedPosts.slice(offset, offset + PAGE_SIZE)
+  const displayedPosts = rest.slice(offset, offset + PAGE_SIZE)
 
   return (
     <div className="container mx-auto px-4 py-12 md:py-16 lg:py-20">
       <PageHeader
         badge={copy.badge}
-        title={copy.title}
+        title={currentPage === 1 ? copy.title : fill(copy.pageTitle, { current: currentPage })}
         description={copy.description}
       />
 
-      {/* Featured Posts — only on first page */}
-      {currentPage === 1 && featuredPosts.length > 0 && (
+      {/* Wyróżnione — tylko na pierwszej stronie */}
+      {currentPage === 1 && featured.length > 0 && (
         <section className="mb-16">
           <h2 className="text-2xl font-semibold mb-8">{copy.featuredHeading}</h2>
           <div className="grid md:grid-cols-2 gap-8">
-            {featuredPosts.slice(0, 2).map((post: Post) => (
+            {featured.map((post: Post) => (
               <article key={post.slug} className="group relative">
                 <div>
                   <div className="relative aspect-[16/9] rounded-xl overflow-hidden mb-6">
@@ -71,26 +83,24 @@ export function BlogIndexView({
                       src={post.frontmatter.image}
                       alt={post.frontmatter.title}
                       fill
-                      priority
+                      preload
                       sizes="(min-width: 768px) 50vw, 100vw"
                       className="object-cover transition-transform group-hover:scale-105"
                     />
                   </div>
                   <div className="space-y-3">
                     <div className="flex flex-wrap gap-2">
-                      {(post.frontmatter.categories || []).map(
-                        (cat: string) => (
-                          <Link
-                            key={cat}
-                            href={categoryPath(locale, slugify(cat))}
-                            className="relative z-10"
-                          >
-                            <Badge variant="secondary" className="hover:bg-secondary/80 cursor-pointer transition-colors">
-                              {cat}
-                            </Badge>
-                          </Link>
-                        )
-                      )}
+                      {post.frontmatter.categories.map((cat) => (
+                        <Link
+                          key={cat}
+                          href={categoryPath(locale, slugify(cat))}
+                          className="relative z-10"
+                        >
+                          <Badge variant="secondary" className="hover:bg-secondary/80 cursor-pointer transition-colors">
+                            {cat}
+                          </Badge>
+                        </Link>
+                      ))}
                     </div>
                     <h3 className="text-2xl font-bold group-hover:text-primary transition-colors">
                       <Link href={postPath(locale, post.slug)} className="after:absolute after:inset-0">
@@ -118,7 +128,7 @@ export function BlogIndexView({
         </section>
       )}
 
-      {/* All Posts */}
+      {/* Wszystkie artykuły — ta sama karta co w kategoriach, tagach i pod wpisem */}
       <section>
         <h2 className="text-2xl font-semibold mb-8">
           {copy.allHeading}
@@ -128,67 +138,19 @@ export function BlogIndexView({
             </span>
           )}
         </h2>
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {displayedPosts.map((post: Post, index) => (
-            <article key={post.slug} className="group relative">
-              <div>
-                <div className="relative aspect-[16/9] rounded-lg overflow-hidden mb-4">
-                  <Image
-                    src={post.frontmatter.image}
-                    alt={post.frontmatter.title}
-                    fill
-                    priority={currentPage === 1 && index < 3}
-                    sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
-                    className="object-cover transition-transform group-hover:scale-105"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <div className="flex flex-wrap gap-1">
-                    {(post.frontmatter.categories || [])
-                      .slice(0, 2)
-                      .map((cat: string) => (
-                        <Link
-                          key={cat}
-                          href={categoryPath(locale, slugify(cat))}
-                          className="relative z-10"
-                        >
-                          <Badge variant="outline" className="text-xs hover:bg-secondary/80 cursor-pointer transition-colors">
-                            {cat}
-                          </Badge>
-                        </Link>
-                      ))}
-                  </div>
-                  <h3 className="font-bold group-hover:text-primary transition-colors line-clamp-2">
-                    <Link href={postPath(locale, post.slug)} className="after:absolute after:inset-0">
-                      {post.frontmatter.title}
-                    </Link>
-                  </h3>
-                  <p className="text-sm text-muted-foreground line-clamp-2">
-                    {post.frontmatter.description}
-                  </p>
-                  <div className="flex items-center gap-3 text-xs text-muted-foreground">
-                    <span>
-                      {formatDate(post.frontmatter.date, locale)}
-                    </span>
-                    <span>•</span>
-                    <span>{formatReadingTime(post.readingTime, locale)}</span>
-                  </div>
-                </div>
-              </div>
-            </article>
-          ))}
-        </div>
+        <PostListView posts={displayedPosts} locale={locale} headingLevel="h3" />
       </section>
 
-      {/* Pagination */}
       {totalPages > 1 && (
         <div className="mt-16">
-          <Pagination>
+          <Pagination aria-label={copy.paginationAria}>
             <PaginationContent>
               <PaginationItem>
                 <PaginationPrevious
-                  href={currentPage > 1 ? `${blogHref}?page=${currentPage - 1}` : "#"}
+                  label={copy.previousPage}
+                  href={currentPage > 1 ? blogPagePath(locale, currentPage - 1) : "#"}
                   aria-disabled={currentPage === 1}
+                  tabIndex={currentPage === 1 ? -1 : undefined}
                   className={currentPage === 1 ? "pointer-events-none opacity-50" : ""}
                 />
               </PaginationItem>
@@ -199,8 +161,7 @@ export function BlogIndexView({
                   p === totalPages ||
                   Math.abs(p - currentPage) <= 1
 
-                const showEllipsisAfterFirst =
-                  p === 2 && currentPage > 3
+                const showEllipsisAfterFirst = p === 2 && currentPage > 3
                 const showEllipsisBeforeLast =
                   p === totalPages - 1 && currentPage < totalPages - 2
 
@@ -216,7 +177,10 @@ export function BlogIndexView({
 
                 return (
                   <PaginationItem key={p}>
-                    <PaginationLink href={`${blogHref}?page=${p}`} isActive={p === currentPage}>
+                    <PaginationLink
+                      href={blogPagePath(locale, p)}
+                      isActive={p === currentPage}
+                    >
                       {p}
                     </PaginationLink>
                   </PaginationItem>
@@ -225,8 +189,10 @@ export function BlogIndexView({
 
               <PaginationItem>
                 <PaginationNext
-                  href={currentPage < totalPages ? `${blogHref}?page=${currentPage + 1}` : "#"}
+                  label={copy.nextPage}
+                  href={currentPage < totalPages ? blogPagePath(locale, currentPage + 1) : "#"}
                   aria-disabled={currentPage === totalPages}
+                  tabIndex={currentPage === totalPages ? -1 : undefined}
                   className={currentPage === totalPages ? "pointer-events-none opacity-50" : ""}
                 />
               </PaginationItem>

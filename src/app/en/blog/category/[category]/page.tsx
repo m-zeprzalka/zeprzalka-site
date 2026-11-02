@@ -8,6 +8,9 @@ interface PageProps {
   params: Promise<{ category: string }>
 }
 
+/** Wszystkie adresy powstają przy buildzie — nieznany to od razu 404. */
+export const dynamicParams = false
+
 export async function generateStaticParams() {
   return getAllCategorySlugs("en").map((category) => ({ category }))
 }
@@ -15,7 +18,7 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { category } = await params
   const slug = decodeURIComponent(category)
-  return categoryMetadata("en", slug, getCategoryLabel("en", slug))
+  return categoryMetadata("en", slug, getCategoryLabel("en", slug), getPostsByCategory("en", slug).length)
 }
 
 export default async function CategoryPage({ params }: PageProps) {

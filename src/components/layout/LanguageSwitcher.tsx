@@ -37,6 +37,13 @@ function counterpart(pathname: string, from: Locale, to: Locale): string {
     if (paths[from] === clean) return paths[to]
   }
 
+  // Kolejne strony archiwum: ten sam numer w drugim języku. Obie wersje
+  // mają tyle samo wpisów, więc i tyle samo stron.
+  const pageBase = ROUTES.blogPage[from]
+  if (clean.startsWith(`${pageBase}/`)) {
+    return `${ROUTES.blogPage[to]}/${clean.slice(pageBase.length + 1)}`
+  }
+
   const blogBase = ROUTES.blog[from]
   const categoryBase = ROUTES.categories[from]
   const tagBase = ROUTES.tags[from]
@@ -68,7 +75,7 @@ export function LanguageSwitcher({ locale }: { locale: Locale }) {
   const copy = getCommon(locale).languageSwitch
 
   return (
-    <Button asChild variant="outline" size="icon" aria-label={copy.aria}>
+    <Button asChild variant="outline" size="icon" aria-label={`${copy.label} — ${copy.aria}`}>
       {/*
         `hrefLang` mówi wyszukiwarce, dokąd prowadzi link — ten sam sygnał
         co znaczniki `alternate` w nagłówku, tylko widoczny dla czytelnika.

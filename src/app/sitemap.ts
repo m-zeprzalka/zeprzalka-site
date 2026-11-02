@@ -1,10 +1,12 @@
 import { MetadataRoute } from "next"
-import { getAllPosts, getAllCategorySlugs } from "@/lib/posts"
+import { getAllPosts, getAllCategorySlugs, getPostsByCategory } from "@/lib/posts"
+import { MIN_POSTS_TO_INDEX_CATEGORY } from "@/i18n/page-metadata"
 import { absoluteUrl } from "@/lib/site"
 import {
   ROUTES,
   categoryPath,
   locales,
+  otherLocale,
   postPath,
   type Locale,
 } from "@/i18n/config"
@@ -26,6 +28,8 @@ function languageAlternates(
     const path = paths[locale]
     if (path) languages[locale] = absoluteUrl(path)
   }
+  // Tak samo jak w znacznikach hreflang: x-default wskazuje wersję polską.
+  if (paths.pl) languages["x-default"] = absoluteUrl(paths.pl)
   return { languages }
 }
 
@@ -89,6 +93,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
         priority: 0.7,
       },
       {
+        path: ROUTES.privacy[locale],
+        alternates: ROUTES.privacy,
+        changeFrequency: "yearly",
+        priority: 0.2,
+      },
+      {
         path: ROUTES.categories[locale],
         alternates: ROUTES.categories,
         lastModified: newestPostDate,
@@ -107,8 +117,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
       })
     }
 
+    const other = otherLocale(locale)
+
     for (const post of posts) {
-      const other = locale === "pl" ? "en" : "pl"
       const twin = translatePostSlug(post.slug, locale, other)
       entries.push({
         url: absoluteUrl(postPath(locale, post.slug)),
@@ -124,8 +135,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
       })
     }
 
-    for (const slug of getAllCategorySlugs(locale)) {
-      const other = locale === "pl" ? "en" : "pl"
+    // Kategorie z jednym wpisem mają noindex (patrz categoryMetadata) —
+    // mapa strony nie może wskazywać adresów wyłączonych z indeksu.
+    const indexedCategories = getAllCategorySlugs(locale).filter(
+      (slug) =>
+        getPostsByCategory(locale, slug).length >= MIN_POSTS_TO_INDEX_CATEGORY
+    )
+
+    for (const slug of indexedCategories) {
       const twin = translateCategorySlug(slug, locale, other)
       entries.push({
         url: absoluteUrl(categoryPath(locale, slug)),
@@ -140,8 +157,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     }
   }
 
-  // Strony tagów celowo poza sitemapą: ~110 tagów przy 26 wpisach to zbyt
-  // rozdrobnione (thin content) strony — pozostają dostępne przez linki.
+  // Strony tagów celowo poza sitemapą (i z noindex): to wąskie listy po kilka
+  // wpisów, które powielają strony kategorii — robot dociera do nich linkami.
   return entries
 }
 

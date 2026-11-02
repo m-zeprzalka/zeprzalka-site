@@ -8,6 +8,9 @@ interface PageProps {
   params: Promise<{ tag: string }>
 }
 
+/** Wszystkie adresy powstają przy buildzie — nieznany to od razu 404. */
+export const dynamicParams = false
+
 export async function generateStaticParams() {
   return getAllTagSlugs("pl").map((tag) => ({ tag }))
 }

@@ -29,6 +29,7 @@ const pl = {
       "Wycena jest bezpłatna i nie zobowiązuje do niczego. Jeśli uznam, że Twojego problemu nie rozwiąże strona internetowa — powiem to wprost.",
     quotePrimary: "Bezpłatna wycena",
     quoteSecondary: "Kim jestem",
+    quotePortfolio: "Zobacz realizacje",
     /** Nazwa katalogu ofert w danych strukturalnych. */
     offerCatalog: "Usługi cyfrowe",
   },
@@ -48,7 +49,7 @@ const pl = {
     bioLeadSuffix:
       " w projektowaniu i wdrażaniu innowacyjnych rozwiązań webowych i multimedialnych. Łączę umiejętności techniczne z wrażliwością projektową — tworzę produkty cyfrowe, które są funkcjonalne i estetyczne. ",
     bioSecondPrefix:
-      "Specjalizuję się w design systemów, stron internetowych, integracji AI oraz budowie skalowalnych aplikacji. Mam duże doświadczenie w projektowaniu graficznym, animacji i tworzeniu materiałów wideo. Przez wiele lat byłem wykładowcą ",
+      "Specjalizuję się w projektowaniu design systemów i stron internetowych, integracjach AI oraz budowie skalowalnych aplikacji. Mam duże doświadczenie w projektowaniu graficznym, animacji i tworzeniu materiałów wideo. Przez wiele lat byłem wykładowcą ",
     bioSecondStrong: "zdobywając Nagrodę Rektora",
     bioSecondSuffix:
       " za najwyższą średnią ocen w ankietach studenckich: 99,28%.",
@@ -58,7 +59,7 @@ const pl = {
         company: "Freelance",
         period: "2011 - obecnie",
         description:
-          "Ponad 30+ klientów. Głównie tworzenie stron internetowych, aplikacji, materiałów graficznych, animacji i materiałów wideo. Prowadzenie i zarządzanie Social Media, przygotwywanie kampanii reklamowych oraz doradztwo w zakresie transformacji cyfrowej.",
+          "Ponad 30 klientów. Głównie tworzenie stron internetowych, aplikacji, materiałów graficznych, animacji i materiałów wideo. Prowadzenie i zarządzanie Social Media, przygotowywanie kampanii reklamowych oraz doradztwo w zakresie transformacji cyfrowej.",
         tags: [
           "Social Media",
           "Marketing",
@@ -210,6 +211,14 @@ const pl = {
     tagBadge: "Tag",
     withTag: "{count} z tym tagiem",
     breadcrumbBlog: "Blog",
+    relatedHeading: "Czytaj dalej",
+    paginationAria: "Strony archiwum bloga",
+    previousPage: "Poprzednia",
+    nextPage: "Następna",
+    /** {current} podstawia się w tytule i opisie kolejnych stron listy. */
+    pageTitle: "Blog — strona {current}",
+    pageDescription:
+      "Archiwum bloga, strona {current}: artykuły o AI, Next.js, web developmencie i designie.",
   },
 }
 
@@ -234,6 +243,7 @@ const en: typeof pl = {
       "The quote is free and commits you to nothing. If I conclude that a website will not solve your problem, I will say so plainly.",
     quotePrimary: "Free quote",
     quoteSecondary: "Who I am",
+    quotePortfolio: "See my work",
     offerCatalog: "Digital services",
   },
 
@@ -409,6 +419,13 @@ const en: typeof pl = {
     tagBadge: "Tag",
     withTag: "{count} tagged this way",
     breadcrumbBlog: "Blog",
+    relatedHeading: "Keep reading",
+    paginationAria: "Blog archive pages",
+    previousPage: "Previous",
+    nextPage: "Next",
+    pageTitle: "Blog — page {current}",
+    pageDescription:
+      "Blog archive, page {current}: articles on AI, Next.js, web development and design.",
   },
 }
 

@@ -1,18 +1,24 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import Link from "next/link"
-import {
-  SidebarMenu,
-  SidebarMenuItem,
-  SidebarMenuButton,
-} from "@/components/ui/sidebar"
 
 interface Heading {
   id: string
   level: number
   text: string
 }
+
+/**
+ * Lista nagłówków wpisu z podświetleniem sekcji, którą właśnie się czyta.
+ *
+ * Wcześniej stała na komponencie `Sidebar` z shadcn — 700 linii z własnym
+ * kontekstem, skrótem klawiszowym, ciasteczkiem, wersją mobilną w panelu
+ * i podpowiedziami — po to, żeby wyświetlić listę linków. Klasy poniżej to
+ * dokładnie te, które tamte komponenty nadawały (wynik `cn()`), więc wygląd
+ * się nie zmienia, a do przeglądarki nie trafia nic poza tą listą.
+ */
+const ITEM =
+  "flex w-full items-center gap-2 overflow-hidden rounded-md p-2 text-left text-xs h-auto whitespace-normal ring-sidebar-ring outline-hidden transition-[width,height,padding] hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 active:bg-sidebar-accent active:text-sidebar-accent-foreground data-[active=true]:bg-sidebar-accent data-[active=true]:font-medium data-[active=true]:text-sidebar-accent-foreground"
 
 export function ActiveTOC({ headings }: { headings: Heading[] }) {
   const [activeId, setActiveId] = useState<string>("")
@@ -40,21 +46,23 @@ export function ActiveTOC({ headings }: { headings: Heading[] }) {
   if (headings.length === 0) return null
 
   return (
-    <SidebarMenu>
-      {headings.map((heading) => (
-        <SidebarMenuItem key={heading.id}>
-          <SidebarMenuButton
-            asChild
-            isActive={activeId === heading.id}
-            size="sm"
-            // h-auto + whitespace-normal: pozwala długim tytułom zawijać się w wiele linii
-            className="h-auto whitespace-normal [&>*]:whitespace-normal"
-            style={{ paddingLeft: `${(heading.level - 2) * 12 + 8}px` }}
-          >
-            <Link href={`#${heading.id}`}>{heading.text}</Link>
-          </SidebarMenuButton>
-        </SidebarMenuItem>
-      ))}
-    </SidebarMenu>
+    <ul className="flex w-full min-w-0 flex-col gap-1">
+      {headings.map((heading) => {
+        const isActive = activeId === heading.id
+        return (
+          <li key={heading.id} className="relative">
+            <a
+              href={`#${heading.id}`}
+              data-active={isActive}
+              aria-current={isActive ? "location" : undefined}
+              className={ITEM}
+              style={{ paddingLeft: `${(heading.level - 2) * 12 + 8}px` }}
+            >
+              {heading.text}
+            </a>
+          </li>
+        )
+      })}
+    </ul>
   )
 }

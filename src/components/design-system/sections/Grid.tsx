@@ -97,7 +97,7 @@ export function GridSection() {
             ["/o-mnie", "3 / 9", "Etykieta w wersalikach zamiast H2"],
             ["/blog", "brak podziału", "Siatka kart 2 / 3 kolumny"],
             ["/uslugi", "brak podziału", "Karty pakietów 2 kolumny, proces 3 kolumny"],
-            ["Wpis bloga", "sidebar + treść", "Spis treści w komponencie Sidebar"],
+            ["Wpis bloga", "spis treści + treść", "Spis treści jako zwykły <nav> (od 11.2026 bez komponentu Sidebar)"],
           ]}
         />
       </DsBlock>

@@ -10,6 +10,7 @@
  * komponent kliencki — przełącznik nie potrzebuje wtedy żadnych propsów.
  */
 import type { Locale, Localized } from "@/i18n/config"
+import { slugify } from "@/lib/slug"
 
 /** Slug wpisu w obu językach. Kolejność alfabetyczna, jak w `content/`. */
 export const POST_SLUGS: readonly Localized<string>[] = [
@@ -88,10 +89,6 @@ export const TAG_LABELS: readonly Localized<string>[] = [
   { pl: "Social Media", en: "Social Media" },
 ]
 
-/** Ta sama reguła slugów co w lib/posts.ts — powielona, bo tam siedzi `fs`. */
-function toSlug(value: string): string {
-  return value.toLowerCase().replace(/\s+/g, "-")
-}
 
 function translate(
   pairs: readonly Localized<string>[],
@@ -120,7 +117,7 @@ export function translateCategorySlug(
   from: Locale,
   to: Locale
 ): string | null {
-  return translate(CATEGORY_LABELS, slug, from, to, toSlug)
+  return translate(CATEGORY_LABELS, slug, from, to, slugify)
 }
 
 /** Slug tego samego tagu w drugim języku. */
@@ -129,5 +126,5 @@ export function translateTagSlug(
   from: Locale,
   to: Locale
 ): string | null {
-  return translate(TAG_LABELS, slug, from, to, toSlug)
+  return translate(TAG_LABELS, slug, from, to, slugify)
 }

@@ -13,9 +13,11 @@ teksty i co trzeba zrobić, żeby dodać nową stronę albo nowy wpis.
 | Kontakt    | `/kontakt`          | `/en/contact`         |
 | Portfolio  | `/portfolio`        | `/en/portfolio`       |
 | Blog       | `/blog`             | `/en/blog`            |
+| Archiwum   | `/blog/strona/2`    | `/en/blog/page/2`     |
 | Kategorie  | `/blog/kategoria`   | `/en/blog/category`   |
 | Tagi       | `/blog/tag`         | `/en/blog/tag`        |
 | Kanał RSS  | `/feed.xml`         | `/en/feed.xml`        |
+| Prywatność | `/polityka-prywatnosci` | `/en/privacy`     |
 
 **Polskie adresy nie zmieniły się ani o znak.** Są zaindeksowane, więc polska
 wersja została w katalogu głównym, a angielska stanęła obok pod `/en`.
@@ -36,7 +38,8 @@ Copy stron. Każdy moduł ma dwa drzewa — `pl` i `en` — przy czym `en` ma ty
 | `common.ts`  | nawigacja, stopka, formularz, komunikaty błędów, 404     |
 | `home.ts`    | strona główna (hero, kompetencje, sekcje)                |
 | `pages.ts`   | usługi, o mnie, kontakt, portfolio, blog                 |
-| `meta.ts`    | tytuły i opisy dla wyszukiwarki, karty Open Graph        |
+| `meta.ts`    | tytuły i opisy dla wyszukiwarki, teksty kart Open Graph  |
+| `legal.ts`   | polityka prywatności                                     |
 
 ### 2. Pary `Localized<T>` przy danych
 
@@ -57,18 +60,27 @@ Typ `Localized<T> = Record<Locale, T>` wymusza obie wersje.
    kompilator sam wskaże, czego brakuje) i metadane do `meta.ts`.
 3. Zbuduj **jeden** widok w `src/components/views/`, przyjmujący `locale`.
 4. Dodaj dwa cienkie pliki trasy: `src/app/(pl)/…/page.tsx` i
-   `src/app/en/…/page.tsx`; każdy woła ten sam widok i builder metadanych.
-5. Dopisz stronę do `src/app/sitemap.ts`.
+   `src/app/en/…/page.tsx`; każdy woła ten sam widok i funkcję metadanych
+   z `src/i18n/page-metadata.ts` — wszystkie przechodzą przez `buildMetadata`,
+   które dokłada canonical, hreflang, RSS i kartę Open Graph z adresem strony.
+5. Jeśli strona ma się dobrze udostępniać: plik `opengraph-image.tsx` w segmencie
+   trasy (wzór: `src/app/(pl)/uslugi/opengraph-image.tsx`, teksty w `meta.ts` → `og.cards`).
+   Bez niego strona nie ma obrazka karty — Next nie dziedziczy go, gdy strona podaje
+   własne `openGraph`.
+6. Dopisz stronę do `src/app/sitemap.ts`.
 
 ## Jak dodać nowy wpis na blogu
 
-1. Napisz wpis po polsku: `content/posts/<slug>.mdx`.
+1. Napisz wpis po polsku: `content/posts/<slug>.mdx` (szkic: `draft: true` —
+   widoczny tylko w `pnpm dev`).
 2. Napisz wersję angielską: `content/en/posts/<slug-en>.mdx` (własny,
    angielski slug — lepszy dla wyszukiwarki).
 3. Dopisz parę slugów do `POST_SLUGS` w `src/i18n/blog-map.ts`. Bez tego
    znaczniki `hreflang` i przełącznik języka nie skojarzą obu wersji.
 4. Kategorie i tagi w wersji angielskiej muszą mieć pary w `CATEGORY_LABELS`
    i `TAG_LABELS` w tym samym pliku.
+5. `pnpm check:content` — sprawdza wszystkie powyższe pary, istnienie obrazków
+   i reguły SEO (długości, liczba kategorii i tagów). To samo uruchamia CI.
 
 Wpis bez tłumaczenia nie psuje serwisu: po prostu nie dostaje `alternate`
 dla drugiego języka, a przełącznik prowadzi wtedy do indeksu bloga.
@@ -88,9 +100,12 @@ Wymaga to flagi `experimental.globalNotFound` w `next.config.ts`.
 ## SEO
 
 - `hreflang` na każdej stronie, z `x-default` wskazującym wersję polską —
-  buduje je `alternatesFor()` w `src/i18n/config.ts`, więc nie da się o nim
-  zapomnieć w JSX-ie.
-- Mapa strony wymienia obie wersje i powtarza te same pary jako `alternates`.
+  buduje je `alternatesFor()` w `src/i18n/config.ts`, wołane przez
+  `buildMetadata`, więc nie da się o nim zapomnieć w JSX-ie.
+- Mapa strony wymienia obie wersje i powtarza te same pary (z `x-default`)
+  jako `alternates`.
+- Kolejne strony archiwum bloga mają `hreflang` tylko wtedy, gdy druga wersja
+  ma stronę o tym samym numerze.
 - Osobny kanał RSS dla `/en` z własnym znacznikiem `<language>`.
 - Dane strukturalne (`inLanguage`) i karty Open Graph (`og:locale`,
   `og:locale:alternate`) w obu językach.

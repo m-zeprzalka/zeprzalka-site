@@ -1,124 +1,157 @@
 # Strategia SEO — zeprzalka.com
 
-Cel: pozycja eksperta (web development + design + AI) i stały napływ zapytań
-o zlecenia z wyszukiwarki. Horyzont: pierwsze efekty 2–3 miesiące, stabilny
-ruch 6–12 miesięcy.
+Cel: pierwsze skojarzenie w wyszukiwarce dla „projektant i programista produktów
+z AI” i stały napływ zapytań ofertowych z Google. Horyzont: pierwsze efekty
+2–3 miesiące, stabilny ruch 6–12 miesięcy.
 
-Stan na: 2026-08-26 (po wdrożeniu strony technicznej).
+Stan na: **2 listopada 2026** (po audycie i refaktorze — [AUDYT-2026-11.md](AUDYT-2026-11.md)).
 
 ---
 
-## 1. Stan techniczny
+## 1. Stan techniczny (zweryfikowany)
 
-| Obszar | Stan |
+| Obszar | Stan | Gdzie w kodzie |
+| --- | --- | --- |
+| Domena kanoniczna `www`, apex → 308 | ✅ | `src/lib/site.ts` |
+| Canonical na każdej stronie, wskazujący ją samą | ✅ 86/86 adresów sitemapy | `buildMetadata` w `src/i18n/page-metadata.ts` |
+| `hreflang` pl/en + `x-default`, także w sitemapie | ✅ | `alternatesFor` w `src/i18n/config.ts` |
+| `og:url`, `og:image` 1200×630, `og:site_name` na każdej stronie | ✅ (było: 60 stron z `og:url` strony głównej) | `buildMetadata` + pliki `opengraph-image.tsx` |
+| Karty OG wpisów z tytułem (zamiast zdjęć WebP/SVG) | ✅ prerenderowane | `postOgCard` w `src/components/og.tsx` |
+| Link do RSS w `<head>` | ✅ na każdej stronie (było: 1 z 232) | `buildMetadata` |
+| Treść w `<main>` bez JavaScriptu | ✅ (było: ukryta za stopką przez `loading.tsx`) | — |
+| Wszystkie strony statyczne | ✅ 0 tras dynamicznych | paginacja `/blog/strona/N` |
+| JSON-LD: jedna encja `Person` z `@id` + `WebSite`, `BlogPosting`, `ProfilePage`, `ProfessionalService`, `CollectionPage`, `BreadcrumbList` | ✅ 0 błędów parsowania | `src/lib/schema.ts` |
+| `max-image-preview:large` (Google Discover) | ✅ | `rootMetadata` w `src/i18n/metadata.ts` |
+| Tagi `noindex, follow`, poza sitemapą | ✅ | `tagMetadata` |
+| Kategorie z 1 wpisem `noindex`, poza sitemapą | ✅ automatycznie (`MIN_POSTS_TO_INDEX_CATEGORY = 2`) | `categoryMetadata`, `sitemap.ts` |
+| Długie tytuły bez sufiksu „\| Michał Zeprzałka” | ✅ automatycznie przy > 60 znakach | `pageTitle` w `page-metadata.ts` |
+| „Czytaj dalej” — 3 powiązane wpisy pod artykułem | ✅ | `getRelatedPosts` w `src/lib/posts.ts` |
+| Kontrola reguł treści przy każdym commicie | ✅ `pnpm check:content` + CI | `scripts/check-content.mjs` |
+| Weryfikacja Google Search Console / Bing | ❌ **do zrobienia** (kod gotowy: `GOOGLE_SITE_VERIFICATION`, `BING_SITE_VERIFICATION` albo rekord TXT) | — |
+| LinkedIn w `sameAs` | ❌ **do zrobienia** (`NEXT_PUBLIC_LINKEDIN_URL`) | `src/lib/site.ts` |
+
+**Techniki już nie trzeba poprawiać.** Każda kolejna godzina pracy nad SEO powinna
+iść w treść komercyjną (sekcje 3–6), nie w znaczniki.
+
+## 2. Pomiar — warunek wszystkiego
+
+1. GSC: **właściwość domenowa** (rekord TXT w Vercel DNS — obejmuje www, apex i `/en`).
+   Zgłoś sitemapę. Po tygodniu sprawdź „Strony” (co jest w indeksie) i „Wersje
+   międzynarodowe” (hreflang).
+2. Bing Webmaster Tools: import z GSC. Bing zasila Copilota i część wyszukiwarek AI.
+3. Co miesiąc: wyświetlenia, CTR i pozycje fraz → decyzje o kolejnych tematach.
+   Strony z wyświetleniami i niskim CTR → nowy tytuł i opis.
+
+## 3. Tytuły stron kluczowych (zmiana tytułu dokumentu, nie wyglądu)
+
+Konkurencja (zmierzone): „Filip Staniec - projektant stron, UI/UX i branding | Warszawa”,
+„Tworzenie stron internetowych Warszawa | Filip Staniec”. Dziś strona główna to
+„Michał Zeprzałka - Digital Solutions Architect” — bez jednej frazy, której szuka klient.
+
+Propozycje (do decyzji razem z nową rolą — MONETYZACJA.md §2):
+
+| Strona | Propozycja `<title>` |
 | --- | --- |
-| Adres kanoniczny zgodny z serwowaną domeną | ✅ `www` wszędzie (było: sprzeczne) |
-| Canonicale na wszystkich podstronach | ✅ |
-| `metadataBase` + jedno źródło adresu | ✅ `src/lib/site.ts` |
-| sitemap.xml (strony, wpisy, kategorie) | ✅ 38 adresów, tagi celowo poza |
-| robots.txt | ✅ |
-| RSS `/feed.xml` + `<link rel=alternate>` | ✅ |
-| JSON-LD: WebSite + Person (home) | ✅ |
-| JSON-LD: ProfilePage (/o-mnie) | ✅ |
-| JSON-LD: BlogPosting + BreadcrumbList (wpisy) | ✅ z `dateModified` |
-| JSON-LD: ProfessionalService + OfferCatalog (/uslugi) | ✅ nowe |
-| Dedykowany obraz OG 1200×630 | ✅ osobny dla każdego wpisu |
-| Meta description 140–160 znaków | ✅ wszystkie 27 wpisów |
-| Tytuły ≤ 60 znaków | ✅ wszystkie 27 wpisów |
-| Paginacja: canonical na /blog | ✅ |
-| `lang="pl"`, semantyczny HTML, breadcrumbs | ✅ |
-| Dostępność (axe) | ✅ 0 naruszeń na każdym typie strony |
-| Wydajność (Lighthouse) | ✅ desktop 100, mobile 91–96, CLS 0 |
-| Optymalizacja obrazków | ✅ AVIF/WebP w locie (plan Pro) + `sizes` na listach |
-| Podatności zależności | ✅ 44 → 0 (`pnpm audit --prod`) |
-| Weryfikacja w GSC / Bing | ⏳ kod gotowy, czeka na tokeny |
+| `/` | „Michał Zeprzałka – strony internetowe i aplikacje z AI, Warszawa” |
+| `/uslugi` | „Tworzenie stron internetowych – cennik i wdrożenia AI \| Zeprzałka” |
+| `/en` | „Freelance Next.js Developer & Product Designer, Poland \| Michał Zeprzałka” |
 
-**Do zrobienia (poza kodem):** weryfikacja w Google Search Console i Bing
-(zmienne `GOOGLE_SITE_VERIFICATION`, `BING_SITE_VERIFICATION`), zgłoszenie
-sitemapy, Rich Results Test po wdrożeniu, PageSpeed na produkcji.
+Gdzie: `src/i18n/content/meta.ts` (`root.titleDefault`, `services.title`).
+H1 strony głównej zmienia jej wygląd — osobna decyzja.
 
-## 2. Fundament: jedna domena, jeden adres ✅
+## 4. Architektura treści komercyjnej (największa luka)
 
-**Rozstrzygnięte.** Apex (`zeprzalka.com`) odpowiada przekierowaniem 308 na
-`www.zeprzalka.com` — to `www` jest domeną główną. Kod wskazywał apex, więc
-każda podstrona wysyłała wyszukiwarce sprzeczny sygnał: „mieszkam pod www, ale
-kanoniczny jestem pod apex, który i tak przekierowuje na www".
+Polscy konkurenci wygrywają nie znacznikami, tylko **liczbą stron, które odpowiadają
+na pytania kupującego**: podstrony usług, case studies pod osobnymi adresami,
+strony branżowe. Tu jest jedna strona ofertowa i zero case studies.
 
-Adres jest teraz w `src/lib/site.ts` i domyślnie wskazuje `www`. Pozostaje
-ustawić `NEXT_PUBLIC_SITE_URL=https://www.zeprzalka.com` w Vercelu albo usunąć
-tę zmienną (wartość domyślna jest poprawna).
+1. **Case studies** `/portfolio/[slug]` (400–800 słów): problem → Twoja rola →
+   rozwiązanie → wynik w liczbach → zakres i technologie, film jako hero.
+   Kolejność: aifeed.pl, Orlen (Mistrzowie Podwórek / Paczka), Klinika Berbecki.
+2. **Podstrony usług**, każda z FAQ, procesem, ceną „od”, case study i CTA:
+   `/uslugi/strony-internetowe`, `/uslugi/landing-page`, `/uslugi/wdrozenia-ai`,
+   `/uslugi/opieka-nad-strona`. `/uslugi` zostaje hubem z cennikiem.
+3. **Strona lokalna** „Strony internetowe Warszawa” — tylko z prawdziwą lokalną treścią
+   (klienci z Mazowsza, spotkania na miejscu). Bez tego to doorway page.
 
-## 3. Strategia treści — klastry tematyczne
+## 5. Higiena treści — reguły (pilnuje ich `pnpm check:content`)
 
-Blog ma 27 wpisów, głównie edukacyjnych. To buduje ruch, ale nie zapytania
-ofertowe. Docelowa struktura: **3 klastry**, każdy z treściami edukacyjnymi
-(ruch) i komercyjnymi (konwersja).
+- Maksymalnie **2 kategorie** i **3–5 tagów** na wpis, wyłącznie z list w
+  `src/i18n/blog-map.ts`. Nowy tag zakładamy, gdy obejmie min. 3 wpisy.
+- Opis meta **120–160 znaków**, tytuł **≤ 60 znaków**.
+- Okładka w WebP (nie SVG), min. 1200 px szerokości.
+- Każdy wpis ma parę PL↔EN w `POST_SLUGS` albo świadomie jej nie ma.
+- Odświeżony wpis dostaje `updated: YYYY-MM-DD` (trafia do `dateModified` i sitemapy).
+- `featured: true` tylko dla 2–4 wpisów filarowych (dziś 24 z 29 — wyróżnienie nic nie znaczy).
+- Bez emoji w nagłówkach H2/H3 (psują kotwice i fragmenty w wynikach).
 
-**Klaster A — „Strona internetowa dla firmy" (komercyjny, priorytet)**
-- ✅ `/uslugi` — strona ofertowa z widełkami cen (główny cel klastra).
-- „Ile kosztuje strona internetowa w 2026?" ← najwyższa intencja zakupowa;
-  wpis powinien linkować do `/uslugi`, nie tylko do formularza.
-- „Strona na WordPressie czy Next.js — co wybrać dla firmy?"
-- „Ile trwa zrobienie strony? Proces krok po kroku"
-- „Czego wymagać od wykonawcy strony (checklist dla zamawiającego)"
+**Do poprawy teraz** (z `pnpm check:content` i audytu): transcendencja ma 4 kategorie
+(3 nowe, każda z jednym wpisem) i 0 tagów; wpis o SaaS 0 tagów; 13 opisów poza zakresem;
+3 tytuły EN za długie.
 
-**Klaster B — „AI w małej firmie" (wyróżnik ekspercki)**
-- Case study aifeed.pl (jak zbudowałem autonomiczny serwis AI)
-- „Automatyzacje AI dla małych firm — 5 realnych wdrożeń"
-- „Integracja modelu językowego ze stroną firmową — od czego zacząć"
+## 6. Plan treści
 
-**Klaster C — istniejące treści edukacyjne** (Next.js, HTML/CSS, Makerkit)
-- Kontynuować serie; budują ruch long-tail i zaplecze linkowania wewnętrznego.
+### 6.1 Istniejące wpisy (29 + 29)
 
-**Zasada linkowania:** ✅ wdrożona w kodzie — komponent `PostCta` zamyka każdy
-wpis wezwaniem do wyceny z odnośnikami do `/kontakt` i `/o-mnie`. Reguła
-obowiązuje automatycznie także przyszłe artykuły. Do ręcznego dopisania zostają
-odnośniki tematyczne między wpisami (edukacyjny → komercyjny).
+| Rekomendacja | Wpisy |
+| --- | --- |
+| **Zostaw** (część z drobnymi poprawkami) | html, css, ppg, twoja-pierwsza-strona, bootstrap, twoja-strona-w-internecie, typescript-1 (te w hubie kursu), next-shadcn, dashboard, tailwind-netlify, seria Makerkit #1–#4, social-manager-fable-5, transcendencja, budowa SaaS |
+| **Odśwież** (+ `updated:`) | grafiki (dopisz własny pomiar −90% wagi), trendy-socialmedia, mdx (Next 16, błąd z `getStaticProps`), od-html-do-ai (pod klienta), promptowanie (agenci 2026), tailwind (v4), wordpress (bez „2025” w tytule), claude-design |
+| **Przepisz pod klienta** | zaliczenie → „Brief strony internetowej — szablon dla firm”; aifeed → case study |
+| **Połącz / rozbuduj** | player → do next-shadcn (308); Makerkit #5 → rozbuduj albo połącz z #4 |
+| **Slug** | `markerkit-*` → `makerkit-*` (literówka) — tylko przy odświeżeniu, zawsze z 308 |
 
-## 4. Higiena treści ✅
+Pełna tabela z frazami i intencjami: `docs/prywatne/raporty-2026-11/seo.md` §7.
 
-Wykonane 2026-08-26:
+### 6.2 Nowe tematy (fraza → intencja → link docelowy)
 
-- **Kategorie: 48 → 6.** Web development (15), Next.js (10), AI (9), SaaS (5),
-  Design (4), Projekty (2). Wcześniej 30 kategorii miało po jednym wpisie.
-- **Tagi: 114 → 18** przekrojowych. Wcześniej 86 tagów występowało raz.
-- **Tytuły:** 12 skróconych do ≤60 znaków, fraza kluczowa z przodu.
-- **Opisy:** 20 przepisanych; wszystkie mieszczą się w 140–165 znakach.
-- **Efekt:** 207 → 70 stron statycznych. Zniknęły dziesiątki stron z jednym
-  wpisem, które rozpraszały budżet indeksowania i wyglądały jak thin content.
+1. Koszt utrzymania strony internetowej: hosting, domena, opieka → komercyjna → opieka
+2. Co wpływa na cenę strony? Rozbijam wycenę 3 projektów → komercyjna → `/uslugi`
+3. Strona internetowa dla firmy — od czego zacząć → info-komercyjna → strony internetowe
+4. WordPress czy Next.js dla strony firmowej → porównawcza → strony internetowe
+5. Ile trwa zrobienie strony? Proces krok po kroku → komercyjna → `/uslugi#proces`
+6. Landing page czy strona z podstronami → porównawcza → landing page
+7. Wdrożenie AI w małej firmie: 7 automatyzacji z kosztami → komercyjna → wdrożenia AI
+8. Chatbot AI na stronę firmową — ile kosztuje, kiedy ma sens → komercyjna → wdrożenia AI
+9. Jak podłączyć ChatGPT lub Claude do danych firmy bez wycieku → info-komercyjna → wdrożenia AI
+10. Europejski Akt o Dostępności: czy Twoja strona musi spełniać WCAG → informacyjna (pilna) → audyt
+11. Redesign strony: kiedy przebudować, a kiedy poprawić → komercyjna → `/uslugi`
+12. Audyt strony przed zleceniem nowej — 25 punktów → komercyjna → `/kontakt`
+13. Case study: strona dla kliniki (Klinika Berbecki) → branżowa → case study
+14. Next.js developer: kiedy warto, ile kosztuje, jak sprawdzić wykonawcę → B2B → `/uslugi`, `/o-mnie`
+15. (EN) Hiring a freelance Next.js developer in Poland → B2B EN → `/en/services`
 
-Zasada na przyszłość: **maksymalnie 2 kategorie i 3–5 tagów na wpis**, wyłącznie
-z istniejących list. Nowy tag zakładamy dopiero, gdy ma objąć min. 3 wpisy.
+Każdy: 1200–2500 słów, własne liczby i zrzuty, FAQ jako treść, 2–4 linki wewnętrzne,
+CTA do konkretnej podstrony usług. Fraza „ile kosztuje strona internetowa” należy już
+do `/uslugi` — wpisy celują w długi ogon i linkują do niej.
 
-## 5. E-E-A-T (sygnały eksperckości)
+## 7. Wersja angielska
 
-- ✅ `Person` / `ProfilePage`, bio autora pod każdym wpisem, strona `/o-mnie`
-  z doświadczeniem i edukacją (Nagroda Rektora — mocny sygnał, zostaw).
-- ✅ **Spójny autor**: dane strukturalne podawały „zeprzalka.com", a strona
-  „Michał Zeprzałka". Teraz jedno źródło (`AUTHOR` w `src/lib/site.ts`).
-- ✅ **Data aktualizacji**: pole `updated` we frontmatterze trafia do
-  `dateModified` i do mapy strony. Używaj przy odświeżaniu starszych wpisów —
-  to jeden z tańszych sposobów na odzyskanie pozycji.
-- ✅ **CV do pobrania** (PDF generowany ze strony `/o-mnie`).
-- ⏳ **LinkedIn**: ustaw `NEXT_PUBLIC_LINKEDIN_URL`, a profil dopisze się do
-  stopki i do `sameAs`. To wciąż najważniejszy brakujący kanał.
-- ⏳ **Case studies z nazwami klientów** (Orlen, Vinci) — masz je w portfolio,
-  brakuje opisu: problem → rozwiązanie → wynik.
+EN ma służyć dwóm celom: zleceniom zagranicznym (nearshore) i rekrutacji B2B.
+Lekcje kursu po angielsku (HTML/CSS basics, Bootstrap, GitHub Pages) konkurują z MDN
+i freeCodeCamp — szansa na ruch jest bliska zeru. Po 90 dniach danych z GSC: lekcje
+bez wyświetleń → `noindex`, usunięcie z sitemapy i z `POST_SLUGS`. Nowych lekcji nie
+tłumaczyć. Rozważyć ceny w EUR i `x-default` → EN dla usług, o mnie i portfolio.
 
-## 6. Pozyskiwanie linków (link building bez spamu)
+## 8. Encja i panel wiedzy (6–12 miesięcy)
 
-1. **LinkedIn** — regularne posty PL z linkiem do wpisów (ruch + marka).
-2. **aifeed.pl** — Twój drugi serwis; naturalny cross-link w stopce.
-3. **Uczelnie** — bio wykładowcy z linkiem (Civitas, WSR) — mocne domeny .edu.pl.
-4. **Katalogi branżowe / mapy**: Google Business Profile, Clutch, Useme.
-5. **Publikacje gościnne**: JustJoin.it, Bulldogjob, dev.to (wersje EN
-   z canonicalem na oryginał).
-6. **GitHub** — README projektów z linkiem do serwisu.
+Na stronie jest już jedna encja `Person` z `@id`, `alumniOf`, `knowsAbout` i `sameAs`.
+Brakuje sygnałów zewnętrznych, w kolejności siły:
 
-## 7. Pomiar (co miesiąc)
+1. LinkedIn z linkiem do serwisu i tą samą rolą (i zmienna `NEXT_PUBLIC_LINKEDIN_URL`).
+2. Biogramy wykładowcy na stronach Uniwersytetu Civitas i WSR z linkiem (domeny .edu.pl).
+3. Google Business Profile jako firma z obszarem obsługi (bez publicznego adresu),
+   ten sam zapis nazwy, miasta i kontaktu wszędzie.
+4. GitHub (README profilu), Behance dla case studies wideo i UX.
+5. Wystąpienia i publikacje gościnne z biogramem.
+6. To samo zdjęcie (≥ 800 px) i to samo zdanie opisu we wszystkich kanałach.
 
-- GSC: wyświetlenia, CTR, pozycje fraz → decyzja o kolejnych tematach.
-- Vercel Analytics: ruch na `/uslugi` i wpisy komercyjne, ścieżka do formularza.
-- Speed Insights: Core Web Vitals z ruchu rzeczywistego (nie z laboratorium).
-- Cel na 3 miesiące: indeksacja 100% sitemapy, 500+ wyświetleń/dzień w GSC,
-  pierwsze zapytanie ofertowe z organica.
+Do dopisania w `personSchema` po decyzji: `award` (Nagroda Rektora), `worksFor`
+/ `affiliation`, `knowsLanguage`, większe zdjęcie.
+
+## 9. Linki przychodzące (bez spamu)
+
+LinkedIn (posty z linkami do wpisów) · aifeed.pl (cross-link) · uczelnie (biogramy,
+wykład gościnny) · Google Business Profile · publikacje gościnne (JustJoin.it,
+Bulldogjob, dev.to w EN z canonicalem na oryginał) · GitHub README projektów ·
+meetupy i konferencje (nagranie + strona prelegenta).

@@ -1,214 +1,163 @@
-# Roadmapa: droga do produkcji i pierwszych przychodów
+# Plan działania — od 2 listopada 2026
 
-Stan na: 2026-08-26. Kod po wdrożeniu roadmapy — build, lint i typy przechodzą
-czysto, audyt dostępności daje 0 naruszeń na każdym typie strony.
+Jedyna lista rzeczy do zrobienia. Diagnoza i uzasadnienia: [AUDYT-2026-11.md](AUDYT-2026-11.md).
+Odhaczaj tutaj (`[x]`), żeby plan nie rozjechał się z rzeczywistością jak ten z sierpnia.
 
-Legenda: `[x]` zrobione · `[~]` zrobione inaczej niż zakładano (z uzasadnieniem)
-· `[ ]` wymaga działania poza kodem (Twojego konta, decyzji albo treści).
-
----
-
-## Etap 1 — Konfiguracja produkcyjna
-
-- [x] **Domena kanoniczna rozstrzygnięta: `www.zeprzalka.com`.**
-      Sprawdzenie na żywo pokazało, że apex odpowiada przekierowaniem 308 na
-      `www` — czyli `www` jest domeną główną w Vercelu, a kod wskazywał apex.
-      Adres jest teraz w jednym miejscu (`src/lib/site.ts`) i domyślnie wskazuje
-      `www`; wszystkie 152 wystąpienia w zbudowanej stronie są spójne.
-      **Do zrobienia u Ciebie:** ustaw w Vercelu `NEXT_PUBLIC_SITE_URL` na
-      `https://www.zeprzalka.com` **albo usuń tę zmienną** — wartość domyślna
-      jest już poprawna.
-- [ ] **Ponowne powiązanie projektu z nowym kontem Vercel (Pro, `m-5643`).**
-      Katalog `.vercel` wskazywał jeszcze poprzednią organizację — plik został
-      odsunięty (`.vercel/project.json.stare-konto`), żeby przypadkowe
-      `vercel deploy --prod` nie trafiło na stare konto. Do zrobienia:
-      `vercel login`, potem `vercel link` (wybierz zakres `m-5643`).
-- [ ] **Zmienne środowiskowe w Vercel (Production):** `SMTP_HOST`, `SMTP_PORT`,
-      `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASS`, opcjonalnie `CONTACT_EMAIL`,
-      `NEXT_PUBLIC_LINKEDIN_URL`, `GOOGLE_SITE_VERIFICATION`,
-      `BING_SITE_VERIFICATION`. Nie dało się zweryfikować — CLI Vercela nie jest
-      zalogowane w tym środowisku (`vercel login`, potem `vercel env ls`).
-- [ ] **Test formularza kontaktowego na produkcji** (wysyłka + odbiór +
-      odpowiedź na reply-to). Kod ma teraz dodatkowo limit zgłoszeń, więc przy
-      testach nie wysyłaj więcej niż 5 wiadomości na 10 minut z jednego adresu.
-- [x] **Commit i push zmian** — historia rozbita na commity tematyczne.
-      Deploy: `vercel deploy --prod` (push na GitHub nie wyzwala builda).
-- [~] **7 nieużywanych filmów w `public/`** — trafiły na stronę `/portfolio`
-      w sekcji „Wideo i animacja". Tytuły wziąłem z nazw plików, kategorie
-      z obejrzenia materiału (relacja z wydarzenia / wideo wizerunkowe /
-      wideo produktowe / content social media). **Potwierdź jedno i drugie**
-      w `src/lib/portfolio.ts` — zwłaszcza „Content sportowy", gdzie w kadrze
-      jest szyld 4F, ale nie wiem, czy to realizacja dla tej marki.
-      Do rozważenia osobno: `content-sport.mp4` (3,7 MB) i `rolki-lifestyle.mp4`
-      (2,8 MB) mają 2400 kb/s przy kadrze 636×750 — kompresja do ~900 kb/s
-      byłaby niezauważalna, a odchudziłaby stronę o połowę.
-
-## Etap 2 — Widoczność w Google
-
-- [ ] **Google Search Console**: weryfikacja domeny i zgłoszenie sitemapy.
-      Kod jest gotowy: ustaw `GOOGLE_SITE_VERIFICATION` (sam token, bez
-      znacznika `<meta>`), a znacznik pojawi się na wszystkich stronach.
-- [ ] **Bing Webmaster Tools**: analogicznie `BING_SITE_VERIFICATION`.
-- [x] **Analityka**: `@vercel/analytics` i `@vercel/speed-insights` wpięte
-      w layout. Oba skrypty ładują się z własnej domeny (`/_vercel/…`), nie
-      ustawiają ciasteczek i nie wymagają banera zgody. Lokalnie zwracają 404 —
-      działają dopiero po wdrożeniu na Vercela.
-- [x] **Dane strukturalne zweryfikowane lokalnie**: `WebSite` + `Person` (/),
-      `ProfilePage` (/o-mnie), `BlogPosting` + `BreadcrumbList` (wpisy),
-      `ProfessionalService` + `OfferCatalog` (/uslugi) — wszystkie z kompletem
-      wymaganych pól i bezwzględnymi adresami obrazów. Po wdrożeniu warto
-      przepuścić przez Rich Results Test dla pewności.
-- [x] **Lighthouse**: desktop 100/100/100 (wydajność, dostępność, SEO),
-      mobile 95/100/100. CLS 0 na wszystkich stronach.
-
-## Etap 3 — Konwersja i wiarygodność
-
-- [ ] **LinkedIn**: kod czeka na adres. Ustaw `NEXT_PUBLIC_LINKEDIN_URL`, a
-      profil sam dopisze się do stopki i do pola `sameAs` w danych
-      strukturalnych na `/` i `/o-mnie` (`src/lib/site.ts`).
-- [x] **Sekcja usług z widełkami cen**: nowa strona `/uslugi` — pięć pakietów,
-      opieka miesięczna wyróżniona jako przychód powtarzalny, trzy kroki
-      współpracy i wezwanie do wyceny. Podlinkowana w nagłówku, stopce, menu
-      mobilnym i mapie strony.
-      **Ceny pochodzą z rekomendacji w docs/MONETYZACJA.md i wymagają Twojego
-      potwierdzenia przed wdrożeniem** — wszystkie siedzą w jednym pliku
-      (`src/lib/services.ts`), zmiana stawki to zmiana jednej liczby.
-- [ ] **2–3 case studies** (Orlen, Vinci, aifeed.pl): problem → rozwiązanie →
-      wynik. To praca redakcyjna — potrzebuję od Ciebie liczb i kontekstu.
-- [ ] **Social proof**: rekomendacje muszą być prawdziwe, więc nie da się ich
-      napisać za Ciebie. Poproś 3–5 klientów, wtedy dołożę sekcję.
-- [x] **CV do pobrania (PDF)**: generowane ze strony `/o-mnie`
-      (`public/cv-michal-zeprzalka.pdf`, 2 strony, 147 KB), przycisk wrócił.
-      Style druku ukrywają nawigację i stopkę, więc wydruk każdej strony jest
-      czysty. Po większej zmianie treści `/o-mnie` wygeneruj PDF ponownie.
-- [x] **Wezwanie do działania pod każdym wpisem** (`components/blog/PostCta`):
-      realizuje regułę z docs/SEO.md §3 — każdy artykuł prowadzi do `/kontakt`
-      i `/o-mnie`, bez dopisywania czegokolwiek do 27 plików z treścią.
-
-## Etap 4 — Wydajność i bezpieczeństwo
-
-- [x] **Optymalizacja obrazków** — zrobione dwutorowo. Najpierw pre-kompresja
-      w `public/`: 22 pliki JPEG → WebP, **4,6 MB → 464 KB (−90%)**. Następnie,
-      po przejściu na plan **Vercel Pro**, włączona optymalizacja w locie
-      (`images.unoptimized` usunięte, formaty AVIF/WebP, roczny cache) wraz
-      z atrybutami `sizes` na wszystkich listach — telefon pobiera teraz kadr
-      dopasowany do ekranu, a nie pełne 1600 px. Wydajność `/blog` na mobile: 96.
-- [x] **Wideo hero**: ponowna kompresja **4,0 → 1,8 MB** (VP9) i
-      **5,8 → 3,2 MB** (H.264), bez widocznej różnicy w jakości. Do tego
-      prawdziwy poster (28 KB WebP) zamiast przezroczystego piksela,
-      `preload="metadata"` i wstępne pobranie posteru. LCP na mobile: 3,6 → 3,0 s.
-- [x] **Postery w portfolio**: osiem kadrów WebP zamiast pustych ramek —
-      galeria pokazuje treść, zanim wideo się wczyta.
-- [~] **CSP**: wdrożone jako polityka oparta na źródłach (`default-src 'self'`
-      plus jawne listy dla skryptów, stylów, obrazów, mediów, czcionek
-      i połączeń). **Świadomie bez nonce'ów**: w App Routerze nonce wymusza
-      renderowanie na żądanie, a serwis ma kilkadziesiąt stron statycznych —
-      zamieniłby je w dynamiczne i skasował cache brzegowy. Polityka nie
-      zatrzyma wstrzyknięcia inline, ale odcina ładowanie obcego kodu
-      i wyprowadzanie danych, czyli realne wektory dla serwisu bez logowania.
-- [x] **Limit zgłoszeń formularza**: 5 wysyłek na 10 minut z jednego adresu
-      (`src/lib/rate-limit.ts`), z komunikatem dla użytkownika. Licznik działa
-      w pamięci instancji — zatrzymuje zalewanie formularza, nie zdeterminowanego
-      napastnika. Gdy pojawi się realny spam: Upstash albo reguła Vercel WAF.
-- [x] **Ikony i manifest**: monogram 192/512 px, `apple-icon` 180 px,
-      `manifest.webmanifest` z kolorami motywu.
-- [x] **Dedykowany obraz Open Graph 1200×630** generowany kodem — osobny dla
-      serwisu i **osobny dla każdego wpisu**, z jego tytułem, kategoriami
-      i czasem czytania. Wcześniej wszystko dzieliło jeden PNG 300×300.
-
-## Etap 6 — Bezpieczeństwo zależności ✅
-
-- [x] **44 podatności → 0.** Audyt produkcyjny wykazał 20 wysokich, 21 średnich
-      i 3 niskie — głównie SSRF, obejście middleware i DoS w Next.js, do tego
-      nodemailer, postcss i parsery YAML.
-      - `next` 16.1.6 → **16.3.3** (advisory wymagały ≥16.2.11)
-      - `nodemailer` 8 → **9.0.5** (API zgodne, sprawdzone)
-      - `eslint-config-next` podniesione do tej samej wersji co Next
-      - `js-yaml@3` → `^3.15.1` i `yaml@^2` → `^2.8.3` przez `pnpm.overrides`;
-        obie paczki wchodzą pośrednio (gray-matter, next-mdx-remote), a ich
-        rodzice nie wydali aktualizacji. Zakres nadpisania jest wersjonowany,
-        więc nie rusza `js-yaml` 4.x używanego przez ESLint.
-
-      Po aktualizacji: `pnpm audit --prod` → **No known vulnerabilities found**.
-
-- [x] **Gałęzie `vercel/*` w repozytorium: NIE scalać.**
-      Vercel wypchnął dwie gałęzie naprawcze (`react-flight-rce-vulnerability`,
-      `react-server-components-cve`). Obie powstały ze **stanu repozytorium
-      sprzed audytu** i scalenie cofnęłoby kilkaset plików: usunęłoby
-      `src/lib/site.ts`, `services.ts`, `rate-limit.ts` i analitykę, a
-      przywróciło zależności skasowane w sierpniu. Same łatki są przy tym
-      nieaktualne: pierwsza podnosi Next 15.5.3 → 15.5.7, druga 16.0.8 →
-      16.0.10, podczas gdy serwis jest już na 16.3.3. Gałęzie można usunąć.
-
-## Etap 5 — Maszyna treści (proces ciągły)
-
-- [ ] **Rytm publikacji: 1 wpis / tydzień.** W `content/drafts/` czeka 5 szkiców.
-- [ ] **Dystrybucja każdego wpisu**: LinkedIn, grupy branżowe, newsletter.
-- [ ] **Przegląd GSC co miesiąc**: które frazy rosną → pod nie kolejne wpisy.
+**[Ty]** — Twoje konto, decyzja albo treść · **[Kod]** — praca w repozytorium ·
+**[Zgoda]** — zmienia wygląd strony głównej, czeka na Twoją akceptację.
 
 ---
 
-## Co zostało zrobione 2026-08-29 — wersja angielska
+## Zasady pracy (nowe)
 
-Serwis ma pełną wersję angielską pod `/en`. Polskie adresy nie zmieniły się
-ani o znak — są zaindeksowane, więc polska wersja została w katalogu głównym.
-Szczegóły: [docs/DWUJEZYCZNOSC.md](DWUJEZYCZNOSC.md).
-
-- **Jedno źródło prawdy dla tekstów.** Żaden napis nie może istnieć tylko
-  w jednym języku i pilnuje tego kompilator: moduły w `src/i18n/content/*`
-  to lustrzane drzewa, gdzie `en` ma typ `typeof pl`, a teksty należące do
-  danych (realizacje, pakiety) są parami `{ pl, en }` w miejscu deklaracji.
-- **Widoki wspólne dla obu języków** (`src/components/views/*`) — zmiana
-  układu podstrony to nadal jedna zmiana, nie dwie.
-- **27 wpisów bloga przetłumaczonych** (~39 000 słów) z własnymi, angielskimi
-  slugami; pary polski↔angielski w `src/i18n/blog-map.ts`.
-- **SEO**: `hreflang` z `x-default` na polską wersję, mapa strony z parami
-  językowymi (40 → 80 adresów), osobny kanał RSS `/en/feed.xml`, karty
-  Open Graph i dane strukturalne w obu językach.
-- **Dwa układy główne** (`(pl)` i `en`), bo `lang` na `<html>` ustawia
-  w App Routerze tylko układ główny. Nieznany adres obsługuje
-  `global-not-found.tsx` — pełna strona ze stylami i statusem 404.
-- **Polska wersja zweryfikowana strona po stronie** względem stanu sprzed
-  zmiany: w widocznym tekście 63 wygenerowanych stron jedyną różnicą jest
-  nowy przycisk przełącznika języka.
-
-**Do zrobienia u Ciebie:**
-- Zgłoś obie wersje w Google Search Console (właściwość domenowa obejmuje
-  `/en` automatycznie, ale warto sprawdzić raport „Wersje międzynarodowe").
-- CV w PDF jest tylko po polsku — przycisk na `/en/about` mówi o tym wprost.
-  Angielską wersję wygenerujesz drukując `/en/about` do PDF.
-- Potwierdź angielskie tytuły realizacji wideo w `src/lib/portfolio.ts`
-  („Automotive productions", „Sports content", „Rollerblading lifestyle").
+1. **Push na `main` = natychmiastowe wdrożenie na produkcję.** Dlatego pracuj na gałęzi:
+   `git switch -c nazwa` → push → Vercel buduje **podgląd** (Preview) → GitHub Actions
+   sprawdza treść, lint, typy, build i podatności → dopiero wtedy merge do `main`.
+2. Przed każdym commitem: `pnpm check` (treść + lint + build). Sam wpis: `pnpm check:content`.
+3. Zmiany wyglądu zaczynamy w `/design-system`, nie na stronie głównej.
+4. Każda zmiana pliku używanego przez stronę główną → porównanie zrzutów przed/po
+   (metoda w README, „Kontrola wizualna”).
 
 ---
 
-## Co zostało zrobione 2026-08-26
+## Dzień 0 — wdrożenie tej rundy (ok. 1 h)
 
-**Adresy i dane strukturalne**
-- `src/lib/site.ts` jako jedyne źródło adresu, nazwy, opisu, autora i profili
-  społecznościowych (wcześniej powielone w 8 plikach).
-- Autor w danych strukturalnych to teraz osoba, a nie nazwa domeny — pokrywa się
-  z widoczną notą pod wpisem. Bloki `author` usunięte z 25 plików treści.
-- Obsługa `updated` we frontmatterze → `dateModified` i data w mapie strony.
+- [ ] **1. Przejrzyj zmiany.** `git log --oneline main..audyt-2026-11` i ten katalog `docs/`.
+      Przeczytaj politykę prywatności: `src/i18n/content/legal.ts` (szczególnie okres
+      przechowywania — 12 miesięcy to moja propozycja).
+- [ ] **2. Ustawienia projektu w Vercelu** (Settings):
+      - *Build and Deployment* → wyłącz nadpisania **Install Command** i **Build Command**
+        (dziś `npm install` / `npm run build`). `vercel.json` i tak ma pierwszeństwo,
+        ale panel nie powinien mówić czego innego niż repozytorium.
+      - *Functions* → region **fra1** (Frankfurt) i włączone **Fluid Compute**.
+      - *Environment Variables* → `NEXT_PUBLIC_SITE_URL` = `https://www.zeprzalka.com`
+        albo usuń (wartość domyślna jest poprawna). Resztę zmiennych uporządkuj według
+        `docs/prywatne/BEZPIECZENSTWO.md`.
+- [ ] **3. Podgląd przed produkcją:**
+      ```bash
+      git push -u origin audyt-2026-11
+      git push origin warianty-strony-glownej-2026-08   # tag z kodem odrzuconych wariantów
+      ```
+      Vercel zbuduje podgląd, GitHub Actions uruchomi CI. Jeśli push zostanie odrzucony
+      z powodu `.github/workflows`, Twój token potrzebuje uprawnienia `workflow`
+      (albo użyj `gh auth login`).
+- [ ] **4. Sprawdź log buildu podglądu:** ma być `Running "install" command: pnpm install
+      --frozen-lockfile` i `Next.js 16.4.4`. Przejdź po podglądzie: strona główna, wpis,
+      `/blog/strona/2`, `/polityka-prywatnosci`, formularz (bez wysyłania).
+- [ ] **5. Wdrożenie:**
+      ```bash
+      git switch main && git merge --ff-only audyt-2026-11 && git push origin main
+      ```
+      Pierwszy deploy po zmianie ustawień: w Vercelu *Redeploy* z odznaczonym
+      „Use existing Build Cache”.
+- [ ] **6. Weryfikacja na produkcji:**
+      ```bash
+      # wersja Next w publicznym JS (oczekiwane 16.4.4)
+      for j in $(curl -s https://www.zeprzalka.com/ | grep -oE '/_next/static/[^"]+\.js' | sort -u); do
+        curl -s "https://www.zeprzalka.com$j" | grep -oE 'version:"16\.[0-9.]+"' && break; done
+      # blog statyczny (oczekiwane: x-vercel-cache HIT po drugim wywołaniu, bez no-store)
+      curl -sI https://www.zeprzalka.com/blog | grep -iE 'cache'
+      ```
+      Plus: PageSpeed Insights dla `/` i jednego wpisu, LinkedIn Post Inspector dla `/uslugi`,
+      **jedna prawdziwa wiadomość z formularza** (sprawdź skrzynkę i odpowiedź na reply-to).
+- [ ] **7. Sprzątanie gałęzi:**
+      ```bash
+      git push origin --delete vercel/react-flight-rce-vulnerability-t4208i vercel/react-server-components-cve-vu-06xirk
+      git branch -d audyt-2026-11
+      ```
 
-**Higiena treści (docs/SEO.md §4)**
-- Kategorie: **48 → 6** (Web development, Next.js, AI, SaaS, Design, Projekty).
-- Tagi: **114 → 18** przekrojowych (86 tagów występowało dokładnie raz).
-- Tytuły: 12 skróconych do ≤60 znaków, fraza kluczowa z przodu.
-- Opisy meta: 20 przepisanych, wszystkie 27 mieszczą się w 140–165 znakach.
-- Efekt uboczny: **207 → 70 stron statycznych** — zniknęły dziesiątki stron
-  z jednym wpisem, które rozpraszały ruch i budżet indeksowania.
+## Dni 1–3 — konta i pomiar (same Twoje działania, ok. 3 h)
 
-**Dostępność**
-- Etykiety dla nawigacji w nagłówku, stopce i menu mobilnym.
-- Naprawiona hierarchia nagłówków na listach kategorii i tagów.
-- Nagłówki kategorii pokazują właściwą nazwę („AI"), a nie odwrócony slug („ai").
-- Audyt axe: **0 naruszeń** na wszystkich typach stron.
+- [ ] **Google Search Console**: właściwość domenowa (rekord TXT w Vercel DNS), zgłoś
+      `https://www.zeprzalka.com/sitemap.xml`, sprawdź raporty „Strony” i „Wersje
+      międzynarodowe”. Po tygodniu Rich Results Test dla wpisu, `/o-mnie` i `/uslugi`.
+- [ ] **Bing Webmaster Tools**: import z GSC (2 minuty; Bing zasila m.in. Copilota).
+- [ ] **LinkedIn**: ustaw `NEXT_PUBLIC_LINKEDIN_URL` w Vercelu (profil sam trafi do stopki
+      i danych strukturalnych). Uporządkuj profil według MONETYZACJA.md §7.
+- [ ] **Bezpieczeństwo konta** — lista w `docs/prywatne/BEZPIECZENSTWO.md` (sekrety,
+      rekordy poczty, stare projekty Vercel, WAF, 2FA, ochrona `main`).
+- [ ] **GitHub**: bio zgodne ze stroną (bez „financial freedom”), README profilu,
+      archiwizacja repozytoriów testowych.
+- [ ] Zapisz, ile zapytań przyszło od sierpnia i z jakimi budżetami — punkt odniesienia.
 
-## Co zostało zrobione w audycie (2026-08-12)
+## Dni 4–7 — decyzje i pomiar konwersji
 
-Bezpieczeństwo formularza (escapowanie HTML, ochrona nagłówków przed CRLF,
-limity długości, honeypot, obsługa błędów SMTP), naprawiony link `/cv` → 404,
-naruszenie zasad hooków w `ActiveTOC`, parsowanie `?page=`, nagłówki
-bezpieczeństwa, deduplikacja komponentów (`components/home`, wspólny
-`ContactForm`, `slugify` w `lib/posts.ts`), aktualizacja `eslint-config-next`.
+- [ ] **[Ty] Decyzje z AUDYT-2026-11.md §4**: staż, rola i propozycja wartości, ceny.
+- [ ] **[Kod] Zdarzenia Vercel Analytics** (MONETYZACJA.md §6): `lead_submitted`
+      i `lead_failed` po stronie serwera, `cta_click`, `email_click`, `cv_download`.
+- [ ] **[Kod] Tożsamość ujednolicona** po decyzji: `src/lib/site.ts`, `src/i18n/content/*`.
+- [ ] **[Ty] Dane firmy** (forma działalności, NIP, VAT) → **[Kod]** stopka/kontakt i polityka.
+- [ ] **[Ty] Prośba o rekomendacje** do 5 klientów i 3 osób z uczelni (3 pytania:
+      problem przed współpracą, co się zmieniło, komu byś mnie polecił).
+- [ ] **[Ty] Treść**: transcendencja → kategorie „AI” (+ tagi), wpis o SaaS → tagi i obiecane
+      linki do własnych produktów, `featured` tylko dla 2–4 wpisów. Potem `pnpm check:content`.
+
+## Tydzień 2 — oferta, która sprzedaje
+
+- [ ] **[Kod] `/uslugi` v2** (po decyzji o cenach): pakiety od najcenniejszego, „dla kogo”,
+      terminy, CTA przy pakiecie, gwarancje, proces 6 kroków, FAQ (VAT, płatności, prawa
+      autorskie), siatka bez osieroconej karty.
+- [ ] **[Ty → Kod] Kalendarz** (Cal.com/Calendly) w CTA.
+- [ ] **[Kod] Formularz v2**: temat z listy, widełki budżetu zgodne z cennikiem, termin;
+      „Zapytaj o ten pakiet” wypełnia temat; komunikat sukcesu z kolejnymi krokami.
+- [ ] **[Zgoda] Teksty strony głównej** (tylko tekst): hero, leady sekcji, CTA.
+- [ ] **[Zgoda] Portfolio w nawigacji** albo link „Wszystkie realizacje” pod galerią.
+
+## Tygodnie 3–4 — dowody
+
+- [ ] **[Kod] Szablon case study** `/portfolio/[slug]` (+ `/en/portfolio/[slug]`): problem →
+      rola → proces → wynik w liczbach → zakres i technologie, film jako hero, `CreativeWork`.
+- [ ] **[Ty] Case study #1: aifeed.pl** (architektura, koszty LLM, ruch).
+- [ ] **[Kod] Grupa „Własne produkty”** w portfolio (aifeed.pl, SocialManager).
+- [ ] **[Ty + Kod] Specimen kierunku wizualnego** w `/design-system` (KIERUNEK-WIZUALNY.md).
+- [ ] **[Kod] Szablon wpisu**: kolumna 66 znaków, `prose` 18 px, spis treści na telefonie,
+      podpis zdjęcia pod obrazem, nawigacja serii (Makerkit, kurs).
+
+---
+
+## Cele mierzalne
+
+Punkt startowy to brak danych — w tygodniu 2 zapisz poziom wyjściowy i skoryguj liczby.
+
+| Termin | Cel |
+| --- | --- |
+| **30 dni** (2 grudnia) | 100% kluczowych zdarzeń mierzonych · GSC i Bing zweryfikowane · LinkedIn w serwisie · ≥ 3 rekomendacje · 1 case study · nowe `/uslugi` · ≥ 2 zapytania z budżetem ≥ 10 tys. zł |
+| **60 dni** (1 stycznia) | 3 case studies · sekcja rekomendacji · wpis „Ile kosztuje strona w 2026” · Laboratorium #1 · magnes na leady + newsletter · ≥ 6 zakwalifikowanych zapytań · 1 sprzedany sprint diagnostyczny |
+| **90 dni** (31 stycznia) | ≥ 2 podpisane projekty ≥ 10 tys. zł · ≥ 2 klientów na opiece · oferta szkoleń online · hub „Akademia” · 1 wystąpienie · indeksacja 100% sitemapy w GSC |
+
+Przegląd raz w miesiącu: GSC (wyświetlenia, CTR, frazy), Vercel Analytics (lejek
+`/uslugi` → `cta_click` → `lead_submitted`), Speed Insights (p75 LCP i INP z ruchu
+rzeczywistego), arkusz leadów (źródło, budżet, status, wartość).
+
+---
+
+## Zaległości w kodzie (backlog)
+
+Uporządkowane według zysku. Pozycje [Zgoda] czekają na decyzję o stronie głównej.
+
+| P | Zadanie | Gdzie |
+| --- | --- | --- |
+| P1 | Zdarzenia konwersji (serwer + klient) | `src/app/actions/contact.ts`, przyciski CTA |
+| P1 | `/uslugi` v2 + JSON-LD wyliczany z danych (`priceRange`, `UnitPriceSpecification` dla opieki) | `src/lib/services.ts`, `ServicesView.tsx` |
+| P1 | Szablon case study + podstrony usług (`/uslugi/strony-internetowe`, `…/wdrozenia-ai`…) | nowe trasy + `ROUTES` |
+| P1 [Zgoda] | Pauza wideo i stałe podpisy kafli portfolio (WCAG 2.2.2) | `PortfolioCard.tsx`, `Hero.tsx` |
+| P2 | Szablon wpisu: szerokość kolumny, typografia, spis treści na mobile, podpis zdjęcia, H1 | `PostView.tsx` |
+| P2 | Hub „Akademia” z lekcjami kursu (adresy wpisów bez zmian) | nowa trasa |
+| P2 | Wstępy do kategorii (60–120 słów, link do usługi) | `blog-map.ts`, `CategoryView.tsx` |
+| P2 | BotID dla formularza (po regule WAF) | `next.config.ts`, `contact.ts` |
+| P2 | Menu mobilne jako „plansza” (e-mail, CTA, EN/PL) | `MobileNav.tsx` |
+| P2 | `llms.txt` generowany z `ROUTES`, usług i wpisów | nowa trasa |
+| P3 | Angielska 404 dla `/en/*` | `global-not-found.tsx` |
+| P3 | Lazy load panelu menu mobilnego (Radix Dialog, 11 KB na każdej stronie) | `MobileNav.tsx` |
+| P3 [Zgoda] | Hero: poster przez `next/image` zamiast `preload()` (dziś prefetch strony głównej pobiera 28 KB postera na każdej podstronie), wersja wideo dla telefonów | `HomeView.tsx`, `Hero.tsx` |
+| P3 [Zgoda] | Dług z `/design-system`: 5 rozmiarów CTA → 2, `top-22/24` → jedna zmienna, `md:font-semi-bold`, `bg-green-500` → token | strona główna i podstrony |
+| P3 | Lucide 0.544 → 1.x, TypeScript 7, ESLint 10 (major — osobno, z testem) | `package.json` |
+
+---
+
+## Historia
+
+Ustalenia i prace z 12 i 26–29 sierpnia 2026 (domena kanoniczna, taksonomia, WebP,
+CSP, `/uslugi`, CV w PDF, wersja angielska) są opisane w historii gita —
+`git log --until=2026-08-30`. Stan po audycie z 2 listopada 2026 opisuje
+[AUDYT-2026-11.md](AUDYT-2026-11.md).

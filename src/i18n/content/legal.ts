@@ -7,8 +7,8 @@
  * w localStorage (next-themes), filmy YouTube w trybie youtube-nocookie.
  * Zmiana któregokolwiek z tych mechanizmów wymaga aktualizacji tego pliku.
  *
- * Okres przechowywania i dane firmy to decyzje właściciela — patrz
- * docs/ROADMAP.md, sekcja „Do decyzji".
+ * Okres przechowywania (12 miesięcy) i dane usługodawcy to decyzje właściciela
+ * — patrz docs/AUDYT-2026-11.md, sekcja 4.
  */
 import type { Locale } from "@/i18n/config"
 

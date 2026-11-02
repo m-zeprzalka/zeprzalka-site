@@ -60,8 +60,8 @@ export function RulesSection() {
             </strong>{" "}
             — materiały w portfolio odtwarzają się w pętli i osoba bez ustawienia
             „ogranicz ruch&rdquo; nie ma jak ich zatrzymać (WCAG 2.2.2).
-            Komponent <DsInline>media/SmartVideo</DsInline> (używany przez
-            warianty) ma już przycisk pauzy — wystarczy przenieść go do galerii.
+            Przycisk pauzy w kaflu portfolio zmienia wygląd strony głównej,
+            więc czeka na decyzję (docs/AUDYT-2026-11.md).
           </>
         }
       >

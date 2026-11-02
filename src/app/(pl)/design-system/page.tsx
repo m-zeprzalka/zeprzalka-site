@@ -67,9 +67,9 @@ export default function DesignSystemPage() {
             <p className="mt-3 max-w-3xl text-sm text-muted-foreground leading-relaxed">
               Ostatnia sekcja zbiera rozbieżności między systemem a kodem — to
               lista decyzji do podjęcia, nie błędów do cichego poprawienia.
-              Warianty testowe (<DsInline>/main-secondary</DsInline>,{" "}
-              <DsInline>/main-third</DsInline>, <DsInline>/main-fourth</DsInline>)
-              są osobnymi eksperymentami i nie należą do tego systemu.
+              Trzy odrzucone warianty strony głównej zostały usunięte z serwisu
+              w listopadzie 2026 — ich kod przechowuje tag gita{" "}
+              <DsInline>warianty-strony-glownej-2026-08</DsInline>.
             </p>
 
             <dl className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">

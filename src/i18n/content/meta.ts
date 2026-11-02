@@ -14,7 +14,7 @@ const pl = {
     titleTemplate: "%s | Michał Zeprzałka",
     ogDescription:
       "Strony internetowe, aplikacje webowe, design i integracje AI dla biznesu.",
-    siteName: "Michał Zeprzałka - Portfolio i Blog",
+    siteName: "Michał Zeprzałka",
     feedTitle: "Blog - Michał Zeprzałka",
   },
   services: {
@@ -125,7 +125,7 @@ const en: typeof pl = {
     titleTemplate: "%s | Michał Zeprzałka",
     ogDescription:
       "Websites, web applications, design and AI integrations for business.",
-    siteName: "Michał Zeprzałka - Portfolio and Blog",
+    siteName: "Michał Zeprzałka",
     feedTitle: "Blog - Michał Zeprzałka",
   },
   services: {

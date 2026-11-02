@@ -117,6 +117,8 @@ const nextConfig: NextConfig = {
   async redirects() {
     const page = "(?<n>[2-9]|[1-9]\\d+)"
     return [
+      // iOS i część robotów pytają o ten adres wprost; Next serwuje ikonę jako /apple-icon.png.
+      { source: "/apple-touch-icon.png", destination: "/apple-icon.png", permanent: true },
       {
         source: "/blog",
         has: [{ type: "query", key: "page", value: page }],

@@ -1,5 +1,5 @@
 import { getAllPosts } from "@/lib/posts"
-import { SITE_URL, absoluteUrl } from "@/lib/site"
+import { AUTHOR, SITE_URL, absoluteUrl } from "@/lib/site"
 import { BCP47, ROUTES, postPath, type Locale } from "@/i18n/config"
 import { getMeta } from "@/i18n/content/meta"
 
@@ -28,18 +28,26 @@ export function buildFeed(locale: Locale): string {
       <link>${absoluteUrl(postPath(locale, post.slug))}</link>
       <guid isPermaLink="true">${absoluteUrl(postPath(locale, post.slug))}</guid>
       <description>${escapeXml(post.frontmatter.description)}</description>
+      <dc:creator>${escapeXml(AUTHOR.name)}</dc:creator>
+${post.frontmatter.categories.map((c) => `      <category>${escapeXml(c)}</category>`).join("\n")}
       <pubDate>${new Date(post.frontmatter.date).toUTCString()}</pubDate>
     </item>`
     )
     .join("\n")
 
   return `<?xml version="1.0" encoding="UTF-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/elements/1.1/">
   <channel>
     <title>${escapeXml(m.root.feedTitle)}</title>
     <link>${absoluteUrl(ROUTES.blog[locale])}</link>
     <description>${escapeXml(m.blog.feedDescription)}</description>
     <language>${BCP47[locale]}</language>
+    <lastBuildDate>${new Date(posts[0]?.frontmatter.updated || posts[0]?.frontmatter.date || Date.now()).toUTCString()}</lastBuildDate>
+    <image>
+      <url>${absoluteUrl("/icon-512.png")}</url>
+      <title>${escapeXml(m.root.feedTitle)}</title>
+      <link>${absoluteUrl(ROUTES.blog[locale])}</link>
+    </image>
     <atom:link href="${SITE_URL}${ROUTES.feed[locale]}" rel="self" type="application/rss+xml"/>
 ${items}
   </channel>

@@ -9,7 +9,6 @@
  * zamiast jednego bytu, który da się skleić w panel wiedzy.
  */
 import { ROUTES, BCP47, postPath, type Locale } from "@/i18n/config"
-import { getMeta } from "@/i18n/content/meta"
 import { getPages } from "@/i18n/content/pages"
 import {
   AUTHOR,
@@ -71,7 +70,9 @@ export function websiteSchema(locale: Locale): Schema {
   return {
     "@type": "WebSite",
     "@id": websiteId(locale),
-    name: getMeta(locale).root.titleDefault,
+    // Ta sama nazwa co sufiks tytułów — Google wybiera z niej nazwę witryny w wynikach.
+    name: AUTHOR.name,
+    alternateName: "zeprzalka.com",
     url: absoluteUrl(ROUTES.home[locale]),
     inLanguage: BCP47[locale],
     publisher: { "@id": PERSON_ID },

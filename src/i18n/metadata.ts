@@ -34,6 +34,15 @@ export function rootMetadata(locale: Locale): Metadata {
     robots: {
       index: true,
       follow: true,
+      // Duże podglądy obrazów i pełne fragmenty — warunek wejścia do Google
+      // Discover i większych kart w wynikach.
+      googleBot: {
+        index: true,
+        follow: true,
+        "max-image-preview": "large",
+        "max-snippet": -1,
+        "max-video-preview": -1,
+      },
     },
     twitter: {
       card: "summary_large_image",

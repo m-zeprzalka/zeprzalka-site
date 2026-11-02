@@ -1,0 +1,44 @@
+# Bramka jakości. Każdy push na `main` od razu wdraża się na produkcję
+# (integracja Vercel ↔ GitHub), więc te same kroki warto mieć zielone,
+# zanim zmiana tam trafi — najlepiej pracując na gałęzi i otwierając PR.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Treść bloga (frontmatter, pary PL↔EN, obrazy)
+        run: pnpm check:content
+
+      - name: Typy
+        run: pnpm typecheck
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Build produkcyjny
+        run: pnpm build
+
+      - name: Podatności zależności produkcyjnych
+        run: pnpm audit --prod --audit-level high

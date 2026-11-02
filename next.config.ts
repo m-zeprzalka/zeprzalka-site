@@ -7,17 +7,40 @@ import type { NextConfig } from "next"
 const isDev = process.env.NODE_ENV === "development"
 
 const securityHeaders = [
-  { key: "X-DNS-Prefetch-Control", value: "on" },
+  // Przeglądarka nie rozwiązuje z wyprzedzeniem domen linków zewnętrznych.
+  { key: "X-DNS-Prefetch-Control", value: "off" },
   {
     key: "Strict-Transport-Security",
     value: "max-age=63072000; includeSubDomains; preload",
   },
-  { key: "X-Frame-Options", value: "SAMEORIGIN" },
+  // Serwis nie osadza sam siebie w ramkach — nikt inny też nie powinien.
+  { key: "X-Frame-Options", value: "DENY" },
   { key: "X-Content-Type-Options", value: "nosniff" },
-  { key: "Referrer-Policy", value: "origin-when-cross-origin" },
+  // Domyślna wartość przeglądarek: pełny adres tylko w obrębie serwisu,
+  // na zewnątrz sam origin i nic przy przejściu z HTTPS na HTTP.
+  { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+  // Okno otwarte z serwisu nie dostaje uchwytu do niego (i odwrotnie).
+  { key: "Cross-Origin-Opener-Policy", value: "same-origin" },
   {
     key: "Permissions-Policy",
-    value: "camera=(), microphone=(), geolocation=()",
+    // fullscreen, autoplay i encrypted-media świadomie bez wpisu — pusta
+    // lista zablokowałaby je także w ramce YouTube we wpisach.
+    value: [
+      "camera=()",
+      "microphone=()",
+      "geolocation=()",
+      "payment=()",
+      "usb=()",
+      "serial=()",
+      "hid=()",
+      "bluetooth=()",
+      "midi=()",
+      "magnetometer=()",
+      "display-capture=()",
+      "idle-detection=()",
+      "browsing-topics=()",
+      "xr-spatial-tracking=()",
+    ].join(", "),
   },
   /*
    * Polityka bezpieczeństwa treści oparta na źródłach.
@@ -59,9 +82,10 @@ const securityHeaders = [
       "manifest-src 'self'",
       "object-src 'none'",
       "base-uri 'self'",
-      "frame-ancestors 'self'",
+      "frame-ancestors 'none'",
       "form-action 'self'",
-      "frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com",
+      // Filmy we wpisach ładują się wyłącznie z domeny bez ciasteczek.
+      "frame-src 'self' https://www.youtube-nocookie.com",
       ...(isDev ? [] : ["upgrade-insecure-requests"]),
     ].join("; "),
   },
@@ -80,6 +104,32 @@ const nextConfig: NextConfig = {
      * dokument — i nadal odpowiada statusem 404, a nie 200.
      */
     globalNotFound: true,
+    // Jedyna akcja serwerowa to formularz kontaktowy; najdłuższa poprawna
+    // wiadomość ma ~21 KB, więc domyślny 1 MB to niepotrzebny zapas dla DoS.
+    serverActions: { bodySizeLimit: "64kb" },
+  },
+
+  /*
+   * Paginacja bloga przeszła z `?page=N` na statyczne adresy, żeby indeks
+   * bloga mógł być serwowany z cache CDN. Stare adresy prowadzą na nowe.
+   * Strona 1 nie ma odpowiednika — `/blog?page=1` to i tak `/blog`.
+   */
+  async redirects() {
+    const page = "(?<n>[2-9]|[1-9]\\d+)"
+    return [
+      {
+        source: "/blog",
+        has: [{ type: "query", key: "page", value: page }],
+        destination: "/blog/strona/:n",
+        permanent: true,
+      },
+      {
+        source: "/en/blog",
+        has: [{ type: "query", key: "page", value: page }],
+        destination: "/en/blog/page/:n",
+        permanent: true,
+      },
+    ]
   },
 
   async headers() {
@@ -87,6 +137,18 @@ const nextConfig: NextConfig = {
       {
         source: "/:path*",
         headers: securityHeaders,
+      },
+      {
+        // Obrazy z public/ nie mają skrótu treści w nazwie, więc nie mogą być
+        // `immutable` jak /_next/static — tydzień cache zamiast rewalidacji
+        // przy każdej wizycie (domyślnie Vercel daje max-age=0).
+        source: "/:dir(blog|portfolio)/:file([^/]+\\.(?:webp|png|jpg|jpeg|svg))",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=604800, stale-while-revalidate=86400",
+          },
+        ],
       },
       {
         // Wideo portfolio jest wersjonowane nazwą pliku — może być cache'owane bez końca

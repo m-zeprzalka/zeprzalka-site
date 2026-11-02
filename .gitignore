@@ -39,3 +39,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# prywatne notatki i raporty (np. szczegóły bezpieczeństwa) — tylko lokalnie
+/docs/prywatne/

@@ -1,0 +1,4 @@
+Contact: mailto:m@zeprzalka.com
+Expires: 2027-11-01T00:00:00.000Z
+Preferred-Languages: pl, en
+Canonical: https://www.zeprzalka.com/.well-known/security.txt

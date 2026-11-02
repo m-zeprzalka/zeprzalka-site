@@ -4,7 +4,7 @@ import { useState } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { Menu, X } from "lucide-react"
-import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet"
+import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
 import { ModeToggle } from "@/components/Toggle"
 import { Logo } from "@/components/layout/Logo"
 import { cn } from "@/lib/utils"
@@ -27,21 +27,22 @@ export function MobileNav({ locale }: { locale: Locale }) {
 
   return (
     <>
-      {/* Hamburger — otwiera panel */}
-      <button
-        onClick={() => setOpen(true)}
-        aria-label={copy.nav.openMenu}
-        className="md:hidden flex items-center justify-center w-9 h-9 rounded-md hover:bg-muted transition-colors"
-      >
-        <Menu className="w-5 h-5" />
-      </button>
-
       {/*
         Sheet renderuje SheetContent w Radix Portal (koniec <body>).
         bg-background działa, bo element jest poza stacking context headera.
-        Radix obsługuje automatycznie: overlay, scroll-lock, Escape.
+        Radix obsługuje automatycznie: overlay, scroll-lock, Escape — a dzięki
+        SheetTrigger także powrót fokusu na hamburger po zamknięciu panelu
+        (wcześniej fokus spadał na <body>).
       */}
       <Sheet open={open} onOpenChange={setOpen}>
+        <SheetTrigger asChild>
+          <button
+            aria-label={copy.nav.openMenu}
+            className="md:hidden flex items-center justify-center w-9 h-9 rounded-md hover:bg-muted transition-colors"
+          >
+            <Menu className="w-5 h-5" />
+          </button>
+        </SheetTrigger>
         <SheetContent
           side="top"
           showCloseButton={false}

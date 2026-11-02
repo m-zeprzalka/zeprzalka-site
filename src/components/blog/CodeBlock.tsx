@@ -36,7 +36,7 @@ export function CodeBlock({
 
       <button
         onClick={handleCopy}
-        className="absolute top-3 right-3 p-2 rounded-md bg-background/80 border hover:bg-background transition-all opacity-0 group-hover:opacity-100 focus:opacity-100"
+        className="absolute top-3 right-3 p-2 rounded-md bg-background/80 border hover:bg-background transition-all opacity-0 group-hover:opacity-100 focus:opacity-100 [@media(hover:none)]:opacity-100"
         aria-label={copyLabel}
         type="button"
       >
@@ -46,6 +46,10 @@ export function CodeBlock({
           <Copy className="w-4 h-4" />
         )}
       </button>
+      {/* Ekran nie zmienia się poza ikoną — potwierdzenie musi dotrzeć też do czytnika. */}
+      <span className="sr-only" role="status">
+        {copied ? "✓" : ""}
+      </span>
     </div>
   )
 }

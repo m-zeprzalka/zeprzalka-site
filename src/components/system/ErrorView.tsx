@@ -23,7 +23,7 @@ export function ErrorView({
 
   return (
     <div className="container mx-auto px-4 py-24 flex flex-col items-center justify-center min-h-[60vh] text-center">
-      <h2 className="text-3xl md:text-4xl font-bold mb-4">{copy.title}</h2>
+      <h1 className="text-3xl md:text-4xl font-bold mb-4">{copy.title}</h1>
       <p className="text-muted-foreground mb-8">
         {copy.description}
       </p>

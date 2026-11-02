@@ -81,7 +81,7 @@ export function BlogIndexView({
                   <div className="relative aspect-[16/9] rounded-xl overflow-hidden mb-6">
                     <Image
                       src={post.frontmatter.image}
-                      alt={post.frontmatter.title}
+                      alt=""
                       fill
                       preload
                       sizes="(min-width: 768px) 50vw, 100vw"
@@ -146,13 +146,16 @@ export function BlogIndexView({
           <Pagination aria-label={copy.paginationAria}>
             <PaginationContent>
               <PaginationItem>
-                <PaginationPrevious
-                  label={copy.previousPage}
-                  href={currentPage > 1 ? blogPagePath(locale, currentPage - 1) : "#"}
-                  aria-disabled={currentPage === 1}
-                  tabIndex={currentPage === 1 ? -1 : undefined}
-                  className={currentPage === 1 ? "pointer-events-none opacity-50" : ""}
-                />
+                {currentPage > 1 ? (
+                  <PaginationPrevious
+                    label={copy.previousPage}
+                    href={blogPagePath(locale, currentPage - 1)}
+                  />
+                ) : (
+                  <span aria-disabled="true" className="pointer-events-none opacity-50">
+                    <PaginationPrevious label={copy.previousPage} href="" tabIndex={-1} aria-hidden="true" />
+                  </span>
+                )}
               </PaginationItem>
 
               {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => {
@@ -188,13 +191,16 @@ export function BlogIndexView({
               })}
 
               <PaginationItem>
-                <PaginationNext
-                  label={copy.nextPage}
-                  href={currentPage < totalPages ? blogPagePath(locale, currentPage + 1) : "#"}
-                  aria-disabled={currentPage === totalPages}
-                  tabIndex={currentPage === totalPages ? -1 : undefined}
-                  className={currentPage === totalPages ? "pointer-events-none opacity-50" : ""}
-                />
+                {currentPage < totalPages ? (
+                  <PaginationNext
+                    label={copy.nextPage}
+                    href={blogPagePath(locale, currentPage + 1)}
+                  />
+                ) : (
+                  <span aria-disabled="true" className="pointer-events-none opacity-50">
+                    <PaginationNext label={copy.nextPage} href="" tabIndex={-1} aria-hidden="true" />
+                  </span>
+                )}
               </PaginationItem>
             </PaginationContent>
           </Pagination>

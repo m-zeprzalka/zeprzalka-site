@@ -114,9 +114,11 @@ export function DebtSection() {
           ))}
         </ul>
         <p className="mt-3 text-sm text-muted-foreground">
-          Po tych zmianach audyt axe nie zgłasza już żadnego naruszenia na
-          żadnym typie strony, a Lighthouse daje 100 na desktopie i 95 na
-          mobile.
+          Audyt z 2 listopada 2026 znalazł kolejne problemy (przełącznik języka
+          i paginacja niezgodne z WCAG 2.5.3, 404 bez H1, słaby pierścień
+          fokusu, formularz gubiący dane, zepsuty wydruk) — naprawione w tej
+          samej rundzie, opis w docs/AUDYT-2026-11.md. Otwarte pozycje poniżej
+          nadal obowiązują.
         </p>
       </div>
 

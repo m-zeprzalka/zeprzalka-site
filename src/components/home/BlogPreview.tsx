@@ -43,7 +43,7 @@ export function BlogPreview({ locale }: { locale: Locale }) {
                   {post.frontmatter.image && (
                     <Image
                       src={post.frontmatter.image}
-                      alt={post.frontmatter.title}
+                      alt=""
                       fill
                       className="object-cover transition-transform duration-500 ease-in-out group-hover:scale-105"
                       sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 33vw"

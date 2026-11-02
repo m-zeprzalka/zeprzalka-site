@@ -72,7 +72,7 @@ const pl = {
   notFound: {
     title: "Strona nie znaleziona",
     description:
-      "Wygląda na to, że strona, której szukasz zadziałała tylko w wyobraźni. Przejdźmy na stabilny grunt.",
+      "Wygląda na to, że strona, której szukasz, zadziałała tylko w wyobraźni. Przejdźmy na stabilny grunt.",
     cta: "Wróć na stronę główną",
   },
   error: {

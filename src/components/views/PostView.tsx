@@ -205,7 +205,7 @@ export function PostView({ post, locale }: { post: Post; locale: Locale }) {
           <article className="lg:col-span-6 xl:col-span-7">
             {/* Header */}
             <header className="mb-12">
-              <Breadcrumb className="mb-6">
+              <Breadcrumb className="mb-6" aria-label={copy.breadcrumbAria}>
                 <BreadcrumbList>
                   <BreadcrumbItem>
                     <BreadcrumbLink href={ROUTES.blog[locale]}>
@@ -341,7 +341,8 @@ export function PostView({ post, locale }: { post: Post; locale: Locale }) {
               {/* Author */}
               <div className="flex flex-col sm:flex-row items-start gap-6 bg-muted/40 p-6 rounded-lg border">
                 <Avatar className="w-20 h-20 border">
-                  <AvatarImage src={AUTHOR.avatarSmall} alt={AUTHOR.name} loading="lazy" />
+                  {/* alt pusty: imię i nazwisko stoją tuż obok jako tekst. */}
+                    <AvatarImage src={AUTHOR.avatarSmall} alt="" loading="lazy" />
                   <AvatarFallback>MZ</AvatarFallback>
                 </Avatar>
                 <div className="flex-1">

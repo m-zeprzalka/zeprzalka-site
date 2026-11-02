@@ -36,7 +36,7 @@ export function PostListView({
           <div className="relative aspect-[16/9] rounded-lg overflow-hidden mb-4">
             <Image
               src={post.frontmatter.image}
-              alt={post.frontmatter.title}
+              alt=""
               fill
               sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
               className="object-cover transition-transform duration-500 group-hover:scale-105"

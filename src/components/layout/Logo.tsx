@@ -199,7 +199,10 @@ export function Logo({
 
   return (
     <Link href={ROUTES.home[locale]} onClick={onClick} className="flex items-center gap-2 text-xl">
+      {/* Glif zmienia się co sekundę — bez aria-hidden nazwa linku zmieniała
+          się razem z nim („⨝zeprzalka.com" → „⨟zeprzalka.com"). */}
       <span
+        aria-hidden="true"
         className="transition-all duration-150 inline-block"
         style={{ width: "2ch", textAlign: "center" }}
       >

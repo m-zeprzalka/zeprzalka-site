@@ -56,6 +56,7 @@ export function Hero({ locale }: { locale: Locale }) {
         <video 
           ref={videoRef}
           autoPlay muted loop playsInline 
+          aria-hidden="true"
           preload="metadata"
           poster="/hero-poster.webp"
           onPlay={(event) => {

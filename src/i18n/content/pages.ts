@@ -37,7 +37,7 @@ const pl = {
   about: {
     status: "Gotowy do współpracy",
     name: "Michał Zeprzałka",
-    role: "Digital Solutions Architect - Designer - AI Specialist",
+    role: "Digital Solutions Architect · Designer · AI Specialist",
     location: "Polska, Warszawa",
     aboutHeading: "O mnie",
     experienceHeading: "Doświadczenie",
@@ -57,7 +57,7 @@ const pl = {
       {
         role: "Digital Solutions Architect & Graphic Designer",
         company: "Freelance",
-        period: "2011 - obecnie",
+        period: "2011–obecnie",
         description:
           "Ponad 30 klientów. Głównie tworzenie stron internetowych, aplikacji, materiałów graficznych, animacji i materiałów wideo. Prowadzenie i zarządzanie Social Media, przygotowywanie kampanii reklamowych oraz doradztwo w zakresie transformacji cyfrowej.",
         tags: [
@@ -75,7 +75,7 @@ const pl = {
       {
         role: "Wykładowca akademicki",
         company: "Uczelnie wyższe",
-        period: "2016 — 2026",
+        period: "2016–2026",
         description:
           "Prowadzenie zajęć z zakresu projektowania graficznego, tworzenia stron internetowych oraz nowoczesnych technologii. Kierownik specjalizacji Multimedia w Warszawskiej Szkole Reklamy. Wykładowca Uniwersytetu Civitas wyróżniony Nagrodą Rektora.",
         tags: [
@@ -133,20 +133,20 @@ const pl = {
         school: "Uniwersytet Civitas",
         degree: "Studia magisterskie",
         field: "Socjologia specjalizacja Nowe media",
-        period: "2014 — 2017",
+        period: "2014–2017",
       },
       {
         school: "Szkoła Główna Gospodarstwa Wiejskiego",
         degree: "Studia licencjackie",
         field:
           "Kierunek Socjologia i Pedagogika, specjalizacja animacja społeczna z edukacją kulturalną",
-        period: "2011 — 2014",
+        period: "2011–2014",
       },
       {
         school: "Warszawska Szkoła Reklamy",
         degree: "Szkoła Policealna",
         field: "Specjalizacja Strategia reklamy & PR",
-        period: "2012 — 2014",
+        period: "2012–2014",
       },
     ],
     ctaContact: "Porozmawiajmy o projekcie",
@@ -211,6 +211,7 @@ const pl = {
     tagBadge: "Tag",
     withTag: "{count} z tym tagiem",
     breadcrumbBlog: "Blog",
+    breadcrumbAria: "Ścieżka nawigacji",
     relatedHeading: "Czytaj dalej",
     paginationAria: "Strony archiwum bloga",
     previousPage: "Poprzednia",
@@ -250,7 +251,7 @@ const en: typeof pl = {
   about: {
     status: "Available for new projects",
     name: "Michał Zeprzałka",
-    role: "Digital Solutions Architect - Designer - AI Specialist",
+    role: "Digital Solutions Architect · Designer · AI Specialist",
     location: "Warsaw, Poland",
     aboutHeading: "About me",
     experienceHeading: "Experience",
@@ -269,7 +270,7 @@ const en: typeof pl = {
       {
         role: "Digital Solutions Architect & Graphic Designer",
         company: "Freelance",
-        period: "2011 - present",
+        period: "2011–present",
         description:
           "More than 30 clients. Mostly websites, applications, graphic assets, animation and video. Running and managing social media, preparing advertising campaigns and advising on digital transformation.",
         tags: [
@@ -287,7 +288,7 @@ const en: typeof pl = {
       {
         role: "University lecturer",
         company: "Higher education",
-        period: "2016 — 2026",
+        period: "2016–2026",
         description:
           "Teaching graphic design, web development and modern technology. Head of the Multimedia specialisation at the Warsaw School of Advertising. Lecturer at Civitas University, honoured with the Rector's Award.",
         tags: [
@@ -345,20 +346,20 @@ const en: typeof pl = {
         school: "Civitas University",
         degree: "Master's degree",
         field: "Sociology, New Media specialisation",
-        period: "2014 — 2017",
+        period: "2014–2017",
       },
       {
         school: "Warsaw University of Life Sciences (SGGW)",
         degree: "Bachelor's degree",
         field:
           "Sociology and Pedagogy, specialising in community work with cultural education",
-        period: "2011 — 2014",
+        period: "2011–2014",
       },
       {
         school: "Warsaw School of Advertising",
         degree: "Post-secondary school",
         field: "Advertising Strategy & PR specialisation",
-        period: "2012 — 2014",
+        period: "2012–2014",
       },
     ],
     ctaContact: "Let's talk about your project",
@@ -419,6 +420,7 @@ const en: typeof pl = {
     tagBadge: "Tag",
     withTag: "{count} tagged this way",
     breadcrumbBlog: "Blog",
+    breadcrumbAria: "Breadcrumb",
     relatedHeading: "Keep reading",
     paginationAria: "Blog archive pages",
     previousPage: "Previous",

@@ -18,6 +18,10 @@ export const POST_SLUGS: readonly Localized<string>[] = [
   { pl: "claude-design", en: "claude-design" },
   { pl: "css", en: "css-basics" },
   {
+    pl: "czy-budowa-saas-w-dobie-ai-ma-sens",
+    en: "does-building-saas-still-make-sense",
+  },
+  {
     pl: "czy-da-sie-zyc-wiecznie-transcendencja",
     en: "can-we-live-forever-transcendence",
   },
@@ -57,6 +61,9 @@ export const CATEGORY_LABELS: readonly Localized<string>[] = [
   { pl: "SaaS", en: "SaaS" },
   { pl: "Design", en: "Design" },
   { pl: "Projekty", en: "Projects" },
+  { pl: "Technologia", en: "Technology" },
+  { pl: "Biotechnologia", en: "Biotechnology" },
+  { pl: "Predykcje", en: "Predictions" },
 ]
 
 /** To samo dla tagów. */

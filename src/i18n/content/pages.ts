@@ -431,7 +431,7 @@ const en: typeof pl = {
   },
 }
 
-export const pages = { pl, en } as const
+const pages = { pl, en } as const
 
 export function getPages(locale: Locale) {
   return pages[locale]

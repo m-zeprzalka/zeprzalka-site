@@ -169,7 +169,7 @@ const en: typeof pl = {
   },
 }
 
-export const common = { pl, en } as const
+const common = { pl, en } as const
 
 export function getCommon(locale: Locale) {
   return common[locale]

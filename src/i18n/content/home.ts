@@ -66,7 +66,7 @@ const en: typeof pl = {
   },
 }
 
-export const home = { pl, en } as const
+const home = { pl, en } as const
 
 export function getHome(locale: Locale) {
   return home[locale]

@@ -143,7 +143,7 @@ const en: typeof pl = {
   ],
 }
 
-export const legal = { pl, en } as const
+const legal = { pl, en } as const
 
 export function getLegal(locale: Locale) {
   return legal[locale]

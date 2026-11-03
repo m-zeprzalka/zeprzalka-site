@@ -1,5 +1,6 @@
-import { CalendarDays, Clock } from "lucide-react"
+import { PostCard } from "@/components/blog/PostCard"
 import { Badge } from "@/components/ui/badge"
+import { getAllPosts } from "@/lib/posts"
 import {
   DsBlock,
   DsCode,
@@ -10,6 +11,9 @@ import {
 } from "@/components/design-system/primitives"
 
 export function ContentSection() {
+  const sample = getAllPosts("pl")[0]
+  if (!sample) return null
+
   return (
     <DsSection
       id="tresc"
@@ -18,7 +22,7 @@ export function ContentSection() {
     >
       <DsBlock
         title="Karta wpisu"
-        description="Trzy warianty tej samej informacji. Różnią się proporcją obrazu, wagą tytułu i liczbą metadanych."
+        description="Jeden komponent (src/components/blog/PostCard.tsx) w dwóch wariantach. Różnią się zaokrągleniem obrazu, wagą tytułu i gęstością metadanych."
         note={
           <>
             Cała karta jest klikalna dzięki nakładce{" "}
@@ -28,79 +32,12 @@ export function ContentSection() {
         }
       >
         <div className="grid gap-6 lg:grid-cols-3">
-          <DsPreview label="Wyróżniony (/blog)">
-            <article className="group relative">
-              <div className="mb-6 aspect-[16/9] rounded-xl bg-muted" />
-              <div className="space-y-3">
-                <Badge variant="secondary">AI</Badge>
-                <p className="text-2xl font-bold transition-colors group-hover:text-primary">
-                  Tytuł wyróżnionego wpisu
-                </p>
-                <p className="line-clamp-2 text-muted-foreground">
-                  Lead wpisu skrócony do dwóch wierszy.
-                </p>
-                <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                  <span className="flex items-center gap-1">
-                    <CalendarDays className="h-4 w-4" />
-                    23.08.2026
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <Clock className="h-4 w-4" />
-                    12 min czytania
-                  </span>
-                </div>
-              </div>
-            </article>
+          {/* Prawdziwy komponent na prawdziwym wpisie — nie kopia klas. */}
+          <DsPreview label="Wyróżniony (/blog) — PostCard variant=featured">
+            <PostCard post={sample} locale="pl" variant="featured" headingLevel="h3" />
           </DsPreview>
-
-          <DsPreview label="Siatka (/blog)">
-            <article className="group relative">
-              <div className="mb-4 aspect-[16/9] rounded-lg bg-muted" />
-              <div className="space-y-2">
-                <Badge variant="outline" className="text-xs">
-                  Next.js
-                </Badge>
-                <p className="line-clamp-2 font-bold transition-colors group-hover:text-primary">
-                  Tytuł wpisu na liście
-                </p>
-                <p className="line-clamp-2 text-sm text-muted-foreground">
-                  Lead wpisu w mniejszym stopniu.
-                </p>
-                <div className="flex items-center gap-3 text-xs text-muted-foreground">
-                  <span>23.08.2026</span>
-                  <span>•</span>
-                  <span>12 min czytania</span>
-                </div>
-              </div>
-            </article>
-          </DsPreview>
-
-          <DsPreview label="Podgląd (strona główna)">
-            <article className="group relative">
-              <div className="mb-4 aspect-[16/9] rounded-lg bg-muted" />
-              <div className="space-y-2">
-                <Badge variant="outline" className="text-xs">
-                  Design
-                </Badge>
-                <p className="line-clamp-2 font-bold transition-colors group-hover:text-primary">
-                  Tytuł wpisu w podglądzie
-                </p>
-                <p className="line-clamp-2 text-sm text-muted-foreground">
-                  Lead wpisu skrócony do dwóch wierszy.
-                </p>
-                <div className="flex items-center gap-3 text-xs text-muted-foreground">
-                  <span className="flex items-center gap-1">
-                    <CalendarDays className="h-3 w-3" />
-                    23.08.2026
-                  </span>
-                  <span>·</span>
-                  <span className="flex items-center gap-1">
-                    <Clock className="h-3 w-3" />
-                    12 min
-                  </span>
-                </div>
-              </div>
-            </article>
+          <DsPreview label="Siatka (/blog, kategorie, „Czytaj dalej”) i strona główna">
+            <PostCard post={sample} locale="pl" headingLevel="h3" />
           </DsPreview>
         </div>
       </DsBlock>

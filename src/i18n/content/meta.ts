@@ -227,7 +227,7 @@ const en: typeof pl = {
   },
 }
 
-export const meta = { pl, en } as const
+const meta = { pl, en } as const
 
 export function getMeta(locale: Locale) {
   return meta[locale]

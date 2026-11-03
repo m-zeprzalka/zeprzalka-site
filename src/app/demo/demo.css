@@ -6,6 +6,8 @@
  */
 @import "tailwindcss";
 @import "tw-animate-css";
+/* System „Forma” (iteracja 3) — tokeny i utility nowych koncepcji. */
+@import "../../components/demo/forma/theme.css";
 @plugin "@tailwindcss/typography";
 
 @custom-variant dark (&:is(.dark *));

@@ -15,16 +15,48 @@ export interface DemoEntry {
   slug: string
   title: string
   date: string
-  status: "propozycja" | "odrzucony"
+  status: "rekomendacja" | "propozycja" | "odrzucony"
   summary: string
 }
 
 export const DEMOS: readonly DemoEntry[] = [
   {
+    slug: "zywy-interfejs",
+    title: "Forma · Żywy interfejs",
+    date: "2026-11-03",
+    status: "rekomendacja",
+    summary:
+      "Miękki minimalizm Vercel/shadcn. Każda kompetencja udowadnia się działającym mini-interfejsem: inspektor projektu, log builda, odpowiedź AI strumieniem, sala wykładowa.",
+  },
+  {
+    slug: "indeks",
+    title: "Forma · Indeks",
+    date: "2026-11-03",
+    status: "propozycja",
+    summary:
+      "Jedna precyzyjna kolumna w stylu designerów-inżynierów. Lista realizacji z kartą wideo płynącą za kursorem, chipy w tekście, paleta ⌘K.",
+  },
+  {
+    slug: "talia",
+    title: "Forma · Talia",
+    date: "2026-11-03",
+    status: "propozycja",
+    summary:
+      "Najpierw praca: realizacje jako talia miękkich kart z wideo — wachlarz na desktopie, stos do przesuwania palcem na telefonie, filtry tasujące karty.",
+  },
+  {
+    slug: "forma",
+    title: "Forma · specimen systemu",
+    date: "2026-11-03",
+    status: "propozycja",
+    summary:
+      "Wspólny fundament trzech koncepcji: kolory w obu motywach, pismo, promienie, cienie i prymitywy (pigułki, chipy, kopiowanie, przełącznik motywu, liczby).",
+  },
+  {
     slug: "precyzja",
     title: "Precyzja — kierunek z 3 listopada 2026",
     date: "2026-11-03",
-    status: "propozycja",
+    status: "odrzucony",
     summary:
       "Monochrom, linia włosowa, Geist + Geist Mono. Nagłówek jako zaznaczony obiekt z wymiarami na żywo, tryb „Wymiary”, cztery kompetencje z interaktywnymi próbkami.",
   },
@@ -32,7 +64,7 @@ export const DEMOS: readonly DemoEntry[] = [
     slug: "precyzja/system",
     title: "Precyzja — specimen systemu",
     date: "2026-11-03",
-    status: "propozycja",
+    status: "odrzucony",
     summary:
       "Tokeny i prymitywy nowego języka na jednej stronie: kolor w obu motywach, skala pisma, odstępy, siatka, ruch, przyciski i pola.",
   },

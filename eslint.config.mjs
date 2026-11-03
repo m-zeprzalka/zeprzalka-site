@@ -13,9 +13,15 @@ const eslintConfig = [
       "no-restricted-imports": [
         "error",
         {
+          // Biblioteki ruchu są dziś zależnością wyłącznie piaskownicy (devDependencies).
+          paths: ["motion", "motion/react", "motion/react-m", "@number-flow/react"].map((name) => ({
+            name,
+            message:
+              "Motion i Number Flow są tylko w piaskownicy. Do serwisu trafiają razem z decyzją o nowym wyglądzie.",
+          })),
           patterns: [
             {
-              group: ["@/components/demo/*", "@/app/demo/*"],
+              group: ["@/components/demo/*", "@/app/demo/*", "**/demo/**"],
               message:
                 "Piaskownica /demo nie może być importowana przez serwis (src/components/demo/README.md).",
             },

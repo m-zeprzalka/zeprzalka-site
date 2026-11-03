@@ -23,7 +23,7 @@ const items: Item[] = [
         2.2.2 wymaga mechanizmu pauzy dla ruchu trwającego dłużej niż 5 sekund.
       </>
     ),
-    where: "components/home/Gallery.tsx",
+    where: "components/portfolio/PortfolioCard.tsx",
   },
   {
     weight: "średni",
@@ -35,18 +35,7 @@ const items: Item[] = [
         wysokości dla tej samej roli.
       </>
     ),
-    where: "home/Hero.tsx, o-mnie/page.tsx",
-  },
-  {
-    weight: "niski",
-    title: "Klasa, która nic nie robi",
-    detail: (
-      <>
-        Nagłówki sekcji mają <DsInline>md:font-semi-bold</DsInline> — taka klasa
-        nie istnieje w Tailwindzie.
-      </>
-    ),
-    where: "Skills, Gallery, Contact",
+    where: "home/Hero.tsx, views/AboutView.tsx",
   },
   {
     weight: "niski",
@@ -57,7 +46,7 @@ const items: Item[] = [
         sukcesu. Do zamiany na token (np. <DsInline>--available</DsInline>).
       </>
     ),
-    where: "Hero, o-mnie, ContactForm",
+    where: "StatusBadge, ContactForm",
   },
   {
     weight: "niski",
@@ -68,7 +57,7 @@ const items: Item[] = [
         w /kontakt i w podglądzie bloga.
       </>
     ),
-    where: "sekcje strony głównej, /kontakt",
+    where: "HomeSection (props), /kontakt",
   },
   {
     weight: "niski",
@@ -97,6 +86,7 @@ const fixed = [
   "Hierarchia nagłówków na listach kategorii i tagów bez przeskoków; nagłówek kategorii pokazuje nazwę, nie slug.",
   "Optymalizacja obrazków włączona po przejściu na plan Vercel Pro — do tego pre-kompresja do WebP (4,6 MB → 464 KB) i atrybuty sizes na listach.",
   "Zależności: 44 podatności (20 wysokich) → 0. Next 16.3.3, nodemailer 9, nadpisania dla parserów YAML.",
+  "3 listopada 2026: martwa klasa md:font-semi-bold usunięta; nagłówki sekcji strony głównej w jednym komponencie (HomeSection) — różnice odstępów są jawne w propsach.",
 ]
 
 export function DebtSection() {

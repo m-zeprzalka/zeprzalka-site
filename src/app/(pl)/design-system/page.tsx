@@ -25,8 +25,8 @@ export const metadata: Metadata = {
 }
 
 const facts = [
-  { label: "Tokeny koloru", value: "26 semantycznych + 5 wykresów" },
-  { label: "Komponenty bazowe", value: "13 w użyciu, 5 zainstalowanych" },
+  { label: "Tokeny koloru", value: "18 semantycznych" },
+  { label: "Komponenty bazowe", value: "9 (wszystkie w użyciu)" },
   { label: "Komponenty aplikacji", value: "12" },
   { label: "Motywy", value: "jasny i ciemny, domyślnie ciemny" },
 ]

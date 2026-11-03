@@ -14,7 +14,7 @@ export function Skills() {
       <SectionHeader meta={sections.skills} />
 
       <Reveal delay={120}>
-        <Accordion type="single" collapsible defaultValue={skills[0].id}>
+        <Accordion type="single" collapsible defaultValue={skills[0]?.id}>
           {skills.map((skill) => (
             <AccordionItem
               key={skill.id}

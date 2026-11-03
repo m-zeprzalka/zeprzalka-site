@@ -1,6 +1,4 @@
-import Link from "next/link"
-import { ArrowRight } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { CtaPanel } from "@/components/CtaPanel"
 import { ROUTES, type Locale } from "@/i18n/config"
 import { getCommon } from "@/i18n/content/common"
 
@@ -16,24 +14,15 @@ export function PostCta({ locale }: { locale: Locale }) {
   const copy = getCommon(locale).postCta
 
   return (
-    <aside className="rounded-lg border bg-muted/40 p-6 sm:p-8">
-      <h2 className="text-xl font-semibold tracking-tight">
-        {copy.title}
-      </h2>
-      <p className="mt-2 max-w-2xl text-muted-foreground leading-relaxed">
-        {copy.description}
-      </p>
-      <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-        <Button asChild>
-          <Link href={ROUTES.contact[locale]}>
-            {copy.primary}
-            <ArrowRight />
-          </Link>
-        </Button>
-        <Button asChild variant="outline">
-          <Link href={ROUTES.services[locale]}>{copy.secondary}</Link>
-        </Button>
-      </div>
-    </aside>
+    <CtaPanel
+      as="aside"
+      size="md"
+      heading={copy.title}
+      body={copy.description}
+      actions={[
+        { href: ROUTES.contact[locale], label: copy.primary },
+        { href: ROUTES.services[locale], label: copy.secondary, variant: "outline" },
+      ]}
+    />
   )
 }

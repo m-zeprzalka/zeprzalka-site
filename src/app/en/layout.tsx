@@ -1,12 +1,8 @@
-import type { Metadata, Viewport } from "next"
+import type { Metadata } from "next"
 import { RootShell } from "@/components/layout/RootShell"
-import { rootMetadata } from "@/i18n/metadata"
+import { rootMetadata, rootViewport } from "@/i18n/metadata"
 
-export const viewport: Viewport = {
-  width: "device-width",
-  initialScale: 1,
-  maximumScale: 5,
-}
+export const viewport = rootViewport
 
 export const metadata: Metadata = rootMetadata("en")
 

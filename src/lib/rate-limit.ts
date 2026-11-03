@@ -1,13 +1,12 @@
 /**
  * Prosty limiter zgłoszeń w pamięci procesu.
  *
- * Świadomy kompromis: licznik żyje w pamięci jednej instancji funkcji. Przy
- * włączonym Fluid Compute instancje są współdzielone i żyją długo, więc działa
- * dobrze; bez niego (stan projektu w 11.2026 — do włączenia w panelu) realny
- * limit to 5 × liczba instancji. Zatrzymuje
- * to zwykłe zalewanie formularza, nie determinowanego napastnika. Gdy pojawi
- * się realny spam, następnym krokiem jest magazyn zewnętrzny (Upstash) albo
- * reguła Vercel WAF — patrz docs/ROADMAP.md.
+ * Świadomy kompromis: licznik żyje w pamięci jednej instancji funkcji. Fluid
+ * Compute (`"fluid": true` w vercel.json) współdzieli długo żyjące instancje,
+ * więc limit działa dobrze; bez niego realny limit to 5 × liczba instancji.
+ * Zatrzymuje to zwykłe zalewanie formularza, nie zdeterminowanego napastnika.
+ * Gdy pojawi się realny spam, następnym krokiem jest reguła Vercel WAF albo
+ * magazyn zewnętrzny — patrz docs/ROADMAP.md.
  */
 interface Bucket {
   count: number
@@ -65,6 +64,6 @@ export function clientKey(headers: Headers): string {
   const real = headers.get("x-real-ip")
   if (real) return real.trim()
   const forwarded = headers.get("x-forwarded-for")
-  if (forwarded) return forwarded.split(",")[0].trim()
-  return "nieznany"
+  const first = forwarded?.split(",")[0]?.trim()
+  return first || "unknown"
 }

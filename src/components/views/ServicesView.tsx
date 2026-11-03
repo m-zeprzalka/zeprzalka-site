@@ -1,9 +1,8 @@
-import Link from "next/link"
-import { ArrowRight, Check } from "lucide-react"
+import { Check } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { PageHeader } from "@/components/PageHeader"
+import { CtaPanel } from "@/components/CtaPanel"
 import { packages, processSteps } from "@/lib/services"
 import { JsonLd } from "@/components/JsonLd"
 import { absoluteUrl } from "@/lib/site"
@@ -148,31 +147,16 @@ export function ServicesView({ locale }: { locale: Locale }) {
 
       <Separator className="my-16" />
 
-      <section
-        aria-labelledby={copy.quoteId}
-        className="rounded-xl border bg-muted/40 p-6 md:p-10"
-      >
-        <h2 id={copy.quoteId} className="text-2xl font-semibold tracking-tight">
-          {copy.quoteHeading}
-        </h2>
-        <p className="mt-3 max-w-2xl text-muted-foreground leading-relaxed">
-          {copy.quoteBody}
-        </p>
-        <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-          <Button asChild size="lg" className="w-fit">
-            <Link href={ROUTES.contact[locale]}>
-              {copy.quotePrimary}
-              <ArrowRight />
-            </Link>
-          </Button>
-          <Button asChild variant="outline" size="lg" className="w-fit">
-            <Link href={ROUTES.portfolio[locale]}>{copy.quotePortfolio}</Link>
-          </Button>
-          <Button asChild variant="ghost" size="lg" className="w-fit">
-            <Link href={ROUTES.about[locale]}>{copy.quoteSecondary}</Link>
-          </Button>
-        </div>
-      </section>
+      <CtaPanel
+        id={copy.quoteId}
+        heading={copy.quoteHeading}
+        body={copy.quoteBody}
+        actions={[
+          { href: ROUTES.contact[locale], label: copy.quotePrimary },
+          { href: ROUTES.portfolio[locale], label: copy.quotePortfolio, variant: "outline" },
+          { href: ROUTES.about[locale], label: copy.quoteSecondary, variant: "ghost" },
+        ]}
+      />
     </div>
   )
 }

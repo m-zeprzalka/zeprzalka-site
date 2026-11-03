@@ -1,8 +1,6 @@
-import Link from "next/link"
-import { ArrowRight } from "lucide-react"
-import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { PageHeader } from "@/components/PageHeader"
+import { CtaPanel } from "@/components/CtaPanel"
 import { PortfolioGrid } from "@/components/portfolio/PortfolioGrid"
 import {
   countRealizations,
@@ -92,28 +90,15 @@ export function PortfolioView({ locale }: { locale: Locale }) {
 
       <Separator className="my-16" />
 
-      <section
-        aria-labelledby={copy.ctaId}
-        className="rounded-xl border bg-muted/40 p-6 md:p-10"
-      >
-        <h2 id={copy.ctaId} className="text-2xl font-semibold tracking-tight">
-          {copy.ctaHeading}
-        </h2>
-        <p className="mt-3 max-w-2xl text-muted-foreground leading-relaxed">
-          {copy.ctaBody}
-        </p>
-        <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-          <Button asChild size="lg" className="w-fit">
-            <Link href={ROUTES.contact[locale]}>
-              {copy.ctaPrimary}
-              <ArrowRight />
-            </Link>
-          </Button>
-          <Button asChild variant="outline" size="lg" className="w-fit">
-            <Link href={ROUTES.services[locale]}>{copy.ctaSecondary}</Link>
-          </Button>
-        </div>
-      </section>
+      <CtaPanel
+        id={copy.ctaId}
+        heading={copy.ctaHeading}
+        body={copy.ctaBody}
+        actions={[
+          { href: ROUTES.contact[locale], label: copy.ctaPrimary },
+          { href: ROUTES.services[locale], label: copy.ctaSecondary, variant: "outline" },
+        ]}
+      />
     </div>
   )
 }

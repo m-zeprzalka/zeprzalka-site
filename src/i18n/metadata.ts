@@ -5,11 +5,19 @@
  * `buildMetadata` w `src/i18n/page-metadata.ts`, więc `hreflang`, RSS
  * i karta Open Graph nie mogą wypaść z żadnej strony przez przeoczenie.
  */
-import type { Metadata } from "next"
+import type { Metadata, Viewport } from "next"
 import { OG_LOCALE, ROUTES, otherLocale, type Locale } from "@/i18n/config"
 import { getMeta } from "@/i18n/content/meta"
 import { feedAlternate } from "@/i18n/page-metadata"
 import { SITE_DESCRIPTION, SITE_NAME, SITE_URL, absoluteUrl } from "@/lib/site"
+
+/**
+ * Kolor paska przeglądarki i ekranu startowego — ciemny motyw jest domyślny,
+ * ten sam kolor co `background_color` w manifeście.
+ */
+export const rootViewport: Viewport = {
+  themeColor: "#0a0a0a",
+}
 
 export function rootMetadata(locale: Locale): Metadata {
   const m = getMeta(locale)

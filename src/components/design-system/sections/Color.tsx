@@ -27,11 +27,6 @@ const lines = [
   { variable: "--ring", name: "ring", usage: "Pierścień fokusu (3 px, widoczny na klawiaturze)" },
 ]
 
-const charts = [1, 2, 3, 4, 5].map((index) => ({
-  variable: `--chart-${index}`,
-  name: `chart-${index}`,
-  usage: "Zarezerwowane pod wykresy — obecnie nieużywane",
-}))
 
 export function ColorSection() {
   return (
@@ -70,16 +65,6 @@ export function ColorSection() {
         </div>
       </DsBlock>
 
-      <DsBlock
-        title="Wykresy"
-        description="Jedyne barwne tokeny w systemie. Wprowadzone razem z presetem shadcn, dziś nieużywane — do wykorzystania przy pierwszej wizualizacji danych."
-      >
-        <div className="grid gap-5 grid-cols-2 sm:grid-cols-3 lg:grid-cols-5">
-          {charts.map((token) => (
-            <Swatch key={token.variable} {...token} />
-          ))}
-        </div>
-      </DsBlock>
 
       <DsBlock
         title="Zasady"

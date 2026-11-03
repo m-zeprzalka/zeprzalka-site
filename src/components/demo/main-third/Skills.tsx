@@ -17,7 +17,7 @@ import { sections, skills } from "@/components/demo/shared/home-content"
 export function Skills() {
   return (
     <Frame meta={sections.skills}>
-      <Accordion type="multiple" defaultValue={[skills[0].id]}>
+      <Accordion type="multiple" defaultValue={skills.slice(0, 1).map((skill) => skill.id)}>
         {skills.map((skill, i) => (
           <Rise as="div" i={i} key={skill.id}>
             <AccordionItem

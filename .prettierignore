@@ -1,0 +1,12 @@
+# Treść i dokumentacja mają ręczny skład (tabele, łamanie wierszy w MDX).
+content/
+docs/
+*.md
+*.mdx
+public/
+pnpm-lock.yaml
+.next/
+# Dawne warianty strony głównej — zamrożone, odtworzone 1:1 z tagu gita.
+src/components/demo/main-*/
+src/components/demo/shared/
+src/app/demo/demo.css

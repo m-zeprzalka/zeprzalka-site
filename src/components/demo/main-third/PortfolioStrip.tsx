@@ -13,7 +13,7 @@ const pad = (value: number) => String(value).padStart(2, "0")
  *  żeby pas miał jedną wysokość, a rytm budowały różne formaty. */
 function ratioOf(aspect: string): number {
   const [w, h] = aspect.split("/").map((part) => Number(part.trim()))
-  return h > 0 ? w / h : 16 / 9
+  return w && h ? w / h : 16 / 9
 }
 
 /**

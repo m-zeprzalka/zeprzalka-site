@@ -1,4 +1,4 @@
-import { MetadataRoute } from "next"
+import type { MetadataRoute } from "next"
 import { getAllPosts, getTerms } from "@/lib/posts"
 import { MIN_POSTS_TO_INDEX_CATEGORY } from "@/i18n/page-metadata"
 import { absoluteUrl } from "@/lib/site"
@@ -40,9 +40,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     const posts = getAllPosts(locale)
 
     // Data ostatniego posta — stabilniejsza niż new Date() przy każdym buildzie
-    const newestPostDate = posts.length
-      ? new Date(posts[0].frontmatter.date)
-      : new Date()
+    const newest = posts[0]
+    const newestPostDate = newest ? new Date(newest.frontmatter.date) : new Date()
 
     const staticPages: {
       path: string

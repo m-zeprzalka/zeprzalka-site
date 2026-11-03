@@ -52,7 +52,7 @@ export const POST_SLUGS: readonly Localized<string>[] = [
 ]
 
 /**
- * Nazwy kategorii. Slug powstaje z nazwy (patrz `slugify` w lib/posts.ts),
+ * Nazwy kategorii. Slug powstaje z nazwy (patrz `slugify` w lib/slug.ts),
  * więc para nazw wystarcza, żeby skojarzyć obie strony kategorii.
  */
 export const CATEGORY_LABELS: readonly Localized<string>[] = [

@@ -4,6 +4,7 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import {
+  PATH_BASES,
   ROUTES,
   otherLocale,
   postPath,
@@ -38,14 +39,14 @@ function counterpart(pathname: string, from: Locale, to: Locale): string {
 
   // Kolejne strony archiwum: ten sam numer w drugim języku. Obie wersje
   // mają tyle samo wpisów, więc i tyle samo stron.
-  const pageBase = ROUTES.blogPage[from]
+  const pageBase = PATH_BASES.blogPage[from]
   if (clean.startsWith(`${pageBase}/`)) {
-    return `${ROUTES.blogPage[to]}/${clean.slice(pageBase.length + 1)}`
+    return `${PATH_BASES.blogPage[to]}/${clean.slice(pageBase.length + 1)}`
   }
 
   const blogBase = ROUTES.blog[from]
   const categoryBase = ROUTES.categories[from]
-  const tagBase = ROUTES.tags[from]
+  const tagBase = PATH_BASES.tags[from]
 
   if (clean.startsWith(`${categoryBase}/`)) {
     const slug = clean.slice(categoryBase.length + 1)

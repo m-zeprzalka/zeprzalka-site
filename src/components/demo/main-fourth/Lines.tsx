@@ -30,7 +30,7 @@ export function Lines({ lines, from = 0, immediate, className }: LinesProps) {
           // Fragmenty sklejają się w jeden wiersz — spacja tylko tam, gdzie
           // poprzedni fragment sam jej nie zawiera.
           const space =
-            partIndex > 0 && !/\s$/.test(parts[partIndex - 1].text) ? " " : null
+            partIndex > 0 && !/\s$/.test(parts[partIndex - 1]?.text ?? "") ? " " : null
           return part.accent ? (
             <span key={partIndex}>
               {space}

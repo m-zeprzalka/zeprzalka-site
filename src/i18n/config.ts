@@ -52,12 +52,20 @@ export const ROUTES = {
   contact: { pl: "/kontakt", en: "/en/contact" },
   portfolio: { pl: "/portfolio", en: "/en/portfolio" },
   blog: { pl: "/blog", en: "/en/blog" },
-  /** Kolejne strony archiwum bloga: `/blog/strona/2`. Strona 1 to `blog`. */
-  blogPage: { pl: "/blog/strona", en: "/en/blog/page" },
   categories: { pl: "/blog/kategoria", en: "/en/blog/category" },
-  tags: { pl: "/blog/tag", en: "/en/blog/tag" },
   feed: { pl: "/feed.xml", en: "/en/feed.xml" },
   privacy: { pl: "/polityka-prywatnosci", en: "/en/privacy" },
+} as const satisfies Record<string, Localized<string>>
+
+/**
+ * Prefiksy adresów, pod którymi nie ma własnej strony — tylko podstrony
+ * (`/blog/strona/2`, `/blog/tag/next.js`). Osobno od `ROUTES`, żeby nie dało
+ * się ich podać jako strony (mapa strony, przełącznik języka, metadane).
+ */
+export const PATH_BASES = {
+  /** Kolejne strony archiwum bloga. Strona 1 to `ROUTES.blog`. */
+  blogPage: { pl: "/blog/strona", en: "/en/blog/page" },
+  tags: { pl: "/blog/tag", en: "/en/blog/tag" },
 } as const satisfies Record<string, Localized<string>>
 
 export type RouteKey = keyof typeof ROUTES
@@ -75,7 +83,7 @@ export function postPath(locale: Locale, slug: string): string {
  * tego `/blog` i `/blog/strona/1` byłyby dwoma adresami tej samej treści.
  */
 export function blogPagePath(locale: Locale, page: number): string {
-  return page <= 1 ? ROUTES.blog[locale] : `${ROUTES.blogPage[locale]}/${page}`
+  return page <= 1 ? ROUTES.blog[locale] : `${PATH_BASES.blogPage[locale]}/${page}`
 }
 
 export function categoryPath(locale: Locale, slug: string): string {
@@ -83,7 +91,7 @@ export function categoryPath(locale: Locale, slug: string): string {
 }
 
 export function tagPath(locale: Locale, slug: string): string {
-  return `${ROUTES.tags[locale]}/${slug}`
+  return `${PATH_BASES.tags[locale]}/${slug}`
 }
 
 /**

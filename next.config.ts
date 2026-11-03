@@ -152,24 +152,18 @@ const nextConfig: NextConfig = {
         headers: securityHeaders,
       },
       {
-        // Obrazy z public/ nie mają skrótu treści w nazwie, więc nie mogą być
-        // `immutable` jak /_next/static — tydzień cache zamiast rewalidacji
-        // przy każdej wizycie (domyślnie Vercel daje max-age=0).
-        source: "/:dir(blog|portfolio)/:file([^/]+\\.(?:webp|png|jpg|jpeg|svg))",
+        /*
+         * Media z public/ (obrazy, wideo, ikony). Ich nazwy NIE zawierają
+         * skrótu treści, więc nie mogą być `immutable` jak /_next/static:
+         * podmiana pliku pod tą samą nazwą musi dotrzeć do czytelnika.
+         * Tydzień cache + dzień rewalidacji w tle zamiast domyślnego
+         * `max-age=0` Vercela. Plik zmieniony? Nowa nazwa albo odczekaj tydzień.
+         */
+        source: "/:file*.:ext(webp|avif|png|jpg|jpeg|svg|ico|mp4|webm)",
         headers: [
           {
             key: "Cache-Control",
             value: "public, max-age=604800, stale-while-revalidate=86400",
-          },
-        ],
-      },
-      {
-        // Wideo portfolio jest wersjonowane nazwą pliku — może być cache'owane bez końca
-        source: "/:file*.(mp4|webm)",
-        headers: [
-          {
-            key: "Cache-Control",
-            value: "public, max-age=31536000, immutable",
           },
         ],
       },
@@ -184,8 +178,8 @@ const nextConfig: NextConfig = {
    */
   images: {
     formats: ["image/avif", "image/webp"],
-    // Rok — nazwy plików są wersjonowane treścią, więc cache może żyć długo.
-    minimumCacheTTL: 31536000,
+    // Tydzień — ta sama reguła co dla plików z public/ (nazwy bez skrótu treści).
+    minimumCacheTTL: 604800,
   },
 }
 

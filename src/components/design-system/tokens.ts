@@ -13,10 +13,12 @@ export interface TokenSource {
  * (`oklch(1 0 0)` → `#fff`), więc odczyt z dokumentu pokazałby postać, której
  * nikt nie edytuje. Plik czytamy raz, przy budowaniu strony.
  */
-const BLOCK = /(:root|\.dark)\s*\{([^}]*)\}/g
+// Kotwica na początku wiersza: bloki ekranowe nie mają wcięcia, a `.dark`
+// zagnieżdżone w `@media print` ma — inaczej nadpisywało ciemną paletę jasną.
+const BLOCK = /^(:root|\.dark)\s*\{([^}]*)\}/gm
 const DECLARATION = /(--[\w-]+)\s*:\s*([^;]+);/g
 
-export const readTokens = cache((): Map<string, TokenSource> => {
+const readTokens = cache((): Map<string, TokenSource> => {
   const map = new Map<string, TokenSource>()
   const file = path.join(process.cwd(), "src/app/globals.css")
 
@@ -27,9 +29,9 @@ export const readTokens = cache((): Map<string, TokenSource> => {
     return map
   }
 
-  for (const [, selector, body] of css.matchAll(BLOCK)) {
+  for (const [, selector, body = ""] of css.matchAll(BLOCK)) {
     const scope = selector === ".dark" ? "dark" : "light"
-    for (const [, name, value] of body.matchAll(DECLARATION)) {
+    for (const [, name = "", value = ""] of body.matchAll(DECLARATION)) {
       const entry = map.get(name) ?? { light: "", dark: "" }
       entry[scope] = value.trim()
       map.set(name, entry)

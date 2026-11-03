@@ -18,14 +18,11 @@ export default function manifest(): MetadataRoute.Manifest {
     background_color: "#0a0a0a",
     theme_color: "#0a0a0a",
     icons: [
-      { src: "/icon-192.png", sizes: "192x192", type: "image/png" },
+      // 192 px serwuje Next z src/app/icon.png (ten sam plik co <link rel="icon">).
+      { src: "/icon.png", sizes: "192x192", type: "image/png" },
       { src: "/icon-512.png", sizes: "512x512", type: "image/png" },
-      {
-        src: "/icon-512.png",
-        sizes: "512x512",
-        type: "image/png",
-        purpose: "maskable",
-      },
+      // Wersja maskowalna ma margines bezpieczeństwa — Android przycina ikonę do koła.
+      { src: "/icon-maskable-512.png", sizes: "512x512", type: "image/png", purpose: "maskable" },
     ],
   }
 }

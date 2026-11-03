@@ -6,7 +6,6 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import {
   Breadcrumb,
@@ -40,16 +39,8 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet"
-import { Skeleton } from "@/components/ui/skeleton"
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip"
 import {
   DsBlock,
-  DsCode,
   DsInline,
   DsPreview,
   DsSection,
@@ -58,17 +49,14 @@ import {
 
 const inventory: [string, string, string][] = [
   ["accordion", "Kompetencje na stronie głównej", "W użyciu"],
-  ["avatar", "Nota autora pod wpisem", "W użyciu"],
   ["badge", "Statusy, kategorie, tagi, narzędzia", "W użyciu (11 miejsc)"],
   ["breadcrumb", "Nawigacja okruszkowa wpisu", "W użyciu"],
   ["button", "CTA, formularz, paginacja, motyw", "W użyciu (9 miejsc)"],
   ["card", "Portfolio, sekcja kontaktu", "W użyciu"],
   ["input", "Formularz kontaktowy", "W użyciu"],
   ["pagination", "Lista bloga", "W użyciu"],
-  ["separator", "Nagłówki stron, /o-mnie, /kontakt", "W użyciu"],
-  ["sheet", "Menu mobilne", "W użyciu"],
-  ["skeleton", "Ekran ładowania", "W użyciu"],
-  ["tooltip", "Wyłącznie w tym katalogu (próbka poniżej)", "Nieużywany w serwisie"],
+  ["separator", "Nagłówki stron, /o-mnie, /kontakt (wersja serwerowa, bez Radiksa)", "W użyciu"],
+  ["sheet", "Menu mobilne (ładowane przy pierwszym otwarciu)", "W użyciu"],
 ]
 
 export function UiKitSection() {
@@ -332,20 +320,6 @@ export function UiKitSection() {
             </Breadcrumb>
           </DsPreview>
 
-          <DsPreview label="Avatar (nota autora)">
-            <div className="flex items-center gap-4">
-              <Avatar className="w-20 h-20 border">
-                <AvatarImage src="/avatar.png" alt="Michał Zeprzałka" />
-                <AvatarFallback>MZ</AvatarFallback>
-              </Avatar>
-              <div>
-                <p className="font-semibold">Michał Zeprzałka</p>
-                <p className="text-sm text-muted-foreground">
-                  Digital Solutions Architect
-                </p>
-              </div>
-            </div>
-          </DsPreview>
 
           <DsPreview label="Paginacja">
             <Pagination>
@@ -399,30 +373,8 @@ export function UiKitSection() {
             </Sheet>
           </DsPreview>
 
-          <DsPreview label="Tooltip">
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button variant="outline" size="sm">
-                    Najedź
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>Podpowiedź</TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </DsPreview>
 
-          <DsPreview label="Skeleton (ekran ładowania)">
-            <div className="flex flex-col gap-2">
-              <Skeleton className="h-16 w-full rounded-xl bg-muted/20" />
-              <Skeleton className="h-4 w-2/3 rounded bg-muted/20" />
-            </div>
-          </DsPreview>
         </div>
-        <DsCode>
-          {`// Tooltip nie zawiera własnego providera — wymaga owinięcia
-<TooltipProvider><Tooltip>…</Tooltip></TooltipProvider>`}
-        </DsCode>
       </DsBlock>
 
       <DsBlock title="Separator">

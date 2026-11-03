@@ -7,6 +7,7 @@ import { checkRateLimit, clientKey } from "@/lib/rate-limit"
 import { DEFAULT_LOCALE, locales, type Locale } from "@/i18n/config"
 import { getCommon } from "@/i18n/content/common"
 import { fill } from "@/i18n/format"
+import { escapeMarkup } from "@/lib/escape"
 import { CONTACT_EMAIL } from "@/lib/site"
 
 export interface ContactFormState {
@@ -67,17 +68,6 @@ function schemaFor(locale: Locale) {
   })
 }
 
-// Treść pól trafia do HTML maila — bez escapowania odbiorca wykonałby
-// dowolny znacznik wstrzyknięty przez nadawcę formularza.
-function escapeHtml(value: string): string {
-  return value
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#39;")
-}
-
 export async function sendContactEmail(
   _prevState: ContactFormState,
   formData: FormData
@@ -119,7 +109,8 @@ export async function sendContactEmail(
   })
 
   if (!result.success) {
-    return { success: false, message: result.error.issues[0].message, fields }
+    // zod zwraca co najmniej jeden problem, gdy `success` jest fałszywe.
+    return { success: false, message: result.error.issues[0]?.message ?? copy.failed, fields }
   }
 
   const { name, email, projectType, message } = result.data
@@ -167,11 +158,11 @@ export async function sendContactEmail(
       subject: `${localeTag}Wiadomość z formularza: ${safeSubject}`,
       text: `Imię: ${name}\nEmail: ${email}\nRodzaj projektu: ${projectType || "-"}\n\n${message}`,
       html: `
-        <p><strong>Imię:</strong> ${escapeHtml(name)}</p>
-        <p><strong>Email:</strong> ${escapeHtml(email)}</p>
-        <p><strong>Rodzaj projektu:</strong> ${escapeHtml(projectType || "-")}</p>
+        <p><strong>Imię:</strong> ${escapeMarkup(name)}</p>
+        <p><strong>Email:</strong> ${escapeMarkup(email)}</p>
+        <p><strong>Rodzaj projektu:</strong> ${escapeMarkup(projectType || "-")}</p>
         <hr/>
-        <p>${escapeHtml(message).replace(/\n/g, "<br/>")}</p>
+        <p>${escapeMarkup(message).replace(/\n/g, "<br/>")}</p>
       `,
     })
   } catch (error) {

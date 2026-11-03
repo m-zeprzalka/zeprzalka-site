@@ -1,7 +1,6 @@
 import { AlertCircle, CheckCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Skeleton } from "@/components/ui/skeleton"
 import {
   DsBlock,
   DsInline,
@@ -64,19 +63,8 @@ export function StatesSection() {
         </div>
       </DsBlock>
 
-      <DsBlock title="Ładowanie i strony błędów">
-        <div className="grid gap-4 md:grid-cols-3">
-          <DsPreview label="Ekran ładowania (app/loading.tsx)">
-            <div className="flex flex-col gap-3">
-              <Skeleton className="h-12 w-full rounded-xl bg-muted/20" />
-              <div className="grid grid-cols-3 gap-2">
-                <Skeleton className="h-16 rounded-xl bg-muted/20" />
-                <Skeleton className="h-16 rounded-xl bg-muted/20" />
-                <Skeleton className="h-16 rounded-xl bg-muted/20" />
-              </div>
-            </div>
-          </DsPreview>
-
+      <DsBlock title="Strony błędów">
+        <div className="grid gap-4 md:grid-cols-2">
           <DsPreview label="404">
             <div className="flex flex-col items-center gap-2 text-center">
               <p className="text-4xl font-bold tracking-tight text-primary">404</p>

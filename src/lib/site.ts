@@ -29,14 +29,14 @@ export function absoluteUrl(path = "/"): string {
   return `${SITE_URL}${path.startsWith("/") ? path : `/${path}`}`
 }
 
+/** Adres, na który przychodzą wiadomości i który widnieje na stronach. */
+export const CONTACT_EMAIL = "m@zeprzalka.com"
+
 /**
  * Autor wszystkich treści. Wcześniej powielony w 25 plikach frontmattera,
  * w dodatku pod nazwą domeny zamiast imieniem i nazwiskiem — przez co dane
  * strukturalne mówiły co innego niż widoczna nota pod wpisem.
  */
-/** Adres, na który przychodzą wiadomości i który widnieje na stronach. */
-export const CONTACT_EMAIL = "m@zeprzalka.com"
-
 export const AUTHOR = {
   name: SITE_NAME,
   jobTitle: "Digital Solutions Architect",

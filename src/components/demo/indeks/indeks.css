@@ -1,0 +1,624 @@
+/*
+ * „Indeks” — arkusz koncepcji. Tokeny przychodzą z Formy (`--fm-*`, `--ease-fm-*`,
+ * `--radius-fm-*`); tutaj tylko to, czego nie da się czysto zapisać utility:
+ * selektory relacyjne (:has), animacje sterowane przewijaniem, wejścia
+ * i wyjścia Radiksa oraz karta wideo nad listą realizacji.
+ * Ruch jest opt-in: wszystko, co się przesuwa, stoi w `no-preference`.
+ */
+
+.ix {
+  /* Kolumna treści i „wylew” tła wierszy poza kolumnę — wiersz trzyma tekst
+     w linii z resztą strony, a podświetlenie oddycha 8–12 px na boki. */
+  --ix-col: 40rem;
+  --ix-bleed: 0.5rem;
+  --ix-header: 4rem;
+  --ix-lane: 8.5rem;
+}
+@media (min-width: 40rem) {
+  .ix {
+    --ix-bleed: 0.75rem;
+  }
+}
+
+/* Sticky nagłówek nie może zasłaniać fokusu ani celu kotwicy (WCAG 2.4.11). */
+:root:has(.ix) {
+  scroll-padding-top: calc(var(--ix-header) + 1rem);
+}
+
+.ix-col {
+  width: min(100% - 2 * var(--fm-gutter), var(--ix-col));
+  margin-inline: auto;
+}
+
+/* Jawna szerokość: <button> nie rozciąga się jak blok, więc samo `width: 100%`
+   z ujemnymi marginesami wylewałoby tło tylko w lewo. */
+.ix-bleed {
+  box-sizing: border-box;
+  width: calc(100% + 2 * var(--ix-bleed));
+  margin-inline: calc(-1 * var(--ix-bleed));
+  padding-inline: var(--ix-bleed);
+}
+
+/* ——— Nagłówek: kapsuła pojawia się wraz z przewinięciem (0 → 64 px) ——— */
+.ix-capsule {
+  position: absolute;
+  inset: 0.5rem calc(-1 * var(--ix-bleed) - 0.25rem);
+  border-radius: var(--radius-fm-2xl);
+  background: color-mix(in oklab, var(--fm-surface) 82%, transparent);
+  box-shadow:
+    0 0 0 1px var(--fm-edge),
+    0 8px 24px -12px oklch(0 0 0 / 0.12);
+  -webkit-backdrop-filter: blur(12px) saturate(1.5);
+  backdrop-filter: blur(12px) saturate(1.5);
+  pointer-events: none;
+}
+@supports (animation-timeline: scroll()) {
+  .ix-capsule {
+    animation: ix-capsule linear both;
+    animation-timeline: scroll(root block);
+    animation-range: 0 4rem;
+  }
+}
+@keyframes ix-capsule {
+  from {
+    opacity: 0;
+    scale: 0.985;
+  }
+}
+@media (prefers-reduced-transparency: reduce) {
+  .ix-capsule {
+    background: var(--fm-surface);
+    backdrop-filter: none;
+  }
+}
+
+/* ——— Spis sekcji w lewym marginesie (≥ 1280 px) ——— */
+.ix-index {
+  /* Prawa krawędź spisu 4rem przed kolumną. */
+  right: calc(50% + var(--ix-col) / 2 + 4rem);
+}
+.ix-index__dot {
+  translate: 0 var(--y);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .ix-index__dot {
+    transition: translate 300ms var(--ease-fm-move);
+  }
+}
+/* Spis wchodzi dopiero za pierwszym ekranem — wstęp ma całą scenę dla siebie. */
+@supports (animation-timeline: scroll()) {
+  .ix-index {
+    animation: ix-index linear both;
+    animation-timeline: scroll(root block);
+    animation-range: 50vh 80vh;
+  }
+}
+@keyframes ix-index {
+  from {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+/* ——— Wejście pierwszego ekranu: jedno zaaranżowane wejście, potem cisza ——— */
+@keyframes ix-sharpen {
+  from {
+    opacity: 0;
+    filter: blur(5px);
+  }
+}
+@keyframes ix-rise {
+  from {
+    opacity: 0;
+    filter: blur(4px);
+    translate: 0 0.5rem;
+  }
+}
+.ix-appear {
+  animation: ix-fade-in 600ms var(--ease-fm-snap) both;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .ix-sharpen {
+    animation: ix-sharpen 700ms var(--ease-fm-snap) both;
+    animation-delay: var(--d, 0ms);
+  }
+  .ix-enter {
+    animation: ix-rise 700ms var(--ease-fm-snap) both;
+    animation-delay: var(--d, 0ms);
+  }
+}
+
+/* ——— Chip w tekście: element liniowy, łamie się razem ze zdaniem ———
+   Padding z ujemnym marginesem: tło przy wskazaniu nie przesuwa ani litery. */
+.ix-chip {
+  cursor: pointer;
+  border-radius: 0.28em;
+  padding-inline: 0.14em;
+  margin-inline: -0.14em;
+  text-decoration-line: underline;
+  text-decoration-style: dashed;
+  text-decoration-thickness: max(1px, 0.05em);
+  text-decoration-color: var(--fm-edge-strong);
+  text-underline-offset: 0.2em;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  transition:
+    background-color 150ms ease,
+    text-decoration-color 150ms ease;
+}
+.ix-chip[data-state="open"] {
+  background-color: var(--fm-fill-strong);
+  text-decoration-color: transparent;
+}
+@media (hover: hover) {
+  .ix-chip:hover {
+    background-color: var(--fm-fill);
+    text-decoration-color: transparent;
+    transition-duration: 0ms;
+  }
+}
+.ix-chip__icon {
+  display: inline-block;
+  width: 0.68em;
+  height: 0.68em;
+  margin-inline-end: 0.2em;
+  vertical-align: -0.02em;
+  color: var(--fm-ink-3);
+}
+
+/* ——— Popover i paleta: wejście od wyzwalacza, wyjście szybsze ——— */
+@keyframes ix-pop-in {
+  from {
+    opacity: 0;
+    scale: 0.96;
+    filter: blur(2px);
+  }
+}
+@keyframes ix-pop-out {
+  to {
+    opacity: 0;
+    scale: 0.98;
+  }
+}
+@keyframes ix-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes ix-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+@keyframes ix-sheet-in {
+  from {
+    translate: 0 100%;
+  }
+}
+@keyframes ix-sheet-out {
+  to {
+    translate: 0 100%;
+  }
+}
+
+.ix-popover {
+  transform-origin: var(--radix-popover-content-transform-origin);
+}
+.ix-popover[data-state="open"] {
+  animation: ix-pop-in 200ms var(--ease-fm-snap);
+}
+.ix-popover[data-state="closed"] {
+  animation: ix-pop-out 120ms var(--ease-fm-snap) forwards;
+}
+
+.ix-overlay[data-state="open"] {
+  animation: ix-fade-in 200ms var(--ease-fm-snap);
+}
+.ix-overlay[data-state="closed"] {
+  animation: ix-fade-out 150ms var(--ease-fm-snap) forwards;
+}
+
+/* Paleta: na telefonie arkusz od dołu, od 640 px okno pod górną krawędzią. */
+.ix-palette[data-state="open"] {
+  animation: ix-sheet-in 420ms var(--ease-fm-drawer);
+}
+.ix-palette[data-state="closed"] {
+  animation: ix-sheet-out 240ms var(--ease-fm-drawer) forwards;
+}
+@media (min-width: 40rem) {
+  .ix-palette {
+    transform-origin: 50% 0;
+  }
+  .ix-palette[data-state="open"] {
+    animation: ix-pop-in 200ms var(--ease-fm-snap);
+  }
+  .ix-palette[data-state="closed"] {
+    animation: ix-pop-out 120ms var(--ease-fm-snap) forwards;
+  }
+}
+/* Otwarta skrótem klawiszowym: bez animacji (akcja wykonywana dziesiątki razy dziennie). */
+.ix-palette[data-instant],
+.ix-overlay[data-instant] {
+  animation: none !important;
+}
+
+/* ——— Akordeon kompetencji: wysokość z Radiksa, treść wyostrza się z opóźnieniem ——— */
+@keyframes ix-acc-open {
+  from {
+    height: 0;
+  }
+  to {
+    height: var(--radix-accordion-content-height);
+  }
+}
+@keyframes ix-acc-close {
+  from {
+    height: var(--radix-accordion-content-height);
+  }
+  to {
+    height: 0;
+  }
+}
+.ix-acc {
+  overflow: hidden;
+}
+.ix-acc[data-state="open"] {
+  animation: ix-acc-open 280ms var(--ease-fm-snap);
+}
+.ix-acc[data-state="closed"] {
+  animation: ix-acc-close 200ms var(--ease-fm-snap);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .ix-acc[data-state="open"] > * {
+    animation: ix-rise 360ms var(--ease-fm-snap) 60ms both;
+  }
+}
+
+/* Kompetencja otwarta = wiersz staje się kartą. Tło to pseudo-element
+   (przenikanie opacity zamiast animowania box-shadow). */
+.ix-skill::before {
+  content: "";
+  position: absolute;
+  inset: 0 calc(-1 * var(--ix-bleed));
+  border-radius: var(--radius-fm-2xl);
+  background: var(--fm-surface);
+  box-shadow: var(--fm-shadow-card);
+  opacity: 0;
+  transition: opacity 200ms var(--ease-fm-snap);
+  pointer-events: none;
+}
+.ix-skill[data-state="open"]::before {
+  opacity: 1;
+}
+
+/* ——— Wiersze list: podświetlenie wchodzi od razu, schodzi w 150 ms ——— */
+.ix-row {
+  transition:
+    background-color 150ms ease,
+    color 150ms ease,
+    scale 160ms var(--ease-fm-snap);
+}
+.ix-row:active {
+  scale: 0.99;
+}
+/* Otwarta kompetencja jest już kartą — bez dodatkowego pasa podświetlenia. */
+.ix-row[data-state="open"] {
+  background-color: transparent !important;
+}
+@media (hover: hover) and (pointer: fine) {
+  .ix-row:hover {
+    background-color: var(--fm-fill);
+    transition-duration: 0ms, 0ms, 160ms;
+  }
+  /* Wskazany wiersz zostaje w atramencie, reszta listy cofa się do szarości. */
+  .ix-dim:has(.ix-row:hover) .ix-row:not(:hover) {
+    color: var(--fm-ink-3);
+  }
+  .ix-dim:has(.ix-row:hover) .ix-row:not(:hover) .ix-row__meta {
+    color: color-mix(in oklab, var(--fm-ink-3) 70%, transparent);
+  }
+}
+
+/* Ikona linku: pojawia się (skala 0,75 → 1, 2 px po skosie) w 200 ms. */
+.ix-arrow {
+  opacity: 0;
+  scale: 0.75;
+  translate: -2px 2px;
+  transition:
+    opacity 200ms var(--ease-fm-snap),
+    scale 200ms var(--ease-fm-snap),
+    translate 200ms var(--ease-fm-snap);
+}
+@media (hover: hover) and (pointer: fine) {
+  :is(a, button):hover > .ix-arrow,
+  :is(a, button):hover .ix-arrow {
+    opacity: 1;
+    scale: 1;
+    translate: 0 0;
+  }
+}
+:is(a, button):focus-visible .ix-arrow {
+  opacity: 1;
+  scale: 1;
+  translate: 0 0;
+}
+
+/* Plus → minus: pionowa kreska obraca się i kładzie na poziomej. */
+.ix-plus {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  width: 1rem;
+  height: 1rem;
+  flex: none;
+}
+.ix-plus::before,
+.ix-plus::after {
+  content: "";
+  grid-area: 1 / 1;
+  width: 0.75rem;
+  height: 1.5px;
+  border-radius: 1px;
+  background: currentColor;
+  transition: rotate 300ms var(--ease-fm-snap);
+}
+.ix-plus::after {
+  rotate: 90deg;
+}
+[data-state="open"] > .ix-plus::after,
+[aria-expanded="true"] > .ix-plus::after {
+  rotate: 180deg;
+}
+
+/* ——— Panel realizacji (dotyk i kliknięcie): wysokość przez siatkę 0fr → 1fr ———
+   `data-instant`: panel otwierany morfem karty (View Transition) staje od razu
+   w stanie końcowym — ruch robi przejście widoku, nie przejścia CSS. */
+.ix-panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 320ms var(--ease-fm-snap);
+}
+.ix-panel[data-open] {
+  grid-template-rows: 1fr;
+}
+.ix-panel > * {
+  min-height: 0;
+  overflow: hidden;
+}
+.ix-panel__inner {
+  opacity: 0;
+  translate: 0 -0.25rem;
+  transition:
+    opacity 200ms var(--ease-fm-snap),
+    translate 320ms var(--ease-fm-snap);
+}
+.ix-panel[data-open] .ix-panel__inner {
+  opacity: 1;
+  translate: 0 0;
+  transition-delay: 60ms;
+}
+.ix-panel[data-instant],
+.ix-panel[data-instant] .ix-panel__inner {
+  transition: none;
+}
+/* Podpis dochodzi, gdy wiersze poniżej już zjadą — nie nachodzi na nie w locie. */
+.ix-panel[data-instant] .ix-caption {
+  animation: ix-fade-in 200ms var(--ease-fm-snap) 260ms both;
+}
+
+/* Morf: karta za kursorem → odtwarzacz w wierszu; kolejne wiersze zjeżdżają w dół. */
+::view-transition {
+  pointer-events: none;
+}
+::view-transition-group(ix-work),
+::view-transition-group(.ix-row) {
+  animation-duration: 480ms;
+  animation-timing-function: var(--ease-fm-drawer);
+}
+::view-transition-old(ix-work),
+::view-transition-new(ix-work) {
+  height: 100%;
+  object-fit: cover;
+  animation-duration: 280ms;
+}
+
+/* ——— Karta wideo płynąca za kursorem ——— */
+.ix-float__card {
+  translate: 0 -50%;
+  transform-origin: 0 50%;
+  opacity: 0;
+  scale: 0.94;
+  filter: blur(4px);
+  transition:
+    opacity 150ms var(--ease-fm-snap),
+    scale 150ms var(--ease-fm-snap),
+    filter 150ms var(--ease-fm-snap);
+}
+.ix-float__card[data-morphing] {
+  box-shadow: var(--fm-shadow-card);
+}
+.ix-float__card[data-flip] {
+  transform-origin: 100% 50%;
+}
+.ix-float__card[data-visible] {
+  opacity: 1;
+  scale: 1;
+  filter: none;
+  transition-duration: 240ms;
+}
+.ix-layer {
+  opacity: 0;
+  filter: blur(6px);
+  scale: 1.04;
+  transition:
+    opacity 260ms var(--ease-fm-snap),
+    filter 260ms var(--ease-fm-snap),
+    scale 400ms var(--ease-fm-snap);
+}
+.ix-layer[data-active] {
+  opacity: 1;
+  filter: none;
+  scale: 1;
+}
+.ix-video {
+  opacity: 0;
+  transition: opacity 240ms ease;
+}
+.ix-video[data-ready] {
+  opacity: 1;
+}
+
+/* Pierścień nad mediami: obraz przykrywa tło, więc krawędź rysujemy na wierzchu. */
+.ix-media-ring::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 1px var(--fm-edge);
+  pointer-events: none;
+}
+
+/* Połysk na plakacie, zanim zdjęcie się wczyta. */
+@keyframes ix-shimmer {
+  from {
+    background-position: 150% 0;
+  }
+  to {
+    background-position: -50% 0;
+  }
+}
+.ix-skeleton {
+  background: linear-gradient(
+      100deg,
+      transparent 30%,
+      color-mix(in oklab, var(--fm-surface) 70%, transparent) 50%,
+      transparent 70%
+    )
+    var(--fm-fill);
+  background-size: 200% 100%;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .ix-skeleton {
+    animation: ix-shimmer 1.2s linear infinite;
+  }
+}
+
+/* ——— Blog: odręczna elipsa wokół „Nowy” — dwa pociągnięcia, rysowane raz ——— */
+.ix-new path {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+}
+.ix-new[data-armed] path {
+  stroke-dashoffset: 1;
+}
+.ix-new[data-armed][data-drawn] path {
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset 440ms cubic-bezier(0.65, 0, 0.35, 1) 150ms;
+}
+.ix-new[data-armed][data-drawn] path + path {
+  transition-duration: 300ms;
+  transition-delay: 560ms;
+}
+
+/* Lista zwinięta: dolne wiersze gasną pod gradientem w kolorze płótna. */
+.ix-fade {
+  position: relative;
+}
+.ix-fade::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0;
+  height: 7rem;
+  background: linear-gradient(to bottom, transparent, var(--fm-canvas) 92%);
+  opacity: 0;
+  transition: opacity 300ms var(--ease-fm-snap);
+  pointer-events: none;
+}
+.ix-fade[data-collapsed]::after {
+  opacity: 1;
+}
+
+/* ——— Formularz: wypełnione pola, fokus jako miękki pierścień ——— */
+.ix-field {
+  width: 100%;
+  border-radius: var(--radius-fm-lg);
+  background: var(--fm-fill);
+  color: var(--fm-ink);
+  font-size: 1rem;
+  outline: none;
+  box-shadow: 0 0 0 1px transparent;
+  transition:
+    background-color 150ms ease,
+    box-shadow 150ms ease;
+}
+@media (min-width: 40rem) {
+  .ix-field {
+    font-size: 0.9375rem;
+  }
+}
+.ix-field::placeholder {
+  color: var(--fm-ink-3);
+}
+@media (hover: hover) {
+  .ix-field:hover {
+    background: var(--fm-fill-strong);
+  }
+}
+.ix-field:focus {
+  background: var(--fm-surface);
+  box-shadow:
+    0 0 0 1px var(--fm-ink-3),
+    0 0 0 4px var(--fm-edge);
+}
+.ix-field[aria-invalid="true"] {
+  background: var(--fm-surface);
+  box-shadow: 0 0 0 1px var(--fm-ink);
+}
+textarea.ix-field {
+  field-sizing: content;
+  resize: none;
+}
+
+/* Przycisk wysyłania: stany w jednej komórce siatki — szerokość nie skacze. */
+.ix-submit__layer {
+  grid-area: 1 / 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition:
+    opacity 200ms var(--ease-fm-snap),
+    filter 200ms var(--ease-fm-snap),
+    translate 400ms var(--ease-fm-spring);
+}
+.ix-submit:not([data-pending]) [data-layer="pending"],
+.ix-submit[data-pending] [data-layer="idle"] {
+  opacity: 0;
+  filter: blur(2px);
+  translate: 0 0.6em;
+}
+.ix-submit[data-pending] [data-layer="idle"] {
+  translate: 0 -0.6em;
+}
+@keyframes ix-spin {
+  to {
+    rotate: 1turn;
+  }
+}
+.ix-spin {
+  animation: ix-spin 0.8s linear infinite;
+}
+
+/* „Ogranicz ruch”: zostaje samo przenikanie — bez rozmycia, skali i przesunięć.
+   (Czasy i tak skraca globalna reguła w demo.css; tu znikają same stany pośrednie.) */
+@media (prefers-reduced-motion: reduce) {
+  .ix-float__card,
+  .ix-layer {
+    filter: none !important;
+    scale: 1 !important;
+  }
+  .ix-panel__inner,
+  .ix-submit__layer {
+    filter: none !important;
+    translate: none !important;
+  }
+}

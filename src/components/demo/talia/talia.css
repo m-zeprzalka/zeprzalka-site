@@ -1,0 +1,515 @@
+/*
+ * „Talia” — to, czego nie da się zgrabnie zapisać klasami Tailwinda:
+ * geometria wachlarza (sam CSS, zero JS, gotowa w HTML z serwera), stos
+ * kart na telefonie, maski przewijania i choreografia przejść widoku
+ * (karta wyjmowana z talii). Kolory, promienie i krzywe pochodzą z Formy.
+ */
+
+.talia {
+  /* Sprężyna spring(0.4, 0.15) — przestrzelenie 0,6%. Czas ustalenia 750 ms. */
+  --talia-spring: linear(
+    0,
+    0.0663,
+    0.2105,
+    0.3763,
+    0.5332,
+    0.6669,
+    0.7733,
+    0.8533,
+    0.9107,
+    0.9499,
+    0.9754,
+    0.9911,
+    1,
+    1.0044,
+    1.0061,
+    1.0062,
+    1.0055,
+    1.0045,
+    1.0035,
+    1.0026,
+    1.0018,
+    1.0012,
+    1.0008,
+    1,
+    1
+  );
+  /* Lecąca karta nie może rozpychać strony w poziomie (clip, nie hidden: sticky działa). */
+  overflow-x: clip;
+}
+
+/* Pływający nagłówek nie zasłania celu kotwicy ani fokusu (WCAG 2.4.11). */
+html:has(.talia) {
+  scroll-padding-top: 6rem;
+  scrollbar-gutter: stable;
+}
+/* Blokada przewijania Radiksa dokłada margines za pasek — rynna już go trzyma. */
+html:has(.talia) body[data-scroll-locked] {
+  margin-right: 0 !important;
+}
+
+/* ———————————————————————————— Wachlarz (desktop) ———————————————————————————— */
+
+/*
+ * Każda karta zna swój numer (--i) i liczbę kart (--n); z tego wynika
+ * odchylenie od środka (--o), a z niego przesunięcie, łuk i obrót. Najechanie
+ * zmienia tylko dwie liczby (--spread, --tilt), resztę liczy przeglądarka,
+ * a przejście ze sprężyną dociąga karty do nowych miejsc.
+ */
+.talia-fan {
+  --w: clamp(9.5rem, 16vw, 15rem);
+  --spread: 0.56;
+  --tilt: 3.5deg;
+  --arc: 0.5rem;
+  position: relative;
+  height: calc(var(--w) * 1.25 + 4.5rem);
+}
+
+.talia-fan__card {
+  --o: calc(var(--i) - (var(--n) - 1) / 2);
+  position: absolute;
+  top: 1.25rem;
+  left: calc(50% - var(--w) / 2);
+  width: var(--w);
+  z-index: var(--i);
+  border-radius: var(--radius-fm-3xl);
+  translate: calc(var(--o) * var(--w) * var(--spread) + var(--push, 0rem))
+    calc(var(--o) * var(--o) * var(--arc) + var(--lift, 0rem));
+  rotate: calc(var(--o) * var(--tilt));
+  scale: var(--scale, 1);
+  transform-origin: 50% 100%;
+  transition:
+    translate 750ms var(--talia-spring),
+    rotate 750ms var(--talia-spring),
+    scale 300ms var(--ease-fm-snap);
+}
+
+/* Cień uniesienia na pseudo-elemencie: animujemy krycie, nie box-shadow. */
+.talia-fan__card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  box-shadow: var(--fm-shadow-float);
+  opacity: 0;
+  transition: opacity 300ms var(--ease-fm-snap);
+}
+
+.talia-fan:has(:focus-visible) {
+  --spread: 0.82;
+  --tilt: 4.5deg;
+}
+.talia-fan__card:has(:focus-visible) {
+  --lift: -0.75rem;
+  --scale: 1.03;
+  z-index: 10;
+}
+.talia-fan__card:has(:focus-visible)::after {
+  opacity: 1;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .talia-fan:has(.talia-fan__card:hover) {
+    --spread: 0.82;
+    --tilt: 4.5deg;
+  }
+  .talia-fan__card:hover {
+    --lift: -0.75rem;
+    --scale: 1.03;
+    z-index: 10;
+  }
+  .talia-fan__card:hover::after {
+    opacity: 1;
+  }
+  /* Sąsiedzi robią miejsce karcie pod kursorem. */
+  .talia-fan__card:has(+ .talia-fan__card:hover) {
+    --push: -1.25rem;
+  }
+  .talia-fan__card:hover + .talia-fan__card {
+    --push: 1.25rem;
+  }
+  .talia-fan__card:has(+ * + .talia-fan__card:hover) {
+    --push: -0.5rem;
+  }
+  .talia-fan__card:hover + * + .talia-fan__card {
+    --push: 0.5rem;
+  }
+}
+
+/* Rozdanie: karty wyjeżdżają ze wspólnego stosu w wachlarz — raz, przy wejściu. */
+@media (prefers-reduced-motion: no-preference) {
+  .talia-fan__card {
+    animation: talia-deal 1100ms var(--talia-spring) backwards;
+    animation-delay: calc(320ms + var(--i) * 70ms);
+  }
+}
+@keyframes talia-deal {
+  from {
+    translate: 0 2rem;
+    rotate: 0deg;
+    opacity: 0;
+  }
+}
+
+/*
+ * Mała talia w kontakcie: mniejsze karty, ciaśniej, rozdanie przy wjeździe
+ * w kadr. Położenie tutaj, nie w klasach — `.talia-fan` (poza warstwami)
+ * wygrałby z utility Tailwinda.
+ */
+.talia-fan--mini {
+  --w: 9.5rem;
+  --spread: 0.5;
+  --tilt: 6deg;
+  --arc: 0.375rem;
+  display: none;
+  height: calc(var(--w) * 1.25 + 3rem);
+}
+@media (min-width: 64rem) {
+  .talia-fan.talia-fan--mini {
+    display: block;
+    position: absolute;
+    top: 6.5rem;
+    right: 3.5rem;
+    width: 24rem;
+  }
+}
+@media (min-width: 80rem) {
+  .talia-fan.talia-fan--mini {
+    right: 5.5rem;
+  }
+}
+.talia-fan--mini:has(.talia-fan__card:hover),
+.talia-fan--mini:has(:focus-visible) {
+  --spread: 0.72;
+  --tilt: 8deg;
+}
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .talia-fan--mini .talia-fan__card {
+      animation: talia-deal linear backwards;
+      animation-timeline: view();
+      animation-range: entry 20% cover 45%;
+    }
+  }
+}
+
+/* Bez ruchu talia leży spokojnie w rzędzie — żadnych obrotów ani sprężyn. */
+@media (prefers-reduced-motion: reduce) {
+  .talia-fan {
+    grid-template-columns: repeat(var(--n), minmax(0, 1fr));
+    gap: 1rem;
+    height: auto;
+  }
+  .talia-fan:not(.talia-fan--mini) {
+    display: grid;
+  }
+  @media (min-width: 64rem) {
+    .talia-fan.talia-fan--mini {
+      display: grid;
+    }
+  }
+  .talia-fan__card {
+    position: relative;
+    top: auto;
+    left: auto;
+    width: auto;
+    translate: none;
+    rotate: none;
+    scale: none;
+  }
+}
+
+/* ———————————————————————————— Stos (telefon) ———————————————————————————— */
+
+/*
+ * Karta k = 0 leży na wierzchu, kolejne wystają spod niej u góry. --pull
+ * (0…1) ustawia gest: gdy wierzchnia karta odjeżdża, cała talia podjeżdża
+ * o jedno miejsce proporcjonalnie do przesunięcia palca.
+ */
+.talia-stack {
+  --pull: 0;
+  position: relative;
+  width: min(100%, 19.5rem);
+  aspect-ratio: 4 / 5;
+  margin-inline: auto;
+}
+
+.talia-stack__slot {
+  --kk: max(calc(var(--k) - var(--pull)), 0);
+  position: absolute;
+  inset: 0;
+  z-index: calc(10 - var(--k));
+  translate: 0 calc(var(--kk) * -0.875rem);
+  scale: calc(1 - var(--kk) * 0.055);
+  rotate: calc(var(--tilt, 0) * min(var(--kk), 1) * 1deg);
+  opacity: clamp(0, calc(3 - var(--kk)), 1);
+  transform-origin: 50% 0%;
+  transition:
+    translate 650ms var(--talia-spring),
+    scale 650ms var(--talia-spring),
+    rotate 650ms var(--talia-spring),
+    opacity 250ms var(--ease-fm-snap);
+}
+.talia-stack[data-dragging] .talia-stack__slot {
+  transition-duration: 0ms;
+}
+
+/* Podpowiedź gestu: wierzchnia karta raz „zerka” w bok po wejściu na stronę. */
+@media (prefers-reduced-motion: no-preference) {
+  .talia-stack__hint {
+    animation: talia-nudge 1100ms var(--ease-fm-snap) 1.6s both;
+  }
+}
+@keyframes talia-nudge {
+  35% {
+    translate: -1.25rem 0;
+    rotate: -3deg;
+  }
+}
+
+/* ———————————————————————————— Przewijane taśmy ———————————————————————————— */
+
+/* Tylko telefon: od 768 px te same listy są siatką i maska ucięłaby karty. */
+@media (max-width: 47.99rem) {
+  .talia-scroller {
+    scrollbar-width: none;
+    mask-image: linear-gradient(
+      to right,
+      transparent,
+      #000 var(--fm-gutter),
+      #000 calc(100% - 2rem),
+      transparent
+    );
+  }
+  .talia-scroller::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* ———————————————————————————— Przejścia widoku ———————————————————————————— */
+
+/*
+ * Karta wyjmowana z talii: obraz leci z karty do dialogu (wspólny element),
+ * a tło i arkusz dialogu wchodzą osobno. Obie migawki wypełniają grupę
+ * z `object-fit: cover`, więc zmiana proporcji (4:5 → natywne) jest
+ * przekadrowaniem, a nie rozciąganiem.
+ */
+::view-transition {
+  pointer-events: none;
+}
+::view-transition-group(.talia-morph) {
+  animation-duration: 520ms;
+  animation-timing-function: var(--ease-fm-drawer);
+}
+::view-transition-image-pair(.talia-morph) {
+  overflow: clip;
+  border-radius: var(--radius-fm-2xl);
+}
+::view-transition-old(.talia-morph),
+::view-transition-new(.talia-morph) {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+::view-transition-new(.talia-fade-in):only-child {
+  animation: talia-fade 360ms var(--ease-fm-snap) both;
+}
+::view-transition-old(.talia-fade-out):only-child {
+  animation: talia-fade 220ms var(--ease-fm-snap) reverse both;
+}
+::view-transition-new(.talia-sheet-in):only-child {
+  animation: talia-sheet-in 480ms var(--ease-fm-drawer) both;
+}
+::view-transition-old(.talia-sheet-out):only-child {
+  animation: talia-sheet-out 220ms var(--ease-fm-snap) both;
+}
+@media (max-width: 47.99rem) {
+  ::view-transition-new(.talia-sheet-in):only-child {
+    animation-name: talia-sheet-up;
+  }
+  ::view-transition-old(.talia-sheet-out):only-child {
+    animation: talia-sheet-up 260ms var(--ease-fm-snap) reverse both;
+  }
+}
+
+@keyframes talia-fade {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes talia-sheet-in {
+  from {
+    opacity: 0;
+    scale: 0.97;
+    translate: 0 1rem;
+  }
+}
+@keyframes talia-sheet-out {
+  to {
+    opacity: 0;
+    scale: 0.98;
+    translate: 0 0.5rem;
+  }
+}
+@keyframes talia-sheet-up {
+  from {
+    translate: 0 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation-duration: 0s !important;
+    animation-delay: 0s !important;
+  }
+}
+
+/* ———————————————————————————— Odwrócona wyspa (kontakt) ———————————————————————————— */
+
+/*
+ * Tokeny Formy podmienione lokalnie: ciemna karta na jasnej stronie i jasna
+ * na ciemnej. Cienie trzeba zdefiniować ponownie, bo `var()` w nich
+ * rozwiązał się już na korzeniu `.fm`.
+ */
+.talia-invert {
+  --fm-canvas: oklch(0.205 0 0);
+  --fm-surface: oklch(0.255 0 0);
+  --fm-fill: oklch(1 0 0 / 0.08);
+  --fm-fill-strong: oklch(1 0 0 / 0.14);
+  --fm-ink: oklch(0.975 0 0);
+  --fm-ink-2: oklch(0.78 0 0);
+  --fm-ink-3: oklch(0.66 0 0);
+  --fm-edge: oklch(1 0 0 / 0.1);
+  --fm-inverse: oklch(0.205 0 0);
+  --fm-shadow-ring: 0 0 0 1px var(--fm-edge);
+  color-scheme: dark;
+  background: var(--fm-canvas);
+  color: var(--fm-ink);
+}
+.dark .talia-invert {
+  --fm-canvas: oklch(0.975 0 0);
+  --fm-surface: oklch(1 0 0);
+  --fm-fill: oklch(0 0 0 / 0.05);
+  --fm-fill-strong: oklch(0 0 0 / 0.1);
+  --fm-ink: oklch(0.205 0 0);
+  --fm-ink-2: oklch(0.44 0 0);
+  --fm-ink-3: oklch(0.53 0 0);
+  --fm-edge: oklch(0 0 0 / 0.09);
+  --fm-inverse: oklch(0.975 0 0);
+  color-scheme: light;
+}
+
+/* ———————————————————————————— Kompetencje: ikona wykonuje zawód ———————————————————————————— */
+
+.talia-skill__icon > svg:first-child {
+  transition: translate 300ms var(--ease-fm-snap);
+}
+.talia-skill__select,
+.talia-skill__caret,
+.talia-skill__cursor {
+  position: absolute;
+  pointer-events: none;
+  opacity: 0;
+}
+
+/* Projektowanie: miękka ramka zaznaczenia z czterema uchwytami. */
+.talia-skill__select {
+  inset: -5px;
+  border-radius: 15px;
+  box-shadow: 0 0 0 1px var(--fm-ink);
+  scale: 0.9;
+  transition:
+    opacity 200ms var(--ease-fm-snap),
+    scale 400ms var(--ease-fm-spring);
+}
+.talia-skill__select i {
+  position: absolute;
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: var(--fm-surface);
+  box-shadow: 0 0 0 1px var(--fm-ink);
+}
+.talia-skill__select i:nth-child(1) {
+  top: -3px;
+  left: -3px;
+}
+.talia-skill__select i:nth-child(2) {
+  top: -3px;
+  right: -3px;
+}
+.talia-skill__select i:nth-child(3) {
+  bottom: -3px;
+  left: -3px;
+}
+.talia-skill__select i:nth-child(4) {
+  right: -3px;
+  bottom: -3px;
+}
+
+/* Kod: karetka mruga za ikoną, ikona robi jej miejsce. */
+.talia-skill__caret {
+  top: calc(50% - 7px);
+  right: 8px;
+  width: 1.5px;
+  height: 14px;
+  border-radius: 1px;
+  background: var(--fm-ink);
+}
+
+/* AI: jeden przebłysk przez kafel (bez iskier — ruch zamiast ikony). */
+.talia-skill[data-kind="ai"] .talia-skill__icon::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(
+      105deg,
+      transparent 30%,
+      color-mix(in oklab, var(--fm-surface) 90%, transparent) 50%,
+      transparent 70%
+    )
+    100% 0 / 250% 100% no-repeat;
+  opacity: 0;
+}
+
+/* Wykłady: kursor studenta podjeżdża do kafla. */
+.talia-skill__cursor {
+  right: -7px;
+  bottom: -7px;
+  width: 15px;
+  height: 15px;
+  fill: var(--fm-ink);
+  stroke: var(--fm-surface);
+  stroke-width: 1.5;
+  translate: 6px 6px;
+  transition:
+    opacity 200ms var(--ease-fm-snap),
+    translate 500ms var(--ease-fm-spring);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .talia-skill:hover .talia-skill__select {
+    opacity: 1;
+    scale: 1;
+  }
+  .talia-skill:hover .talia-skill__caret {
+    opacity: 1;
+    animation: fm-caret 1s steps(1) infinite;
+  }
+  .talia-skill[data-kind="code"]:hover .talia-skill__icon > svg:first-child {
+    translate: -3px 0;
+  }
+  .talia-skill[data-kind="ai"]:hover .talia-skill__icon::after {
+    opacity: 1;
+    animation: fm-shimmer 900ms var(--ease-fm-snap) both;
+  }
+  .talia-skill:hover .talia-skill__cursor {
+    opacity: 1;
+    translate: 0 0;
+  }
+}

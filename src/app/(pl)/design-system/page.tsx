@@ -20,14 +20,16 @@ export const metadata: Metadata = {
   title: "System projektowy",
   description:
     "Katalog języka wizualnego zeprzalka.com: tokeny, typografia, siatka, komponenty i wzorce obecnej wersji serwisu.",
-  // Dokumentacja wewnętrzna — nie należy do treści serwisu w wyszukiwarce.
+  // Dokumentacja wewnętrzna, tylko po polsku (wyjątek od zasady dwujęzyczności,
+  // AGENTS.md) — poza wyszukiwarką, z własnym adresem kanonicznym.
   robots: { index: false, follow: false },
+  alternates: { canonical: "/design-system" },
 }
 
 const facts = [
   { label: "Tokeny koloru", value: "18 semantycznych" },
-  { label: "Komponenty bazowe", value: "9 (wszystkie w użyciu)" },
-  { label: "Komponenty aplikacji", value: "12" },
+  { label: "Komponenty bazowe", value: "10 (wszystkie w użyciu)" },
+  { label: "Komponenty aplikacji", value: "15" },
   { label: "Motywy", value: "jasny i ciemny, domyślnie ciemny" },
 ]
 

@@ -199,10 +199,10 @@ export function UiKitSection() {
           <Accordion type="single" collapsible defaultValue="item-1">
             <AccordionItem value="item-1" className="border-t">
               <AccordionTrigger className="py-8 hover:no-underline">
-                <div className="flex w-full items-center gap-4 lg:gap-6">
+                <span className="flex w-full items-center gap-4 lg:gap-6">
                   <span className="text-2xl text-muted-foreground/80 md:text-3xl">01</span>
                   <span className="text-xl sm:text-3xl">Projektowanie Produktu</span>
-                </div>
+                </span>
               </AccordionTrigger>
               <AccordionContent className="flex flex-col gap-4 text-balance">
                 <p className="text-base leading-relaxed text-muted-foreground md:text-lg">
@@ -220,10 +220,10 @@ export function UiKitSection() {
             </AccordionItem>
             <AccordionItem value="item-2" className="border-t">
               <AccordionTrigger className="py-8 hover:no-underline">
-                <div className="flex w-full items-center gap-4 lg:gap-6">
+                <span className="flex w-full items-center gap-4 lg:gap-6">
                   <span className="text-2xl text-muted-foreground/80 md:text-3xl">02</span>
                   <span className="text-xl sm:text-3xl">Development i Technologia</span>
-                </div>
+                </span>
               </AccordionTrigger>
               <AccordionContent>
                 <p className="text-base text-muted-foreground">Treść pozycji.</p>
@@ -237,11 +237,11 @@ export function UiKitSection() {
         title="Pola formularza"
         note={
           <>
-            Formularz kontaktowy używa <DsInline>Input</DsInline> z komponentów, ale etykiety są
-            zwykłymi <DsInline>&lt;label&gt;</DsInline>, a pole wieloliniowe to ręcznie ostylowany{" "}
-            <DsInline>&lt;textarea&gt;</DsInline> — mimo że komponenty <DsInline>label</DsInline>,{" "}
-            <DsInline>textarea</DsInline> i <DsInline>field</DsInline> są w projekcie. Ujednolicenie
-            usunęłoby ok. 20 linii powtórzonych klas.
+            Formularz kontaktowy używa <DsInline>Input</DsInline> i <DsInline>Textarea</DsInline> z
+            komponentów, z etykietami jako zwykłe <DsInline>&lt;label&gt;</DsInline>. Pole
+            wiadomości ma jeszcze nadpisania utrzymujące dawny wygląd (inne tło w ciemnym motywie,
+            14 px, dawny pierścień fokusu) — ujednolicenie z <DsInline>Input</DsInline> czeka na
+            decyzję o stronie głównej.
           </>
         }
       >

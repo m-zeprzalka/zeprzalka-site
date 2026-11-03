@@ -13,71 +13,62 @@ import { notFound } from "next/navigation"
 import { PostView } from "@/components/views/PostView"
 import { TaxonomyView } from "@/components/views/TaxonomyView"
 import { BlogIndexView } from "@/components/views/BlogIndexView"
-import { locales, type Locale } from "@/i18n/config"
+import type { Locale } from "@/i18n/config"
+import { mapLocales } from "@/i18n/alternates"
 import { blogPageMetadata, categoryMetadata, postMetadata, tagMetadata } from "@/i18n/page-metadata"
 import { getBlogPageCount } from "@/lib/blog-pages"
-import { getAllPosts, getPostBySlug, getTerm, getTerms, type TaxonomyField } from "@/lib/posts"
+import { getPostBySlug, getTerm, type TaxonomyField } from "@/lib/posts"
+import { archiveParams, postParams, readParam, termParams, type ParamsProps } from "@/routes/params"
 
-type Props<K extends string> = { params: Promise<Record<K, string>> }
+/*
+ * Przy `dynamicParams = false` Next wywołuje te funkcje wyłącznie dla adresów
+ * z `generateStaticParams`, więc brak wpisu albo terminu to błąd danych —
+ * `notFound()` zamiast pustych metadanych i typów z `null`.
+ */
 
 /** Wpis: `/blog/[slug]`, `/en/blog/[slug]`. */
 export function postRoute(locale: Locale) {
-  const postFor = async ({ params }: Props<"slug">) => getPostBySlug(locale, (await params).slug)
+  const postFor = async (props: ParamsProps<"slug">) =>
+    getPostBySlug(locale, await readParam(props, "slug")) ?? notFound()
 
   return {
-    generateStaticParams: () => getAllPosts(locale).map((post) => ({ slug: post.slug })),
-    generateMetadata: async (props: Props<"slug">): Promise<Metadata> =>
+    generateStaticParams: () => postParams(locale),
+    generateMetadata: async (props: ParamsProps<"slug">): Promise<Metadata> =>
       postMetadata(locale, await postFor(props)),
-    Page: async (props: Props<"slug">) => {
-      const post = await postFor(props)
-      if (!post) notFound()
-      return <PostView post={post} locale={locale} />
-    },
+    Page: async (props: ParamsProps<"slug">) => (
+      <PostView post={await postFor(props)} locale={locale} />
+    ),
   }
 }
 
 /** Kategoria albo tag: `/blog/kategoria/[kategoria]`, `/en/blog/tag/[tag]`… */
-export function taxonomyRoute<K extends string>(locale: Locale, field: TaxonomyField, param: K) {
-  const termFor = async ({ params }: Props<K>) => getTerm(locale, field, (await params)[param])
+export function taxonomyRoute<K extends string>(locale: Locale, field: TaxonomyField, key: K) {
+  const termFor = async (props: ParamsProps<K>) =>
+    getTerm(locale, field, await readParam(props, key)) ?? notFound()
 
   return {
-    generateStaticParams: () =>
-      getTerms(locale, field).map((term) => ({ [param]: term.slug }) as Record<K, string>),
-    generateMetadata: async (props: Props<K>): Promise<Metadata> => {
+    generateStaticParams: () => termParams(locale, field, key),
+    generateMetadata: async (props: ParamsProps<K>): Promise<Metadata> => {
       const term = await termFor(props)
-      if (!term) return {}
       return field === "categories" ? categoryMetadata(locale, term) : tagMetadata(locale, term)
     },
-    Page: async (props: Props<K>) => {
-      const term = await termFor(props)
-      if (!term) notFound()
-      return <TaxonomyView locale={locale} field={field} term={term} />
-    },
+    Page: async (props: ParamsProps<K>) => (
+      <TaxonomyView locale={locale} field={field} term={await termFor(props)} />
+    ),
   }
 }
 
 /** Kolejne strony archiwum: `/blog/strona/[strona]`, `/en/blog/page/[page]`. */
-export function blogArchiveRoute<K extends string>(locale: Locale, param: K) {
-  const pageFor = async ({ params }: Props<K>) => Number((await params)[param])
-  const pageCounts = () =>
-    Object.fromEntries(locales.map((other) => [other, getBlogPageCount(other)])) as Record<
-      Locale,
-      number
-    >
+export function blogArchiveRoute<K extends string>(locale: Locale, key: K) {
+  const pageFor = async (props: ParamsProps<K>) => Number(await readParam(props, key))
+  const pageCounts = () => mapLocales(getBlogPageCount)
 
   return {
-    // Strona 1 to sam indeks bloga, więc archiwum zaczyna się od 2.
-    generateStaticParams: () =>
-      Array.from(
-        { length: getBlogPageCount(locale) - 1 },
-        (_, i) => ({ [param]: String(i + 2) }) as Record<K, string>
-      ),
-    generateMetadata: async (props: Props<K>): Promise<Metadata> =>
+    generateStaticParams: () => archiveParams(locale, key),
+    generateMetadata: async (props: ParamsProps<K>): Promise<Metadata> =>
       blogPageMetadata(locale, await pageFor(props), pageCounts()),
-    Page: async (props: Props<K>) => {
-      const page = await pageFor(props)
-      if (!Number.isInteger(page) || page < 2) notFound()
-      return <BlogIndexView locale={locale} page={page} />
-    },
+    Page: async (props: ParamsProps<K>) => (
+      <BlogIndexView locale={locale} page={await pageFor(props)} />
+    ),
   }
 }

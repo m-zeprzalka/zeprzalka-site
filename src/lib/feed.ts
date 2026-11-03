@@ -1,7 +1,8 @@
+import "server-only"
 import { escapeMarkup } from "@/lib/escape"
-import { getAllPosts } from "@/lib/posts"
+import { getAllPosts, latestUpdate } from "@/lib/posts"
 import { AUTHOR, absoluteUrl } from "@/lib/site"
-import { INTL_LOCALE, ROUTES, postPath, type Locale } from "@/i18n/config"
+import { FEEDS, INTL_LOCALE, ROUTES, postPath, type Locale } from "@/i18n/config"
 import { getMeta } from "@/i18n/content/meta"
 
 /**
@@ -34,13 +35,15 @@ ${post.frontmatter.categories.map((c) => `      <category>${escapeMarkup(c)}</ca
     <link>${absoluteUrl(ROUTES.blog[locale])}</link>
     <description>${escapeMarkup(m.blog.feedDescription)}</description>
     <language>${INTL_LOCALE[locale]}</language>
-    <lastBuildDate>${new Date(posts[0]?.frontmatter.updated || posts[0]?.frontmatter.date || Date.now()).toUTCString()}</lastBuildDate>
+    <lastBuildDate>${(latestUpdate(posts) ?? new Date()).toUTCString()}</lastBuildDate>
     <image>
-      <url>${absoluteUrl("/icon-512.png")}</url>
+      <url>${absoluteUrl("/icon.png")}</url>
       <title>${escapeMarkup(m.root.feedTitle)}</title>
       <link>${absoluteUrl(ROUTES.blog[locale])}</link>
+      <width>144</width>
+      <height>144</height>
     </image>
-    <atom:link href="${absoluteUrl(ROUTES.feed[locale])}" rel="self" type="application/rss+xml"/>
+    <atom:link href="${absoluteUrl(FEEDS[locale])}" rel="self" type="application/rss+xml"/>
 ${items}
   </channel>
 </rss>`

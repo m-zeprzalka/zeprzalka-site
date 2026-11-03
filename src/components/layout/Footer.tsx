@@ -4,8 +4,10 @@ import { ROUTES, type Locale } from "@/i18n/config"
 import { getCommon } from "@/i18n/content/common"
 import { fill } from "@/i18n/format"
 import { mainNav } from "@/i18n/navigation"
+import { SITE_DOMAIN } from "@/lib/site"
+import { cn } from "@/lib/utils"
 
-const LINK = "text-muted-foreground hover:text-foreground transition-colors"
+const LINK = cn("text-muted-foreground transition-colors hover:text-foreground")
 
 export function Footer({ locale }: { locale: Locale }) {
   const copy = getCommon(locale)
@@ -19,7 +21,7 @@ export function Footer({ locale }: { locale: Locale }) {
               href={ROUTES.home[locale]}
               className="text-lg font-semibold tracking-tight transition-colors hover:text-primary"
             >
-              zeprzalka.com
+              {SITE_DOMAIN}
             </Link>
             <p className="text-sm text-muted-foreground">
               {copy.footer.tagline} <br />

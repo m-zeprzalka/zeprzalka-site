@@ -3,7 +3,7 @@
  * dat, liczb i czasu lektury. Region bierze się zawsze z `INTL_LOCALE`
  * (copy angielskie jest pisane po brytyjsku, więc `en-GB`).
  */
-import { INTL_LOCALE, type Locale } from "@/i18n/config"
+import { INTL_LOCALE, type Locale, type Localized } from "@/i18n/config"
 
 /** Podstawia `{klucz}` wartościami — jedyny mechanizm interpolacji w treściach. */
 export function fill(template: string, values: Record<string, string | number>): string {
@@ -51,7 +51,13 @@ export function formatNumber(value: number, locale: Locale): string {
   return new Intl.NumberFormat(INTL_LOCALE[locale]).format(value)
 }
 
+/**
+ * Wzorzec czasu lektury jako para `Localized` — moduł jest używany także po
+ * stronie klienta, więc nie sięga do (serwerowych) modułów treści.
+ */
+const READING_TIME: Localized<string> = { pl: "{minutes} min czytania", en: "{minutes} min read" }
+
 /** „5 min czytania” / „5 min read”. */
 export function formatReadingTime(minutes: number, locale: Locale): string {
-  return locale === "pl" ? `${minutes} min czytania` : `${minutes} min read`
+  return fill(READING_TIME[locale], { minutes })
 }

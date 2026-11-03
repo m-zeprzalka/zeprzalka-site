@@ -16,15 +16,18 @@
  */
 import type { Metadata } from "next"
 import {
+  archivePaths,
+  categoryPaths,
+  hreflangMap,
+  postPaths,
+  tagPaths,
+  type LocalizedPaths,
+} from "@/i18n/alternates"
+import {
+  FEEDS,
   OG_LOCALE,
   ROUTES,
-  alternatesFor,
-  blogPagePath,
-  categoryPath,
-  locales,
   otherLocale,
-  postPath,
-  tagPath,
   type Locale,
   type Localized,
   type RouteKey,
@@ -32,7 +35,6 @@ import {
 import { getMeta } from "@/i18n/content/meta"
 import { getPages } from "@/i18n/content/pages"
 import { fill } from "@/i18n/format"
-import { translateCategorySlug, translatePostSlug, translateTagSlug } from "@/i18n/blog-map"
 import { AUTHOR, absoluteUrl } from "@/lib/site"
 import type { Post, Term } from "@/lib/posts"
 
@@ -43,7 +45,7 @@ interface PageMetaInput {
   title: string
   description: string
   /** Ta sama strona w obu językach; `null` = brak odpowiednika. */
-  paths: Localized<string | null>
+  paths: LocalizedPaths
   ogDescription?: string
   /** `noindex, follow` — strona dostępna, ale poza wynikami wyszukiwania. */
   noindex?: boolean
@@ -63,13 +65,21 @@ function pageTitle(locale: Locale, title: string): Metadata["title"] {
 /** Odnośnik do kanału RSS w `<head>` — na każdej stronie, w jej języku. */
 export function feedAlternate(locale: Locale) {
   return {
-    "application/rss+xml": [{ url: ROUTES.feed[locale], title: getMeta(locale).root.feedTitle }],
+    "application/rss+xml": [{ url: FEEDS[locale], title: getMeta(locale).root.feedTitle }],
   }
 }
 
-/** Ta sama wartość dla każdego języka serwisu. */
-function mapLocales<T>(fn: (locale: Locale) => T): Localized<T> {
-  return Object.fromEntries(locales.map((locale) => [locale, fn(locale)])) as Record<Locale, T>
+/**
+ * Adres kanoniczny, `hreflang` i kanał RSS. Wyszukiwarka dostaje wprost, że
+ * dwie strony to ten sam dokument w dwóch językach — bez tego traktuje je jak
+ * treść zduplikowaną albo pokazuje Polakowi wersję angielską.
+ */
+function alternates(locale: Locale, paths: LocalizedPaths): Metadata["alternates"] {
+  return {
+    canonical: paths[locale] ?? undefined,
+    languages: hreflangMap(paths),
+    types: feedAlternate(locale),
+  }
 }
 
 /**
@@ -85,10 +95,7 @@ function buildMetadata(locale: Locale, input: PageMetaInput): Metadata {
   return {
     title: pageTitle(locale, input.title),
     description: input.description,
-    alternates: {
-      ...alternatesFor(locale, input.paths),
-      types: feedAlternate(locale),
-    },
+    alternates: alternates(locale, input.paths),
     openGraph: {
       type: "website",
       siteName: root.siteName,
@@ -122,12 +129,7 @@ function staticPage(
  * `og:url` wskazuje właśnie ją) — dokłada tylko canonical, hreflang i RSS.
  */
 export function homeMetadata(locale: Locale): Metadata {
-  return {
-    alternates: {
-      ...alternatesFor(locale, ROUTES.home),
-      types: feedAlternate(locale),
-    },
-  }
+  return { alternates: alternates(locale, ROUTES.home) }
 }
 
 export const servicesMetadata = (locale: Locale) =>
@@ -164,21 +166,7 @@ export function blogPageMetadata(
   return buildMetadata(locale, {
     title: fill(copy.pageTitle, { current: page }),
     description: fill(copy.pageDescription, { current: page }),
-    paths: mapLocales((other) => (page <= pageCount[other] ? blogPagePath(other, page) : null)),
-  })
-}
-
-/** Buduje parę ścieżek na podstawie slugów w obu językach. */
-function pathsFor(
-  locale: Locale,
-  slug: string,
-  translate: (slug: string, from: Locale, to: Locale) => string | null,
-  build: (locale: Locale, slug: string) => string
-): Localized<string | null> {
-  return mapLocales((other) => {
-    if (other === locale) return build(locale, slug)
-    const translated = translate(slug, locale, other)
-    return translated ? build(other, translated) : null
+    paths: archivePaths(page, pageCount),
   })
 }
 
@@ -187,7 +175,7 @@ export function categoryMetadata(locale: Locale, term: Term): Metadata {
   return buildMetadata(locale, {
     title: fill(m.title, { name: term.label }),
     description: fill(m.description, { name: term.label }),
-    paths: pathsFor(locale, term.slug, translateCategorySlug, categoryPath),
+    paths: categoryPaths(locale, term.slug),
     noindex: term.posts.length < MIN_POSTS_TO_INDEX_CATEGORY,
   })
 }
@@ -201,7 +189,7 @@ export function tagMetadata(locale: Locale, term: Term): Metadata {
   return buildMetadata(locale, {
     title: fill(m.title, { name: term.label }),
     description: fill(m.description, { name: term.label }),
-    paths: pathsFor(locale, term.slug, translateTagSlug, tagPath),
+    paths: tagPaths(locale, term.slug),
     noindex: true,
   })
 }
@@ -212,18 +200,14 @@ export function tagMetadata(locale: Locale, term: Term): Metadata {
  * nadpisywały ją zdjęciem z frontmattera — w WebP albo SVG (część
  * komunikatorów ich nie pokazuje) i z fałszywie zadeklarowanym 1200×630.
  */
-export function postMetadata(locale: Locale, post: Post | null): Metadata {
-  if (!post) {
-    return {}
-  }
-
+export function postMetadata(locale: Locale, post: Post): Metadata {
   const { frontmatter } = post
 
   return {
     ...buildMetadata(locale, {
       title: frontmatter.title,
       description: frontmatter.description,
-      paths: pathsFor(locale, post.slug, translatePostSlug, postPath),
+      paths: postPaths(locale, post.slug),
       openGraph: {
         type: "article",
         publishedTime: frontmatter.date,

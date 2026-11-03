@@ -65,7 +65,7 @@ export function DsBlock({ title, description, note, children, className }: Block
 }
 
 /** Etykieta w wersalikach — wzorzec z /o-mnie i /kontakt. */
-export function DsLabel({ children, className }: { children: ReactNode; className?: string }) {
+function DsLabel({ children, className }: { children: ReactNode; className?: string }) {
   return (
     <p
       className={cn(

@@ -1,3 +1,4 @@
+import "server-only"
 import type { Locale } from "@/i18n/config"
 import { getAllPosts, type Post } from "@/lib/posts"
 

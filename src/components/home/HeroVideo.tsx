@@ -1,14 +1,20 @@
 "use client"
 
+import { preload } from "react-dom"
 import { useReducedMotionVideo } from "@/hooks/use-reduced-motion"
 
 /**
  * Wideo hero — jedyna kliencka część sekcji. Poster to pierwsza klatka
  * materiału (28 KB WebP): maluje się od razu, więc największy element strony
- * nie czeka na wideo, a `preload="metadata"` zdejmuje megabajty ze ścieżki
- * krytycznej.
+ * nie czeka na wideo. (`preload` nie ma tu znaczenia — `autoPlay` i tak
+ * zaczyna pobieranie; odroczenie wideo to zmiana zachowania do decyzji.)
  */
 export function HeroVideo({ fallback }: { fallback: string }) {
+  // Poster maluje się jako pierwszy duży element — pobiera się równolegle z
+  // dokumentem. Wywołane w komponencie klienckim trafia tylko do <head> HTML-a
+  // strony głównej; z komponentu serwerowego szło też do ładunku RSC, więc
+  // każdy prefetch strony głównej (logo w nagłówku) ściągał poster na podstronach.
+  preload("/hero-poster.webp", { as: "image", fetchPriority: "high" })
   const { ref, onPlay } = useReducedMotionVideo()
 
   return (
@@ -21,7 +27,6 @@ export function HeroVideo({ fallback }: { fallback: string }) {
         loop
         playsInline
         aria-hidden="true"
-        preload="metadata"
         poster="/hero-poster.webp"
         className="absolute inset-0 h-full w-full object-cover"
       >

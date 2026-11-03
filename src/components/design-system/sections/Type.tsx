@@ -26,7 +26,7 @@ export function TypeSection() {
             ustawiane na <DsInline>&lt;body&gt;</DsInline>, a Tailwind v4 przypisuje{" "}
             <DsInline>font-family</DsInline> na <DsInline>&lt;html&gt;</DsInline> — o poziom wyżej,
             gdzie zmiennej jeszcze nie było. Klasy przeniesiono na <DsInline>&lt;html&gt;</DsInline>{" "}
-            w <DsInline>src/app/layout.tsx</DsInline>.
+            w <DsInline>src/components/layout/RootShell.tsx</DsInline>.
           </>
         }
       >
@@ -157,9 +157,9 @@ export function TypeSection() {
         title="Zasady"
         note={
           <>
-            W serwisie nagłówki sekcji mają dziś klasę <DsInline>md:font-semi-bold</DsInline> — taka
-            klasa nie istnieje w Tailwindzie i nic nie robi. Do usunięcia albo zamiany na{" "}
-            <DsInline>md:font-semibold</DsInline>.
+            Nagłówki sekcji strony głównej mają jedną grubość (<DsInline>font-medium</DsInline>) w
+            komponencie <DsInline>HomeSection</DsInline> — martwa klasa{" "}
+            <DsInline>md:font-semi-bold</DsInline> zniknęła 3 listopada 2026.
           </>
         }
       >

@@ -1,23 +1,26 @@
 /**
  * Karty Open Graph (1200×630) — wygląd i treść w jednym miejscu.
  *
- * Pliki `opengraph-image.tsx` w segmentach tras są jednolinijkowcami nad
- * trzema fabrykami z tego modułu: `pageOgImage` (strony stałe),
- * `postOgImage` (wpisy) i `categoryOgImage` (kategorie). Wszystko powstaje
+ * Pliki `opengraph-image.tsx` w segmentach tras są kilkulinijkowcami nad
+ * fabrykami z tego modułu: `pageOgImage` (strony stałe), `postOgImage`
+ * (wpisy), `categoryOgImage` (kategorie), `archiveOgImage` i `tagOgImage`. Wszystko powstaje
  * przy buildzie — w produkcji to zwykłe statyczne PNG.
  *
  * Renderuje Satori (next/og), które zna wyłącznie flexbox — stąd jawne
  * `display: flex` przy każdym elemencie z wieloma dziećmi. Kolory to tokeny
  * motywu ciemnego, domyślnego w serwisie: karta ma wyglądać jak jego przedłużenie.
  */
+import "server-only"
 import { ImageResponse } from "next/og"
+import { notFound } from "next/navigation"
 import type { Locale } from "@/i18n/config"
 import { getCommon } from "@/i18n/content/common"
 import { getMeta } from "@/i18n/content/meta"
 import { fill, formatReadingTime, plural } from "@/i18n/format"
 import { portfolioItems } from "@/lib/portfolio"
-import { getAllPosts, getPostBySlug, getTerm, getTerms } from "@/lib/posts"
-import { SITE_NAME } from "@/lib/site"
+import { getAllPosts, getPostBySlug, getTerm } from "@/lib/posts"
+import { SITE_HOST, SITE_NAME } from "@/lib/site"
+import { archiveParams, postParams, readParam, termParams, type ParamsProps } from "@/routes/params"
 
 export const OG_SIZE = { width: 1200, height: 630 }
 
@@ -87,9 +90,7 @@ function OgCard({ title, eyebrow, footer }: Card) {
         }}
       >
         <div style={{ display: "flex", fontSize: 28, color: PAPER }}>{SITE_NAME}</div>
-        <div style={{ display: "flex", fontSize: 24, color: MUTED }}>
-          {footer ?? "www.zeprzalka.com"}
-        </div>
+        <div style={{ display: "flex", fontSize: 24, color: MUTED }}>{footer ?? SITE_HOST}</div>
       </div>
     </div>
   )
@@ -130,8 +131,6 @@ export function pageOgImage(locale: Locale, key: PageCardKey) {
   }
 }
 
-type ParamsOf<K extends string> = { params: Promise<Record<K, string>> }
-
 /**
  * Kart wpisów i kategorii nie opisujemy przez `generateImageMetadata`
  * (osobny `alt` dla każdej): w Next 16.4 takie obrazki nie są prerenderowane
@@ -146,10 +145,9 @@ function sectionAlt(locale: Locale, key: "blog" | "category") {
 export function postOgImage(locale: Locale) {
   return {
     alt: sectionAlt(locale, "blog"),
-    generateStaticParams: () => getAllPosts(locale).map((post) => ({ slug: post.slug })),
-    Image: async ({ params }: ParamsOf<"slug">) => {
-      const post = getPostBySlug(locale, (await params).slug)
-      if (!post) return render({ eyebrow: "", title: SITE_NAME })
+    generateStaticParams: () => postParams(locale),
+    Image: async (props: ParamsProps<"slug">) => {
+      const post = getPostBySlug(locale, await readParam(props, "slug")) ?? notFound()
       return render({
         eyebrow: post.frontmatter.categories.slice(0, 3).join(" · "),
         title: post.frontmatter.title,
@@ -160,7 +158,7 @@ export function postOgImage(locale: Locale) {
 }
 
 /** Kategoria: nazwa i liczba wpisów. Parametr trasy ma inną nazwę w każdym języku. */
-export function categoryOgImage<K extends string>(locale: Locale, param: K) {
+export function categoryOgImage<K extends string>(locale: Locale, key: K) {
   const template = getMeta(locale).og.cards.category
   const cardFor = (slug: string): Card => {
     const term = getTerm(locale, "categories", slug)
@@ -173,8 +171,22 @@ export function categoryOgImage<K extends string>(locale: Locale, param: K) {
   }
   return {
     alt: sectionAlt(locale, "category"),
-    generateStaticParams: () =>
-      getTerms(locale, "categories").map((term) => ({ [param]: term.slug }) as Record<K, string>),
-    Image: async ({ params }: ParamsOf<K>) => render(cardFor((await params)[param])),
+    generateStaticParams: () => termParams(locale, "categories", key),
+    Image: async (props: ParamsProps<K>) => render(cardFor(await readParam(props, key))),
   }
+}
+
+/**
+ * Archiwum bloga i strony tagów dostają kartę bloga (bez nowego tekstu).
+ * Bez własnego pliku obrazka strona gubiła kartę: jej `openGraph` zastępuje
+ * rodzica, więc obrazek z segmentu `blog/` nie przechodzi niżej.
+ */
+export function archiveOgImage<K extends string>(locale: Locale, key: K) {
+  const { alt, Image } = pageOgImage(locale, "blog")
+  return { alt, Image, generateStaticParams: () => archiveParams(locale, key) }
+}
+
+export function tagOgImage<K extends string>(locale: Locale, key: K) {
+  const { alt, Image } = pageOgImage(locale, "blog")
+  return { alt, Image, generateStaticParams: () => termParams(locale, "tags", key) }
 }

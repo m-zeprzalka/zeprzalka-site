@@ -13,10 +13,10 @@ export function Hero({ locale }: { locale: Locale }) {
   return (
     <section className="container mx-auto flex min-h-[calc(100vh-4rem)] flex-col gap-6 p-4 py-6 md:py-8 lg:gap-8 lg:py-12 xl:gap-10 xl:py-16">
       <StatusBadge label={copy.status} />
-      <h1 className="max-w-5xl text-4xl font-medium transition-all duration-300 sm:text-5xl md:text-6xl xl:text-7xl">
+      <h1 className="max-w-5xl text-4xl font-medium sm:text-5xl md:text-6xl xl:text-7xl">
         {copy.title}
       </h1>
-      <p className="max-w-3xl font-normal text-muted-foreground transition-all duration-300 sm:text-xl md:text-2xl">
+      <p className="max-w-3xl font-normal text-muted-foreground sm:text-xl md:text-2xl">
         {copy.subtitleRole}
         <span className="font-medium text-foreground">{copy.subtitleHighlight}</span>
         {copy.subtitleRest}

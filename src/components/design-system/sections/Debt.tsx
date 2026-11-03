@@ -1,10 +1,11 @@
+import type { ReactNode } from "react"
 import { Badge } from "@/components/ui/badge"
 import { DsInline, DsSection } from "@/components/design-system/primitives"
 
 interface Item {
   weight: "wysoki" | "średni" | "niski"
   title: string
-  detail: React.ReactNode
+  detail: ReactNode
   where: string
 }
 

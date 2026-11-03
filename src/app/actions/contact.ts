@@ -4,15 +4,19 @@ import { headers } from "next/headers"
 import nodemailer from "nodemailer"
 import { z } from "zod"
 import { checkRateLimit, clientKey } from "@/lib/rate-limit"
-import { DEFAULT_LOCALE, locales, type Locale } from "@/i18n/config"
+import { DEFAULT_LOCALE, isLocale, type Locale } from "@/i18n/config"
 import { getCommon } from "@/i18n/content/common"
 import { fill } from "@/i18n/format"
 import { escapeMarkup } from "@/lib/escape"
 import { CONTACT_EMAIL } from "@/lib/site"
 
+export type ContactField = "name" | "email" | "projectType" | "message"
+
 export interface ContactFormState {
   success: boolean
   message: string
+  /** Pola z błędem walidacji — formularz oznacza je `aria-invalid`. */
+  invalid?: ContactField[]
   /**
    * Wpisane wartości, odsyłane przy błędzie. React 19 czyści formularz po
    * każdej akcji, więc bez tego jedna literówka w adresie kasowała całą
@@ -36,7 +40,7 @@ function text(value: FormDataEntryValue | null, max: number): string {
  * w ukrytym polu; nieznana wartość spada do polskiego.
  */
 function readLocale(value: FormDataEntryValue | null): Locale {
-  return locales.includes(value as Locale) ? (value as Locale) : DEFAULT_LOCALE
+  return isLocale(value) ? value : DEFAULT_LOCALE
 }
 
 function schemaFor(locale: Locale) {
@@ -93,8 +97,15 @@ export async function sendContactEmail(
   })
 
   if (!result.success) {
-    // zod zwraca co najmniej jeden problem, gdy `success` jest fałszywe.
-    return { success: false, message: result.error.issues[0]?.message ?? copy.failed, fields }
+    // Komunikat: pierwszy problem (zod zwraca co najmniej jeden). Pola: wszystkie
+    // z błędem — czytnik ekranu i obramowanie wskazują każde od razu.
+    const invalid = Object.keys(z.flattenError(result.error).fieldErrors) as ContactField[]
+    return {
+      success: false,
+      message: result.error.issues[0]?.message ?? copy.failed,
+      invalid,
+      fields,
+    }
   }
 
   const { name, email, projectType, message } = result.data
@@ -136,7 +147,8 @@ export async function sendContactEmail(
       // Stały prefiks: nazwa wyświetlana nadawcy pochodzi z formularza, więc
       // bez niego wiadomość mogła udawać np. „Bank — dział bezpieczeństwa".
       from: { name: `Formularz: ${safeName}`.slice(0, 120), address: SMTP_USER },
-      to: process.env.CONTACT_EMAIL || CONTACT_EMAIL,
+      // Odbiorca: zmienna środowiskowa albo publiczny adres kontaktowy serwisu.
+      to: process.env.CONTACT_RECIPIENT || CONTACT_EMAIL,
       replyTo: email,
       subject: `${localeTag}Wiadomość z formularza: ${safeSubject}`,
       text: `Imię: ${name}\nEmail: ${email}\nRodzaj projektu: ${projectType || "-"}\n\n${message}`,

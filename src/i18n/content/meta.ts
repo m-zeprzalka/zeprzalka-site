@@ -5,6 +5,7 @@
  * nigdy nie trafia do treści strony. Trzymany osobno, bo rządzi się innymi
  * regułami niż copy (limity długości, słowa kluczowe).
  */
+import "server-only"
 import type { Locale } from "@/i18n/config"
 
 const pl = {

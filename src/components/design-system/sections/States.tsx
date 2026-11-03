@@ -35,9 +35,10 @@ export function StatesSection() {
         description="Formularz kontaktowy zwraca dokładnie dwa komunikaty: potwierdzenie zastępujące cały formularz i błąd nad polami."
         note={
           <>
-            Oba komunikaty są dziś zbudowane ręcznie z klas, mimo że komponent{" "}
-            <DsInline>alert</DsInline> jest w projekcie. Sukces używa też surowej zieleni{" "}
-            <DsInline>bg-green-500/10</DsInline> — poza paletą tokenów.
+            Oba komunikaty są zbudowane z klas (serwis nie ma komponentu <DsInline>alert</DsInline>
+            ), a fokus przechodzi na komunikat po wysłaniu. Sukces używa surowej zieleni{" "}
+            <DsInline>bg-green-500/10</DsInline> — poza paletą tokenów, do decyzji razem z nowym
+            systemem.
           </>
         }
       >

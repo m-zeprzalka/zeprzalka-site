@@ -11,10 +11,6 @@ export const metadata: Metadata = rootMetadata("en")
  * wyłącznie dlatego, że atrybut `lang` na `<html>` ustawia w App Routerze
  * tylko układ główny — reszta jest wspólna, w `RootShell`.
  */
-export default function EnRootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode
-}>) {
+export default function EnRootLayout({ children }: LayoutProps<"/en">) {
   return <RootShell locale="en">{children}</RootShell>
 }

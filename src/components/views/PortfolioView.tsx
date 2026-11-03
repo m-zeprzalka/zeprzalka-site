@@ -2,21 +2,18 @@ import { Separator } from "@/components/ui/separator"
 import { PageHeader } from "@/components/PageHeader"
 import { CtaPanel } from "@/components/CtaPanel"
 import { PortfolioGrid } from "@/components/portfolio/PortfolioGrid"
-import {
-  countRealizations,
-  getPortfolioByGroup,
-  portfolioGroups,
-  portfolioItems,
-} from "@/lib/portfolio"
+import { getPortfolioByGroup, portfolioGroups, portfolioItems } from "@/lib/portfolio"
 import { JsonLd } from "@/components/JsonLd"
 import { SITE_NAME, absoluteUrl } from "@/lib/site"
 import { PERSON_ID, breadcrumbSchema, graph } from "@/lib/schema"
 import { INTL_LOCALE, ROUTES, type Locale } from "@/i18n/config"
-import { fill } from "@/i18n/format"
+import { fill, plural } from "@/i18n/format"
+import { getCommon } from "@/i18n/content/common"
 import { getPages } from "@/i18n/content/pages"
 
 export function PortfolioView({ locale }: { locale: Locale }) {
   const copy = getPages(locale).portfolio
+  const common = getCommon(locale)
 
   /**
    * Zbiór realizacji w danych strukturalnych. Świadomie `CreativeWork`, a nie
@@ -69,14 +66,14 @@ export function PortfolioView({ locale }: { locale: Locale }) {
                 {group.label[locale]}
               </h2>
               <p className="text-sm text-muted-foreground tabular-nums">
-                {countRealizations(items.length, locale)}
+                {plural(items.length, locale, common.plurals.projects)}
               </p>
             </div>
             <p className="mb-8 max-w-2xl leading-relaxed text-muted-foreground">
               {group.description[locale]}
             </p>
 
-            <PortfolioGrid items={items} locale={locale} />
+            <PortfolioGrid items={items} locale={locale} priorityCount={index === 0 ? 2 : 0} />
           </section>
         )
       })}

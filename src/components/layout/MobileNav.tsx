@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useRef, useState } from "react"
 import dynamic from "next/dynamic"
 import { Menu } from "lucide-react"
 import type { Locale } from "@/i18n/config"
@@ -19,23 +19,30 @@ const MobileNavPanel = dynamic(() => import("@/components/layout/MobileNavPanel"
 /**
  * Przycisk menu mobilnego. Panel (Radix Dialog, ok. 11 KB) pobiera się przy
  * pierwszym dotknięciu albo najechaniu — nie przy każdym wczytaniu strony.
+ * Przycisk stoi poza drzewem Dialogu (inaczej panel nie mógłby być leniwy),
+ * więc Radix nie zna wyzwalacza — fokus po zamknięciu wraca przez `returnFocusTo`.
  */
 export function MobileNav({
   locale,
   links,
   labels,
+  themeClassName,
 }: {
   locale: Locale
   links: NavLink[]
   labels: MobileNavLabels
+  /** Klasa przycisku motywu w panelu (liczona na serwerze). */
+  themeClassName: string
 }) {
   const [open, setOpen] = useState(false)
   const [requested, setRequested] = useState(false)
+  const triggerRef = useRef<HTMLButtonElement>(null)
   const request = () => setRequested(true)
 
   return (
     <>
       <button
+        ref={triggerRef}
         type="button"
         aria-label={labels.open}
         aria-haspopup="dialog"
@@ -55,8 +62,10 @@ export function MobileNav({
           locale={locale}
           links={links}
           labels={labels}
+          themeClassName={themeClassName}
           open={open}
           onOpenChange={setOpen}
+          returnFocusTo={triggerRef}
         />
       )}
     </>

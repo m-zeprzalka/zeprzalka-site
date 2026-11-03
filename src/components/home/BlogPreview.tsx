@@ -1,7 +1,7 @@
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { HomeSection } from "@/components/home/HomeSection"
-import { PostCard } from "@/components/blog/PostCard"
+import { PostGrid } from "@/components/blog/PostCard"
 import { getAllPosts } from "@/lib/posts"
 import { ROUTES, type Locale } from "@/i18n/config"
 import { getHome } from "@/i18n/content/home"
@@ -23,17 +23,13 @@ export function BlogPreview({ locale }: { locale: Locale }) {
         </Button>
       }
     >
-      <div className="grid gap-8 sm:grid-cols-2">
-        {posts.map((post) => (
-          <PostCard
-            key={post.slug}
-            post={post}
-            locale={locale}
-            headingLevel="h3"
-            sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 33vw"
-          />
-        ))}
-      </div>
+      <PostGrid
+        posts={posts}
+        locale={locale}
+        headingLevel="h3"
+        className="grid gap-8 sm:grid-cols-2"
+        sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 33vw"
+      />
     </HomeSection>
   )
 }

@@ -16,6 +16,10 @@ export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://www.zeprza
   ""
 )
 
+/** Host kanoniczny (`www.zeprzalka.com`) i nazwa domeny w znaku serwisu (`zeprzalka.com`). */
+export const SITE_HOST = new URL(SITE_URL).host
+export const SITE_DOMAIN = SITE_HOST.replace(/^www\./, "")
+
 export const SITE_NAME = "Michał Zeprzałka"
 export const SITE_TITLE = "Michał Zeprzałka - Digital Solutions Architect"
 
@@ -57,7 +61,7 @@ export const AUTHOR = {
  * NEXT_PUBLIC_LINKEDIN_URL — docs/SEO.md §5 wskazuje go jako najważniejszy
  * brakujący kanał, a dopisanie adresu nie powinno wymagać zmiany w kodzie.
  */
-export const SOCIAL_PROFILES: { label: string; url: string }[] = [
+export const SOCIAL_PROFILES: readonly { label: string; url: string }[] = [
   { label: "GitHub", url: "https://github.com/m-zeprzalka" },
   { label: "Facebook", url: "https://www.facebook.com/michalzeprzalka" },
   ...(process.env.NEXT_PUBLIC_LINKEDIN_URL

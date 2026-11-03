@@ -11,10 +11,6 @@ export const metadata: Metadata = rootMetadata("pl")
  * Bliźniaczy układ angielski stoi w `src/app/en/layout.tsx`; wspólną treść
  * obu trzyma `RootShell`, żeby nie mogły się rozjechać.
  */
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode
-}>) {
+export default function RootLayout({ children }: LayoutProps<"/">) {
   return <RootShell locale="pl">{children}</RootShell>
 }

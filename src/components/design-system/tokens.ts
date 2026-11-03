@@ -1,5 +1,6 @@
-import fs from "fs"
-import path from "path"
+import "server-only"
+import fs from "node:fs"
+import path from "node:path"
 import { cache } from "react"
 
 export interface TokenSource {
@@ -13,21 +14,14 @@ export interface TokenSource {
  * (`oklch(1 0 0)` → `#fff`), więc odczyt z dokumentu pokazałby postać, której
  * nikt nie edytuje. Plik czytamy raz, przy budowaniu strony.
  */
-// Kotwica na początku wiersza: bloki ekranowe nie mają wcięcia, a `.dark`
-// zagnieżdżone w `@media print` ma — inaczej nadpisywało ciemną paletę jasną.
-const BLOCK = /^(:root|\.dark)\s*\{([^}]*)\}/gm
+// `:root` i `.dark` (ta druga w `@media not print`, więc z dowolnym wcięciem).
+const BLOCK = /^\s*(:root|\.dark)\s*\{([^}]*)\}/gm
 const DECLARATION = /(--[\w-]+)\s*:\s*([^;]+);/g
 
 const readTokens = cache((): Map<string, TokenSource> => {
   const map = new Map<string, TokenSource>()
-  const file = path.join(process.cwd(), "src/app/globals.css")
-
-  let css: string
-  try {
-    css = fs.readFileSync(file, "utf8")
-  } catch {
-    return map
-  }
+  // Brak pliku to błąd builda, a nie katalog z kreskami zamiast wartości.
+  const css = fs.readFileSync(path.join(process.cwd(), "src/app/globals.css"), "utf8")
 
   for (const [, selector, body = ""] of css.matchAll(BLOCK)) {
     const scope = selector === ".dark" ? "dark" : "light"

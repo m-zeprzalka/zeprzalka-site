@@ -31,9 +31,9 @@ export function MotionSection() {
               "Powiększenie obrazu wpisu pod kursorem",
             ],
             [
-              "1000 ms",
-              <DsInline key="e">duration-1000</DsInline>,
-              "Pojawienie się wideo po wczytaniu pierwszej klatki",
+              "—",
+              <DsInline key="e">animation-timeline: scroll()</DsInline>,
+              "Pasek postępu czytania — sprzężony z przewijaniem, bez czasu trwania",
             ],
           ]}
         />
@@ -99,10 +99,10 @@ export function MotionSection() {
             </div>
           </DsPreview>
 
-          <DsPreview label="Pasek postępu" code="components/layout/Bar.tsx">
+          <DsPreview label="Pasek postępu" code="components/layout/ReadingProgress.tsx">
             <div className="flex h-16 items-center">
               <div className="h-1 w-full rounded-full bg-background">
-                <div className="h-full w-2/3 rounded-full bg-gradient-to-r from-primary/20 to-primary" />
+                <div className="h-full w-2/3 rounded-full bg-linear-to-r from-primary/20 to-primary" />
               </div>
             </div>
           </DsPreview>
@@ -114,10 +114,10 @@ export function MotionSection() {
           </DsPreview>
         </div>
         <DsCode>
-          {`// Leniwe wczytanie kadru — wzorzec z components/home/Gallery.tsx
-const { ref, inView } = useInView({ triggerOnce: true, rootMargin: "600px" })
-// wideo montuje się dopiero 600 px przed wejściem w kadr,
-// a pojawia się dopiero po zdarzeniu onLoadedData (opacity 0 → 100)`}
+          {`// Leniwe wczytanie kadru — components/portfolio/LazyVideo.tsx
+const [frameRef, inView] = useInViewOnce<HTMLDivElement>("600px")
+// wideo montuje się dopiero 600 px przed wejściem w kadr; poster maluje
+// się od razu, a przy „ogranicz ruch” film stoi na pierwszej klatce`}
         </DsCode>
       </DsBlock>
     </DsSection>

@@ -3,6 +3,7 @@ import { RootShell } from "@/components/layout/RootShell"
 import { NotFoundView } from "@/components/system/NotFoundView"
 import { DEFAULT_LOCALE } from "@/i18n/config"
 import { getMeta } from "@/i18n/content/meta"
+import { getSystem } from "@/i18n/content/system"
 
 /**
  * Strona 404 dla adresów, które nie pasują do żadnej trasy.
@@ -12,12 +13,17 @@ import { getMeta } from "@/i18n/content/meta"
  * arkusza stylów. `global-not-found` buduje własny, kompletny dokument, więc
  * nieznany adres dostaje pełną stronę (z nagłówkiem i stopką) i status 404.
  *
- * Treść jest polska: to język oryginału serwisu, a adresu spoza obu wersji
- * nie da się przypisać do żadnej z nich.
+ * Treść jest polska: to język oryginału serwisu. Nieznany adres spod `/en`
+ * też trafia tutaj — angielska 404 wymagałaby trasy renderowanej na żądanie
+ * (statyczny catch-all z `dynamicParams = false` i tak kończy się tą stroną).
+ * `noindex` dokłada sam Next — jawne `robots` dawało drugi znacznik.
  */
 export const metadata: Metadata = {
-  title: getMeta(DEFAULT_LOCALE).root.titleDefault,
-  robots: { index: false, follow: false },
+  // Poza układami głównymi nie działa ich szablon tytułu — sufiks dokładamy sami.
+  title: getMeta(DEFAULT_LOCALE).root.titleTemplate.replace(
+    "%s",
+    getSystem(DEFAULT_LOCALE).notFound.title
+  ),
 }
 
 export default function GlobalNotFound() {

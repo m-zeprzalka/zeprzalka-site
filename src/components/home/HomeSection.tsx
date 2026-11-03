@@ -8,8 +8,9 @@ import { cn } from "@/lib/utils"
  * kopiach tych samych klas (wygląd strony głównej jest zamrożony; ich
  * ujednolicenie to decyzja projektowa, nie refaktor).
  */
-const SECTION =
-  "flex flex-col justify-center p-4 py-6 md:py-8 lg:py-12 xl:py-16 xl:min-h-[calc(100vh-4rem)] container mx-auto"
+const SECTION = cn(
+  "container mx-auto flex flex-col justify-center p-4 py-6 md:py-8 lg:py-12 xl:min-h-[calc(100vh-4rem)] xl:py-16"
+)
 
 export function HomeSection({
   id,
@@ -34,13 +35,11 @@ export function HomeSection({
     <section className={sectionClassName} id={id}>
       <div className={cn("grid lg:grid-cols-12", gridClassName)}>
         <div className={cn("self-start lg:sticky lg:col-span-3", stickyClassName)}>
-          <div>
-            <h2 className="text-3xl font-medium md:text-4xl">{title}</h2>
-            <p className="mt-2 max-w-xs text-muted-foreground lg:mt-6 lg:text-lg 2xl:text-xl">
-              {lead}
-            </p>
-            {action}
-          </div>
+          <h2 className="text-3xl font-medium md:text-4xl">{title}</h2>
+          <p className="mt-2 max-w-xs text-muted-foreground lg:mt-6 lg:text-lg 2xl:text-xl">
+            {lead}
+          </p>
+          {action}
         </div>
         <div className="lg:col-span-9">{children}</div>
       </div>

@@ -1,3 +1,4 @@
+import { cn } from "@/lib/utils"
 import { Check } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
@@ -69,11 +70,10 @@ export function ServicesView({ locale }: { locale: Locale }) {
           {packages.map((pack) => (
             <article
               key={pack.id}
-              className={
-                pack.highlight
-                  ? "flex flex-col rounded-xl border-2 border-primary/40 p-6 md:p-8"
-                  : "flex flex-col rounded-xl border p-6 md:p-8"
-              }
+              className={cn(
+                "flex flex-col rounded-xl border p-6 md:p-8",
+                pack.highlight && "border-2 border-primary/40"
+              )}
             >
               <div className="flex items-start justify-between gap-4">
                 <div>
@@ -117,7 +117,8 @@ export function ServicesView({ locale }: { locale: Locale }) {
         <ol className="mt-8 grid gap-8 md:grid-cols-3">
           {processSteps.map((step, index) => (
             <li key={step.title[locale]} className="flex flex-col gap-3">
-              <span className="text-sm text-muted-foreground tabular-nums">
+              {/* Numer jest wizualny — kolejność kroków podaje już lista numerowana. */}
+              <span aria-hidden="true" className="text-sm text-muted-foreground tabular-nums">
                 {String(index + 1).padStart(2, "0")}
               </span>
               <h3 className="text-base font-semibold">{step.title[locale]}</h3>

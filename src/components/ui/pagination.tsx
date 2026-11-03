@@ -43,6 +43,7 @@ function PaginationLink({
   size = "icon",
   href,
   children,
+  "aria-label": ariaLabel,
   ...props
 }: PaginationLinkProps) {
   const classes = cn(
@@ -54,13 +55,10 @@ function PaginationLink({
   )
 
   // Nieaktywna pozycja to zwykły tekst, a nie link do bieżącej strony.
+  // Bez `aria-disabled` i `aria-label` — oba są niedozwolone na elemencie bez roli.
   if (!href) {
     return (
-      <span
-        aria-disabled="true"
-        data-slot="pagination-link"
-        className={cn(classes, "pointer-events-none opacity-50")}
-      >
+      <span data-slot="pagination-link" className={cn(classes, "pointer-events-none opacity-50")}>
         {children}
       </span>
     )
@@ -70,6 +68,7 @@ function PaginationLink({
     <Link
       href={href}
       aria-current={isActive ? "page" : undefined}
+      aria-label={ariaLabel}
       data-slot="pagination-link"
       data-active={isActive}
       className={classes}
@@ -130,7 +129,6 @@ function PaginationEllipsis({ className, ...props }: React.ComponentProps<"span"
       {...props}
     >
       <MoreHorizontalIcon className="size-4" />
-      <span className="sr-only">…</span>
     </span>
   )
 }

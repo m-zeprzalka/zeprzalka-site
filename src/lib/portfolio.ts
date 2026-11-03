@@ -11,7 +11,7 @@
  * Teksty są parami `{ pl, en }` — pola techniczne (plik wideo, poster, grupa)
  * są niezależne od języka, więc występują raz.
  */
-import type { Locale, Localized } from "@/i18n/config"
+import type { Localized } from "@/i18n/config"
 
 /** Dwie dyscypliny, które trudno oceniać tą samą miarą — stąd osobne sekcje. */
 export type PortfolioGroup = "web" | "wideo"
@@ -225,21 +225,4 @@ export const featuredPortfolioItems = portfolioItems.filter((item) => item.featu
 
 export function getPortfolioByGroup(group: PortfolioGroup): PortfolioItem[] {
   return portfolioItems.filter((item) => item.group === group)
-}
-
-/**
- * Liczebnik przy nazwie sekcji. Polski ma trzy formy, więc `${n} realizacji`
- * byłoby błędem przy dwóch, trzech i czterech pozycjach; angielski ma dwie.
- */
-export function countRealizations(count: number, locale: Locale): string {
-  if (locale === "en") return count === 1 ? "1 project" : `${count} projects`
-
-  const rest10 = count % 10
-  const rest100 = count % 100
-
-  if (count === 1) return "1 realizacja"
-  if (rest10 >= 2 && rest10 <= 4 && (rest100 < 12 || rest100 > 14)) {
-    return `${count} realizacje`
-  }
-  return `${count} realizacji`
 }

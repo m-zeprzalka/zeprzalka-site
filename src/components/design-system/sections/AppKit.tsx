@@ -1,3 +1,4 @@
+import { buttonVariants } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import { Logo } from "@/components/layout/Logo"
@@ -16,20 +17,34 @@ export function AppKitSection() {
     <DsSection
       id="aplikacja"
       title="Komponenty aplikacji"
-      description="Warstwa nad shadcn: elementy specyficzne dla tego serwisu. Wszystkie są renderowane na serwerze poza czterema, które potrzebują przeglądarki — te są opisane jako klienckie."
+      description="Warstwa nad shadcn: elementy specyficzne dla tego serwisu. Domyślnie renderowane na serwerze; klienckie są tylko te, które potrzebują przeglądarki (stan, zdarzenia, obserwatory) — opisane w kolumnie „Typ”."
     >
       <DsBlock title="Rejestr">
         <DsTable
           head={["Komponent", "Rola", "Typ"]}
           rows={[
             ["layout/Header", "Przyklejony nagłówek, h-16, tło 65% + blur", "Serwer"],
-            ["layout/Bar", "Pasek postępu przewijania, 1 px, nad nagłówkiem", "Klient"],
+            [
+              "layout/ReadingProgress",
+              "Pasek postępu czytania — sam CSS (animacja przewijania)",
+              "Serwer",
+            ],
             ["layout/Footer", "Trzy kolumny: opis, nawigacja, social", "Serwer"],
-            ["layout/Logo", "Sygnet z podmienianym znakiem + nazwa domeny", "Klient"],
-            ["layout/MobileNav", "Menu pełnoekranowe (Sheet, side=top)", "Klient"],
+            ["layout/Logo", "Nazwa domeny + sygnet (kliencki jest tylko LogoGlyph)", "Serwer"],
+            ["layout/NavLink", "Link nawigacji z aria-current dla bieżącej sekcji", "Klient"],
+            [
+              "layout/MobileNav",
+              "Przycisk menu; panel (Sheet) wczytywany przy pierwszym dotknięciu",
+              "Klient",
+            ],
             ["ThemeToggle", "Przełącznik motywu (next-themes)", "Klient"],
             ["PageHeader", "Nagłówek podstrony: badge, H1, lead, separator", "Serwer"],
-            ["ContactForm", "Formularz + akcja serwerowa, honeypot", "Klient"],
+            ["ContactForm", "Formularz + akcja serwerowa, honeypot, pola z aria-invalid", "Klient"],
+            [
+              "portfolio/PortfolioCard",
+              "Kafel realizacji (kliencki jest tylko LazyVideo)",
+              "Serwer",
+            ],
             ["ScrollToTop", "Przewija na górę po zmianie ścieżki", "Klient"],
             ["blog/ActiveTOC", "Spis treści wpisu ze śledzeniem pozycji", "Klient"],
             ["blog/CodeBlock", "Blok kodu z przyciskiem kopiowania", "Klient"],
@@ -48,7 +63,10 @@ export function AppKitSection() {
             <Logo locale="pl" />
           </DsPreview>
           <DsPreview label="Przełącznik motywu" code='variant="outline" size="icon"'>
-            <ThemeToggle label={getCommon("pl").ui.themeToggle} />
+            <ThemeToggle
+              label={getCommon("pl").ui.themeToggle}
+              className={buttonVariants({ variant: "outline", size: "icon" })}
+            />
           </DsPreview>
         </div>
       </DsBlock>

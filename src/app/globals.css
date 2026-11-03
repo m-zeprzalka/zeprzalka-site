@@ -9,7 +9,18 @@
 @source not "./demo";
 @source not "../components/demo";
 
-@custom-variant dark (&:is(.dark *));
+/*
+ * Ciemny motyw jest pojęciem ekranowym: na wydruku nie działa ani paleta
+ * `.dark`, ani żadne `dark:` (next-themes zostawia klasę na <html>), więc
+ * wpis wydrukowany z ciemnego motywu nie ma jasnego tekstu na białym papierze.
+ */
+@custom-variant dark {
+  @media not print {
+    &:is(.dark *) {
+      @slot;
+    }
+  }
+}
 
 /* Półprzezroczyste tło z rozmyciem — pasek postępu, nagłówek, stopka. */
 @utility surface-glass {
@@ -73,26 +84,28 @@
   --ring: oklch(0.205 0 0);
 }
 
-.dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  /* Jw. dla ciemnego motywu — przy 0.556 wychodziło 1,88:1. */
-  --ring: oklch(0.922 0 0);
+@media not print {
+  .dark {
+    --background: oklch(0.145 0 0);
+    --foreground: oklch(0.985 0 0);
+    --card: oklch(0.205 0 0);
+    --card-foreground: oklch(0.985 0 0);
+    --popover: oklch(0.205 0 0);
+    --popover-foreground: oklch(0.985 0 0);
+    --primary: oklch(0.922 0 0);
+    --primary-foreground: oklch(0.205 0 0);
+    --secondary: oklch(0.269 0 0);
+    --secondary-foreground: oklch(0.985 0 0);
+    --muted: oklch(0.269 0 0);
+    --muted-foreground: oklch(0.708 0 0);
+    --accent: oklch(0.269 0 0);
+    --accent-foreground: oklch(0.985 0 0);
+    --destructive: oklch(0.704 0.191 22.216);
+    --border: oklch(1 0 0 / 10%);
+    --input: oklch(1 0 0 / 15%);
+    /* Jw. dla ciemnego motywu — przy 0.556 wychodziło 1,88:1. */
+    --ring: oklch(0.922 0 0);
+  }
 }
 
 @layer base {
@@ -102,11 +115,32 @@
   body {
     @apply bg-background text-foreground;
   }
+  /* W warstwie bazowej, żeby utility (`cursor-default`, `cursor-not-allowed`) mogły go nadpisać. */
+  :where(button, [role="button"]):not([disabled]) {
+    cursor: pointer;
+  }
+}
+/* Pasek postępu czytania (ReadingProgress): skala sprzężona z przewijaniem dokumentu. */
+@keyframes reading-progress {
+  to {
+    scale: 1 1;
+  }
+}
+@supports (animation-timeline: scroll()) {
+  .reading-progress {
+    animation: reading-progress linear both;
+    animation-timeline: scroll(root block);
+  }
 }
 
-:where(button, [role="button"]):not([disabled]) {
-  cursor: pointer;
+/*
+ * Przyklejony nagłówek (h-16 + pasek postępu) nie może zasłaniać elementu
+ * z fokusem (WCAG 2.4.11) ani celu kotwicy — jedna wartość dla obu.
+ */
+html {
+  scroll-padding-top: 6rem;
 }
+
 /* Płynne przewijanie tylko dla osób, które nie prosiły o mniej ruchu. */
 @media (prefers-reduced-motion: no-preference) {
   html {
@@ -146,29 +180,9 @@
     display: none !important;
   }
 
-  /*
-   * Domyślny motyw serwisu jest ciemny. Same `color: #000` na <body> nie
-   * wystarczało — elementy z własnym kolorem tokenu drukowały się białym
-   * tekstem na białym papierze. Na wydruku obowiązuje zawsze paleta jasna.
-   */
-  .dark {
-    color-scheme: light;
-    --background: oklch(1 0 0);
-    --foreground: oklch(0.145 0 0);
-    --card: oklch(1 0 0);
-    --card-foreground: oklch(0.145 0 0);
-    --popover: oklch(1 0 0);
-    --popover-foreground: oklch(0.145 0 0);
-    --primary: oklch(0.205 0 0);
-    --primary-foreground: oklch(0.985 0 0);
-    --secondary: oklch(0.97 0 0);
-    --secondary-foreground: oklch(0.205 0 0);
-    --muted: oklch(0.97 0 0);
-    --muted-foreground: oklch(0.556 0 0);
-    --accent: oklch(0.97 0 0);
-    --accent-foreground: oklch(0.205 0 0);
-    --border: oklch(0.922 0 0);
-    --input: oklch(0.922 0 0);
+  /* next-themes ustawia `color-scheme` w atrybucie style — wydruk jest zawsze jasny. */
+  html {
+    color-scheme: light !important;
   }
 
   html,

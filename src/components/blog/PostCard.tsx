@@ -1,7 +1,7 @@
 import Image from "next/image"
 import Link from "next/link"
 import { CalendarDays, Clock } from "lucide-react"
-import { Badge } from "@/components/ui/badge"
+import { TermLink } from "@/components/blog/TermLink"
 import { categoryPath, postPath, type Locale } from "@/i18n/config"
 import { formatDate, formatReadingTime } from "@/i18n/format"
 import type { Post } from "@/lib/posts"
@@ -70,25 +70,19 @@ export function PostCard({
         />
       </div>
       <div className={v.body}>
-        <div className={cn("flex flex-wrap", variant === "featured" ? "gap-2" : "gap-1")}>
+        <ul className={cn("flex flex-wrap", variant === "featured" ? "gap-2" : "gap-1")}>
           {frontmatter.categories.slice(0, v.categories.limit).map((category) => (
-            <Link
-              key={category}
-              href={categoryPath(locale, slugify(category))}
-              className="relative z-10"
-            >
-              <Badge
+            <li key={category} className="relative z-10">
+              <TermLink
+                href={categoryPath(locale, slugify(category))}
                 variant={v.categories.badge}
-                className={cn(
-                  "cursor-pointer transition-colors hover:bg-secondary/80",
-                  v.categories.className
-                )}
+                className={v.categories.className}
               >
                 {category}
-              </Badge>
-            </Link>
+              </TermLink>
+            </li>
           ))}
-        </div>
+        </ul>
         <Heading className={cn("font-bold transition-colors group-hover:text-primary", v.title)}>
           <Link href={postPath(locale, post.slug)} className="after:absolute after:inset-0">
             {frontmatter.title}
@@ -113,20 +107,41 @@ export function PostCard({
   )
 }
 
-/** Siatka kart: 1 / 2 / 3 kolumny (strona główna podaje własną siatkę). */
+/**
+ * Siatka kart — domyślnie 1 / 2 / 3 kolumny. `className` zastępuje siatkę
+ * w całości (strona główna i wyróżnione wpisy mają własną), `sizes` musi
+ * opisywać szerokość kafla w tej siatce.
+ */
 export function PostGrid({
   posts,
   locale,
   headingLevel,
+  variant,
+  sizes,
+  preloadFirst = false,
+  className = "grid gap-8 md:grid-cols-2 lg:grid-cols-3",
 }: {
   posts: Post[]
   locale: Locale
   headingLevel?: "h2" | "h3"
+  variant?: keyof typeof VARIANTS
+  sizes?: string
+  /** Tylko pierwsza karta bywa elementem LCP — preload dla jednej, nie dla wszystkich. */
+  preloadFirst?: boolean
+  className?: string
 }) {
   return (
-    <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-      {posts.map((post) => (
-        <PostCard key={post.slug} post={post} locale={locale} headingLevel={headingLevel} />
+    <div className={className}>
+      {posts.map((post, index) => (
+        <PostCard
+          key={post.slug}
+          post={post}
+          locale={locale}
+          headingLevel={headingLevel}
+          variant={variant}
+          sizes={sizes}
+          preload={preloadFirst && index === 0}
+        />
       ))}
     </div>
   )

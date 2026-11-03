@@ -1,4 +1,3 @@
-import { preload } from "react-dom"
 import { Hero } from "@/components/home/Hero"
 import { Skills } from "@/components/home/Skills"
 import { PortfolioPreview } from "@/components/home/PortfolioPreview"
@@ -14,10 +13,6 @@ import type { Locale } from "@/i18n/config"
  * porównanie zrzutów (`pnpm visual`).
  */
 export function HomeView({ locale }: { locale: Locale }) {
-  // Poster hero maluje się jako pierwszy duży element — niech pobiera się
-  // równolegle z dokumentem, a nie dopiero po odnalezieniu w HTML.
-  preload("/hero-poster.webp", { as: "image", fetchPriority: "high" })
-
   return (
     <>
       {/* Pełny opis autora i serwisu; pozostałe strony odwołują się do niego przez @id. */}

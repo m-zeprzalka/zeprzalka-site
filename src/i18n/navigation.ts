@@ -1,3 +1,4 @@
+import "server-only"
 import { ROUTES, type Locale, type RouteKey } from "@/i18n/config"
 import { getCommon } from "@/i18n/content/common"
 

@@ -1,11 +1,12 @@
 "use client"
 
-import { useActionState, useEffect, useRef } from "react"
+import { useActionState, useEffect, useId, useRef } from "react"
 import Link from "next/link"
-import { sendContactEmail, type ContactFormState } from "@/app/actions/contact"
+import { sendContactEmail, type ContactField, type ContactFormState } from "@/app/actions/contact"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { MousePointerClick, CheckCircle, AlertCircle } from "lucide-react"
+import { Textarea } from "@/components/ui/textarea"
+import { CircleAlert, CircleCheck, MousePointerClick } from "lucide-react"
 import type { Locale } from "@/i18n/config"
 import type { getCommon } from "@/i18n/content/common"
 
@@ -26,22 +27,39 @@ export function ContactForm({
 }) {
   const [state, formAction, pending] = useActionState(sendContactEmail, initialState)
   const statusRef = useRef<HTMLDivElement>(null)
+  // Identyfikatory unikalne w dokumencie — formularz może stanąć na stronie
+  // obok innych pól (`id="name"` kolidowałby z każdym innym).
+  const id = useId()
+  const ids = {
+    status: `${id}-status`,
+    name: `${id}-name`,
+    email: `${id}-email`,
+    projectType: `${id}-project-type`,
+    message: `${id}-message`,
+    company: `${id}-company`,
+  }
 
   // Po wysłaniu formularz znika albo dostaje komunikat — fokus przechodzi
-  // na komunikat, żeby czytnik ekranu i klawiatura nie zostały „na body".
+  // na komunikat (czytnik ekranu odczyta go raz, przy fokusie), żeby
+  // klawiatura nie została „na body".
   useEffect(() => {
     if (state.message) statusRef.current?.focus()
   }, [state])
+
+  /** Pole z błędem: `aria-invalid` i opis wskazujący komunikat (WCAG 3.3.1). */
+  const invalid = (field: ContactField) =>
+    state.invalid?.includes(field)
+      ? ({ "aria-invalid": true, "aria-describedby": ids.status } as const)
+      : {}
 
   if (state.success) {
     return (
       <div
         ref={statusRef}
-        role="status"
         tabIndex={-1}
         className="flex items-center gap-3 rounded-lg border border-green-500/20 bg-green-500/10 p-5 text-green-600 outline-none dark:text-green-400"
       >
-        <CheckCircle className="h-5 w-5 shrink-0" />
+        <CircleCheck className="h-5 w-5 shrink-0" />
         <p>{state.message}</p>
       </div>
     )
@@ -56,11 +74,11 @@ export function ContactForm({
       {state.message && (
         <div
           ref={statusRef}
-          role="alert"
+          id={ids.status}
           tabIndex={-1}
           className="flex items-center gap-3 rounded-lg border border-destructive/20 bg-destructive/10 p-4 text-destructive outline-none"
         >
-          <AlertCircle className="h-5 w-5 shrink-0" />
+          <CircleAlert className="h-5 w-5 shrink-0" />
           <p>{state.message}</p>
         </div>
       )}
@@ -74,8 +92,8 @@ export function ContactForm({
 
       {/* Honeypot — pole niewidoczne dla ludzi, wypełniają je tylko boty */}
       <div className="absolute -z-10 h-0 overflow-hidden opacity-0" aria-hidden="true">
-        <label htmlFor="company">{copy.honeypot}</label>
-        <input id="company" name="company" type="text" tabIndex={-1} autoComplete="off" />
+        <label htmlFor={ids.company}>{copy.honeypot}</label>
+        <input id={ids.company} name="company" type="text" tabIndex={-1} autoComplete="off" />
       </div>
 
       {/*
@@ -84,14 +102,14 @@ export function ContactForm({
       */}
       <div className="grid gap-5 sm:grid-cols-2">
         <div>
-          <label htmlFor="name" className="mb-2 block text-sm font-medium">
+          <label htmlFor={ids.name} className="mb-2 block text-sm font-medium">
             {copy.name}{" "}
             <span className="text-destructive" aria-hidden="true">
               *
             </span>
           </label>
           <Input
-            id="name"
+            id={ids.name}
             name="name"
             type="text"
             placeholder={copy.namePlaceholder}
@@ -100,18 +118,19 @@ export function ContactForm({
             maxLength={100}
             autoComplete="name"
             defaultValue={fields?.name}
+            {...invalid("name")}
             className="px-4 py-6"
           />
         </div>
         <div>
-          <label htmlFor="email" className="mb-2 block text-sm font-medium">
+          <label htmlFor={ids.email} className="mb-2 block text-sm font-medium">
             {copy.email}{" "}
             <span className="text-destructive" aria-hidden="true">
               *
             </span>
           </label>
           <Input
-            id="email"
+            id={ids.email}
             name="email"
             type="email"
             placeholder={copy.emailPlaceholder}
@@ -119,42 +138,50 @@ export function ContactForm({
             maxLength={200}
             autoComplete="email"
             defaultValue={fields?.email}
+            {...invalid("email")}
             className="px-4 py-6"
           />
         </div>
       </div>
 
       <div>
-        <label htmlFor="project-type" className="mb-2 block text-sm font-medium">
+        <label htmlFor={ids.projectType} className="mb-2 block text-sm font-medium">
           {copy.projectType}
         </label>
         <Input
-          id="project-type"
+          id={ids.projectType}
           name="project-type"
           type="text"
           placeholder={copy.projectTypePlaceholder}
           maxLength={200}
           defaultValue={fields?.projectType}
+          {...invalid("projectType")}
           className="px-4 py-6"
         />
       </div>
 
       <div>
-        <label htmlFor="message" className="mb-2 block text-sm font-medium">
+        <label htmlFor={ids.message} className="mb-2 block text-sm font-medium">
           {copy.message}{" "}
           <span className="text-destructive" aria-hidden="true">
             *
           </span>
         </label>
-        <textarea
-          id="message"
+        {/*
+          Nadpisania utrzymują dotychczasowy wygląd pola (inne tło w ciemnym motywie,
+          14 px, dawny pierścień fokusu) — ujednolicenie z `Input` czeka na decyzję
+          właściciela (docs/KIERUNEK-WIZUALNY.md, dług wizualny nr 6).
+        */}
+        <Textarea
+          id={ids.message}
           name="message"
           required
           rows={6}
           minLength={5}
           maxLength={5000}
           defaultValue={fields?.message}
-          className="flex w-full resize-none rounded-md border border-input bg-background p-4 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none"
+          {...invalid("message")}
+          className="field-sizing-fixed min-h-0 resize-none bg-background p-4 text-sm shadow-none ring-offset-background transition-none focus-visible:border-input focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 md:text-sm dark:bg-background"
           placeholder={copy.messagePlaceholder}
         />
       </div>

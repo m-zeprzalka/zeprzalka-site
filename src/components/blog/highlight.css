@@ -1,9 +1,9 @@
 /*
  * Kolorowanie składni bloków kodu we wpisach (rehype-highlight → klasy .hljs).
- * Dotyczy wyłącznie bloków: kod w linii stylują klasy komponentu `code`
- * w PostView — jedno źródło zamiast dwóch.
+ * Dotyczy wyłącznie bloków: kod w linii (`:not(pre) > code`) stylują
+ * modyfikatory `prose` w PostView. Ciemna paleta działa tylko na ekranie —
+ * wydruk jest zawsze jasny (jak `dark:` w globals.css).
  */
-/* Highlight.js */
 .hljs {
   background: #ffffff !important;
   color: #24292f !important;
@@ -12,11 +12,6 @@
   border: none !important;
   font-size: 0.875rem !important;
   line-height: 1.7 !important;
-}
-
-.dark .hljs {
-  background: transparent !important;
-  color: #e6edf3 !important;
 }
 
 .hljs-keyword {
@@ -49,30 +44,37 @@
   color: #22863a !important;
 }
 
-.dark .hljs-keyword {
-  color: #ff7b72 !important;
-}
+@media not print {
+  .dark .hljs {
+    background: transparent !important;
+    color: #e6edf3 !important;
+  }
 
-.dark .hljs-comment {
-  color: #8b949e !important;
-}
+  .dark .hljs-keyword {
+    color: #ff7b72 !important;
+  }
 
-.dark .hljs-string {
-  color: #a5d6ff !important;
-}
+  .dark .hljs-comment {
+    color: #8b949e !important;
+  }
 
-.dark .hljs-meta {
-  color: #79c0ff !important;
-}
+  .dark .hljs-string {
+    color: #a5d6ff !important;
+  }
 
-.dark .hljs-function {
-  color: #d2a8ff !important;
-}
+  .dark .hljs-meta {
+    color: #79c0ff !important;
+  }
 
-.dark .hljs-tag {
-  color: #79c0ff !important;
-}
+  .dark .hljs-function {
+    color: #d2a8ff !important;
+  }
 
-.dark .hljs-tag .hljs-name {
-  color: #7ee787 !important;
+  .dark .hljs-tag {
+    color: #79c0ff !important;
+  }
+
+  .dark .hljs-tag .hljs-name {
+    color: #7ee787 !important;
+  }
 }

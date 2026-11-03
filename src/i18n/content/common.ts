@@ -5,6 +5,7 @@
  * Drzewo `en` ma typ `typeof pl`, więc brak choćby jednego klucza zatrzymuje
  * kompilację — nie da się dodać polskiego napisu bez angielskiego odpowiednika.
  */
+import "server-only"
 import type { Locale } from "@/i18n/config"
 
 const pl = {
@@ -79,7 +80,10 @@ const pl = {
     skipToContent: "Przejdź do treści",
     youtubePlay: "Odtwórz film (YouTube)",
     copyCode: "Kopiuj kod",
+    copied: "Skopiowano",
     tableOfContents: "Spis treści",
+    scrollableTable: "Tabela (przewijana w poziomie)",
+    codeBlock: "Blok kodu",
     videoFallback: "Twoja przeglądarka nie obsługuje wideo.",
   },
   postCta: {
@@ -157,7 +161,10 @@ const en: typeof pl = {
     skipToContent: "Skip to content",
     youtubePlay: "Play video (YouTube)",
     copyCode: "Copy code",
+    copied: "Copied",
     tableOfContents: "Table of contents",
+    scrollableTable: "Table (scrolls horizontally)",
+    codeBlock: "Code block",
     videoFallback: "Your browser does not support video.",
   },
   postCta: {

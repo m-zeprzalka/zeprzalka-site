@@ -14,8 +14,6 @@
  * Polska wersja mieszka w katalogu głównym (`/uslugi`), angielska pod `/en`
  * (`/en/services`). Adresy polskie nie zmieniły się ani o znak — są zaindeksowane.
  */
-import type { Metadata } from "next"
-
 export const locales = ["pl", "en"] as const
 export type Locale = (typeof locales)[number]
 
@@ -53,7 +51,6 @@ export const ROUTES = {
   portfolio: { pl: "/portfolio", en: "/en/portfolio" },
   blog: { pl: "/blog", en: "/en/blog" },
   categories: { pl: "/blog/kategoria", en: "/en/blog/category" },
-  feed: { pl: "/feed.xml", en: "/en/feed.xml" },
   privacy: { pl: "/polityka-prywatnosci", en: "/en/privacy" },
 } as const satisfies Record<string, Localized<string>>
 
@@ -70,9 +67,8 @@ export const PATH_BASES = {
 
 export type RouteKey = keyof typeof ROUTES
 
-export function route(key: RouteKey, locale: Locale): string {
-  return ROUTES[key][locale]
-}
+/** Kanał RSS w każdym języku (zasób, nie strona — dlatego poza `ROUTES`). */
+export const FEEDS: Localized<string> = { pl: "/feed.xml", en: "/en/feed.xml" }
 
 export function postPath(locale: Locale, slug: string): string {
   return `${ROUTES.blog[locale]}/${slug}`
@@ -92,31 +88,6 @@ export function categoryPath(locale: Locale, slug: string): string {
 
 export function tagPath(locale: Locale, slug: string): string {
   return `${PATH_BASES.tags[locale]}/${slug}`
-}
-
-/**
- * Adres kanoniczny plus `hreflang`. Wyszukiwarka dostaje wprost, że dwie
- * strony to ten sam dokument w dwóch językach — bez tego traktuje je jak
- * treść zduplikowaną albo pokazuje Polakowi wersję angielską.
- *
- * `x-default` wskazuje polską wersję: to język oryginału i domena `.com`
- * bez prefiksu.
- */
-export function alternatesFor(
-  locale: Locale,
-  paths: Localized<string | null>
-): Metadata["alternates"] {
-  const languages: Record<string, string> = {}
-  for (const other of locales) {
-    const path = paths[other]
-    if (path) languages[other] = path
-  }
-  if (paths.pl) languages["x-default"] = paths.pl
-
-  return {
-    canonical: paths[locale] ?? undefined,
-    languages,
-  }
 }
 
 /** Drugi język serwisu. */

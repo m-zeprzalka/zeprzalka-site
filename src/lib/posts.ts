@@ -1,9 +1,9 @@
-import fs from "fs"
-import path from "path"
+import "server-only"
+import fs from "node:fs"
+import path from "node:path"
 import { cache } from "react"
 import matter from "gray-matter"
 import readingTime from "reading-time"
-import GithubSlugger from "github-slugger"
 import { z } from "zod"
 import type { Locale, Localized } from "@/i18n/config"
 import { slugify } from "@/lib/slug"
@@ -41,8 +41,8 @@ const frontmatterSchema = z.object({
   updated: isoDate.optional(),
   categories: z.array(z.string().min(1)).min(1),
   tags: z.array(z.string().min(1)).default([]),
-  /** Ścieżka w `public/` albo pełny adres. */
-  image: z.string().regex(/^(\/|https?:\/\/)/, "obraz musi zaczynać się od / albo http"),
+  /** Ścieżka w `public/` — `next/image` nie ma skonfigurowanych domen zewnętrznych. */
+  image: z.string().regex(/^\/[^/]/, "obraz musi być ścieżką w public/ (zaczynać się od /)"),
   imageCaption: z.string().optional(),
   featured: z.boolean().default(false),
   /**
@@ -63,7 +63,6 @@ export interface Post {
   readingMinutes: number
   /** Liczba słów — do danych strukturalnych (`wordCount`). */
   wordCount: number
-  headings: { id: string; level: number; text: string }[]
 }
 
 const showDrafts = process.env.NODE_ENV === "development"
@@ -120,7 +119,6 @@ export const getPostBySlug = memoize((locale: Locale, slug: string): Post | null
     // Ta sama reguła co `stats.text` z reading-time („5 min read”).
     readingMinutes: Math.ceil(Number(stats.minutes.toFixed(2))),
     wordCount: stats.words,
-    headings: extractHeadings(content),
   }
 })
 
@@ -138,32 +136,15 @@ export const getAllPosts = memoize((locale: Locale): Post[] => {
 })
 
 /**
- * Tekst nagłówka bez składni inline — spis treści pokazuje to, co czytelnik
- * widzi w artykule („InstaWP”), a nie źródło („**InstaWP**”). Ta sama postać
- * idzie do sluggera, więc id zgadzają się z tymi, które nadaje rehype-slug
- * (liczy je z wyrenderowanego tekstu, bez adresów linków).
+ * Data ostatniej zmiany w grupie wpisów: `updated`, a gdy jej brak — data
+ * publikacji; najnowsza z grupy. Dla mapy strony (`lastmod`) i kanału RSS.
  */
-function plainHeading(markdown: string): string {
-  return markdown
-    .replace(/!?\[([^\]]*)\]\([^)]*\)/g, "$1")
-    .replace(/<[^>]+>/g, "")
-    .replace(/(\*\*|__|\*|_|~~|`)(.+?)\1/g, "$2")
-    .trim()
-}
-
-function extractHeadings(content: string) {
-  // Bloki kodu są pomijane: `# komentarz` w bashu to nie nagłówek wpisu.
-  const withoutCode = content.replace(/^```[\s\S]*?^```/gm, "")
-  const headings: { id: string; level: number; text: string }[] = []
-  // Ten sam algorytm co rehype-slug (github-slugger) — id muszą się zgadzać z TOC
-  const slugger = new GithubSlugger()
-
-  for (const [, hashes = "", raw = ""] of withoutCode.matchAll(/^(#{2,4})\s+(.+)$/gm)) {
-    const text = plainHeading(raw)
-    headings.push({ id: slugger.slug(text), level: hashes.length, text })
-  }
-
-  return headings
+export function latestUpdate(posts: readonly Post[]): Date | undefined {
+  const newest = posts
+    .map((post) => post.frontmatter.updated ?? post.frontmatter.date)
+    .sort()
+    .at(-1)
+  return newest ? new Date(newest) : undefined
 }
 
 /**

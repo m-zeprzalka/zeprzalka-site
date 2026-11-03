@@ -1,12 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-
-interface Heading {
-  id: string
-  level: number
-  text: string
-}
+import type { Heading } from "@/lib/mdx"
 
 /**
  * Lista nagłówków wpisu z podświetleniem sekcji, którą właśnie się czyta.

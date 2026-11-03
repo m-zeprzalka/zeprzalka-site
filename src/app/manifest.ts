@@ -9,6 +9,8 @@ import { DEFAULT_LOCALE } from "@/i18n/config"
  */
 export default function manifest(): MetadataRoute.Manifest {
   return {
+    // Stały identyfikator aplikacji — niezależny od `start_url`, gdyby ten się zmienił.
+    id: "/",
     name: SITE_TITLE,
     short_name: SITE_NAME,
     description: SITE_DESCRIPTION[DEFAULT_LOCALE],

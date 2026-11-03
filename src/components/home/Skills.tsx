@@ -14,11 +14,11 @@ export function Skills({ locale }: { locale: Locale }) {
 
   return (
     <HomeSection title={copy.title} lead={copy.lead} gridClassName="gap-6 lg:gap-8">
-      <Accordion className="mt-4" type="single" collapsible defaultValue="item-1">
+      <Accordion className="mt-4" type="single" collapsible defaultValue={homeSkills[0]?.id}>
         {homeSkills.map((skill) => (
           <AccordionItem key={skill.id} value={skill.id} className="border-t">
             <AccordionTrigger className="py-8 hover:no-underline md:py-10 lg:py-12">
-              <div className="flex w-full items-center gap-4 lg:gap-6">
+              <span className="flex w-full items-center gap-4 lg:gap-6">
                 <span className="text-2xl text-muted-foreground/80 md:text-3xl lg:text-4xl xl:text-5xl">
                   {skill.number}
                 </span>
@@ -26,19 +26,21 @@ export function Skills({ locale }: { locale: Locale }) {
                 <span className="text-xl sm:text-3xl md:text-4xl xl:text-5xl">
                   {skill.title[locale]}
                 </span>
-              </div>
+              </span>
             </AccordionTrigger>
             <AccordionContent className="flex flex-col gap-4 text-balance">
               <p className="max-w-5xl text-lg leading-relaxed text-muted-foreground md:text-xl">
                 {skill.description[locale]}
               </p>
-              <div className="flex flex-wrap gap-2 py-4">
+              <ul className="flex flex-wrap gap-2 py-4">
                 {skill.tools[locale].map((tool) => (
-                  <Badge variant="outline" className="px-3 py-1" key={tool}>
-                    {tool}
-                  </Badge>
+                  <li key={tool} className="flex">
+                    <Badge variant="outline" className="px-3 py-1">
+                      {tool}
+                    </Badge>
+                  </li>
                 ))}
-              </div>
+              </ul>
             </AccordionContent>
           </AccordionItem>
         ))}

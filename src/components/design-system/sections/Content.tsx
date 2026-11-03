@@ -84,7 +84,7 @@ export function ContentSection() {
 
       <DsBlock
         title="Taksonomia"
-        description="Kategorie i tagi mają wspólną regułę adresów (slugify z lib/posts) i różną wagę wizualną."
+        description="Kategorie i tagi mają wspólną regułę adresów (slugify z lib/slug.ts) i jeden komponent linku (TermLink) w dwóch wariantach plakietki."
       >
         <div className="flex flex-wrap items-center gap-3">
           <Badge variant="outline" className="text-xs">

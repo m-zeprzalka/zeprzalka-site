@@ -4,6 +4,6 @@ import { aboutMetadata } from "@/i18n/page-metadata"
 
 export const metadata: Metadata = aboutMetadata("pl")
 
-export default function CVPage() {
+export default function AboutPage() {
   return <AboutView locale="pl" />
 }

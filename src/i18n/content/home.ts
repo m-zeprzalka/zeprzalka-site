@@ -1,4 +1,5 @@
 /** Treść strony głównej (`src/components/home/*`). */
+import "server-only"
 import type { Locale, Localized } from "@/i18n/config"
 
 const pl = {

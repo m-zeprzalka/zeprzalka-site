@@ -8,7 +8,8 @@
  * profilu), więc wyszukiwarka dostawała pięć częściowo sprzecznych opisów
  * zamiast jednego bytu, który da się skleić w panel wiedzy.
  */
-import { ROUTES, INTL_LOCALE, postPath, type Locale } from "@/i18n/config"
+import "server-only"
+import { DEFAULT_LOCALE, ROUTES, INTL_LOCALE, postPath, type Locale } from "@/i18n/config"
 import { getCommon } from "@/i18n/content/common"
 import { getPages } from "@/i18n/content/pages"
 import { AUTHOR, CONTACT_EMAIL, SAME_AS, SITE_URL, absoluteImage, absoluteUrl } from "@/lib/site"
@@ -19,18 +20,22 @@ type Schema = Record<string, unknown>
 /** Identyfikatory encji — adres z fragmentem, stały między wdrożeniami. */
 export const PERSON_ID = `${SITE_URL}/#person`
 
-export function websiteId(locale: Locale): string {
+/**
+ * Jeden adres osoby niezależnie od języka strony — encja jest jedna. Angielski
+ * profil wskazuje `ProfilePage` na `/en/about` (AboutView).
+ */
+const PERSON_URL = absoluteUrl(ROUTES.about[DEFAULT_LOCALE])
+
+function websiteId(locale: Locale): string {
   return `${absoluteUrl(ROUTES.home[locale])}#website`
 }
 
 /** Odwołanie do autora z innych encji: identyfikator plus minimum pól. */
-export function personRef(locale: Locale): Schema {
-  return {
-    "@type": "Person",
-    "@id": PERSON_ID,
-    name: AUTHOR.name,
-    url: absoluteUrl(ROUTES.about[locale]),
-  }
+const PERSON_REF: Schema = {
+  "@type": "Person",
+  "@id": PERSON_ID,
+  name: AUTHOR.name,
+  url: PERSON_URL,
 }
 
 /** Pełny opis autora — publikowany na stronie głównej i na „o mnie". */
@@ -43,7 +48,7 @@ export function personSchema(locale: Locale): Schema {
     name: AUTHOR.name,
     jobTitle: AUTHOR.jobTitle,
     description: AUTHOR.bio[locale],
-    url: absoluteUrl(ROUTES.about[locale]),
+    url: PERSON_URL,
     image: absoluteImage(AUTHOR.avatar),
     email: `mailto:${CONTACT_EMAIL}`,
     address: {
@@ -110,8 +115,53 @@ export function blogPostingSchema(post: Post): Schema {
     keywords: frontmatter.tags.join(", ") || undefined,
     mainEntityOfPage: { "@type": "WebPage", "@id": url },
     isPartOf: { "@id": websiteId(locale) },
-    author: personRef(locale),
-    publisher: personRef(locale),
+    author: PERSON_REF,
+    publisher: PERSON_REF,
+  }
+}
+
+/**
+ * Strona-lista albo strona kontaktu: typ schema.org, adres, nazwa i opis
+ * z metadanych strony, przynależność do witryny i autora.
+ */
+export function webPageSchema(
+  type: "CollectionPage" | "ContactPage",
+  locale: Locale,
+  page: { name: string; description: string; path: string },
+  extra: Schema = {}
+): Schema {
+  const url = absoluteUrl(page.path)
+  return {
+    "@type": type,
+    "@id": `${url}#webpage`,
+    url,
+    name: page.name,
+    description: page.description,
+    inLanguage: INTL_LOCALE[locale],
+    isPartOf: { "@id": websiteId(locale) },
+    ...extra,
+  }
+}
+
+/** Indeks bloga: `Blog` z odwołaniami do wpisów z bieżącej strony listy. */
+export function blogSchema(
+  locale: Locale,
+  page: { name: string; description: string; path: string },
+  posts: readonly Post[]
+): Schema {
+  const url = absoluteUrl(page.path)
+  return {
+    "@type": "Blog",
+    "@id": `${absoluteUrl(ROUTES.blog[locale])}#blog`,
+    url,
+    name: page.name,
+    description: page.description,
+    inLanguage: INTL_LOCALE[locale],
+    isPartOf: { "@id": websiteId(locale) },
+    publisher: { "@id": PERSON_ID },
+    blogPost: posts.map((post) => ({
+      "@id": `${absoluteUrl(postPath(locale, post.slug))}#article`,
+    })),
   }
 }
 

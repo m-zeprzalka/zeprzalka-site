@@ -1,10 +1,13 @@
 import { Separator } from "@/components/ui/separator"
 import { Mail, MapPin, Clock } from "lucide-react"
 import { ContactForm } from "@/components/ContactForm"
+import { JsonLd } from "@/components/JsonLd"
 import { PageHeader } from "@/components/PageHeader"
 import { ROUTES, type Locale } from "@/i18n/config"
 import { getCommon } from "@/i18n/content/common"
+import { getMeta } from "@/i18n/content/meta"
 import { getPages } from "@/i18n/content/pages"
+import { PERSON_ID, breadcrumbSchema, graph, webPageSchema } from "@/lib/schema"
 import { CONTACT_EMAIL } from "@/lib/site"
 
 export function ContactView({ locale }: { locale: Locale }) {
@@ -31,35 +34,53 @@ export function ContactView({ locale }: { locale: Locale }) {
     },
   ]
 
+  const meta = getMeta(locale).contact
+  const path = ROUTES.contact[locale]
+  const jsonLd = graph(
+    webPageSchema(
+      "ContactPage",
+      locale,
+      { name: meta.title, description: meta.description, path },
+      { mainEntity: { "@id": PERSON_ID } }
+    ),
+    breadcrumbSchema(locale, [{ name: meta.title, path }])
+  )
+
   return (
     <div className="page-shell">
+      <JsonLd data={jsonLd} />
       <PageHeader badge={copy.badge} title={copy.title} description={copy.description} />
 
       <div className="grid gap-12 lg:grid-cols-12 lg:gap-16">
         {/* Info boczna */}
         <aside className="lg:col-span-4 xl:col-span-3">
           <div className="top-24 space-y-8 lg:sticky">
-            {info.map(({ icon: Icon, label, value, href }) => (
-              <div key={label}>
-                <p className="mb-2 text-xs font-medium tracking-widest text-muted-foreground uppercase">
-                  {label}
-                </p>
-                {href ? (
-                  <a
-                    href={href}
-                    className="flex items-center gap-2 text-sm font-medium transition-colors hover:text-primary"
-                  >
-                    <Icon className="h-4 w-4 shrink-0 text-muted-foreground" />
-                    {value}
-                  </a>
-                ) : (
-                  <p className="flex items-center gap-2 text-sm font-medium">
-                    <Icon className="h-4 w-4 shrink-0 text-muted-foreground" />
-                    {value}
-                  </p>
-                )}
-              </div>
-            ))}
+            {/* Pary „etykieta — wartość” to lista opisowa. */}
+            <dl className="space-y-8">
+              {info.map(({ icon: Icon, label, value, href }) => (
+                <div key={label}>
+                  <dt className="mb-2 text-xs font-medium tracking-widest text-muted-foreground uppercase">
+                    {label}
+                  </dt>
+                  <dd>
+                    {href ? (
+                      <a
+                        href={href}
+                        className="flex items-center gap-2 text-sm font-medium transition-colors hover:text-primary"
+                      >
+                        <Icon className="h-4 w-4 shrink-0 text-muted-foreground" />
+                        {value}
+                      </a>
+                    ) : (
+                      <p className="flex items-center gap-2 text-sm font-medium">
+                        <Icon className="h-4 w-4 shrink-0 text-muted-foreground" />
+                        {value}
+                      </p>
+                    )}
+                  </dd>
+                </div>
+              ))}
+            </dl>
 
             <Separator />
 
@@ -68,6 +89,7 @@ export function ContactView({ locale }: { locale: Locale }) {
         </aside>
 
         {/* Formularz */}
+        {/* `relative`: kontekst pozycjonowania pola-pułapki formularza (absolute, -z-10). */}
         <div className="relative lg:col-span-8 xl:col-span-9">
           <ContactForm
             locale={locale}

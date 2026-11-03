@@ -10,6 +10,7 @@
  * Okres przechowywania (12 miesięcy) i dane usługodawcy to decyzje właściciela
  * — patrz docs/AUDYT-2026-11.md, sekcja 4.
  */
+import "server-only"
 import type { Locale } from "@/i18n/config"
 
 export interface LegalSection {

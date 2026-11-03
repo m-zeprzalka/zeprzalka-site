@@ -5,6 +5,7 @@
  * serwisu wygląda dokładnie tak samo jak przed wprowadzeniem dwujęzyczności.
  * `en` ma typ `typeof pl`, więc każdy nowy tekst musi powstać w obu językach.
  */
+import "server-only"
 import type { Locale } from "@/i18n/config"
 
 const pl = {
@@ -206,7 +207,7 @@ const pl = {
     categoriesTitle: "Kategorie",
     categoriesDescription: "Przeglądaj artykuły według kategorii",
     categoryBadge: "Kategoria",
-    /** {count} plus odmiana rzeczownika — patrz countArticles w tym pliku. */
+    /** {count} z odmienionym rzeczownikiem — `plural()` i `common.plurals.articles`. */
     inCategory: "{count} w tej kategorii",
     tagBadge: "Tag",
     withTag: "{count} z tym tagiem",
@@ -435,13 +436,4 @@ const pages = { pl, en } as const
 
 export function getPages(locale: Locale) {
   return pages[locale]
-}
-
-/**
- * Liczebnik przy słowie „artykuł". Polska wersja zachowuje formę, którą
- * miała strona przed wprowadzeniem angielskiego (jedna vs. wiele).
- */
-export function countArticles(count: number, locale: Locale): string {
-  if (locale === "en") return count === 1 ? "1 article" : `${count} articles`
-  return `${count} ${count === 1 ? "artykuł" : "artykuły"}`
 }

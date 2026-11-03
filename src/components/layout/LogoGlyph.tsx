@@ -28,11 +28,7 @@ export function LogoGlyph() {
 
   return (
     // aria-hidden: bez tego nazwa linku zmieniałaby się razem ze znakiem.
-    <span
-      aria-hidden="true"
-      className="inline-block transition-all duration-150"
-      style={{ width: "2ch", textAlign: "center" }}
-    >
+    <span aria-hidden="true" className="inline-block w-[2ch] text-center">
       {glyph}
     </span>
   )

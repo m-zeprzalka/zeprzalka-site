@@ -1,11 +1,11 @@
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import { Button } from "@/components/ui/button"
-import { MapPin, Mail, Globe, ExternalLink, Download } from "lucide-react"
+import { MapPin, Mail, Globe, ArrowRight, Download } from "lucide-react"
 import Link from "next/link"
 import { JsonLd } from "@/components/JsonLd"
 import { StatusBadge } from "@/components/StatusBadge"
-import { CONTACT_EMAIL, SITE_URL, absoluteUrl } from "@/lib/site"
+import { CONTACT_EMAIL, SITE_HOST, SITE_URL, absoluteUrl } from "@/lib/site"
 import { PERSON_ID, breadcrumbSchema, graph, personSchema } from "@/lib/schema"
 import { INTL_LOCALE, ROUTES, type Locale } from "@/i18n/config"
 import { getPages } from "@/i18n/content/pages"
@@ -61,7 +61,7 @@ export function AboutView({ locale }: { locale: Locale }) {
             className="flex items-center gap-2 transition-colors hover:text-foreground"
           >
             <Globe className="h-4 w-4 shrink-0" />
-            www.zeprzalka.com
+            {SITE_HOST}
           </a>
         </div>
 
@@ -81,8 +81,7 @@ export function AboutView({ locale }: { locale: Locale }) {
             <span className="font-medium text-foreground">{copy.bioLeadStrong}</span>
             {copy.bioLeadSuffix}
           </p>
-          <br />
-          <p className="text-base leading-relaxed text-muted-foreground">
+          <p className="mt-6 text-base leading-relaxed text-muted-foreground">
             {copy.bioSecondPrefix}
             <span className="font-medium text-foreground">{copy.bioSecondStrong}</span>
             {copy.bioSecondSuffix}
@@ -103,8 +102,11 @@ export function AboutView({ locale }: { locale: Locale }) {
         </div>
 
         <div className="space-y-10">
-          {copy.experience.map((job, i) => (
-            <div key={i} className="grid gap-4 lg:grid-cols-12 lg:gap-8">
+          {copy.experience.map((job) => (
+            <div
+              key={`${job.company}-${job.period}`}
+              className="grid gap-4 lg:grid-cols-12 lg:gap-8"
+            >
               <div className="lg:col-span-3">
                 <p className="text-sm text-muted-foreground tabular-nums">{job.period}</p>
                 <p className="mt-1 text-sm font-medium">{job.company}</p>
@@ -167,8 +169,11 @@ export function AboutView({ locale }: { locale: Locale }) {
           </h2>
         </div>
         <div className="space-y-8 lg:col-span-9">
-          {copy.education.map((edu, i) => (
-            <div key={i} className="flex items-start justify-between gap-4">
+          {copy.education.map((edu) => (
+            <div
+              key={`${edu.school}-${edu.period}`}
+              className="flex items-start justify-between gap-4"
+            >
               <div>
                 <h3 className="text-base font-semibold">{edu.school}</h3>
                 {edu.degree && <p className="mt-1 text-sm text-foreground">{edu.degree}</p>}
@@ -196,10 +201,10 @@ export function AboutView({ locale }: { locale: Locale }) {
             {copy.ctaCv}
           </a>
         </Button>
-        {/* Wcześniej prowadził na stronę główną w nowej karcie — teraz na komplet realizacji. */}
+        {/* Link wewnętrzny — strzałka zamiast ikony „nowa karta”. */}
         <Button asChild variant="ghost" size="lg" className="w-fit gap-2">
           <Link href={ROUTES.portfolio[locale]}>
-            <ExternalLink className="h-4 w-4" />
+            <ArrowRight className="h-4 w-4" />
             {copy.ctaPortfolio}
           </Link>
         </Button>

@@ -16,7 +16,8 @@ const eslintConfig = [
           patterns: [
             {
               group: ["@/components/demo/*", "@/app/demo/*"],
-              message: "Piaskownica /demo nie może być importowana przez serwis (src/components/demo/README.md).",
+              message:
+                "Piaskownica /demo nie może być importowana przez serwis (src/components/demo/README.md).",
             },
           ],
         },

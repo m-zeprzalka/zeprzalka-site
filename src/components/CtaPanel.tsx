@@ -43,7 +43,7 @@ export function CtaPanel({
       <h2 id={id} className={cn("font-semibold tracking-tight", s.heading)}>
         {heading}
       </h2>
-      <p className={cn("max-w-2xl text-muted-foreground leading-relaxed", s.body)}>{body}</p>
+      <p className={cn("max-w-2xl leading-relaxed text-muted-foreground", s.body)}>{body}</p>
       <div className="mt-6 flex flex-col gap-3 sm:flex-row">
         {actions.map(({ href, label, variant = "default" }, index) => (
           <Button

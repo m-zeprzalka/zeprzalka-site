@@ -11,14 +11,7 @@
 import { ROUTES, INTL_LOCALE, postPath, type Locale } from "@/i18n/config"
 import { getCommon } from "@/i18n/content/common"
 import { getPages } from "@/i18n/content/pages"
-import {
-  AUTHOR,
-  CONTACT_EMAIL,
-  SAME_AS,
-  SITE_URL,
-  absoluteImage,
-  absoluteUrl,
-} from "@/lib/site"
+import { AUTHOR, CONTACT_EMAIL, SAME_AS, SITE_URL, absoluteImage, absoluteUrl } from "@/lib/site"
 import type { Post } from "@/lib/posts"
 
 type Schema = Record<string, unknown>
@@ -84,10 +77,7 @@ export function websiteSchema(locale: Locale): Schema {
  * Okruszki: strona główna dokładana automatycznie, ostatni element to
  * bieżąca strona.
  */
-export function breadcrumbSchema(
-  locale: Locale,
-  items: { name: string; path: string }[]
-): Schema {
+export function breadcrumbSchema(locale: Locale, items: { name: string; path: string }[]): Schema {
   const trail = [{ name: getCommon(locale).nav.home, path: ROUTES.home[locale] }, ...items]
   return {
     "@type": "BreadcrumbList",

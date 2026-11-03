@@ -32,8 +32,8 @@ export function BlogIndexView({ locale, page = 1 }: { locale: Locale; page?: num
       {/* Wyróżnione — tylko na pierwszej stronie */}
       {current === 1 && featured.length > 0 && (
         <section className="mb-16">
-          <h2 className="text-2xl font-semibold mb-8">{copy.featuredHeading}</h2>
-          <div className="grid md:grid-cols-2 gap-8">
+          <h2 className="mb-8 text-2xl font-semibold">{copy.featuredHeading}</h2>
+          <div className="grid gap-8 md:grid-cols-2">
             {featured.map((post) => (
               <PostCard
                 key={post.slug}
@@ -50,7 +50,7 @@ export function BlogIndexView({ locale, page = 1 }: { locale: Locale; page?: num
       )}
 
       <section>
-        <h2 className="text-2xl font-semibold mb-8">
+        <h2 className="mb-8 text-2xl font-semibold">
           {copy.allHeading}
           {totalPages > 1 && (
             <span className="ml-3 text-base font-normal text-muted-foreground">

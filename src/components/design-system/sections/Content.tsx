@@ -22,9 +22,8 @@ export function ContentSection() {
         note={
           <>
             Cała karta jest klikalna dzięki nakładce{" "}
-            <DsInline>after:absolute after:inset-0</DsInline> na linku tytułu.
-            Odnośniki kategorii muszą więc mieć{" "}
-            <DsInline>relative z-10</DsInline>, żeby pozostały klikalne.
+            <DsInline>after:absolute after:inset-0</DsInline> na linku tytułu. Odnośniki kategorii
+            muszą więc mieć <DsInline>relative z-10</DsInline>, żeby pozostały klikalne.
           </>
         }
       >
@@ -42,11 +41,11 @@ export function ContentSection() {
                 </p>
                 <div className="flex items-center gap-4 text-sm text-muted-foreground">
                   <span className="flex items-center gap-1">
-                    <CalendarDays className="w-4 h-4" />
+                    <CalendarDays className="h-4 w-4" />
                     23.08.2026
                   </span>
                   <span className="flex items-center gap-1">
-                    <Clock className="w-4 h-4" />
+                    <Clock className="h-4 w-4" />
                     12 min czytania
                   </span>
                 </div>
@@ -91,12 +90,12 @@ export function ContentSection() {
                 </p>
                 <div className="flex items-center gap-3 text-xs text-muted-foreground">
                   <span className="flex items-center gap-1">
-                    <CalendarDays className="w-3 h-3" />
+                    <CalendarDays className="h-3 w-3" />
                     23.08.2026
                   </span>
                   <span>·</span>
                   <span className="flex items-center gap-1">
-                    <Clock className="w-3 h-3" />
+                    <Clock className="h-3 w-3" />
                     12 min
                   </span>
                 </div>
@@ -111,11 +110,10 @@ export function ContentSection() {
         description="Treść wpisu składana jest przez wtyczkę typography Tailwinda i nadpisania w mdxComponents. Nagłówki są w wadze bold, akapity w kolorze foreground (nie muted), odnośniki w kolorze primary bez podkreślenia do czasu najechania."
       >
         <DsPreview label="Próbka składu">
-          <div className="prose prose-lg dark:prose-invert max-w-none prose-headings:font-bold prose-headings:tracking-tight prose-p:text-base prose-p:leading-relaxed prose-a:text-primary prose-a:no-underline hover:prose-a:underline">
+          <div className="prose prose-lg max-w-none dark:prose-invert prose-headings:font-bold prose-headings:tracking-tight prose-p:text-base prose-p:leading-relaxed prose-a:text-primary prose-a:no-underline hover:prose-a:underline">
             <p className="text-2xl font-bold tracking-tight">Nagłówek drugiego stopnia</p>
             <p>
-              Akapit treści z <a href="#tresc">odnośnikiem</a>,{" "}
-              <strong>wyróżnieniem</strong> oraz{" "}
+              Akapit treści z <a href="#tresc">odnośnikiem</a>, <strong>wyróżnieniem</strong> oraz{" "}
               <code className="rounded border bg-muted px-1.5 py-0.5 font-mono text-sm">
                 fragmentem kodu
               </code>
@@ -138,7 +136,11 @@ export function ContentSection() {
             ["p", "text-base leading-relaxed, kolor foreground", "Nie muted — to treść główna"],
             ["code", "bg-muted border rounded px-1.5 py-0.5", "Monospace, bez cudzysłowów"],
             ["pre", "komponent CodeBlock", "Podświetlanie rehype-highlight + kopiowanie"],
-            ["tabela", "border-collapse, nagłówek bg-muted/50", "Przewijana w poziomie na wąskich ekranach"],
+            [
+              "tabela",
+              "border-collapse, nagłówek bg-muted/50",
+              "Przewijana w poziomie na wąskich ekranach",
+            ],
           ]}
         />
       </DsBlock>

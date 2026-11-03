@@ -8,10 +8,22 @@ import {
 } from "@/components/design-system/primitives"
 
 const radii = [
-  { token: "--radius-sm", value: "calc(var(--radius) - 4px)", usage: "Drobne elementy wewnątrz kart" },
-  { token: "--radius-md", value: "calc(var(--radius) - 2px)", usage: "Przyciski, pola formularza, badge" },
+  {
+    token: "--radius-sm",
+    value: "calc(var(--radius) - 4px)",
+    usage: "Drobne elementy wewnątrz kart",
+  },
+  {
+    token: "--radius-md",
+    value: "calc(var(--radius) - 2px)",
+    usage: "Przyciski, pola formularza, badge",
+  },
   { token: "--radius-lg", value: "var(--radius) = 0.625rem", usage: "Kadry wideo, obrazy wpisów" },
-  { token: "--radius-xl", value: "calc(var(--radius) + 4px)", usage: "Karty portfolio, wyróżnione obrazy" },
+  {
+    token: "--radius-xl",
+    value: "calc(var(--radius) + 4px)",
+    usage: "Karty portfolio, wyróżnione obrazy",
+  },
 ]
 
 const icons = [
@@ -43,9 +55,7 @@ export function ShapeSection() {
                 <span className="font-mono text-[0.6875rem] text-muted-foreground">
                   {radius.value}
                 </span>
-                <span className="text-xs text-muted-foreground leading-snug">
-                  {radius.usage}
-                </span>
+                <span className="text-xs leading-snug text-muted-foreground">{radius.usage}</span>
               </div>
             </div>
           ))}
@@ -76,7 +86,7 @@ export function ShapeSection() {
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {icons.map(({ Icon, name, usage }) => (
             <div key={name} className="flex items-start gap-3 rounded-lg border p-4">
-              <Icon className="mt-0.5 w-4 h-4 shrink-0 text-muted-foreground" />
+              <Icon className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
               <div className="flex flex-col">
                 <span className="font-mono text-xs">{name}</span>
                 <span className="text-xs text-muted-foreground">{usage}</span>

@@ -4,16 +4,15 @@ import { DEMOS } from "@/components/demo/registry"
 export const metadata = { title: "Piaskownica" }
 
 export default function DemoIndexPage() {
-
   return (
     <main className="mx-auto max-w-3xl px-4 py-16 md:py-24">
-      <p className="font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground">
+      <p className="font-mono text-xs tracking-[0.2em] text-muted-foreground uppercase">
         /demo · tylko podgląd i pnpm dev
       </p>
       <h1 className="mt-4 text-4xl font-medium tracking-tight">Piaskownica projektowa</h1>
       <p className="mt-4 max-w-prose text-muted-foreground">
-        Eksperymenty z wyglądem strony głównej, odizolowane od serwisu: własny układ,
-        własny arkusz stylów, zero importów w drugą stronę. Na produkcji ten adres zwraca 404.
+        Eksperymenty z wyglądem strony głównej, odizolowane od serwisu: własny układ, własny arkusz
+        stylów, zero importów w drugą stronę. Na produkcji ten adres zwraca 404.
       </p>
 
       <ol className="mt-12 divide-y divide-border border-y border-border">

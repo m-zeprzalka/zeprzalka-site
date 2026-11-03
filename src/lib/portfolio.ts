@@ -221,9 +221,7 @@ export const portfolioItems: PortfolioItem[] = [
 ]
 
 /** Zajawka na stronie głównej — w kolejności z listy powyżej. */
-export const featuredPortfolioItems = portfolioItems.filter(
-  (item) => item.featured
-)
+export const featuredPortfolioItems = portfolioItems.filter((item) => item.featured)
 
 export function getPortfolioByGroup(group: PortfolioGroup): PortfolioItem[] {
   return portfolioItems.filter((item) => item.group === group)

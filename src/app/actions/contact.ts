@@ -43,28 +43,12 @@ function schemaFor(locale: Locale) {
   const copy = getCommon(locale).contactAction
 
   return z.object({
-    name: z
-      .string()
-      .trim()
-      .min(2, copy.nameMin)
-      .max(100, copy.nameMax),
+    name: z.string().trim().min(2, copy.nameMin).max(100, copy.nameMax),
     // Najpierw obcięcie spacji, potem format — odwrotna kolejność odrzucała
     // adres ze spacją na końcu (częste przy autouzupełnianiu na telefonie).
-    email: z
-      .string()
-      .trim()
-      .max(200, copy.emailMax)
-      .pipe(z.email(copy.emailInvalid)),
-    projectType: z
-      .string()
-      .trim()
-      .max(200, copy.projectTypeMax)
-      .optional(),
-    message: z
-      .string()
-      .trim()
-      .min(5, copy.messageMin)
-      .max(5000, copy.messageMax),
+    email: z.string().trim().max(200, copy.emailMax).pipe(z.email(copy.emailInvalid)),
+    projectType: z.string().trim().max(200, copy.projectTypeMax).optional(),
+    message: z.string().trim().min(5, copy.messageMin).max(5000, copy.messageMax),
   })
 }
 
@@ -115,8 +99,7 @@ export async function sendContactEmail(
 
   const { name, email, projectType, message } = result.data
 
-  const { SMTP_HOST, SMTP_PORT, SMTP_SECURE, SMTP_USER, SMTP_PASS } =
-    process.env
+  const { SMTP_HOST, SMTP_PORT, SMTP_SECURE, SMTP_USER, SMTP_PASS } = process.env
 
   if (!SMTP_HOST || !SMTP_USER || !SMTP_PASS) {
     console.error("Contact form: missing SMTP configuration (SMTP_HOST/SMTP_USER/SMTP_PASS)")

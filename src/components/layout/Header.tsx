@@ -15,12 +15,12 @@ export function Header({ locale }: { locale: Locale }) {
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         <Logo locale={locale} />
         <div className="flex items-center gap-2">
-          <nav aria-label={copy.nav.mainAria} className="hidden md:flex items-center gap-6 mr-2">
+          <nav aria-label={copy.nav.mainAria} className="mr-2 hidden items-center gap-6 md:flex">
             {mainNav(locale).map(({ href, label }) => (
               <Link
                 key={href}
                 href={href}
-                className="text-sm text-muted-foreground hover:text-foreground underline-offset-4 hover:underline transition-colors"
+                className="text-sm text-muted-foreground underline-offset-4 transition-colors hover:text-foreground hover:underline"
               >
                 {label}
               </Link>

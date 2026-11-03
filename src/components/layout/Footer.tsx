@@ -17,7 +17,7 @@ export function Footer({ locale }: { locale: Locale }) {
           <div className="space-y-4">
             <Link
               href={ROUTES.home[locale]}
-              className="font-semibold text-lg tracking-tight hover:text-primary transition-colors"
+              className="text-lg font-semibold tracking-tight transition-colors hover:text-primary"
             >
               zeprzalka.com
             </Link>
@@ -61,7 +61,7 @@ export function Footer({ locale }: { locale: Locale }) {
           </div>
         </div>
 
-        <div className="mt-12 pt-8 border-t">
+        <div className="mt-12 border-t pt-8">
           <p className="text-center text-sm text-muted-foreground">
             {fill(copy.footer.copyright, { year: new Date().getFullYear() })}
           </p>

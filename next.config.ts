@@ -13,8 +13,7 @@ const isDev = process.env.NODE_ENV === "development"
  * nie widzi ich wcale — `/demo` dostaje zwykłą stronę 404, a paczka nie
  * zawiera ani bajtu dem. `DEMO_PUBLIC=1` świadomie to wyłącza.
  */
-const withDemos =
-  process.env.VERCEL_ENV !== "production" || process.env.DEMO_PUBLIC === "1"
+const withDemos = process.env.VERCEL_ENV !== "production" || process.env.DEMO_PUBLIC === "1"
 
 const securityHeaders = [
   // Przeglądarka nie rozwiązuje z wyprzedzeniem domen linków zewnętrznych.
@@ -85,9 +84,7 @@ const securityHeaders = [
       "media-src 'self'",
       "font-src 'self' data:",
       // HMR Turbopacka chodzi po websocketach na tym samym origin.
-      `connect-src 'self' https://vitals.vercel-insights.com${
-        isDev ? " ws: wss:" : ""
-      }`,
+      `connect-src 'self' https://vitals.vercel-insights.com${isDev ? " ws: wss:" : ""}`,
       "worker-src 'self' blob:",
       "manifest-src 'self'",
       "object-src 'none'",

@@ -89,7 +89,6 @@ export const TAG_LABELS: readonly Localized<string>[] = [
   { pl: "Social Media", en: "Social Media" },
 ]
 
-
 function translate(
   pairs: readonly Localized<string>[],
   value: string,
@@ -103,28 +102,16 @@ function translate(
 }
 
 /** Slug tego samego wpisu w drugim języku — `null`, gdy tłumaczenia nie ma. */
-export function translatePostSlug(
-  slug: string,
-  from: Locale,
-  to: Locale
-): string | null {
+export function translatePostSlug(slug: string, from: Locale, to: Locale): string | null {
   return translate(POST_SLUGS, slug, from, to)
 }
 
 /** Slug tej samej kategorii w drugim języku. */
-export function translateCategorySlug(
-  slug: string,
-  from: Locale,
-  to: Locale
-): string | null {
+export function translateCategorySlug(slug: string, from: Locale, to: Locale): string | null {
   return translate(CATEGORY_LABELS, slug, from, to, slugify)
 }
 
 /** Slug tego samego tagu w drugim języku. */
-export function translateTagSlug(
-  slug: string,
-  from: Locale,
-  to: Locale
-): string | null {
+export function translateTagSlug(slug: string, from: Locale, to: Locale): string | null {
   return translate(TAG_LABELS, slug, from, to, slugify)
 }

@@ -13,13 +13,11 @@ export function PrivacyView({ locale }: { locale: Locale }) {
 
       <div className="space-y-12">
         {copy.sections.map((section) => (
-          <section key={section.heading} className="grid lg:grid-cols-12 gap-4 lg:gap-8">
-            <h2 className="lg:col-span-4 text-base font-semibold">
-              {section.heading}
-            </h2>
-            <div className="lg:col-span-8 space-y-4">
+          <section key={section.heading} className="grid gap-4 lg:grid-cols-12 lg:gap-8">
+            <h2 className="text-base font-semibold lg:col-span-4">{section.heading}</h2>
+            <div className="space-y-4 lg:col-span-8">
               {section.paragraphs.map((paragraph) => (
-                <p key={paragraph} className="text-muted-foreground leading-relaxed">
+                <p key={paragraph} className="leading-relaxed text-muted-foreground">
                   {paragraph}
                 </p>
               ))}
@@ -29,8 +27,7 @@ export function PrivacyView({ locale }: { locale: Locale }) {
       </div>
 
       <p className="mt-16 text-sm text-muted-foreground">
-        {copy.updatedLabel}:{" "}
-        <time dateTime={copy.updated}>{formatDate(copy.updated, locale)}</time>
+        {copy.updatedLabel}: <time dateTime={copy.updated}>{formatDate(copy.updated, locale)}</time>
       </p>
     </div>
   )

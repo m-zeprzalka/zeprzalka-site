@@ -13,11 +13,7 @@ import {
   route,
   type Locale,
 } from "@/i18n/config"
-import {
-  translateCategorySlug,
-  translatePostSlug,
-  translateTagSlug,
-} from "@/i18n/blog-map"
+import { translateCategorySlug, translatePostSlug, translateTagSlug } from "@/i18n/blog-map"
 
 /**
  * Przełącznik języka prowadzi na **odpowiednik oglądanej strony**, a nie na

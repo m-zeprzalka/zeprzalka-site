@@ -2,18 +2,8 @@ import type { MetadataRoute } from "next"
 import { getAllPosts, getTerms } from "@/lib/posts"
 import { MIN_POSTS_TO_INDEX_CATEGORY } from "@/i18n/page-metadata"
 import { absoluteUrl } from "@/lib/site"
-import {
-  ROUTES,
-  categoryPath,
-  locales,
-  otherLocale,
-  postPath,
-  type Locale,
-} from "@/i18n/config"
-import {
-  translateCategorySlug,
-  translatePostSlug,
-} from "@/i18n/blog-map"
+import { ROUTES, categoryPath, locales, otherLocale, postPath, type Locale } from "@/i18n/config"
+import { translateCategorySlug, translatePostSlug } from "@/i18n/blog-map"
 
 /**
  * Mapa strony obejmuje obie wersje językowe. Każdy wpis niesie `alternates`,
@@ -122,9 +112,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       const twin = translatePostSlug(post.slug, locale, other)
       entries.push({
         url: absoluteUrl(postPath(locale, post.slug)),
-        lastModified: new Date(
-          post.frontmatter.updated || post.frontmatter.date
-        ),
+        lastModified: new Date(post.frontmatter.updated || post.frontmatter.date),
         changeFrequency: "monthly",
         priority: 0.8,
         alternates: languageAlternates({
@@ -159,4 +147,3 @@ export default function sitemap(): MetadataRoute.Sitemap {
   // wpisów, które powielają strony kategorii — robot dociera do nich linkami.
   return entries
 }
-

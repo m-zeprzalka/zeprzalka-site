@@ -55,8 +55,7 @@ export function GridSection() {
             <div className="rounded-md border border-dashed bg-muted/40 p-4 lg:col-span-3">
               <p className="text-sm font-medium">lg:col-span-3</p>
               <p className="mt-1 text-xs text-muted-foreground">
-                H2 sekcji + jedno zdanie wprowadzenia.{" "}
-                <DsInline>lg:sticky top-22</DsInline>
+                H2 sekcji + jedno zdanie wprowadzenia. <DsInline>lg:sticky top-22</DsInline>
               </p>
             </div>
             <div className="rounded-md border border-dashed bg-muted/40 p-4 lg:col-span-9">
@@ -81,11 +80,9 @@ export function GridSection() {
         title="Warianty podziału"
         note={
           <>
-            Odstępy przyklejenia nie są ujednolicone:{" "}
-            <DsInline>top-22</DsInline> na stronie głównej,{" "}
-            <DsInline>top-24</DsInline> w /kontakt i w podglądzie bloga. Nagłówek
-            ma 4 rem (<DsInline>h-16</DsInline>), więc wartością docelową jest
-            jedna z nich — do ustalenia.
+            Odstępy przyklejenia nie są ujednolicone: <DsInline>top-22</DsInline> na stronie
+            głównej, <DsInline>top-24</DsInline> w /kontakt i w podglądzie bloga. Nagłówek ma 4 rem
+            (<DsInline>h-16</DsInline>), więc wartością docelową jest jedna z nich — do ustalenia.
           </>
         }
       >
@@ -97,7 +94,11 @@ export function GridSection() {
             ["/o-mnie", "3 / 9", "Etykieta w wersalikach zamiast H2"],
             ["/blog", "brak podziału", "Siatka kart 2 / 3 kolumny"],
             ["/uslugi", "brak podziału", "Karty pakietów 2 kolumny, proces 3 kolumny"],
-            ["Wpis bloga", "spis treści + treść", "Spis treści jako zwykły <nav> (od 11.2026 bez komponentu Sidebar)"],
+            [
+              "Wpis bloga",
+              "spis treści + treść",
+              "Spis treści jako zwykły <nav> (od 11.2026 bez komponentu Sidebar)",
+            ],
           ]}
         />
       </DsBlock>

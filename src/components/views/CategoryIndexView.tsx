@@ -23,10 +23,10 @@ export function CategoryIndexView({ locale }: { locale: Locale }) {
           <Link key={slug} href={categoryPath(locale, slug)}>
             <Badge
               variant="outline"
-              className="text-sm px-4 py-2 hover:bg-primary hover:text-primary-foreground transition-colors cursor-pointer gap-2"
+              className="cursor-pointer gap-2 px-4 py-2 text-sm transition-colors hover:bg-primary hover:text-primary-foreground"
             >
               {label}
-              <span className="text-muted-foreground font-normal">{posts.length}</span>
+              <span className="font-normal text-muted-foreground">{posts.length}</span>
             </Badge>
           </Link>
         ))}

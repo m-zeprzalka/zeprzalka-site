@@ -11,9 +11,10 @@
  */
 import type { Localized } from "@/i18n/config"
 
-export const SITE_URL = (
-  process.env.NEXT_PUBLIC_SITE_URL || "https://www.zeprzalka.com"
-).replace(/\/$/, "")
+export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://www.zeprzalka.com").replace(
+  /\/$/,
+  ""
+)
 
 export const SITE_NAME = "Michał Zeprzałka"
 export const SITE_TITLE = "Michał Zeprzałka - Digital Solutions Architect"

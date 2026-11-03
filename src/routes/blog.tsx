@@ -14,12 +14,7 @@ import { PostView } from "@/components/views/PostView"
 import { TaxonomyView } from "@/components/views/TaxonomyView"
 import { BlogIndexView } from "@/components/views/BlogIndexView"
 import { locales, type Locale } from "@/i18n/config"
-import {
-  blogPageMetadata,
-  categoryMetadata,
-  postMetadata,
-  tagMetadata,
-} from "@/i18n/page-metadata"
+import { blogPageMetadata, categoryMetadata, postMetadata, tagMetadata } from "@/i18n/page-metadata"
 import { getBlogPageCount } from "@/lib/blog-pages"
 import { getAllPosts, getPostBySlug, getTerm, getTerms, type TaxonomyField } from "@/lib/posts"
 

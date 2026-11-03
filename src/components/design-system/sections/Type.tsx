@@ -21,14 +21,12 @@ export function TypeSection() {
         title="Kroje"
         note={
           <>
-            Kolumna „renderowane teraz&rdquo; czyta krój z wyrenderowanej strony, więc
-            potwierdza, że deklaracja działa. Do 26 sierpnia 2026 pokazywała krój
-            systemowy: zmienne były ustawiane na{" "}
-            <DsInline>&lt;body&gt;</DsInline>, a Tailwind v4 przypisuje{" "}
-            <DsInline>font-family</DsInline> na <DsInline>&lt;html&gt;</DsInline>{" "}
-            — o poziom wyżej, gdzie zmiennej jeszcze nie było. Klasy przeniesiono
-            na <DsInline>&lt;html&gt;</DsInline> w{" "}
-            <DsInline>src/app/layout.tsx</DsInline>.
+            Kolumna „renderowane teraz&rdquo; czyta krój z wyrenderowanej strony, więc potwierdza,
+            że deklaracja działa. Do 26 sierpnia 2026 pokazywała krój systemowy: zmienne były
+            ustawiane na <DsInline>&lt;body&gt;</DsInline>, a Tailwind v4 przypisuje{" "}
+            <DsInline>font-family</DsInline> na <DsInline>&lt;html&gt;</DsInline> — o poziom wyżej,
+            gdzie zmiennej jeszcze nie było. Klasy przeniesiono na <DsInline>&lt;html&gt;</DsInline>{" "}
+            w <DsInline>src/app/layout.tsx</DsInline>.
           </>
         }
       >
@@ -71,21 +69,21 @@ export function TypeSection() {
         <div className="rounded-lg border px-6">
           <Specimen
             as="p"
-            className="text-4xl sm:text-5xl md:text-6xl xl:text-7xl font-medium"
+            className="text-4xl font-medium sm:text-5xl md:text-6xl xl:text-7xl"
             usage="Hero strony głównej — jedyny H1 tej wielkości"
           >
             Przekształcam ambitne projekty
           </Specimen>
           <Specimen
             as="p"
-            className="text-4xl md:text-5xl lg:text-6xl font-medium tracking-tight"
+            className="text-4xl font-medium tracking-tight md:text-5xl lg:text-6xl"
             usage="H1 podstron (PageHeader, /o-mnie)"
           >
             Porozmawiajmy o projekcie
           </Specimen>
           <Specimen
             as="p"
-            className="text-3xl md:text-4xl font-medium"
+            className="text-3xl font-medium md:text-4xl"
             usage="H2 sekcji strony głównej: Kompetencje, Portfolio, Blog, Kontakt"
           >
             Kompetencje
@@ -117,7 +115,7 @@ export function TypeSection() {
       <DsBlock title="Tekst i etykiety">
         <div className="rounded-lg border px-6">
           <Specimen
-            className="sm:text-xl md:text-2xl text-muted-foreground"
+            className="text-muted-foreground sm:text-xl md:text-2xl"
             usage="Lead pod nagłówkiem hero"
           >
             Digital Solutions Architect — ponad 12+ lat doświadczenia
@@ -141,13 +139,13 @@ export function TypeSection() {
             23 sierpnia 2026 · 12 min czytania
           </Specimen>
           <Specimen
-            className="text-xs font-medium uppercase tracking-widest text-muted-foreground"
+            className="text-xs font-medium tracking-widest text-muted-foreground uppercase"
             usage="Etykieta kolumny bocznej (/o-mnie, /kontakt) — jedyne wersaliki w systemie"
           >
             Doświadczenie
           </Specimen>
           <Specimen
-            className="text-sm tabular-nums text-muted-foreground"
+            className="text-sm text-muted-foreground tabular-nums"
             usage="Liczby i okresy — cyfry o stałej szerokości"
           >
             2011 — obecnie
@@ -159,14 +157,13 @@ export function TypeSection() {
         title="Zasady"
         note={
           <>
-            W serwisie nagłówki sekcji mają dziś klasę{" "}
-            <DsInline>md:font-semi-bold</DsInline> — taka klasa nie istnieje
-            w Tailwindzie i nic nie robi. Do usunięcia albo zamiany na{" "}
+            W serwisie nagłówki sekcji mają dziś klasę <DsInline>md:font-semi-bold</DsInline> — taka
+            klasa nie istnieje w Tailwindzie i nic nie robi. Do usunięcia albo zamiany na{" "}
             <DsInline>md:font-semibold</DsInline>.
           </>
         }
       >
-        <ul className="flex list-disc flex-col gap-2 pl-5 text-sm text-muted-foreground leading-relaxed">
+        <ul className="flex list-disc flex-col gap-2 pl-5 text-sm leading-relaxed text-muted-foreground">
           <li>
             Nagłówki serwisu: waga <DsInline>font-medium</DsInline>. Waga{" "}
             <DsInline>font-bold</DsInline> zarezerwowana dla treści artykułów.
@@ -175,8 +172,7 @@ export function TypeSection() {
             <DsInline>tracking-tight</DsInline> tylko przy stopniach od 4xl w górę.
           </li>
           <li>
-            Tekst drugorzędny zawsze przez{" "}
-            <DsInline>text-muted-foreground</DsInline>, nigdy przez
+            Tekst drugorzędny zawsze przez <DsInline>text-muted-foreground</DsInline>, nigdy przez
             przezroczystość.
           </li>
           <li>Jeden H1 na stronę; kolejność nagłówków bez przeskoków.</li>

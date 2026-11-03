@@ -59,11 +59,7 @@ export function ServicesView({ locale }: { locale: Locale }) {
     <div className="page-shell">
       <JsonLd data={offerJsonLd} />
 
-      <PageHeader
-        badge={copy.badge}
-        title={copy.title}
-        description={copy.description}
-      />
+      <PageHeader badge={copy.badge} title={copy.title} description={copy.description} />
 
       <section aria-labelledby={copy.packagesId}>
         <h2 id={copy.packagesId} className="sr-only">
@@ -81,36 +77,26 @@ export function ServicesView({ locale }: { locale: Locale }) {
             >
               <div className="flex items-start justify-between gap-4">
                 <div>
-                  <h3 className="text-xl font-semibold tracking-tight">
-                    {pack.name[locale]}
-                  </h3>
-                  <p className="mt-1 text-sm text-muted-foreground">
-                    {pack.scope[locale]}
-                  </p>
+                  <h3 className="text-xl font-semibold tracking-tight">{pack.name[locale]}</h3>
+                  <p className="mt-1 text-sm text-muted-foreground">{pack.scope[locale]}</p>
                 </div>
-                {pack.highlight && (
-                  <Badge variant="secondary">{copy.recurringBadge}</Badge>
-                )}
+                {pack.highlight && <Badge variant="secondary">{copy.recurringBadge}</Badge>}
               </div>
 
               <p className="mt-6 flex items-baseline gap-2">
-                <span className="text-sm text-muted-foreground">
-                  {copy.priceFrom}
-                </span>
+                <span className="text-sm text-muted-foreground">{copy.priceFrom}</span>
                 <span className="text-3xl font-medium tabular-nums">
                   {formatNumber(pack.from, locale)} {copy.currency}
                 </span>
                 {pack.unit && (
-                  <span className="text-sm text-muted-foreground">
-                    / {pack.unit[locale]}
-                  </span>
+                  <span className="text-sm text-muted-foreground">/ {pack.unit[locale]}</span>
                 )}
               </p>
 
               <ul className="mt-6 flex flex-1 flex-col gap-3">
                 {pack.items[locale].map((item) => (
                   <li key={item} className="flex items-start gap-3 text-sm">
-                    <Check className="mt-0.5 w-4 h-4 shrink-0 text-muted-foreground" />
+                    <Check className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
                     {item}
                   </li>
                 ))}
@@ -119,9 +105,7 @@ export function ServicesView({ locale }: { locale: Locale }) {
           ))}
         </div>
 
-        <p className="mt-6 text-sm text-muted-foreground">
-          {copy.priceNote}
-        </p>
+        <p className="mt-6 text-sm text-muted-foreground">{copy.priceNote}</p>
       </section>
 
       <Separator className="my-16" />
@@ -133,13 +117,11 @@ export function ServicesView({ locale }: { locale: Locale }) {
         <ol className="mt-8 grid gap-8 md:grid-cols-3">
           {processSteps.map((step, index) => (
             <li key={step.title[locale]} className="flex flex-col gap-3">
-              <span className="text-sm tabular-nums text-muted-foreground">
+              <span className="text-sm text-muted-foreground tabular-nums">
                 {String(index + 1).padStart(2, "0")}
               </span>
               <h3 className="text-base font-semibold">{step.title[locale]}</h3>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                {step.detail[locale]}
-              </p>
+              <p className="text-sm leading-relaxed text-muted-foreground">{step.detail[locale]}</p>
             </li>
           ))}
         </ol>

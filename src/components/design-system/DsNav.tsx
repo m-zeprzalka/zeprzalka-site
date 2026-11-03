@@ -39,7 +39,7 @@ export function DsNav({ entries }: { entries: DsEntry[] }) {
 
   return (
     <nav aria-label="Spis treści katalogu" className="lg:sticky lg:top-24">
-      <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground mb-4">
+      <p className="mb-4 text-xs font-medium tracking-widest text-muted-foreground uppercase">
         Spis treści
       </p>
       <ol className="flex flex-col gap-1 border-l">
@@ -51,11 +51,11 @@ export function DsNav({ entries }: { entries: DsEntry[] }) {
               className={cn(
                 "-ml-px flex items-baseline gap-3 border-l py-1.5 pl-4 text-sm transition-colors",
                 active === entry.id
-                  ? "border-primary text-foreground font-medium"
+                  ? "border-primary font-medium text-foreground"
                   : "border-transparent text-muted-foreground hover:text-foreground"
               )}
             >
-              <span className="font-mono text-[0.6875rem] tabular-nums text-muted-foreground">
+              <span className="font-mono text-[0.6875rem] text-muted-foreground tabular-nums">
                 {String(index + 1).padStart(2, "0")}
               </span>
               {entry.title}

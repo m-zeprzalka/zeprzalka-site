@@ -1,11 +1,6 @@
 "use client"
 
-import {
-  useCallback,
-  useState,
-  useSyncExternalStore,
-  type ElementType,
-} from "react"
+import { useCallback, useState, useSyncExternalStore, type ElementType } from "react"
 import { cn } from "@/lib/utils"
 
 /**
@@ -44,12 +39,7 @@ interface SpecimenProps {
  * wyrenderowanej próbce — także po zmianie szerokości okna, bo skala jest
  * responsywna.
  */
-export function Specimen({
-  as: Tag = "p",
-  className,
-  children,
-  usage,
-}: SpecimenProps) {
+export function Specimen({ as: Tag = "p", className, children, usage }: SpecimenProps) {
   const [node, setNode] = useState<HTMLElement | null>(null)
 
   const subscribe = useCallback(
@@ -83,9 +73,7 @@ export function Specimen({
         </Tag>
       </div>
       <div className="flex flex-col gap-1.5 lg:col-span-5">
-        <span className="font-mono text-[0.6875rem] text-muted-foreground">
-          {spec || "—"}
-        </span>
+        <span className="font-mono text-[0.6875rem] text-muted-foreground">{spec || "—"}</span>
         <code className="block overflow-x-auto rounded border bg-muted px-2 py-1 font-mono text-[0.6875rem] text-muted-foreground">
           {className}
         </code>
@@ -104,9 +92,5 @@ export function ComputedFont({ selector }: { selector: string }) {
 
   const value = useSyncExternalStore(subscribeToTheme, read, serverFallback)
 
-  return (
-    <span className="font-mono text-xs text-muted-foreground">
-      {value || "—"}
-    </span>
-  )
+  return <span className="font-mono text-xs text-muted-foreground">{value || "—"}</span>
 }

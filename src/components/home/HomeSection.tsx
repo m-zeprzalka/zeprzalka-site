@@ -33,10 +33,10 @@ export function HomeSection({
   return (
     <section className={sectionClassName} id={id}>
       <div className={cn("grid lg:grid-cols-12", gridClassName)}>
-        <div className={cn("lg:col-span-3 lg:sticky self-start", stickyClassName)}>
+        <div className={cn("self-start lg:sticky lg:col-span-3", stickyClassName)}>
           <div>
-            <h2 className="text-3xl md:text-4xl font-medium">{title}</h2>
-            <p className="text-muted-foreground lg:text-lg 2xl:text-xl mt-2 lg:mt-6 max-w-xs">
+            <h2 className="text-3xl font-medium md:text-4xl">{title}</h2>
+            <p className="mt-2 max-w-xs text-muted-foreground lg:mt-6 lg:text-lg 2xl:text-xl">
               {lead}
             </p>
             {action}

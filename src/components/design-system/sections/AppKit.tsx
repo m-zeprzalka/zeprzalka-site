@@ -44,10 +44,7 @@ export function AppKitSection() {
         description="Logo i przełącznik motywu — jedyne elementy obecne na każdej stronie."
       >
         <div className="grid gap-4 md:grid-cols-2">
-          <DsPreview
-            label="Logo"
-            code="Znak losowany z listy 170 symboli, podmieniany co 1 s"
-          >
+          <DsPreview label="Logo" code="Znak losowany z listy 170 symboli, podmieniany co 1 s">
             <Logo locale="pl" />
           </DsPreview>
           <DsPreview label="Przełącznik motywu" code='variant="outline" size="icon"'>
@@ -61,24 +58,23 @@ export function AppKitSection() {
         description="Wspólny nagłówek podstron: opcjonalny badge, H1, lead i separator. Używany na /blog i /kontakt."
         note={
           <>
-            Próbka niżej odtwarza układ klasa w klasę, ale tytuł składa
-            akapitem. Prawdziwy komponent renderuje{" "}
-            <DsInline>&lt;h1&gt;</DsInline>, a katalog ma już własny nagłówek
+            Próbka niżej odtwarza układ klasa w klasę, ale tytuł składa akapitem. Prawdziwy
+            komponent renderuje <DsInline>&lt;h1&gt;</DsInline>, a katalog ma już własny nagłówek
             pierwszego stopnia — dwa H1 na jednej stronie psułyby jej strukturę.
           </>
         }
       >
         <DsPreview code='<PageHeader badge="Kontakt" title="Porozmawiajmy" description="…" />'>
           <div>
-            <Badge variant="outline" className="text-sm px-4 py-2 w-fit mb-6">
+            <Badge variant="outline" className="mb-6 w-fit px-4 py-2 text-sm">
               Kontakt
             </Badge>
-            <p className="text-4xl md:text-5xl lg:text-6xl font-medium tracking-tight mb-4">
+            <p className="mb-4 text-4xl font-medium tracking-tight md:text-5xl lg:text-6xl">
               Porozmawiajmy
             </p>
-            <p className="text-xl text-muted-foreground max-w-2xl">
-              Masz pomysł na projekt? Chętnie go omówię i zaproponuję
-              rozwiązanie dopasowane do Twoich potrzeb.
+            <p className="max-w-2xl text-xl text-muted-foreground">
+              Masz pomysł na projekt? Chętnie go omówię i zaproponuję rozwiązanie dopasowane do
+              Twoich potrzeb.
             </p>
             <Separator className="mt-10" />
           </div>
@@ -90,22 +86,22 @@ export function AppKitSection() {
         description="Nagłówek jest przyklejony pod paskiem postępu; oba używają tego samego przepisu na tło: 65% krycia plus rozmycie."
         note={
           <>
-            Nagłówek ma <DsInline>top-1</DsInline>, a pasek postępu{" "}
-            <DsInline>top-0</DsInline> z <DsInline>z-60</DsInline> — pasek jest
-            więc nad nagłówkiem. Klasa <DsInline>z-60</DsInline> nie należy do
-            domyślnej skali Tailwinda; działa, ale wypada ją opisać w systemie
-            albo zamienić na <DsInline>z-50</DsInline> z odpowiednią kolejnością.
+            Nagłówek ma <DsInline>top-1</DsInline>, a pasek postępu <DsInline>top-0</DsInline> z{" "}
+            <DsInline>z-60</DsInline> — pasek jest więc nad nagłówkiem. Klasa{" "}
+            <DsInline>z-60</DsInline> nie należy do domyślnej skali Tailwinda; działa, ale wypada ją
+            opisać w systemie albo zamienić na <DsInline>z-50</DsInline> z odpowiednią kolejnością.
           </>
         }
       >
-        <DsPreview label="Przepis na warstwę przyklejoną" code="sticky bg-background/65 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b">
+        <DsPreview
+          label="Przepis na warstwę przyklejoną"
+          code="sticky bg-background/65 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b"
+        >
           <div className="rounded-lg border">
             <div className="h-1 w-2/3 bg-gradient-to-r from-primary/20 to-primary" />
             <div className="flex h-16 items-center justify-between border-t px-4">
               <span className="text-sm font-medium">zeprzalka.com</span>
-              <span className="text-sm text-muted-foreground">
-                Blog · O mnie · Kontakt
-              </span>
+              <span className="text-sm text-muted-foreground">Blog · O mnie · Kontakt</span>
             </div>
           </div>
         </DsPreview>

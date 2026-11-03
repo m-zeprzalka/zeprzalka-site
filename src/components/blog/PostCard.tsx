@@ -79,19 +79,22 @@ export function PostCard({
             >
               <Badge
                 variant={v.categories.badge}
-                className={cn("hover:bg-secondary/80 cursor-pointer transition-colors", v.categories.className)}
+                className={cn(
+                  "cursor-pointer transition-colors hover:bg-secondary/80",
+                  v.categories.className
+                )}
               >
                 {category}
               </Badge>
             </Link>
           ))}
         </div>
-        <Heading className={cn("font-bold group-hover:text-primary transition-colors", v.title)}>
+        <Heading className={cn("font-bold transition-colors group-hover:text-primary", v.title)}>
           <Link href={postPath(locale, post.slug)} className="after:absolute after:inset-0">
             {frontmatter.title}
           </Link>
         </Heading>
-        <p className={cn("text-muted-foreground line-clamp-2", v.description)}>
+        <p className={cn("line-clamp-2 text-muted-foreground", v.description)}>
           {frontmatter.description}
         </p>
         <div className={cn("flex items-center text-muted-foreground", v.meta)}>
@@ -121,7 +124,7 @@ export function PostGrid({
   headingLevel?: "h2" | "h3"
 }) {
   return (
-    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+    <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
       {posts.map((post) => (
         <PostCard key={post.slug} post={post} locale={locale} headingLevel={headingLevel} />
       ))}

@@ -46,14 +46,7 @@ function mdxComponents(locale: Locale) {
     YouTubeEmbed: (props: ComponentProps<typeof YouTubeEmbed>) => (
       <YouTubeEmbed playLabel={getCommon(locale).ui.youtubePlay} {...props} />
     ),
-    Image: ({
-      src,
-      alt,
-      width,
-      height,
-      className,
-      ...props
-    }: ComponentProps<typeof Image>) => (
+    Image: ({ src, alt, width, height, className, ...props }: ComponentProps<typeof Image>) => (
       // Domyślne 1280×720 to proporcje wszystkich obrazów `<Image>` w treści.
       <Image
         src={src}
@@ -61,33 +54,64 @@ function mdxComponents(locale: Locale) {
         width={width ?? 1280}
         height={height ?? 720}
         sizes="(min-width: 1280px) 60vw, 100vw"
-        className={cn("rounded-lg shadow-md my-6 w-full h-auto", className)}
+        className={cn("my-6 h-auto w-full rounded-lg shadow-md", className)}
         {...props}
       />
     ),
     h2: ({ className, ...props }: HTMLAttributes<HTMLHeadingElement>) => (
-      <h2 {...props} className={cn("text-2xl font-bold tracking-tight mt-12 mb-4 scroll-mt-24", className)} />
+      <h2
+        {...props}
+        className={cn("mt-12 mb-4 scroll-mt-24 text-2xl font-bold tracking-tight", className)}
+      />
     ),
     h3: ({ className, ...props }: HTMLAttributes<HTMLHeadingElement>) => (
-      <h3 {...props} className={cn("text-xl font-bold tracking-tight mt-8 mb-3 scroll-mt-24", className)} />
+      <h3
+        {...props}
+        className={cn("mt-8 mb-3 scroll-mt-24 text-xl font-bold tracking-tight", className)}
+      />
     ),
     h4: ({ className, ...props }: HTMLAttributes<HTMLHeadingElement>) => (
-      <h4 {...props} className={cn("text-lg font-semibold tracking-tight mt-6 mb-2 scroll-mt-24", className)} />
+      <h4
+        {...props}
+        className={cn("mt-6 mb-2 scroll-mt-24 text-lg font-semibold tracking-tight", className)}
+      />
     ),
     ul: ({ className, ...props }: HTMLAttributes<HTMLUListElement>) => (
-      <ul {...props} className={cn("list-disc list-outside space-y-2 my-4 [margin-inline-start:0] [padding-inline-start:1.5rem]", className)} />
+      <ul
+        {...props}
+        className={cn(
+          "my-4 [margin-inline-start:0] list-outside list-disc space-y-2 [padding-inline-start:1.5rem]",
+          className
+        )}
+      />
     ),
     ol: ({ className, ...props }: HTMLAttributes<HTMLOListElement>) => (
-      <ol {...props} className={cn("list-decimal list-outside space-y-2 my-4 [margin-inline-start:0] [padding-inline-start:1.5rem]", className)} />
+      <ol
+        {...props}
+        className={cn(
+          "my-4 [margin-inline-start:0] list-outside list-decimal space-y-2 [padding-inline-start:1.5rem]",
+          className
+        )}
+      />
     ),
     code: ({ className, ...props }: HTMLAttributes<HTMLElement>) => (
-      <code {...props} className={cn("bg-muted text-foreground px-1.5 py-0.5 rounded text-sm font-mono border", className)} />
+      <code
+        {...props}
+        className={cn(
+          "rounded border bg-muted px-1.5 py-0.5 font-mono text-sm text-foreground",
+          className
+        )}
+      />
     ),
-    pre: (props: HTMLAttributes<HTMLPreElement>) => (
-      <CodeBlock copyLabel={copyLabel} {...props} />
-    ),
+    pre: (props: HTMLAttributes<HTMLPreElement>) => <CodeBlock copyLabel={copyLabel} {...props} />,
     blockquote: ({ className, ...props }: HTMLAttributes<HTMLQuoteElement>) => (
-      <blockquote {...props} className={cn("border-l-4 border-primary bg-muted/30 py-4 px-6 my-6 rounded-r-lg italic text-foreground/90", className)} />
+      <blockquote
+        {...props}
+        className={cn(
+          "my-6 rounded-r-lg border-l-4 border-primary bg-muted/30 px-6 py-4 text-foreground/90 italic",
+          className
+        )}
+      />
     ),
     // Obrazy z markdownu mają nieznane wymiary — świadomie zwykły <img>, leniwy.
     img: ({ alt, className, ...props }: ComponentProps<"img">) => (
@@ -97,7 +121,7 @@ function mdxComponents(locale: Locale) {
         alt={alt ?? ""}
         loading="lazy"
         decoding="async"
-        className={cn("rounded-lg shadow-md my-6", className)}
+        className={cn("my-6 rounded-lg shadow-md", className)}
       />
     ),
     // Szerokie tabele przewijają się we własnym kontenerze; tabela zostaje tabelą.
@@ -110,7 +134,7 @@ function mdxComponents(locale: Locale) {
     // zewnętrzne w nowej karcie.
     a: ({ href = "", className, ...props }: ComponentProps<"a">) => {
       const classes = cn(
-        "text-primary underline underline-offset-2 hover:text-primary/80 transition-colors",
+        "text-primary underline underline-offset-2 transition-colors hover:text-primary/80",
         className
       )
       if (href.startsWith("/")) return <Link href={href} className={classes} {...props} />
@@ -149,7 +173,7 @@ export function PostView({ post, locale }: { post: Post; locale: Locale }) {
       <div className="container mx-auto p-4 py-6 md:py-8 lg:py-12 xl:py-16">
         <div className="grid grid-cols-1 lg:grid-cols-12 lg:gap-x-12">
           {/* Table of Contents */}
-          <aside className="hidden lg:block lg:col-span-4 xl:col-span-3" data-print-hide>
+          <aside className="hidden lg:col-span-4 lg:block xl:col-span-3" data-print-hide>
             <nav
               aria-label={ui.tableOfContents}
               className="sticky top-24 flex h-auto w-full flex-col bg-transparent text-foreground"
@@ -159,7 +183,7 @@ export function PostView({ post, locale }: { post: Post; locale: Locale }) {
                   {ui.tableOfContents}
                 </p>
               </div>
-              <div className="flex min-h-0 flex-1 flex-col gap-2 overflow-auto max-h-[calc(100vh-10rem)]">
+              <div className="flex max-h-[calc(100vh-10rem)] min-h-0 flex-1 flex-col gap-2 overflow-auto">
                 <div className="relative flex w-full min-w-0 flex-col p-2">
                   <div className="w-full text-sm">
                     <ActiveTOC headings={post.headings} />
@@ -187,46 +211,46 @@ export function PostView({ post, locale }: { post: Post; locale: Locale }) {
                 </BreadcrumbList>
               </Breadcrumb>
 
-              <div className="flex flex-wrap gap-2 mb-4">
+              <div className="mb-4 flex flex-wrap gap-2">
                 {post.frontmatter.categories.map((cat) => (
-                  <Link
-                    key={cat}
-                    href={categoryPath(locale, slugify(cat))}
-                  >
-                    <Badge variant="outline" className="text-xs hover:bg-secondary/80 cursor-pointer transition-colors">
+                  <Link key={cat} href={categoryPath(locale, slugify(cat))}>
+                    <Badge
+                      variant="outline"
+                      className="cursor-pointer text-xs transition-colors hover:bg-secondary/80"
+                    >
                       {cat}
                     </Badge>
                   </Link>
                 ))}
               </div>
 
-              <h1 className="text-4xl md:text-5xl xl:text-6xl font-bold tracking-tighter mb-4 leading-tight">
+              <h1 className="mb-4 text-4xl leading-tight font-bold tracking-tighter md:text-5xl xl:text-6xl">
                 {post.frontmatter.title}
               </h1>
 
-              <p className="text-xl xl:text-2xl text-muted-foreground mb-8">
+              <p className="mb-8 text-xl text-muted-foreground xl:text-2xl">
                 {post.frontmatter.description}
               </p>
 
-              <div className="flex items-center gap-x-4 gap-y-2 text-sm text-muted-foreground flex-wrap">
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-muted-foreground">
                 <div className="flex items-center gap-2">
-                  <CalendarDays className="w-4 h-4" />
+                  <CalendarDays className="h-4 w-4" />
                   <time dateTime={post.frontmatter.date}>
                     {formatDate(post.frontmatter.date, locale)}
                   </time>
                 </div>
-                <span className="text-muted-foreground/50" aria-hidden="true">/</span>
+                <span className="text-muted-foreground/50" aria-hidden="true">
+                  /
+                </span>
                 <div className="flex items-center gap-2">
-                  <Clock className="w-4 h-4" />
-                  <span>
-                    {formatReadingTime(post.readingMinutes, locale)}
-                  </span>
+                  <Clock className="h-4 w-4" />
+                  <span>{formatReadingTime(post.readingMinutes, locale)}</span>
                 </div>
               </div>
             </header>
 
             {/* Featured Image */}
-            <figure className="relative w-full aspect-[16/9] rounded-xl border overflow-hidden mb-12 shadow-md">
+            <figure className="relative mb-12 aspect-[16/9] w-full overflow-hidden rounded-xl border shadow-md">
               <Image
                 src={post.frontmatter.image}
                 alt={post.frontmatter.title}
@@ -236,14 +260,14 @@ export function PostView({ post, locale }: { post: Post; locale: Locale }) {
                 preload
               />
               {post.frontmatter.imageCaption && (
-                <figcaption className="absolute bottom-0 left-0 right-0 bg-black/60 text-white text-sm px-4 py-2 backdrop-blur-sm">
+                <figcaption className="absolute right-0 bottom-0 left-0 bg-black/60 px-4 py-2 text-sm text-white backdrop-blur-sm">
                   {post.frontmatter.imageCaption}
                 </figcaption>
               )}
             </figure>
 
             {/* MDX Content */}
-            <div className="prose prose-lg dark:prose-invert max-w-none prose-headings:text-foreground prose-headings:font-bold prose-headings:tracking-tight prose-headings:no-underline prose-h2:text-2xl prose-h3:text-xl prose-p:text-base prose-p:text-foreground prose-p:leading-relaxed prose-strong:text-foreground prose-a:text-primary prose-a:no-underline hover:prose-a:underline prose-a:transition-colors prose-img:rounded-lg prose-img:shadow-md prose-pre:bg-transparent prose-pre:p-0 prose-pre:m-0 prose-code:bg-muted prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-sm prose-code:font-mono prose-code:border prose-code:before:content-none prose-code:after:content-none prose-table:w-full prose-table:border-collapse prose-table:my-6 prose-th:bg-muted/50 prose-th:font-semibold prose-th:text-left prose-th:border prose-th:border-border prose-th:px-4 prose-th:py-3 prose-td:border prose-td:border-border prose-td:px-4 prose-td:py-3 prose-blockquote:not-italic prose-blockquote:font-normal [&_ul]:[margin-inline-start:0] [&_ul]:[padding-inline-start:1.5rem] [&_ol]:[margin-inline-start:0] [&_ol]:[padding-inline-start:1.5rem] [&_li]:[margin-inline-start:0] [&_th:first-child]:pl-4 [&_td:first-child]:pl-4">
+            <div className="prose prose-lg max-w-none dark:prose-invert prose-headings:font-bold prose-headings:tracking-tight prose-headings:text-foreground prose-headings:no-underline prose-h2:text-2xl prose-h3:text-xl prose-p:text-base prose-p:leading-relaxed prose-p:text-foreground prose-a:text-primary prose-a:no-underline prose-a:transition-colors hover:prose-a:underline prose-blockquote:font-normal prose-blockquote:not-italic prose-strong:text-foreground prose-code:rounded prose-code:border prose-code:bg-muted prose-code:px-1.5 prose-code:py-0.5 prose-code:font-mono prose-code:text-sm prose-code:before:content-none prose-code:after:content-none prose-pre:m-0 prose-pre:bg-transparent prose-pre:p-0 prose-table:my-6 prose-table:w-full prose-table:border-collapse prose-th:border prose-th:border-border prose-th:bg-muted/50 prose-th:px-4 prose-th:py-3 prose-th:text-left prose-th:font-semibold prose-td:border prose-td:border-border prose-td:px-4 prose-td:py-3 prose-img:rounded-lg prose-img:shadow-md [&_li]:[margin-inline-start:0] [&_ol]:[margin-inline-start:0] [&_ol]:[padding-inline-start:1.5rem] [&_td:first-child]:pl-4 [&_th:first-child]:pl-4 [&_ul]:[margin-inline-start:0] [&_ul]:[padding-inline-start:1.5rem]">
               <MDXRemote
                 source={post.content}
                 components={mdxComponents(locale)}
@@ -275,19 +299,16 @@ export function PostView({ post, locale }: { post: Post; locale: Locale }) {
             </div>
 
             {/* Footer */}
-            <footer className="mt-16 pt-10 border-t space-y-12">
+            <footer className="mt-16 space-y-12 border-t pt-10">
               {/* Tags — wpis spoza istniejących tagów nie dostaje samotnej ikony */}
               {post.frontmatter.tags.length > 0 && (
                 <div className="flex flex-wrap items-center gap-2">
-                  <Hash className="w-5 h-5 text-muted-foreground" />
+                  <Hash className="h-5 w-5 text-muted-foreground" />
                   {post.frontmatter.tags.map((tag) => (
-                    <Link
-                      key={tag}
-                      href={tagPath(locale, slugify(tag))}
-                    >
+                    <Link key={tag} href={tagPath(locale, slugify(tag))}>
                       <Badge
                         variant="secondary"
-                        className="hover:bg-secondary/80 cursor-pointer transition-colors"
+                        className="cursor-pointer transition-colors hover:bg-secondary/80"
                       >
                         {tag}
                       </Badge>
@@ -299,7 +320,7 @@ export function PostView({ post, locale }: { post: Post; locale: Locale }) {
               <PostCta locale={locale} />
 
               {/* Author */}
-              <div className="flex flex-col sm:flex-row items-start gap-6 bg-muted/40 p-6 rounded-lg border">
+              <div className="flex flex-col items-start gap-6 rounded-lg border bg-muted/40 p-6 sm:flex-row">
                 {/* alt pusty: imię i nazwisko stoją tuż obok jako tekst. */}
                 <Image
                   src={AUTHOR.avatarSmall}
@@ -309,13 +330,9 @@ export function PostView({ post, locale }: { post: Post; locale: Locale }) {
                   className="size-20 shrink-0 rounded-full border object-cover"
                 />
                 <div className="flex-1">
-                  <p className="font-semibold text-xl mt-1">{AUTHOR.name}</p>
-                  <p className="text-muted-foreground text-sm mt-1">
-                    {AUTHOR.jobTitle}
-                  </p>
-                  <p className="mt-2 text-foreground/80 text-base">
-                    {AUTHOR.bio[locale]}
-                  </p>
+                  <p className="mt-1 text-xl font-semibold">{AUTHOR.name}</p>
+                  <p className="mt-1 text-sm text-muted-foreground">{AUTHOR.jobTitle}</p>
+                  <p className="mt-2 text-base text-foreground/80">{AUTHOR.bio[locale]}</p>
                 </div>
               </div>
             </footer>
@@ -325,10 +342,7 @@ export function PostView({ post, locale }: { post: Post; locale: Locale }) {
         {related.length > 0 && (
           <section aria-labelledby="related-heading" className="mt-20" data-print-hide>
             <Separator className="mb-12" />
-            <h2
-              id="related-heading"
-              className="text-2xl font-semibold tracking-tight mb-8"
-            >
+            <h2 id="related-heading" className="mb-8 text-2xl font-semibold tracking-tight">
               {copy.relatedHeading}
             </h2>
             <PostGrid posts={related} locale={locale} headingLevel="h3" />

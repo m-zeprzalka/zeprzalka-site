@@ -33,36 +33,34 @@ export function AboutView({ locale }: { locale: Locale }) {
       <JsonLd data={profileJsonLd} />
       {/* Header */}
       <header className="mb-16">
-        <StatusBadge label={copy.status} className="w-fit mb-6" />
+        <StatusBadge label={copy.status} className="mb-6 w-fit" />
 
-        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6 mb-6">
+        <div className="mb-6 flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-medium tracking-tight mb-2">
+            <h1 className="mb-2 text-4xl font-medium tracking-tight md:text-5xl lg:text-6xl">
               {copy.name}
             </h1>
-            <p className="text-xl text-muted-foreground">
-              {copy.role}
-            </p>
+            <p className="text-xl text-muted-foreground">{copy.role}</p>
           </div>
         </div>
 
         <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted-foreground">
           <span className="flex items-center gap-2">
-            <MapPin className="w-4 h-4 shrink-0" />
+            <MapPin className="h-4 w-4 shrink-0" />
             {copy.location}
           </span>
           <a
             href={`mailto:${CONTACT_EMAIL}`}
-            className="flex items-center gap-2 hover:text-foreground transition-colors"
+            className="flex items-center gap-2 transition-colors hover:text-foreground"
           >
-            <Mail className="w-4 h-4 shrink-0" />
+            <Mail className="h-4 w-4 shrink-0" />
             {CONTACT_EMAIL}
           </a>
           <a
             href={SITE_URL}
-            className="flex items-center gap-2 hover:text-foreground transition-colors"
+            className="flex items-center gap-2 transition-colors hover:text-foreground"
           >
-            <Globe className="w-4 h-4 shrink-0" />
+            <Globe className="h-4 w-4 shrink-0" />
             www.zeprzalka.com
           </a>
         </div>
@@ -71,22 +69,23 @@ export function AboutView({ locale }: { locale: Locale }) {
       </header>
 
       {/* O mnie */}
-      <section className="mb-14 grid lg:grid-cols-12 gap-6 lg:gap-8">
+      <section className="mb-14 grid gap-6 lg:grid-cols-12 lg:gap-8">
         <div className="lg:col-span-3">
-          <h2 className="text-xs font-medium uppercase tracking-widest text-muted-foreground pt-1">
+          <h2 className="pt-1 text-xs font-medium tracking-widest text-muted-foreground uppercase">
             {copy.aboutHeading}
           </h2>
         </div>
         <div className="lg:col-span-9">
           <p className="text-base leading-relaxed text-muted-foreground">
             {copy.bioLeadPrefix}
-            <span className="font-medium text-foreground">
-              {copy.bioLeadStrong}
-            </span>
-            {copy.bioLeadSuffix}</p>
+            <span className="font-medium text-foreground">{copy.bioLeadStrong}</span>
+            {copy.bioLeadSuffix}
+          </p>
           <br />
           <p className="text-base leading-relaxed text-muted-foreground">
-            {copy.bioSecondPrefix}<span className="font-medium text-foreground">{copy.bioSecondStrong}</span>{copy.bioSecondSuffix}
+            {copy.bioSecondPrefix}
+            <span className="font-medium text-foreground">{copy.bioSecondStrong}</span>
+            {copy.bioSecondSuffix}
           </p>
         </div>
       </section>
@@ -95,9 +94,9 @@ export function AboutView({ locale }: { locale: Locale }) {
 
       {/* Doświadczenie */}
       <section className="mb-14">
-        <div className="grid lg:grid-cols-12 gap-6 lg:gap-8 mb-10">
+        <div className="mb-10 grid gap-6 lg:grid-cols-12 lg:gap-8">
           <div className="lg:col-span-3">
-            <h2 className="text-xs font-medium uppercase tracking-widest text-muted-foreground pt-1">
+            <h2 className="pt-1 text-xs font-medium tracking-widest text-muted-foreground uppercase">
               {copy.experienceHeading}
             </h2>
           </div>
@@ -105,25 +104,19 @@ export function AboutView({ locale }: { locale: Locale }) {
 
         <div className="space-y-10">
           {copy.experience.map((job, i) => (
-            <div key={i} className="grid lg:grid-cols-12 gap-4 lg:gap-8">
+            <div key={i} className="grid gap-4 lg:grid-cols-12 lg:gap-8">
               <div className="lg:col-span-3">
-                <p className="text-sm text-muted-foreground tabular-nums">
-                  {job.period}
-                </p>
-                <p className="text-sm font-medium mt-1">{job.company}</p>
+                <p className="text-sm text-muted-foreground tabular-nums">{job.period}</p>
+                <p className="mt-1 text-sm font-medium">{job.company}</p>
               </div>
               <div className="lg:col-span-9">
-                <h3 className="text-base font-semibold mb-2">{job.role}</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed mb-4">
+                <h3 className="mb-2 text-base font-semibold">{job.role}</h3>
+                <p className="mb-4 text-sm leading-relaxed text-muted-foreground">
                   {job.description}
                 </p>
                 <div className="flex flex-wrap gap-2">
                   {job.tags.map((tag) => (
-                    <Badge
-                      key={tag}
-                      variant="secondary"
-                      className="text-xs font-normal"
-                    >
+                    <Badge key={tag} variant="secondary" className="text-xs font-normal">
                       {tag}
                     </Badge>
                   ))}
@@ -138,27 +131,23 @@ export function AboutView({ locale }: { locale: Locale }) {
 
       {/* Umiejętności */}
       <section className="mb-14">
-        <div className="grid lg:grid-cols-12 gap-6 lg:gap-8 mb-10">
+        <div className="mb-10 grid gap-6 lg:grid-cols-12 lg:gap-8">
           <div className="lg:col-span-3">
-            <h2 className="text-xs font-medium uppercase tracking-widest text-muted-foreground pt-1">
+            <h2 className="pt-1 text-xs font-medium tracking-widest text-muted-foreground uppercase">
               {copy.skillsHeading}
             </h2>
           </div>
         </div>
 
-        <div className="grid sm:grid-cols-2 gap-8">
+        <div className="grid gap-8 sm:grid-cols-2">
           {copy.skillGroups.map((group) => (
             <div key={group.category}>
-              <h3 className="text-xs font-medium uppercase tracking-widest text-muted-foreground mb-3">
+              <h3 className="mb-3 text-xs font-medium tracking-widest text-muted-foreground uppercase">
                 {group.category}
               </h3>
               <div className="flex flex-wrap gap-2">
                 {group.items.map((skill) => (
-                  <Badge
-                    key={skill}
-                    variant="outline"
-                    className="text-xs font-normal"
-                  >
+                  <Badge key={skill} variant="outline" className="text-xs font-normal">
                     {skill}
                   </Badge>
                 ))}
@@ -171,25 +160,21 @@ export function AboutView({ locale }: { locale: Locale }) {
       <Separator className="mb-14" />
 
       {/* Edukacja */}
-      <section className="mb-14 grid lg:grid-cols-12 gap-6 lg:gap-8">
+      <section className="mb-14 grid gap-6 lg:grid-cols-12 lg:gap-8">
         <div className="lg:col-span-3">
-          <h2 className="text-xs font-medium uppercase tracking-widest text-muted-foreground pt-1">
+          <h2 className="pt-1 text-xs font-medium tracking-widest text-muted-foreground uppercase">
             {copy.educationHeading}
           </h2>
         </div>
-        <div className="lg:col-span-9 space-y-8">
+        <div className="space-y-8 lg:col-span-9">
           {copy.education.map((edu, i) => (
             <div key={i} className="flex items-start justify-between gap-4">
               <div>
                 <h3 className="text-base font-semibold">{edu.school}</h3>
-                {edu.degree && (
-                  <p className="text-sm text-foreground mt-1">{edu.degree}</p>
-                )}
-                {edu.field && (
-                  <p className="text-sm text-muted-foreground mt-1">{edu.field}</p>
-                )}
+                {edu.degree && <p className="mt-1 text-sm text-foreground">{edu.degree}</p>}
+                {edu.field && <p className="mt-1 text-sm text-muted-foreground">{edu.field}</p>}
               </div>
-              <span className="text-sm text-muted-foreground shrink-0 tabular-nums">
+              <span className="shrink-0 text-sm text-muted-foreground tabular-nums">
                 {edu.period}
               </span>
             </div>
@@ -200,23 +185,21 @@ export function AboutView({ locale }: { locale: Locale }) {
       <Separator className="mb-12" />
 
       {/* CTA */}
-      <div className="flex flex-col sm:flex-row gap-3" data-print-hide>
+      <div className="flex flex-col gap-3 sm:flex-row" data-print-hide>
         <Button asChild size="lg" className="w-fit">
-          <Link href={ROUTES.contact[locale]}>
-            {copy.ctaContact}
-          </Link>
+          <Link href={ROUTES.contact[locale]}>{copy.ctaContact}</Link>
         </Button>
         {/* PDF jest generowany z tej strony — jedna treść, dwa formaty. */}
         <Button asChild variant="outline" size="lg" className="w-fit gap-2">
           <a href="/cv-michal-zeprzalka.pdf" download>
-            <Download className="w-4 h-4" />
+            <Download className="h-4 w-4" />
             {copy.ctaCv}
           </a>
         </Button>
         {/* Wcześniej prowadził na stronę główną w nowej karcie — teraz na komplet realizacji. */}
         <Button asChild variant="ghost" size="lg" className="w-fit gap-2">
           <Link href={ROUTES.portfolio[locale]}>
-            <ExternalLink className="w-4 h-4" />
+            <ExternalLink className="h-4 w-4" />
             {copy.ctaPortfolio}
           </Link>
         </Button>

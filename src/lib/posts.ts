@@ -25,9 +25,7 @@ const POSTS_SUBDIR: Localized<string> = {
   en: "en/posts",
 }
 
-const isoDate = z
-  .string()
-  .regex(/^\d{4}-\d{2}-\d{2}$/, "data musi mieć format YYYY-MM-DD")
+const isoDate = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "data musi mieć format YYYY-MM-DD")
 
 /**
  * Kontrakt frontmattera. Sprawdzany przy każdym odczycie, więc literówka
@@ -89,49 +87,42 @@ function memoize<A extends readonly (string | number)[], R>(fn: (...args: A) => 
   }
 }
 
-export const getPostBySlug = memoize(
-  (locale: Locale, slug: string): Post | null => {
-    const fullPath = path.join(
-      process.cwd(),
-      "content",
-      POSTS_SUBDIR[locale],
-      `${slug}.mdx`
-    )
+export const getPostBySlug = memoize((locale: Locale, slug: string): Post | null => {
+  const fullPath = path.join(process.cwd(), "content", POSTS_SUBDIR[locale], `${slug}.mdx`)
 
-    if (!fs.existsSync(fullPath)) {
-      return null
-    }
-
-    const { data, content } = matter(fs.readFileSync(fullPath, "utf8"))
-    const parsed = frontmatterSchema.safeParse(data)
-
-    if (!parsed.success) {
-      const issues = parsed.error.issues
-        .map((issue) => `  - ${issue.path.join(".") || "(całość)"}: ${issue.message}`)
-        .join("\n")
-      throw new Error(
-        `Niepoprawny frontmatter w content/${POSTS_SUBDIR[locale]}/${slug}.mdx:\n${issues}`
-      )
-    }
-
-    if (parsed.data.draft && !showDrafts) {
-      return null
-    }
-
-    const stats = readingTime(content)
-
-    return {
-      slug,
-      locale,
-      content,
-      frontmatter: parsed.data,
-      // Ta sama reguła co `stats.text` z reading-time („5 min read”).
-      readingMinutes: Math.ceil(Number(stats.minutes.toFixed(2))),
-      wordCount: stats.words,
-      headings: extractHeadings(content),
-    }
+  if (!fs.existsSync(fullPath)) {
+    return null
   }
-)
+
+  const { data, content } = matter(fs.readFileSync(fullPath, "utf8"))
+  const parsed = frontmatterSchema.safeParse(data)
+
+  if (!parsed.success) {
+    const issues = parsed.error.issues
+      .map((issue) => `  - ${issue.path.join(".") || "(całość)"}: ${issue.message}`)
+      .join("\n")
+    throw new Error(
+      `Niepoprawny frontmatter w content/${POSTS_SUBDIR[locale]}/${slug}.mdx:\n${issues}`
+    )
+  }
+
+  if (parsed.data.draft && !showDrafts) {
+    return null
+  }
+
+  const stats = readingTime(content)
+
+  return {
+    slug,
+    locale,
+    content,
+    frontmatter: parsed.data,
+    // Ta sama reguła co `stats.text` z reading-time („5 min read”).
+    readingMinutes: Math.ceil(Number(stats.minutes.toFixed(2))),
+    wordCount: stats.words,
+    headings: extractHeadings(content),
+  }
+})
 
 export const getAllPosts = memoize((locale: Locale): Post[] => {
   if (!fs.existsSync(path.join(process.cwd(), "content", POSTS_SUBDIR[locale]))) {
@@ -143,11 +134,7 @@ export const getAllPosts = memoize((locale: Locale): Post[] => {
     .filter((name) => name.endsWith(".mdx"))
     .map((name) => getPostBySlug(locale, name.replace(/\.mdx$/, "")))
     .filter((post): post is Post => post !== null)
-    .sort(
-      (a, b) =>
-        new Date(b.frontmatter.date).getTime() -
-        new Date(a.frontmatter.date).getTime()
-    )
+    .sort((a, b) => new Date(b.frontmatter.date).getTime() - new Date(a.frontmatter.date).getTime())
 })
 
 /**
@@ -195,9 +182,7 @@ export function getRelatedPosts(post: Post, limit = 3): Post[] {
       other,
       index,
       score:
-        other.frontmatter.categories.filter((c) => categories.has(slugify(c)))
-          .length *
-          2 +
+        other.frontmatter.categories.filter((c) => categories.has(slugify(c))).length * 2 +
         other.frontmatter.tags.filter((t) => tags.has(slugify(t))).length,
     }))
     // getAllPosts jest już posortowane od najnowszych — indeks to świeżość.

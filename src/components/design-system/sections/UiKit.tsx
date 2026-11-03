@@ -16,13 +16,7 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
 import { Button } from "@/components/ui/button"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import {
   Pagination,
@@ -33,12 +27,7 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination"
 import { Separator } from "@/components/ui/separator"
-import {
-  Sheet,
-  SheetContent,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet"
+import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
 import {
   DsBlock,
   DsInline,
@@ -69,11 +58,7 @@ export function UiKitSection() {
       <DsBlock title="Inwentarz">
         <DsTable
           head={["Komponent", "Gdzie w serwisie", "Status"]}
-          rows={inventory.map(([name, where, status]) => [
-            name,
-            where,
-            status,
-          ])}
+          rows={inventory.map(([name, where, status]) => [name, where, status])}
         />
       </DsBlock>
 
@@ -82,10 +67,9 @@ export function UiKitSection() {
         description="Sześć wariantów i cztery rozmiary. W serwisie używane są trzy warianty: default, outline i ghost."
         note={
           <>
-            Serwis powiększa przyciski klasą <DsInline>p-6</DsInline> zamiast
-            używać rozmiaru <DsInline>size=&quot;lg&quot;</DsInline> zgodnie
-            z jego definicją — stąd dwie różne wysokości CTA na stronie głównej
-            i w /o-mnie. Do ujednolicenia.
+            Serwis powiększa przyciski klasą <DsInline>p-6</DsInline> zamiast używać rozmiaru{" "}
+            <DsInline>size=&quot;lg&quot;</DsInline> zgodnie z jego definicją — stąd dwie różne
+            wysokości CTA na stronie głównej i w /o-mnie. Do ujednolicenia.
           </>
         }
       >
@@ -127,7 +111,7 @@ export function UiKitSection() {
           label="Wzorzec CTA ze strony głównej"
           code={`<Button asChild size="lg" className="p-6 w-fit">\n  <Link href="/kontakt"><MousePointerClick />Zarezerwuj Bezpłatną Konsultację</Link>\n</Button>`}
         >
-          <Button asChild size="lg" className="p-6 w-fit">
+          <Button asChild size="lg" className="w-fit p-6">
             <Link href="/kontakt">
               <MousePointerClick />
               Zarezerwuj Bezpłatną Konsultację
@@ -150,12 +134,9 @@ export function UiKitSection() {
         </DsPreview>
 
         <div className="grid gap-4 md:grid-cols-3">
-          <DsPreview
-            label="Status dostępności"
-            code='variant="outline" px-4 py-2'
-          >
-            <Badge variant="outline" className="flex items-center gap-2 text-sm px-4 py-2">
-              <span className="w-2 h-2 animate-pulse rounded-full bg-green-500" />
+          <DsPreview label="Status dostępności" code='variant="outline" px-4 py-2'>
+            <Badge variant="outline" className="flex items-center gap-2 px-4 py-2 text-sm">
+              <span className="h-2 w-2 animate-pulse rounded-full bg-green-500" />
               Gotowy do współpracy
             </Badge>
           </DsPreview>
@@ -219,16 +200,14 @@ export function UiKitSection() {
             <AccordionItem value="item-1" className="border-t">
               <AccordionTrigger className="py-8 hover:no-underline">
                 <div className="flex w-full items-center gap-4 lg:gap-6">
-                  <span className="text-2xl md:text-3xl text-muted-foreground/80">
-                    01
-                  </span>
+                  <span className="text-2xl text-muted-foreground/80 md:text-3xl">01</span>
                   <span className="text-xl sm:text-3xl">Projektowanie Produktu</span>
                 </div>
               </AccordionTrigger>
               <AccordionContent className="flex flex-col gap-4 text-balance">
-                <p className="text-base md:text-lg text-muted-foreground leading-relaxed">
-                  Od analizy rynku i potrzeb użytkowników, przez architekturę
-                  informacji, po interaktywne prototypy.
+                <p className="text-base leading-relaxed text-muted-foreground md:text-lg">
+                  Od analizy rynku i potrzeb użytkowników, przez architekturę informacji, po
+                  interaktywne prototypy.
                 </p>
                 <div className="flex flex-wrap gap-2 py-4">
                   {["User Experience (UX)", "User Interface (UI)"].map((tool) => (
@@ -242,9 +221,7 @@ export function UiKitSection() {
             <AccordionItem value="item-2" className="border-t">
               <AccordionTrigger className="py-8 hover:no-underline">
                 <div className="flex w-full items-center gap-4 lg:gap-6">
-                  <span className="text-2xl md:text-3xl text-muted-foreground/80">
-                    02
-                  </span>
+                  <span className="text-2xl text-muted-foreground/80 md:text-3xl">02</span>
                   <span className="text-xl sm:text-3xl">Development i Technologia</span>
                 </div>
               </AccordionTrigger>
@@ -260,34 +237,27 @@ export function UiKitSection() {
         title="Pola formularza"
         note={
           <>
-            Formularz kontaktowy używa <DsInline>Input</DsInline> z komponentów,
-            ale etykiety są zwykłymi <DsInline>&lt;label&gt;</DsInline>,
-            a pole wieloliniowe to ręcznie ostylowany{" "}
-            <DsInline>&lt;textarea&gt;</DsInline> — mimo że komponenty{" "}
-            <DsInline>label</DsInline>, <DsInline>textarea</DsInline> i{" "}
-            <DsInline>field</DsInline> są w projekcie. Ujednolicenie usunęłoby
-            ok. 20 linii powtórzonych klas.
+            Formularz kontaktowy używa <DsInline>Input</DsInline> z komponentów, ale etykiety są
+            zwykłymi <DsInline>&lt;label&gt;</DsInline>, a pole wieloliniowe to ręcznie ostylowany{" "}
+            <DsInline>&lt;textarea&gt;</DsInline> — mimo że komponenty <DsInline>label</DsInline>,{" "}
+            <DsInline>textarea</DsInline> i <DsInline>field</DsInline> są w projekcie. Ujednolicenie
+            usunęłoby ok. 20 linii powtórzonych klas.
           </>
         }
       >
-        <DsPreview label="Wzorzec z formularza kontaktowego" code="className=&quot;py-6 px-4&quot;">
+        <DsPreview label="Wzorzec z formularza kontaktowego" code='className="py-6 px-4"'>
           <div className="grid gap-5 sm:grid-cols-2">
             <div>
               <label htmlFor="ds-name" className="mb-2 block text-sm font-medium">
                 Imię <span className="text-destructive">*</span>
               </label>
-              <Input id="ds-name" placeholder="Twoje imię" className="py-6 px-4" />
+              <Input id="ds-name" placeholder="Twoje imię" className="px-4 py-6" />
             </div>
             <div>
               <label htmlFor="ds-email" className="mb-2 block text-sm font-medium">
                 Email <span className="text-destructive">*</span>
               </label>
-              <Input
-                id="ds-email"
-                type="email"
-                placeholder="twoj@email.pl"
-                className="py-6 px-4"
-              />
+              <Input id="ds-email" type="email" placeholder="twoj@email.pl" className="px-4 py-6" />
             </div>
             <div className="sm:col-span-2">
               <label htmlFor="ds-msg" className="mb-2 block text-sm font-medium">
@@ -320,7 +290,6 @@ export function UiKitSection() {
             </Breadcrumb>
           </DsPreview>
 
-
           <DsPreview label="Paginacja">
             <Pagination>
               <PaginationContent>
@@ -345,12 +314,12 @@ export function UiKitSection() {
           <DsPreview label="Metadane wpisu">
             <div className="flex items-center gap-3 text-xs text-muted-foreground">
               <span className="flex items-center gap-1">
-                <CalendarDays className="w-3 h-3" />
+                <CalendarDays className="h-3 w-3" />
                 23.08.2026
               </span>
               <span>·</span>
               <span className="flex items-center gap-1">
-                <Clock className="w-3 h-3" />
+                <Clock className="h-3 w-3" />
                 12 min czytania
               </span>
             </div>
@@ -372,8 +341,6 @@ export function UiKitSection() {
               </SheetContent>
             </Sheet>
           </DsPreview>
-
-
         </div>
       </DsBlock>
 

@@ -12,7 +12,7 @@ export function HeroVideo({ fallback }: { fallback: string }) {
   const { ref, onPlay } = useReducedMotionVideo()
 
   return (
-    <div className="relative aspect-video w-full rounded-lg overflow-hidden bg-muted/20">
+    <div className="relative aspect-video w-full overflow-hidden rounded-lg bg-muted/20">
       <video
         ref={ref}
         onPlay={onPlay}
@@ -23,7 +23,7 @@ export function HeroVideo({ fallback }: { fallback: string }) {
         aria-hidden="true"
         preload="metadata"
         poster="/hero-poster.webp"
-        className="absolute inset-0 w-full h-full object-cover"
+        className="absolute inset-0 h-full w-full object-cover"
       >
         {/* Najpierw lżejszy WebM, MP4 dla Safari. */}
         <source src="/hero_web.webm" type="video/webm" />

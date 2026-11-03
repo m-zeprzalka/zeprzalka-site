@@ -55,9 +55,7 @@ export function YouTubeEmbed({
           </button>
         )}
       </div>
-      {title && (
-        <p className="px-4 py-2 text-sm text-muted-foreground">{title}</p>
-      )}
+      {title && <p className="px-4 py-2 text-sm text-muted-foreground">{title}</p>}
     </div>
   )
 }

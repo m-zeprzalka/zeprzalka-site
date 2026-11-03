@@ -25,13 +25,9 @@ export function DsSection({ id, title, description, children }: SectionProps) {
   return (
     <section id={id} className="scroll-mt-24 py-12 first:pt-0 md:py-16">
       <header className="mb-8 md:mb-10">
-        <h2 className="text-3xl md:text-4xl font-medium tracking-tight">
-          {title}
-        </h2>
+        <h2 className="text-3xl font-medium tracking-tight md:text-4xl">{title}</h2>
         {description && (
-          <p className="mt-3 max-w-2xl text-muted-foreground leading-relaxed">
-            {description}
-          </p>
+          <p className="mt-3 max-w-2xl leading-relaxed text-muted-foreground">{description}</p>
         )}
       </header>
       <div className="flex flex-col gap-12">{children}</div>
@@ -49,26 +45,18 @@ interface BlockProps {
   className?: string
 }
 
-export function DsBlock({
-  title,
-  description,
-  note,
-  children,
-  className,
-}: BlockProps) {
+export function DsBlock({ title, description, note, children, className }: BlockProps) {
   return (
     <article className={cn("flex flex-col gap-5", className)}>
       <div className="flex flex-col gap-2">
         <h3 className="text-lg font-semibold tracking-tight">{title}</h3>
         {description && (
-          <p className="max-w-3xl text-sm text-muted-foreground leading-relaxed">
-            {description}
-          </p>
+          <p className="max-w-3xl text-sm leading-relaxed text-muted-foreground">{description}</p>
         )}
       </div>
       {children}
       {note && (
-        <p className="border-l-2 border-primary/40 pl-4 text-sm text-muted-foreground leading-relaxed">
+        <p className="border-l-2 border-primary/40 pl-4 text-sm leading-relaxed text-muted-foreground">
           {note}
         </p>
       )}
@@ -77,17 +65,11 @@ export function DsBlock({
 }
 
 /** Etykieta w wersalikach — wzorzec z /o-mnie i /kontakt. */
-export function DsLabel({
-  children,
-  className,
-}: {
-  children: ReactNode
-  className?: string
-}) {
+export function DsLabel({ children, className }: { children: ReactNode; className?: string }) {
   return (
     <p
       className={cn(
-        "text-xs font-medium uppercase tracking-widest text-muted-foreground",
+        "text-xs font-medium tracking-widest text-muted-foreground uppercase",
         className
       )}
     >
@@ -109,12 +91,7 @@ export function DsPreview({ label, code, children, className }: PreviewProps) {
   return (
     <figure className="flex flex-col gap-2">
       {label && <DsLabel>{label}</DsLabel>}
-      <div
-        className={cn(
-          "rounded-lg border bg-card p-6 text-card-foreground",
-          className
-        )}
-      >
+      <div className={cn("rounded-lg border bg-card p-6 text-card-foreground", className)}>
         {children}
       </div>
       {code && (
@@ -143,13 +120,7 @@ export function DsInline({ children }: { children: ReactNode }) {
 }
 
 /** Tabela specyfikacji: nazwa → wartość → zastosowanie. */
-export function DsTable({
-  head,
-  rows,
-}: {
-  head: string[]
-  rows: ReactNode[][]
-}) {
+export function DsTable({ head, rows }: { head: string[]; rows: ReactNode[][] }) {
   return (
     <div className="overflow-x-auto rounded-lg border">
       <table className="w-full border-collapse text-sm">

@@ -40,9 +40,7 @@ export function Swatch({ variable, name, usage, on }: SwatchProps) {
             {dark || "—"}
           </span>
         </span>
-        <span className="text-xs text-muted-foreground leading-snug">
-          {usage}
-        </span>
+        <span className="text-xs leading-snug text-muted-foreground">{usage}</span>
       </div>
     </div>
   )

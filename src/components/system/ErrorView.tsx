@@ -22,12 +22,12 @@ export function ErrorView({
   }, [error])
 
   return (
-    <div className="container mx-auto px-4 py-24 flex flex-col items-center justify-center min-h-[60vh] text-center">
-      <h1 className="text-3xl md:text-4xl font-bold mb-4">{copy.title}</h1>
-      <p className="text-muted-foreground mb-8">
-        {copy.description}
-      </p>
-      <Button onClick={reset} variant="default">{copy.cta}</Button>
+    <div className="container mx-auto flex min-h-[60vh] flex-col items-center justify-center px-4 py-24 text-center">
+      <h1 className="mb-4 text-3xl font-bold md:text-4xl">{copy.title}</h1>
+      <p className="mb-8 text-muted-foreground">{copy.description}</p>
+      <Button onClick={reset} variant="default">
+        {copy.cta}
+      </Button>
     </div>
   )
 }

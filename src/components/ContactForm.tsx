@@ -24,10 +24,7 @@ export function ContactForm({
   copy: ReturnType<typeof getCommon>["form"]
   privacyHref: string
 }) {
-  const [state, formAction, pending] = useActionState(
-    sendContactEmail,
-    initialState
-  )
+  const [state, formAction, pending] = useActionState(sendContactEmail, initialState)
   const statusRef = useRef<HTMLDivElement>(null)
 
   // Po wysłaniu formularz znika albo dostaje komunikat — fokus przechodzi
@@ -42,9 +39,9 @@ export function ContactForm({
         ref={statusRef}
         role="status"
         tabIndex={-1}
-        className="flex items-center gap-3 p-5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-600 dark:text-green-400 outline-none"
+        className="flex items-center gap-3 rounded-lg border border-green-500/20 bg-green-500/10 p-5 text-green-600 outline-none dark:text-green-400"
       >
-        <CheckCircle className="w-5 h-5 shrink-0" />
+        <CheckCircle className="h-5 w-5 shrink-0" />
         <p>{state.message}</p>
       </div>
     )
@@ -61,9 +58,9 @@ export function ContactForm({
           ref={statusRef}
           role="alert"
           tabIndex={-1}
-          className="flex items-center gap-3 p-4 rounded-lg bg-destructive/10 border border-destructive/20 text-destructive outline-none"
+          className="flex items-center gap-3 rounded-lg border border-destructive/20 bg-destructive/10 p-4 text-destructive outline-none"
         >
-          <AlertCircle className="w-5 h-5 shrink-0" />
+          <AlertCircle className="h-5 w-5 shrink-0" />
           <p>{state.message}</p>
         </div>
       )}
@@ -76,25 +73,22 @@ export function ContactForm({
       <input type="hidden" name="locale" value={locale} />
 
       {/* Honeypot — pole niewidoczne dla ludzi, wypełniają je tylko boty */}
-      <div className="absolute opacity-0 -z-10 h-0 overflow-hidden" aria-hidden="true">
+      <div className="absolute -z-10 h-0 overflow-hidden opacity-0" aria-hidden="true">
         <label htmlFor="company">{copy.honeypot}</label>
-        <input
-          id="company"
-          name="company"
-          type="text"
-          tabIndex={-1}
-          autoComplete="off"
-        />
+        <input id="company" name="company" type="text" tabIndex={-1} autoComplete="off" />
       </div>
 
       {/*
         Limity poniżej powtarzają reguły z akcji serwerowej (zod), żeby
         przeglądarka zatrzymała oczywisty błąd, zanim formularz wyjdzie.
       */}
-      <div className="grid sm:grid-cols-2 gap-5">
+      <div className="grid gap-5 sm:grid-cols-2">
         <div>
-          <label htmlFor="name" className="text-sm font-medium mb-2 block">
-            {copy.name} <span className="text-destructive" aria-hidden="true">*</span>
+          <label htmlFor="name" className="mb-2 block text-sm font-medium">
+            {copy.name}{" "}
+            <span className="text-destructive" aria-hidden="true">
+              *
+            </span>
           </label>
           <Input
             id="name"
@@ -106,12 +100,15 @@ export function ContactForm({
             maxLength={100}
             autoComplete="name"
             defaultValue={fields?.name}
-            className="py-6 px-4"
+            className="px-4 py-6"
           />
         </div>
         <div>
-          <label htmlFor="email" className="text-sm font-medium mb-2 block">
-            {copy.email} <span className="text-destructive" aria-hidden="true">*</span>
+          <label htmlFor="email" className="mb-2 block text-sm font-medium">
+            {copy.email}{" "}
+            <span className="text-destructive" aria-hidden="true">
+              *
+            </span>
           </label>
           <Input
             id="email"
@@ -122,13 +119,13 @@ export function ContactForm({
             maxLength={200}
             autoComplete="email"
             defaultValue={fields?.email}
-            className="py-6 px-4"
+            className="px-4 py-6"
           />
         </div>
       </div>
 
       <div>
-        <label htmlFor="project-type" className="text-sm font-medium mb-2 block">
+        <label htmlFor="project-type" className="mb-2 block text-sm font-medium">
           {copy.projectType}
         </label>
         <Input
@@ -138,13 +135,16 @@ export function ContactForm({
           placeholder={copy.projectTypePlaceholder}
           maxLength={200}
           defaultValue={fields?.projectType}
-          className="py-6 px-4"
+          className="px-4 py-6"
         />
       </div>
 
       <div>
-        <label htmlFor="message" className="text-sm font-medium mb-2 block">
-          {copy.message} <span className="text-destructive" aria-hidden="true">*</span>
+        <label htmlFor="message" className="mb-2 block text-sm font-medium">
+          {copy.message}{" "}
+          <span className="text-destructive" aria-hidden="true">
+            *
+          </span>
         </label>
         <textarea
           id="message"
@@ -154,18 +154,13 @@ export function ContactForm({
           minLength={5}
           maxLength={5000}
           defaultValue={fields?.message}
-          className="flex w-full rounded-md border border-input bg-background p-4 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 resize-none"
+          className="flex w-full resize-none rounded-md border border-input bg-background p-4 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none"
           placeholder={copy.messagePlaceholder}
         />
       </div>
 
-      <Button
-        type="submit"
-        size="lg"
-        className="p-6 w-fit gap-2"
-        disabled={pending}
-      >
-        <MousePointerClick className="w-4 h-4" />
+      <Button type="submit" size="lg" className="w-fit gap-2 p-6" disabled={pending}>
+        <MousePointerClick className="h-4 w-4" />
         {pending ? copy.submitting : copy.submit}
       </Button>
 
@@ -174,7 +169,7 @@ export function ContactForm({
         {copy.privacyNote}{" "}
         <Link
           href={privacyHref}
-          className="underline underline-offset-2 hover:text-foreground transition-colors"
+          className="underline underline-offset-2 transition-colors hover:text-foreground"
         >
           {copy.privacyLink}
         </Link>

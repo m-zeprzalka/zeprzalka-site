@@ -30,7 +30,7 @@ function LazyVideo({
   }, [reducedMotion])
 
   return (
-    <div ref={ref} className="relative aspect-video w-full bg-muted/30 -my-6">
+    <div ref={ref} className="relative -my-6 aspect-video w-full bg-muted/30">
       {inView && (
         <video
           ref={videoRef}
@@ -39,29 +39,32 @@ function LazyVideo({
           }}
           preload="metadata"
           poster={poster}
-          className="w-full h-full object-cover block"
-          autoPlay loop muted playsInline
+          className="block h-full w-full object-cover"
+          autoPlay
+          loop
+          muted
+          playsInline
         >
           <source src={src} type="video/mp4" />
         </video>
       )}
 
       {/* Dark gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
 
       {/* Category Badge */}
-      <div className="absolute top-3 left-3 pointer-events-none">
+      <div className="pointer-events-none absolute top-3 left-3">
         <Badge
           variant="secondary"
-          className="px-3 py-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+          className="px-3 py-1 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
         >
           {category}
         </Badge>
       </div>
 
       {/* Title */}
-      <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none">
-        <h3 className="text-white font-medium text-lg">{title}</h3>
+      <div className="pointer-events-none absolute right-0 bottom-0 left-0 translate-y-2 p-4 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
+        <h3 className="text-lg font-medium text-white">{title}</h3>
       </div>
     </div>
   )
@@ -72,15 +75,9 @@ function LazyVideo({
  * Przeniesiona bez zmiany klas, żeby zajawka na stronie głównej i strona
  * `/portfolio` korzystały z jednego komponentu zamiast z dwóch kopii.
  */
-export function PortfolioCard({
-  item,
-  locale,
-}: {
-  item: PortfolioItem
-  locale: Locale
-}) {
+export function PortfolioCard({ item, locale }: { item: PortfolioItem; locale: Locale }) {
   return (
-    <Card className="break-inside-avoid mb-4 relative overflow-hidden group cursor-pointer transition-all duration-300 hover:shadow-xl">
+    <Card className="group relative mb-4 cursor-pointer break-inside-avoid overflow-hidden transition-all duration-300 hover:shadow-xl">
       <LazyVideo
         src={item.video}
         poster={item.poster}

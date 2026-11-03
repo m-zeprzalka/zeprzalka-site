@@ -39,11 +39,7 @@ export function ReadingProgress() {
   }, [])
 
   return (
-    <div
-      aria-hidden="true"
-      data-print-hide
-      className="sticky top-0 z-60 h-1 surface-glass"
-    >
+    <div aria-hidden="true" data-print-hide className="sticky top-0 z-60 h-1 surface-glass">
       <div
         ref={fillRef}
         className="h-full bg-gradient-to-r from-primary/20 to-primary"

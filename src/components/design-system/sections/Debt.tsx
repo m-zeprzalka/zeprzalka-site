@@ -19,8 +19,8 @@ const items: Item[] = [
     title: "Wideo portfolio bez możliwości zatrzymania",
     detail: (
       <>
-        Osiem materiałów odtwarza się w pętli bez żadnego sterowania. WCAG
-        2.2.2 wymaga mechanizmu pauzy dla ruchu trwającego dłużej niż 5 sekund.
+        Osiem materiałów odtwarza się w pętli bez żadnego sterowania. WCAG 2.2.2 wymaga mechanizmu
+        pauzy dla ruchu trwającego dłużej niż 5 sekund.
       </>
     ),
     where: "components/portfolio/PortfolioCard.tsx",
@@ -31,8 +31,8 @@ const items: Item[] = [
     detail: (
       <>
         Strona główna używa <DsInline>size=&quot;lg&quot; className=&quot;p-6&quot;</DsInline>,
-        /o-mnie samego <DsInline>size=&quot;lg&quot;</DsInline>. To dwie różne
-        wysokości dla tej samej roli.
+        /o-mnie samego <DsInline>size=&quot;lg&quot;</DsInline>. To dwie różne wysokości dla tej
+        samej roli.
       </>
     ),
     where: "home/Hero.tsx, views/AboutView.tsx",
@@ -42,8 +42,8 @@ const items: Item[] = [
     title: "Kolor spoza palety",
     detail: (
       <>
-        <DsInline>bg-green-500</DsInline> w kropce dostępności i w komunikacie
-        sukcesu. Do zamiany na token (np. <DsInline>--available</DsInline>).
+        <DsInline>bg-green-500</DsInline> w kropce dostępności i w komunikacie sukcesu. Do zamiany
+        na token (np. <DsInline>--available</DsInline>).
       </>
     ),
     where: "StatusBadge, ContactForm",
@@ -53,8 +53,8 @@ const items: Item[] = [
     title: "Niespójne przyklejenie kolumn",
     detail: (
       <>
-        <DsInline>top-22</DsInline> na stronie głównej, <DsInline>top-24</DsInline>{" "}
-        w /kontakt i w podglądzie bloga.
+        <DsInline>top-22</DsInline> na stronie głównej, <DsInline>top-24</DsInline> w /kontakt i w
+        podglądzie bloga.
       </>
     ),
     where: "HomeSection (props), /kontakt",
@@ -64,8 +64,8 @@ const items: Item[] = [
     title: "Karta bez karty",
     detail: (
       <>
-        Sekcja kontaktu owija treść w <DsInline>Card</DsInline> z wyłączonym
-        tłem, obrysem i paddingiem — komponent nie wnosi tam niczego.
+        Sekcja kontaktu owija treść w <DsInline>Card</DsInline> z wyłączonym tłem, obrysem i
+        paddingiem — komponent nie wnosi tam niczego.
       </>
     ),
     where: "components/home/Contact.tsx",
@@ -98,17 +98,16 @@ export function DebtSection() {
     >
       <div className="rounded-lg border border-primary/30 bg-card p-5">
         <h3 className="text-base font-semibold">Naprawione 26 sierpnia 2026</h3>
-        <ul className="mt-3 flex list-disc flex-col gap-1.5 pl-5 text-sm text-muted-foreground leading-relaxed">
+        <ul className="mt-3 flex list-disc flex-col gap-1.5 pl-5 text-sm leading-relaxed text-muted-foreground">
           {fixed.map((item) => (
             <li key={item}>{item}</li>
           ))}
         </ul>
         <p className="mt-3 text-sm text-muted-foreground">
-          Audyt z 2 listopada 2026 znalazł kolejne problemy (przełącznik języka
-          i paginacja niezgodne z WCAG 2.5.3, 404 bez H1, słaby pierścień
-          fokusu, formularz gubiący dane, zepsuty wydruk) — naprawione w tej
-          samej rundzie, opis w docs/AUDYT-2026-11.md. Otwarte pozycje poniżej
-          nadal obowiązują.
+          Audyt z 2 listopada 2026 znalazł kolejne problemy (przełącznik języka i paginacja
+          niezgodne z WCAG 2.5.3, 404 bez H1, słaby pierścień fokusu, formularz gubiący dane,
+          zepsuty wydruk) — naprawione w tej samej rundzie, opis w docs/AUDYT-2026-11.md. Otwarte
+          pozycje poniżej nadal obowiązują.
         </p>
       </div>
 
@@ -116,7 +115,7 @@ export function DebtSection() {
         {items.map((item, index) => (
           <li key={item.title} className="flex flex-col gap-2 bg-card p-5">
             <div className="flex flex-wrap items-center gap-3">
-              <span className="font-mono text-xs tabular-nums text-muted-foreground">
+              <span className="font-mono text-xs text-muted-foreground tabular-nums">
                 {String(index + 1).padStart(2, "0")}
               </span>
               <h3 className="text-base font-semibold">{item.title}</h3>
@@ -127,12 +126,8 @@ export function DebtSection() {
                 {item.weight}
               </Badge>
             </div>
-            <p className="text-sm text-muted-foreground leading-relaxed">
-              {item.detail}
-            </p>
-            <p className="font-mono text-xs text-muted-foreground">
-              {item.where}
-            </p>
+            <p className="text-sm leading-relaxed text-muted-foreground">{item.detail}</p>
+            <p className="font-mono text-xs text-muted-foreground">{item.where}</p>
           </li>
         ))}
       </ol>

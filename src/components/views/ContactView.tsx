@@ -33,32 +33,28 @@ export function ContactView({ locale }: { locale: Locale }) {
 
   return (
     <div className="page-shell">
-      <PageHeader
-        badge={copy.badge}
-        title={copy.title}
-        description={copy.description}
-      />
+      <PageHeader badge={copy.badge} title={copy.title} description={copy.description} />
 
-      <div className="grid lg:grid-cols-12 gap-12 lg:gap-16">
+      <div className="grid gap-12 lg:grid-cols-12 lg:gap-16">
         {/* Info boczna */}
         <aside className="lg:col-span-4 xl:col-span-3">
-          <div className="space-y-8 lg:sticky top-24">
+          <div className="top-24 space-y-8 lg:sticky">
             {info.map(({ icon: Icon, label, value, href }) => (
               <div key={label}>
-                <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground mb-2">
+                <p className="mb-2 text-xs font-medium tracking-widest text-muted-foreground uppercase">
                   {label}
                 </p>
                 {href ? (
                   <a
                     href={href}
-                    className="flex items-center gap-2 text-sm font-medium hover:text-primary transition-colors"
+                    className="flex items-center gap-2 text-sm font-medium transition-colors hover:text-primary"
                   >
-                    <Icon className="w-4 h-4 text-muted-foreground shrink-0" />
+                    <Icon className="h-4 w-4 shrink-0 text-muted-foreground" />
                     {value}
                   </a>
                 ) : (
                   <p className="flex items-center gap-2 text-sm font-medium">
-                    <Icon className="w-4 h-4 text-muted-foreground shrink-0" />
+                    <Icon className="h-4 w-4 shrink-0 text-muted-foreground" />
                     {value}
                   </p>
                 )}
@@ -67,14 +63,12 @@ export function ContactView({ locale }: { locale: Locale }) {
 
             <Separator />
 
-            <p className="text-sm text-muted-foreground leading-relaxed">
-              {copy.note}
-            </p>
+            <p className="text-sm leading-relaxed text-muted-foreground">{copy.note}</p>
           </div>
         </aside>
 
         {/* Formularz */}
-        <div className="lg:col-span-8 xl:col-span-9 relative">
+        <div className="relative lg:col-span-8 xl:col-span-9">
           <ContactForm
             locale={locale}
             copy={getCommon(locale).form}

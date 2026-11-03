@@ -23,12 +23,12 @@ export function CodeBlock({
   }
 
   return (
-    <div className="relative group my-6 rounded-lg border border-border overflow-hidden bg-white dark:bg-muted/50">
+    <div className="group relative my-6 overflow-hidden rounded-lg border border-border bg-white dark:bg-muted/50">
       <div className="overflow-x-auto">
         <pre
           ref={preRef}
           {...props}
-          className={`${className || ""} !m-0 !p-6 bg-transparent text-sm leading-relaxed`}
+          className={`${className || ""} !m-0 bg-transparent !p-6 text-sm leading-relaxed`}
         >
           {children}
         </pre>
@@ -36,15 +36,11 @@ export function CodeBlock({
 
       <button
         onClick={handleCopy}
-        className="absolute top-3 right-3 p-2 rounded-md bg-background/80 border hover:bg-background transition-all opacity-0 group-hover:opacity-100 focus:opacity-100 [@media(hover:none)]:opacity-100"
+        className="absolute top-3 right-3 rounded-md border bg-background/80 p-2 opacity-0 transition-all group-hover:opacity-100 hover:bg-background focus:opacity-100 [@media(hover:none)]:opacity-100"
         aria-label={copyLabel}
         type="button"
       >
-        {copied ? (
-          <Check className="w-4 h-4 text-green-500" />
-        ) : (
-          <Copy className="w-4 h-4" />
-        )}
+        {copied ? <Check className="h-4 w-4 text-green-500" /> : <Copy className="h-4 w-4" />}
       </button>
       {/* Ekran nie zmienia się poza ikoną — potwierdzenie musi dotrzeć też do czytnika. */}
       <span className="sr-only" role="status">

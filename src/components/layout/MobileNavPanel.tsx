@@ -39,12 +39,12 @@ export default function MobileNavPanel({
       <SheetContent
         side="top"
         showCloseButton={false}
-        className="flex flex-col p-0 gap-0 w-full h-screen bg-background"
+        className="flex h-screen w-full flex-col gap-0 bg-background p-0"
       >
         {/* Wymagany przez Radix dla czytników ekranu */}
         <SheetTitle className="sr-only">{labels.title}</SheetTitle>
 
-        <div className="flex items-center justify-between h-16 px-4 border-b shrink-0 container mx-auto">
+        <div className="container mx-auto flex h-16 shrink-0 items-center justify-between border-b px-4">
           <Logo locale={locale} onClick={close} />
           <div className="flex items-center justify-end gap-2">
             <ThemeToggle label={labels.theme} />
@@ -52,9 +52,9 @@ export default function MobileNavPanel({
               type="button"
               onClick={close}
               aria-label={labels.close}
-              className="flex items-center justify-center w-9 h-9 rounded-md hover:bg-muted transition-colors"
+              className="flex h-9 w-9 items-center justify-center rounded-md transition-colors hover:bg-muted"
             >
-              <X className="w-5 h-5" />
+              <X className="h-5 w-5" />
             </button>
           </div>
         </div>
@@ -71,8 +71,10 @@ export default function MobileNavPanel({
                 onClick={close}
                 aria-current={isActive ? "page" : undefined}
                 className={cn(
-                  "py-4 text-base border-b border-border/40 last:border-0 transition-colors",
-                  isActive ? "text-foreground font-medium" : "text-muted-foreground hover:text-foreground"
+                  "border-b border-border/40 py-4 text-base transition-colors last:border-0",
+                  isActive
+                    ? "font-medium text-foreground"
+                    : "text-muted-foreground hover:text-foreground"
                 )}
               >
                 {label}

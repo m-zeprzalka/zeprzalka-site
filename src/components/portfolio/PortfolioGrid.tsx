@@ -17,7 +17,7 @@ export function PortfolioGrid({
   className?: string
 }) {
   return (
-    <div className={cn("columns-1 md:columns-2 lg:columns-3 gap-4", className)}>
+    <div className={cn("columns-1 gap-4 md:columns-2 lg:columns-3", className)}>
       {items.map((item) => (
         <PortfolioCard key={item.slug} item={item} locale={locale} />
       ))}

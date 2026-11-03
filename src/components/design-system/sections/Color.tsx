@@ -9,16 +9,51 @@ import { Swatch } from "@/components/design-system/Swatch"
 const surfaces = [
   { variable: "--background", name: "background", usage: "Tło strony", on: "--foreground" },
   { variable: "--foreground", name: "foreground", usage: "Tekst podstawowy", on: "--background" },
-  { variable: "--card", name: "card", usage: "Karty portfolio, kontenery", on: "--card-foreground" },
-  { variable: "--popover", name: "popover", usage: "Warstwy nakładane (Sheet, Tooltip)", on: "--popover-foreground" },
-  { variable: "--muted", name: "muted", usage: "Tła drugorzędne, kod, nagłówki tabel", on: "--muted-foreground" },
-  { variable: "--accent", name: "accent", usage: "Stan hover elementów nawigacji", on: "--accent-foreground" },
+  {
+    variable: "--card",
+    name: "card",
+    usage: "Karty portfolio, kontenery",
+    on: "--card-foreground",
+  },
+  {
+    variable: "--popover",
+    name: "popover",
+    usage: "Warstwy nakładane (Sheet, Tooltip)",
+    on: "--popover-foreground",
+  },
+  {
+    variable: "--muted",
+    name: "muted",
+    usage: "Tła drugorzędne, kod, nagłówki tabel",
+    on: "--muted-foreground",
+  },
+  {
+    variable: "--accent",
+    name: "accent",
+    usage: "Stan hover elementów nawigacji",
+    on: "--accent-foreground",
+  },
 ]
 
 const actions = [
-  { variable: "--primary", name: "primary", usage: "Przycisk główny, aktywna paginacja, 404", on: "--primary-foreground" },
-  { variable: "--secondary", name: "secondary", usage: "Badge drugorzędny, przycisk secondary", on: "--secondary-foreground" },
-  { variable: "--destructive", name: "destructive", usage: "Błędy formularza, gwiazdka pola wymaganego", on: "--background" },
+  {
+    variable: "--primary",
+    name: "primary",
+    usage: "Przycisk główny, aktywna paginacja, 404",
+    on: "--primary-foreground",
+  },
+  {
+    variable: "--secondary",
+    name: "secondary",
+    usage: "Badge drugorzędny, przycisk secondary",
+    on: "--secondary-foreground",
+  },
+  {
+    variable: "--destructive",
+    name: "destructive",
+    usage: "Błędy formularza, gwiazdka pola wymaganego",
+    on: "--background",
+  },
 ]
 
 const lines = [
@@ -26,7 +61,6 @@ const lines = [
   { variable: "--input", name: "input", usage: "Obrys pól formularza" },
   { variable: "--ring", name: "ring", usage: "Pierścień fokusu (3 px, widoczny na klawiaturze)" },
 ]
-
 
 export function ColorSection() {
   return (
@@ -65,36 +99,32 @@ export function ColorSection() {
         </div>
       </DsBlock>
 
-
       <DsBlock
         title="Zasady"
         note={
           <>
-            Wyjątek w kodzie: kropka „Gotowy do współpracy” w sekcji hero i na
-            /o-mnie używa surowego <DsInline>bg-green-500</DsInline>. To jedyny
-            kolor spoza palety — jeśli ma zostać, powinien dostać własny token
-            (np. <DsInline>--available</DsInline>).
+            Wyjątek w kodzie: kropka „Gotowy do współpracy” w sekcji hero i na /o-mnie używa
+            surowego <DsInline>bg-green-500</DsInline>. To jedyny kolor spoza palety — jeśli ma
+            zostać, powinien dostać własny token (np. <DsInline>--available</DsInline>).
           </>
         }
       >
-        <ul className="flex list-disc flex-col gap-2 pl-5 text-sm text-muted-foreground leading-relaxed">
+        <ul className="flex list-disc flex-col gap-2 pl-5 text-sm leading-relaxed text-muted-foreground">
           <li>
             Kolory wyłącznie przez tokeny (<DsInline>bg-background</DsInline>,{" "}
-            <DsInline>text-muted-foreground</DsInline>) — nigdy przez wartości
-            surowe ani klasy z palety Tailwinda.
+            <DsInline>text-muted-foreground</DsInline>) — nigdy przez wartości surowe ani klasy z
+            palety Tailwinda.
           </li>
           <li>
-            Brak nadpisań <DsInline>dark:</DsInline> na kolorach. Motyw zmienia
-            wartości tokenów, nie klasy komponentów.
+            Brak nadpisań <DsInline>dark:</DsInline> na kolorach. Motyw zmienia wartości tokenów,
+            nie klasy komponentów.
           </li>
           <li>
-            Przezroczystość służy do warstw, nie do odcieni:{" "}
-            <DsInline>bg-background/65</DsInline> w nagłówku i stopce,{" "}
-            <DsInline>bg-muted/30</DsInline> pod cytatem. Jedyne krycie na
-            tekście to <DsInline>text-muted-foreground/80</DsInline> na
-            numeracji kompetencji — najniższa wartość, przy której kontrast
-            wciąż spełnia próg 3:1 dla dużego tekstu (3,23:1 w jasnym motywie,
-            5,19:1 w ciemnym). Wcześniejsze 30% dawało 1,47:1.
+            Przezroczystość służy do warstw, nie do odcieni: <DsInline>bg-background/65</DsInline> w
+            nagłówku i stopce, <DsInline>bg-muted/30</DsInline> pod cytatem. Jedyne krycie na
+            tekście to <DsInline>text-muted-foreground/80</DsInline> na numeracji kompetencji —
+            najniższa wartość, przy której kontrast wciąż spełnia próg 3:1 dla dużego tekstu (3,23:1
+            w jasnym motywie, 5,19:1 w ciemnym). Wcześniejsze 30% dawało 1,47:1.
           </li>
         </ul>
       </DsBlock>

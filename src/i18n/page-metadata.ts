@@ -32,11 +32,7 @@ import {
 import { getMeta } from "@/i18n/content/meta"
 import { getPages } from "@/i18n/content/pages"
 import { fill } from "@/i18n/format"
-import {
-  translateCategorySlug,
-  translatePostSlug,
-  translateTagSlug,
-} from "@/i18n/blog-map"
+import { translateCategorySlug, translatePostSlug, translateTagSlug } from "@/i18n/blog-map"
 import { AUTHOR, absoluteUrl } from "@/lib/site"
 import type { Post, Term } from "@/lib/posts"
 
@@ -137,8 +133,7 @@ export function homeMetadata(locale: Locale): Metadata {
 export const servicesMetadata = (locale: Locale) =>
   staticPage(locale, "services", getMeta(locale).services)
 
-export const aboutMetadata = (locale: Locale) =>
-  staticPage(locale, "about", getMeta(locale).about)
+export const aboutMetadata = (locale: Locale) => staticPage(locale, "about", getMeta(locale).about)
 
 export const contactMetadata = (locale: Locale) =>
   staticPage(locale, "contact", getMeta(locale).contact)
@@ -152,8 +147,7 @@ export const portfolioMetadata = (locale: Locale) =>
 export const categoriesMetadata = (locale: Locale) =>
   staticPage(locale, "categories", getMeta(locale).categories)
 
-export const blogMetadata = (locale: Locale) =>
-  staticPage(locale, "blog", getMeta(locale).blog)
+export const blogMetadata = (locale: Locale) => staticPage(locale, "blog", getMeta(locale).blog)
 
 /**
  * Kolejna strona archiwum bloga. Canonical wskazuje ją samą (nie pierwszą

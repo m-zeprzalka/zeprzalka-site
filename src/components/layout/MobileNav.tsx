@@ -46,9 +46,9 @@ export function MobileNav({
           request()
           setOpen(true)
         }}
-        className="md:hidden flex items-center justify-center w-9 h-9 rounded-md hover:bg-muted transition-colors"
+        className="flex h-9 w-9 items-center justify-center rounded-md transition-colors hover:bg-muted md:hidden"
       >
-        <Menu className="w-5 h-5" />
+        <Menu className="h-5 w-5" />
       </button>
       {requested && (
         <MobileNavPanel

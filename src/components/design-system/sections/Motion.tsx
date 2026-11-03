@@ -18,16 +18,8 @@ export function MotionSection() {
         <DsTable
           head={["Czas", "Klasa", "Zastosowanie"]}
           rows={[
-            [
-              "150 ms",
-              <DsInline key="a">duration-150</DsInline>,
-              "Podmiana znaku w logo",
-            ],
-            [
-              "200 ms",
-              <DsInline key="b">duration-200</DsInline>,
-              "Obrót strzałki w akordeonie",
-            ],
+            ["150 ms", <DsInline key="a">duration-150</DsInline>, "Podmiana znaku w logo"],
+            ["200 ms", <DsInline key="b">duration-200</DsInline>, "Obrót strzałki w akordeonie"],
             [
               "300 ms",
               <DsInline key="c">duration-300</DsInline>,
@@ -63,10 +55,7 @@ export function MotionSection() {
             </div>
           </DsPreview>
 
-          <DsPreview
-            label="Obraz wpisu"
-            code="group-hover:scale-105 duration-500"
-          >
+          <DsPreview label="Obraz wpisu" code="group-hover:scale-105 duration-500">
             <div className="group h-24 overflow-hidden rounded-lg border">
               <div className="h-full w-full bg-muted transition-transform duration-500 ease-in-out group-hover:scale-105" />
             </div>
@@ -93,20 +82,19 @@ export function MotionSection() {
         note={
           <>
             Wszystkie trzy źródła ruchu ciągłego respektują ustawienie{" "}
-            <DsInline>prefers-reduced-motion: reduce</DsInline>: reguła
-            w <DsInline>globals.css</DsInline> skraca animacje i przejścia oraz
-            wyłącza płynne przewijanie, sygnet przestaje podmieniać znak, a wideo
-            zatrzymuje się na pierwszej klatce (pauza w efekcie i w zdarzeniu{" "}
-            <DsInline>onPlay</DsInline>, żeby złapać też start po dociągnięciu
-            danych). Sterowanie odtwarzaniem dla pozostałych użytkowników to
-            osobna sprawa — patrz sekcja 12.
+            <DsInline>prefers-reduced-motion: reduce</DsInline>: reguła w{" "}
+            <DsInline>globals.css</DsInline> skraca animacje i przejścia oraz wyłącza płynne
+            przewijanie, sygnet przestaje podmieniać znak, a wideo zatrzymuje się na pierwszej
+            klatce (pauza w efekcie i w zdarzeniu <DsInline>onPlay</DsInline>, żeby złapać też start
+            po dociągnięciu danych). Sterowanie odtwarzaniem dla pozostałych użytkowników to osobna
+            sprawa — patrz sekcja 12.
           </>
         }
       >
         <div className="grid gap-4 sm:grid-cols-3">
           <DsPreview label="Kropka dostępności" code="animate-pulse bg-green-500">
             <div className="flex h-16 items-center gap-2">
-              <span className="w-2 h-2 animate-pulse rounded-full bg-green-500" />
+              <span className="h-2 w-2 animate-pulse rounded-full bg-green-500" />
               <span className="text-sm">Gotowy do współpracy</span>
             </div>
           </DsPreview>
@@ -121,8 +109,7 @@ export function MotionSection() {
 
           <DsPreview label="Wideo w portfolio" code="autoPlay muted loop playsInline">
             <div className="flex h-16 items-center text-sm text-muted-foreground">
-              W pętli, bez dźwięku; przy ograniczonym ruchu zatrzymane na
-              pierwszej klatce
+              W pętli, bez dźwięku; przy ograniczonym ruchu zatrzymane na pierwszej klatce
             </div>
           </DsPreview>
         </div>

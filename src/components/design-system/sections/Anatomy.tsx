@@ -1,9 +1,4 @@
-import {
-  DsBlock,
-  DsCode,
-  DsInline,
-  DsSection,
-} from "@/components/design-system/primitives"
+import { DsBlock, DsCode, DsInline, DsSection } from "@/components/design-system/primitives"
 
 interface Part {
   label: string
@@ -15,14 +10,12 @@ function Anatomy({ parts }: { parts: Part[] }) {
     <ol className="flex flex-col gap-px overflow-hidden rounded-lg border bg-border">
       {parts.map((part, index) => (
         <li key={part.label} className="flex gap-4 bg-card p-4">
-          <span className="font-mono text-xs tabular-nums text-muted-foreground">
+          <span className="font-mono text-xs text-muted-foreground tabular-nums">
             {String(index + 1).padStart(2, "0")}
           </span>
           <div className="flex flex-col gap-1">
             <span className="text-sm font-medium">{part.label}</span>
-            <span className="text-xs text-muted-foreground leading-relaxed">
-              {part.detail}
-            </span>
+            <span className="text-xs leading-relaxed text-muted-foreground">{part.detail}</span>
           </div>
         </li>
       ))}
@@ -43,11 +36,20 @@ export function AnatomySection() {
       >
         <Anatomy
           parts={[
-            { label: "Badge dostępności", detail: "Outline, pulsująca kropka, tekst „Gotowy do współpracy”" },
-            { label: "H1", detail: "Do 5xl/7xl, waga medium, maksymalnie 5 kolumn szerokości (max-w-5xl)" },
+            {
+              label: "Badge dostępności",
+              detail: "Outline, pulsująca kropka, tekst „Gotowy do współpracy”",
+            },
+            {
+              label: "H1",
+              detail: "Do 5xl/7xl, waga medium, maksymalnie 5 kolumn szerokości (max-w-5xl)",
+            },
             { label: "Lead", detail: "Rola + staż wyróżniony kolorem foreground, reszta muted" },
             { label: "CTA", detail: "Przycisk główny z ikoną, szerokość dopasowana do treści" },
-            { label: "Kadr wideo", detail: "Proporcja 16:9, autoodtwarzanie bez dźwięku, pojawia się po wczytaniu" },
+            {
+              label: "Kadr wideo",
+              detail: "Proporcja 16:9, autoodtwarzanie bez dźwięku, pojawia się po wczytaniu",
+            },
           ]}
         />
       </DsBlock>
@@ -55,8 +57,14 @@ export function AnatomySection() {
       <DsBlock title="02 Kompetencje — zakres">
         <Anatomy
           parts={[
-            { label: "Kolumna opisu (3)", detail: "H2 „Kompetencje” + zdanie wprowadzenia, przyklejona" },
-            { label: "Akordeon (9)", detail: "Trzy pozycje, numer 01–03 w kolorze muted-foreground/80" },
+            {
+              label: "Kolumna opisu (3)",
+              detail: "H2 „Kompetencje” + zdanie wprowadzenia, przyklejona",
+            },
+            {
+              label: "Akordeon (9)",
+              detail: "Trzy pozycje, numer 01–03 w kolorze muted-foreground/80",
+            },
             { label: "Treść pozycji", detail: "Opis + zestaw narzędzi jako badge outline" },
           ]}
         />
@@ -66,9 +74,15 @@ export function AnatomySection() {
         <Anatomy
           parts={[
             { label: "Kolumna opisu (3)", detail: "H2 „Portfolio” + zdanie wprowadzenia" },
-            { label: "Układ murowany (9)", detail: "1 → 2 → 3 kolumny, karty bez marginesu wewnętrznego" },
+            {
+              label: "Układ murowany (9)",
+              detail: "1 → 2 → 3 kolumny, karty bez marginesu wewnętrznego",
+            },
             { label: "Kadr", detail: "Wideo mp4 w pętli, montowane 600 px przed wejściem w kadr" },
-            { label: "Warstwa hover", detail: "Gradient od dołu, badge kategorii, tytuł wjeżdżający od dołu" },
+            {
+              label: "Warstwa hover",
+              detail: "Gradient od dołu, badge kategorii, tytuł wjeżdżający od dołu",
+            },
           ]}
         />
         <DsCode>
@@ -82,9 +96,15 @@ export function AnatomySection() {
       <DsBlock title="04 Blog — wiedza">
         <Anatomy
           parts={[
-            { label: "Kolumna opisu (3)", detail: "H2 „Blog”, zdanie wprowadzenia i przycisk outline do listy" },
+            {
+              label: "Kolumna opisu (3)",
+              detail: "H2 „Blog”, zdanie wprowadzenia i przycisk outline do listy",
+            },
             { label: "Siatka wpisów (9)", detail: "Sześć najnowszych, dwie kolumny od sm" },
-            { label: "Karta wpisu", detail: "Obraz 16:9, kategorie, tytuł, lead, data i czas czytania" },
+            {
+              label: "Karta wpisu",
+              detail: "Obraz 16:9, kategorie, tytuł, lead, data i czas czytania",
+            },
           ]}
         />
       </DsBlock>
@@ -93,9 +113,9 @@ export function AnatomySection() {
         title="05 Kontakt — zaproszenie"
         note={
           <>
-            Sekcja jest owinięta w <DsInline>Card</DsInline> z wyłączonym tłem,
-            obrysem i paddingiem (<DsInline>shadow-none bg-transparent border-0 p-0</DsInline>).
-            Skoro nic z karty nie zostaje, prostszy byłby zwykły kontener.
+            Sekcja jest owinięta w <DsInline>Card</DsInline> z wyłączonym tłem, obrysem i paddingiem
+            (<DsInline>shadow-none bg-transparent border-0 p-0</DsInline>). Skoro nic z karty nie
+            zostaje, prostszy byłby zwykły kontener.
           </>
         }
       >

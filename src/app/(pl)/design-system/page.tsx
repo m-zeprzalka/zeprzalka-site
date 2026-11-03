@@ -51,31 +51,27 @@ export default function DesignSystemPage() {
 
         <div className="min-w-0 lg:col-span-9">
           <section className="mb-4 rounded-lg border bg-card p-6">
-            <h2 className="text-lg font-semibold tracking-tight">
-              Jak czytać ten katalog
-            </h2>
-            <p className="mt-3 max-w-3xl text-sm text-muted-foreground leading-relaxed">
-              Wszystko poniżej opisuje <strong className="font-medium text-foreground">obecny</strong>{" "}
-              wariant serwisu — ten pod adresem głównym. Próbki nie są rysunkami:
-              to te same komponenty, których używają strony produkcyjne.
-              Wartości tokenów pochodzą wprost z <DsInline>globals.css</DsInline>,
-              a rozmiary typografii są mierzone na wyrenderowanej próbce przy
-              bieżącej szerokości okna. Przełącz motyw w nagłówku, aby zobaczyć
-              serwis w drugiej palecie. Fragmenty w <DsInline>tym stylu</DsInline>{" "}
-              to klasy i nazwy z kodu.
+            <h2 className="text-lg font-semibold tracking-tight">Jak czytać ten katalog</h2>
+            <p className="mt-3 max-w-3xl text-sm leading-relaxed text-muted-foreground">
+              Wszystko poniżej opisuje{" "}
+              <strong className="font-medium text-foreground">obecny</strong> wariant serwisu — ten
+              pod adresem głównym. Próbki nie są rysunkami: to te same komponenty, których używają
+              strony produkcyjne. Wartości tokenów pochodzą wprost z{" "}
+              <DsInline>globals.css</DsInline>, a rozmiary typografii są mierzone na wyrenderowanej
+              próbce przy bieżącej szerokości okna. Przełącz motyw w nagłówku, aby zobaczyć serwis w
+              drugiej palecie. Fragmenty w <DsInline>tym stylu</DsInline> to klasy i nazwy z kodu.
             </p>
-            <p className="mt-3 max-w-3xl text-sm text-muted-foreground leading-relaxed">
-              Ostatnia sekcja zbiera rozbieżności między systemem a kodem — to
-              lista decyzji do podjęcia, nie błędów do cichego poprawienia.
-              Trzy odrzucone warianty strony głównej zostały usunięte z serwisu
-              w listopadzie 2026 — ich kod przechowuje tag gita{" "}
+            <p className="mt-3 max-w-3xl text-sm leading-relaxed text-muted-foreground">
+              Ostatnia sekcja zbiera rozbieżności między systemem a kodem — to lista decyzji do
+              podjęcia, nie błędów do cichego poprawienia. Trzy odrzucone warianty strony głównej
+              zostały usunięte z serwisu w listopadzie 2026 — ich kod przechowuje tag gita{" "}
               <DsInline>warianty-strony-glownej-2026-08</DsInline>.
             </p>
 
             <dl className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               {facts.map((fact) => (
                 <div key={fact.label} className="flex flex-col gap-1">
-                  <dt className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
+                  <dt className="text-xs font-medium tracking-widest text-muted-foreground uppercase">
                     {fact.label}
                   </dt>
                   <dd className="text-sm">{fact.value}</dd>

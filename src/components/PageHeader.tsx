@@ -13,16 +13,12 @@ export function PageHeader({ badge, title, description, className }: PageHeaderP
   return (
     <header className={cn("mb-16", className)}>
       {badge && (
-        <Badge variant="outline" className="text-sm px-4 py-2 w-fit mb-6">
+        <Badge variant="outline" className="mb-6 w-fit px-4 py-2 text-sm">
           {badge}
         </Badge>
       )}
-      <h1 className="text-4xl md:text-5xl lg:text-6xl font-medium tracking-tight mb-4">
-        {title}
-      </h1>
-      {description && (
-        <p className="text-xl text-muted-foreground max-w-2xl">{description}</p>
-      )}
+      <h1 className="mb-4 text-4xl font-medium tracking-tight md:text-5xl lg:text-6xl">{title}</h1>
+      {description && <p className="max-w-2xl text-xl text-muted-foreground">{description}</p>}
       <Separator className="mt-10" />
     </header>
   )

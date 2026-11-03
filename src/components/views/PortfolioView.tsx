@@ -25,27 +25,27 @@ export function PortfolioView({ locale }: { locale: Locale }) {
    */
   const portfolioJsonLd = graph(
     {
-    "@type": "CollectionPage",
-    inLanguage: INTL_LOCALE[locale],
-    author: { "@id": PERSON_ID },
-    name: fill(copy.collectionName, { name: SITE_NAME }),
-    url: absoluteUrl(ROUTES.portfolio[locale]),
-    about: portfolioGroups.map((group) => group.label[locale]),
-    mainEntity: {
-      "@type": "ItemList",
-      numberOfItems: portfolioItems.length,
-      itemListElement: portfolioItems.map((item, index) => ({
-        "@type": "ListItem",
-        position: index + 1,
-        item: {
-          "@type": "CreativeWork",
-          name: item.title[locale],
-          genre: item.category[locale],
-          image: absoluteUrl(item.poster),
-          creator: { "@id": PERSON_ID },
-        },
-      })),
-    },
+      "@type": "CollectionPage",
+      inLanguage: INTL_LOCALE[locale],
+      author: { "@id": PERSON_ID },
+      name: fill(copy.collectionName, { name: SITE_NAME }),
+      url: absoluteUrl(ROUTES.portfolio[locale]),
+      about: portfolioGroups.map((group) => group.label[locale]),
+      mainEntity: {
+        "@type": "ItemList",
+        numberOfItems: portfolioItems.length,
+        itemListElement: portfolioItems.map((item, index) => ({
+          "@type": "ListItem",
+          position: index + 1,
+          item: {
+            "@type": "CreativeWork",
+            name: item.title[locale],
+            genre: item.category[locale],
+            image: absoluteUrl(item.poster),
+            creator: { "@id": PERSON_ID },
+          },
+        })),
+      },
     },
     breadcrumbSchema(locale, [{ name: copy.title, path: ROUTES.portfolio[locale] }])
   )
@@ -54,11 +54,7 @@ export function PortfolioView({ locale }: { locale: Locale }) {
     <div className="page-shell">
       <JsonLd data={portfolioJsonLd} />
 
-      <PageHeader
-        badge={copy.badge}
-        title={copy.title}
-        description={copy.description}
-      />
+      <PageHeader badge={copy.badge} title={copy.title} description={copy.description} />
 
       {portfolioGroups.map((group, index) => {
         const items = getPortfolioByGroup(group.id)
@@ -69,17 +65,14 @@ export function PortfolioView({ locale }: { locale: Locale }) {
             {index > 0 && <Separator className="my-16" />}
 
             <div className="mb-8 flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2">
-              <h2
-                id={group.id}
-                className="text-2xl font-semibold tracking-tight"
-              >
+              <h2 id={group.id} className="text-2xl font-semibold tracking-tight">
                 {group.label[locale]}
               </h2>
-              <p className="text-sm tabular-nums text-muted-foreground">
+              <p className="text-sm text-muted-foreground tabular-nums">
                 {countRealizations(items.length, locale)}
               </p>
             </div>
-            <p className="mb-8 max-w-2xl text-muted-foreground leading-relaxed">
+            <p className="mb-8 max-w-2xl leading-relaxed text-muted-foreground">
               {group.description[locale]}
             </p>
 

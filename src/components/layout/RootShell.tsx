@@ -39,13 +39,7 @@ const geistMono = Geist_Mono({
  * (kroje, motyw, nagłówek, stopka, pomiary) siedzi tutaj, żeby oba układy
  * nie mogły się rozjechać.
  */
-export function RootShell({
-  locale,
-  children,
-}: {
-  locale: Locale
-  children: React.ReactNode
-}) {
+export function RootShell({ locale, children }: { locale: Locale; children: React.ReactNode }) {
   return (
     // Zmienne krojów muszą siedzieć na <html>: Tailwind v4 ustawia
     // font-family właśnie na tym elemencie, więc deklaracja na <body>
@@ -61,7 +55,7 @@ export function RootShell({
           <a
             href="#main"
             data-print-hide
-            className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[70] focus:rounded-md focus:bg-background focus:px-4 focus:py-2 focus:text-sm focus:font-medium focus:shadow-md focus:ring-2 focus:ring-ring"
+            className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[70] focus:rounded-md focus:bg-background focus:px-4 focus:py-2 focus:text-sm focus:font-medium focus:shadow-md focus:ring-2 focus:ring-ring"
           >
             {getCommon(locale).ui.skipToContent}
           </a>

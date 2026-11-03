@@ -13,14 +13,17 @@ Stan na: **3 listopada 2026** (po iteracji 2 — [DZIENNIK.md](DZIENNIK.md)).
 | Obszar | Stan | Gdzie w kodzie |
 | --- | --- | --- |
 | Domena kanoniczna `www`, apex → 308 | ✅ | `src/lib/site.ts` |
-| Canonical na każdej stronie, wskazujący ją samą | ✅ 86/86 adresów sitemapy | `buildMetadata` w `src/i18n/page-metadata.ts` |
-| `hreflang` pl/en + `x-default`, także w sitemapie | ✅ | `alternatesFor` w `src/i18n/config.ts` |
-| `og:url`, `og:image` 1200×630, `og:site_name` na każdej stronie | ✅ (było: 60 stron z `og:url` strony głównej) | `buildMetadata` + pliki `opengraph-image.tsx` |
-| Karty OG wpisów z tytułem (zamiast zdjęć WebP/SVG) | ✅ prerenderowane | `postOgCard` w `src/components/og.tsx` |
+| Canonical na każdej stronie, wskazujący ją samą | ✅ 92/92 adresów sitemapy | `buildMetadata` w `src/i18n/page-metadata.ts` |
+| `hreflang` pl/en + `x-default`, także w sitemapie i przełączniku języka | ✅ jedno źródło | `src/i18n/alternates.ts` |
+| `og:url`, `og:image` 1200×630, `og:site_name` na każdej stronie | ✅ 95/95 (iteracja 3: dołączone archiwum bloga i tagi, wcześniej karta bez obrazka) | `buildMetadata` + pliki `opengraph-image.tsx` |
+| Karty OG wpisów z tytułem (zamiast zdjęć WebP/SVG) | ✅ prerenderowane | `postOgImage` w `src/lib/og.tsx` |
+| Spis treści wpisu zgodny z kotwicami artykułu | ✅ ten sam drzewo hast (było: 4 wpisy z martwymi linkami) | `src/lib/mdx.ts` |
+| Kontrola gotowego HTML przy każdym buildzie CI | ✅ `pnpm check:build` (OG, kotwice, `lang`, canonical, `robots`, JSON-LD) | `scripts/check-build.mjs` |
 | Link do RSS w `<head>` | ✅ na każdej stronie (było: 1 z 232) | `buildMetadata` |
 | Treść w `<main>` bez JavaScriptu | ✅ (było: ukryta za stopką przez `loading.tsx`) | — |
 | Wszystkie strony statyczne | ✅ 0 tras dynamicznych | paginacja `/blog/strona/N` |
-| JSON-LD: jedna encja `Person` z `@id` + `WebSite`, `BlogPosting`, `ProfilePage`, `ProfessionalService`, `CollectionPage`, `BreadcrumbList` | ✅ 0 błędów parsowania | `src/lib/schema.ts` |
+| JSON-LD: jedna encja `Person` z `@id` i stałym `url` + `WebSite`, `BlogPosting`, `Blog` (`/blog`), `ProfilePage`, `ContactPage`, `CollectionPage` (portfolio, kategorie, tagi), `BreadcrumbList` | ✅ 0 błędów parsowania | `src/lib/schema.ts` |
+| Mapa strony: archiwum bloga, `lastmod` z dat wpisów (bez daty builda), bez `priority`/`changefreq` | ✅ | `src/app/sitemap.ts` |
 | `max-image-preview:large` (Google Discover) | ✅ | `rootMetadata` w `src/i18n/metadata.ts` |
 | Tagi `noindex, follow`, poza sitemapą | ✅ | `tagMetadata` |
 | Kategorie z 1 wpisem `noindex`, poza sitemapą | ✅ automatycznie (`MIN_POSTS_TO_INDEX_CATEGORY = 2`) | `categoryMetadata`, `sitemap.ts` |
@@ -32,6 +35,7 @@ Stan na: **3 listopada 2026** (po iteracji 2 — [DZIENNIK.md](DZIENNIK.md)).
 | Język wersji angielskiej `en-GB` / `og:locale` `en_GB` (copy jest brytyjskie) | ✅ | `INTL_LOCALE`, `OG_LOCALE` |
 | Poprawna polska odmiana liczebników (także na kartach OG) | ✅ `Intl.PluralRules` | `src/i18n/format.ts` |
 | `rel=author` → strona „O mnie” | ✅ | `rootMetadata` |
+| Strona 404: własny tytuł, jeden `robots` | ✅ (angielska 404 dla `/en/*` — backlog P3) | `global-not-found.tsx`, `not-found.tsx` |
 | Weryfikacja Google Search Console / Bing | ❌ **do zrobienia** (kod gotowy: `GOOGLE_SITE_VERIFICATION`, `BING_SITE_VERIFICATION` albo rekord TXT) | — |
 | LinkedIn w `sameAs` | ❌ **do zrobienia** (`NEXT_PUBLIC_LINKEDIN_URL`) | `src/lib/site.ts` |
 

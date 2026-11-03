@@ -1,4 +1,4 @@
-# Plan działania — od 2 listopada 2026 (aktualizacja 3 listopada, iteracja 2)
+# Plan działania — od 2 listopada 2026 (aktualizacja 3 listopada, iteracja 3)
 
 Jedyna lista rzeczy do zrobienia. Diagnoza i uzasadnienia: [AUDYT-2026-11.md](AUDYT-2026-11.md),
 co już zrobiono: [DZIENNIK.md](DZIENNIK.md).
@@ -14,7 +14,8 @@ Odhaczaj tutaj (`[x]`), żeby plan nie rozjechał się z rzeczywistością jak t
 1. **Push na `main` = natychmiastowe wdrożenie na produkcję.** Dlatego pracuj na gałęzi:
    `git switch -c nazwa` → push → Vercel buduje **podgląd** (Preview) → GitHub Actions
    sprawdza treść, lint, typy, build i podatności → dopiero wtedy merge do `main`.
-2. Przed każdym commitem: `pnpm check` (treść + formatowanie + lint + build). Sam wpis: `pnpm check:content`.
+2. Przed każdym commitem: `pnpm check` (treść + formatowanie + lint + build + kontrola HTML
+   `check:build`). Sam wpis: `pnpm check:content`.
 3. Zmiany wyglądu zaczynamy w `/design-system`, nie na stronie głównej. I inicjujemy go później na przykładowe strony typu /page-test
    → **od iteracji 2 tym miejscem jest piaskownica `/demo`** (demo „Precyzja”, specimen
    `/demo/precyzja/system`; podstrony testowe trafią do `/demo/podstrony/*`). Na produkcji jej nie ma.
@@ -24,56 +25,29 @@ Odhaczaj tutaj (`[x]`), żeby plan nie rozjechał się z rzeczywistością jak t
 
 ---
 
-## Dzień 0 — wdrożenie tej rundy (ok. 1 h)
+## Dzień 0 — wdrożenie (zrobione 3.11.2026, iteracja 3) i to, co zostało Tobie
 
-- [ ] **1. Przejrzyj zmiany.** `git log --oneline main..audyt-2026-11` (iteracja 1 i 2),
-      [DZIENNIK.md](DZIENNIK.md) i ten katalog `docs/`. Obejrzyj `/demo` lokalnie (`pnpm dev`).
-      Przeczytaj politykę prywatności: `src/i18n/content/legal.ts` (szczególnie okres
-      przechowywania — 12 miesięcy to moja propozycja).
-- [ ] **2. Ustawienia projektu w Vercelu** (Settings):
-      - *Build and Deployment* → wyłącz nadpisania **Install Command** i **Build Command**
-        (dziś `npm install` / `npm run build`). `vercel.json` i tak ma pierwszeństwo,
-        ale panel nie powinien mówić czego innego niż repozytorium.
-      - Region **fra1** i **Fluid Compute** ustawia od teraz `vercel.json` (wchodzi w życie
-        z pierwszym wdrożeniem tej gałęzi). W panelu nic nie trzeba zmieniać — jeśli chcesz,
-        ustaw to samo w *Functions*, żeby panel nie mówił czego innego niż repozytorium.
-      - *Environment Variables* → `NEXT_PUBLIC_SITE_URL` = `https://www.zeprzalka.com`
-        albo usuń (wartość domyślna jest poprawna). Resztę zmiennych uporządkuj według
-        `docs/prywatne/BEZPIECZENSTWO.md`.
-- [ ] **3. Podgląd przed produkcją:**
+- [x] **[Kod]** Ustawienia projektu w Vercelu zgodne z repozytorium (Node 24, bez nadpisań
+      `npm`, fra1, Fluid, Skew Protection), sekrety SMTP jako *Sensitive* tylko w Production,
+      usunięta `DATABASE_URL`, przekierowanie `zeprzalka-web.vercel.app`, `zeprzalka-test` za logowaniem.
+- [x] **[Kod]** Push gałęzi, podgląd (log: `pnpm install --frozen-lockfile`, Next.js 16.4.4),
+      CI na GitHubie zielone, **wdrożenie na produkcję** (`0f901a7`).
+- [x] **[Kod]** Weryfikacja produkcji: Next 16.4.4 w publicznym JS, `/blog` z CDN (HIT),
+      `/demo` = 404, karty OG 95/95, czcionki `immutable`, Lighthouse desktop 100 × 4.
+- [x] **[Kod]** GitHub: opis i tematy, Dependabot, ruleset na `main`, stare gałęzie usunięte.
+- [ ] **[Ty] Zatwierdź regułę zapory** (przygotowana jako szkic, CLI wymaga człowieka):
       ```bash
-      git push -u origin audyt-2026-11
-      git push origin warianty-strony-glownej-2026-08   # tag z kodem odrzuconych wariantów
+      vercel firewall diff --scope zeprzalka --project zeprzalka      # co się zmieni
+      vercel firewall publish --scope zeprzalka --project zeprzalka --confirm-name zeprzalka
       ```
-      Vercel zbuduje podgląd (z piaskownicą `/demo` — obejrzysz ją pod adresem podglądu),
-      GitHub Actions uruchomi CI i strażnika strony głównej. Jeśli push zostanie odrzucony
-      z powodu `.github/workflows`, Twój token potrzebuje uprawnienia `workflow`
-      (albo użyj `gh auth login`).
-- [ ] **4. Sprawdź log buildu podglądu:** ma być `Running "install" command: pnpm install
-      --frozen-lockfile` i `Next.js 16.4.4`. Przejdź po podglądzie: strona główna, wpis,
-      `/blog/strona/2`, `/polityka-prywatnosci`, formularz (bez wysyłania), `/demo/precyzja`.
-      Na produkcji po wdrożeniu `/demo` ma zwracać 404.
-- [ ] **5. Wdrożenie:**
-      ```bash
-      git switch main && git merge --ff-only audyt-2026-11 && git push origin main
-      ```
-      Pierwszy deploy po zmianie ustawień: w Vercelu *Redeploy* z odznaczonym
-      „Use existing Build Cache”.
-- [ ] **6. Weryfikacja na produkcji:**
-      ```bash
-      # wersja Next w publicznym JS (oczekiwane 16.4.4)
-      for j in $(curl -s https://www.zeprzalka.com/ | grep -oE '/_next/static/[^"]+\.js' | sort -u); do
-        curl -s "https://www.zeprzalka.com$j" | grep -oE 'version:"16\.[0-9.]+"' && break; done
-      # blog statyczny (oczekiwane: x-vercel-cache HIT po drugim wywołaniu, bez no-store)
-      curl -sI https://www.zeprzalka.com/blog | grep -iE 'cache'
-      ```
-      Plus: PageSpeed Insights dla `/` i jednego wpisu, LinkedIn Post Inspector dla `/uslugi`,
-      **jedna prawdziwa wiadomość z formularza** (sprawdź skrzynkę i odpowiedź na reply-to).
-- [ ] **7. Sprzątanie gałęzi:**
-      ```bash
-      git push origin --delete vercel/react-flight-rce-vulnerability-t4208i vercel/react-server-components-cve-vu-06xirk
-      git branch -d audyt-2026-11
-      ```
+- [ ] **[Ty] Jedna prawdziwa wiadomość z formularza** na produkcji (skrzynka + odpowiedź na reply-to)
+      i LinkedIn Post Inspector dla `/uslugi`.
+- [ ] **[Ty] Baza Neon** z dawnej `DATABASE_URL`: usuń albo zmień hasło (szczegóły w
+      `docs/prywatne/BEZPIECZENSTWO.md`).
+- [ ] **[Ty] Przegląd zmian:** [DZIENNIK.md](DZIENNIK.md) (iteracje 1–3) i polityka
+      prywatności (`src/i18n/content/legal.ts`, okres przechowywania — 12 miesięcy to propozycja).
+- [ ] **[Ty]** PR-y Dependabota #1–#3 (zod, nodemailer, next na starym `main`) są zastąpione
+      przez wdrożenie — zamknij je, jeśli nie zamkną się same.
 
 ## Dzień 1
 
@@ -81,9 +55,12 @@ Odhaczaj tutaj (`[x]`), żeby plan nie rozjechał się z rzeczywistością jak t
   - [x] **[Kod]** Audyt UX/UI produkcji (3,9/10), nowy kierunek „Precyzja”, piaskownica `/demo`
         z dawnymi wariantami, demo strony głównej `/demo/precyzja` i specimen systemu —
         [KIERUNEK-WIZUALNY.md](KIERUNEK-WIZUALNY.md) (iteracja 2, 3.11.2026).
-  - [ ] **[Ty] Etap A:** obejrzyj demo na telefonie i komputerze, w obu motywach; przy każdej
-        sekcji „zostaje / zmień / wyrzuć” + materiały z KIERUNEK-WIZUALNY.md §6
-        (referencje, antyreferencje, zdjęcia, surowce do case studies).
+  - [x] **[Kod]** Iteracja 3 (3.11.2026): „Precyzja” odrzucona; system „Forma” (miękki
+        minimalizm Vercel/shadcn, `/demo/forma`) i trzy koncepcje strony głównej:
+        `/demo/zywy-interfejs` (rekomendacja), `/demo/indeks`, `/demo/talia`; spis `/demo`
+        jako prezentacja — [KIERUNEK-WIZUALNY.md](KIERUNEK-WIZUALNY.md).
+  - [ ] **[Ty] Etap A:** wybierz szkielet i zapożyczenia; przy każdej sekcji „zostaje / zmień /
+        wyrzuć” + materiały z KIERUNEK-WIZUALNY.md §8 (teksty, referencje, zdjęcia, case studies).
   - [ ] **[Kod] Etap B–D** po Twojej decyzji: system w serwisie, podstrony testowe w `/demo`,
         wdrożenie podstron (KIERUNEK-WIZUALNY.md §4). **[Zgoda] Etap E:** strona główna.
 
@@ -165,15 +142,19 @@ Uporządkowane według zysku. Pozycje [Zgoda] czekają na decyzję o stronie gł
 | P1 [Zgoda] | Pauza wideo i stałe podpisy kafli portfolio (WCAG 2.2.2) | `PortfolioCard.tsx`, `Hero.tsx` |
 | P2 | Szablon wpisu: szerokość kolumny, typografia, spis treści na mobile, podpis zdjęcia, H1 | `PostView.tsx` |
 | P2 | Hub „Akademia” z lekcjami kursu (adresy wpisów bez zmian) | nowa trasa |
-| P2 | Wstępy do kategorii (60–120 słów, link do usługi) | `blog-map.ts`, `CategoryView.tsx` |
+| P2 | Wstępy do kategorii (60–120 słów, link do usługi) | `blog-map.ts`, `TaxonomyView.tsx` |
 | P2 | BotID dla formularza (po regule WAF) | `next.config.ts`, `contact.ts` |
 | P2 | Menu mobilne jako „plansza” (e-mail, CTA, EN/PL) | `MobileNav.tsx` |
 | P2 | `llms.txt` generowany z `ROUTES`, usług i wpisów | nowa trasa |
-| P3 | Angielska 404 dla `/en/*` (statyczna `global-not-found` nie zna adresu; trasa catch-all byłaby dynamiczna) | `global-not-found.tsx` |
+| P3 | Angielska 404 dla `/en/*` — wymaga trasy renderowanej na żądanie (sprawdzone w iteracji 3: statyczny catch-all z `dynamicParams = false` i tak kończy się globalną 404) | `global-not-found.tsx` |
+| P1 [Zgoda] | Wideo: przekodowanie klipów portfolio do ~600 kb/s (−2,9 MB na `/`, −10 MB na `/portfolio`), mobilna wersja hero (−0,85 MB) — zmienia klatki | `public/*.mp4`, `HeroVideo.tsx` |
+| P2 [Zgoda] | Treść zwiniętych sekcji akordeonu kompetencji w HTML (+55 słów dla SEO; zmienia animację zamykania) | `ui/accordion.tsx`, `Skills.tsx` |
+| P2 [Ty] | Opisy meta 12 indeksowanych kategorii (dziś 24–37 znaków) | `src/i18n/content/meta.ts`, `blog-map.ts` |
+| P2 | CSS typografii wpisów tylko na wpisach (ok. −3,5 KB na pozostałych stronach) | `globals.css`, `PostView.tsx` |
 | P3 [Zgoda] | Pole wiadomości jak pozostałe pola (tło w ciemnym motywie, 16 px na telefonie — dziś iOS powiększa stronę) | `ContactForm.tsx` |
 | P3 | `typedRoutes` (literówki w adresach łapane przy kompilacji) | `next.config.ts`, `ROUTES` |
-| P3 [Zgoda] | Hero: poster przez `next/image` zamiast `preload()` (dziś prefetch strony głównej pobiera 28 KB postera na każdej podstronie), wersja wideo dla telefonów | `HomeView.tsx`, `Hero.tsx` |
-| P3 [Zgoda] | Dług z `/design-system`: 5 rozmiarów CTA → 2, odstępy `HomeSection` → jedna skala, `bg-green-500` → token (rozwiąże go system „Precyzja”) | strona główna i podstrony |
+| ~~P3~~ | ~~Poster hero pobierany na każdej podstronie~~ — naprawione w iteracji 3 (`preload` w `HeroVideo`, −28 KB na podstronach) | — |
+| P3 [Zgoda] | Dług z `/design-system`: 5 rozmiarów CTA → 2, odstępy `HomeSection` → jedna skala, `bg-green-500` → token (rozwiąże go system „Forma”) | strona główna i podstrony |
 | P3 | Lucide 0.544 → 1.x, TypeScript 7, ESLint 10 (major — osobno, z testem) | `package.json` |
 
 ---

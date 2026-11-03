@@ -21,8 +21,10 @@ teksty i co trzeba zrobić, żeby dodać nową stronę albo nowy wpis.
 
 **Polskie adresy nie zmieniły się ani o znak.** Są zaindeksowane, więc polska
 wersja została w katalogu głównym, a angielska stanęła obok pod `/en`.
-Mapa adresów siedzi w jednym miejscu: `ROUTES` (strony) i `PATH_BASES` (prefiksy bez
-własnej strony: archiwum bloga, tagi) w `src/i18n/config.ts`.
+Mapa adresów siedzi w jednym miejscu: `ROUTES` (strony), `PATH_BASES` (prefiksy bez
+własnej strony: archiwum bloga, tagi) i `FEEDS` (kanały RSS) w `src/i18n/config.ts`.
+„Ta sama strona w drugim języku” (hreflang, mapa strony, przełącznik języka) liczy
+jeden moduł: `src/i18n/alternates.ts`.
 
 ## Jedno źródło prawdy dla tekstów
 
@@ -74,7 +76,7 @@ Typ `Localized<T> = Record<Locale, T>` wymusza obie wersje.
    `pageOgImage(locale, "klucz")` z `src/lib/og.tsx` (wzór: `src/app/(pl)/uslugi/opengraph-image.tsx`),
    teksty w `meta.ts` → `og.cards`. Bez niego strona nie ma obrazka karty — Next nie
    dziedziczy go, gdy strona podaje własne `openGraph`.
-6. Dopisz stronę do `src/app/sitemap.ts`, a jeśli ma być w menu — klucz do `MAIN_NAV`
+6. Dopisz klucz do `STATIC_PAGES` w `src/app/sitemap.ts`, a jeśli ma być w menu — do `MAIN_NAV`
    w `src/i18n/navigation.ts`.
 
 Trasy bloga z parametrem (wpis, kategoria, tag, archiwum) nie mają własnej logiki:
@@ -111,8 +113,9 @@ Wymaga to flagi `experimental.globalNotFound` w `next.config.ts`.
 ## SEO
 
 - `hreflang` na każdej stronie, z `x-default` wskazującym wersję polską —
-  buduje je `alternatesFor()` w `src/i18n/config.ts`, wołane przez
-  `buildMetadata`, więc nie da się o nim zapomnieć w JSX-ie.
+  buduje je `hreflangMap()` z `src/i18n/alternates.ts`, wołane przez
+  `buildMetadata`, więc nie da się o nim zapomnieć w JSX-ie. Te same pary dostaje
+  mapa strony i przełącznik języka (który zna też liczbę stron archiwum w obu językach).
 - Mapa strony wymienia obie wersje i powtarza te same pary (z `x-default`)
   jako `alternates`.
 - Kolejne strony archiwum bloga mają `hreflang` tylko wtedy, gdy druga wersja

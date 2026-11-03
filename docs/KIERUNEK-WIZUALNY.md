@@ -1,177 +1,152 @@
-# Kierunek wizualny: „Precyzja”
+# Kierunek wizualny: system „Forma” i trzy koncepcje strony głównej
 
-Stan na 3 listopada 2026 (iteracja 2). Zastępuje propozycję „Studio nocą” z 2 listopada,
-którą odrzuciłeś: montaż i film odkładamy na bok. **Wygląd strony głównej zmienia się
-wyłącznie za Twoją zgodą.** Nowe rzeczy rodzą się w piaskownicy `/demo`, a dopiero
-potem przechodzą do serwisu.
+Stan na 3 listopada 2026 (iteracja 3). Zastępuje kierunek „Precyzja” z iteracji 2.
+**Wygląd strony głównej zmienia się wyłącznie za Twoją zgodą** — wszystko poniżej żyje
+w piaskownicy `/demo` (na produkcji jej nie ma).
 
-Raporty źródłowe (lokalnie, w `.gitignore`): `docs/prywatne/raporty-2026-11/iteracja-2/`
-`ux-ui.md` (audyt, 138 zrzutów) i `inspiracje.md` (25 wzorców, techniki, narzędzia, kroje).
+Raporty źródłowe (lokalnie, w `.gitignore`), `docs/prywatne/raporty-2026-11/iteracja-3/`:
+`design-referencje.md` (20 zweryfikowanych referencji, zmierzone style, 29 mikrointerakcji,
+klisze 2026) i `rzemioslo-ruchu.md` (czasy, krzywe, sprężyny, promienie, 12 przepisów,
+dostępność i wydajność ruchu).
 
 ---
 
-## 1. Diagnoza obecnego wyglądu: 3,9/10
+## 1. Co poszło nie tak z „Precyzją” i jak to przełożyłem
 
-Interfejs jest już czarno-biały, więc nowy kierunek to ewolucja, a nie budowa od zera.
-Psuje go brak systemu i brak kierunku obrazu.
+„Chirurgiczną i architektoniczną precyzję” zrozumiałem jako **styl** (rysunek techniczny:
+linie włosowe, linijki, wymiary, ostre narożniki). Chodziło Ci o **jakość wykonania**:
+pixel-perfect, dopracowane co do detalu, w minimalizmie rodem z Vercel i shadcn —
+z mikrointerakcjami i komponentami, które robią wrażenie. Przekład na zasady:
 
-1. **Czterech kompetencji nie widać.** Strona główna pokazuje inne trzy (projektowanie,
-   development, komunikacja wizualna). AI jest tagiem, a wykładów i Nagrody Rektora w HTML
-   strony głównej nie ma wcale.
-2. **Pierwszy ekran nie przedstawia autora.** H1 mógłby należeć do każdego software house'u,
-   a wideo to pastelowy render cudzej strony.
-3. **Kolor pochodzi z obrazów, nie z systemu.** Render w hero, białe mockupy, pomarańczowo-turkusowe
-   okładki AI, pięć identycznych tęczowych logo Makerkit.
-4. **Prace są anonimowe.** Podpis kafla pojawia się dopiero po najechaniu (na telefonie nigdy),
-   kursor-łapka nie prowadzi nigdzie, nie ma żadnego case study.
-5. **Nie ma systemu typografii:** 35 stylów tekstu, 11 stopni, 4 grubości, 7 wartości trackingu.
-   Geist Mono występuje tylko w blokach kodu.
-6. **Nie ma języka ruchu.** Jedyna animacja to pulsująca zielona kropka. `transition: all`
-   stoi na 29 elementach, a hover przycisku CTA jest niewidoczny.
-7. **Stany nie są zaprojektowane:** fokus na CTA niewidoczny, błędy formularza jako natywne dymki.
-8. Cztery osie wyrównania na podstronach, trzy skale odstępów sekcji, przyciski 48/40/36/32 px.
+| Twoje słowa | Zasada w „Formie” |
+| --- | --- |
+| minimalizm Vercel / shadcn | płótno `#fafafa` + białe powierzchnie, krawędź jako cień-pierścień 8% czerni, Geist w dwóch tonach (atrament + szarość), dużo powietrza |
+| odchodzimy od kanciastego | skala promieni 6 → 32 px rośnie z elementem, zagnieżdżenia koncentryczne (zewnętrzny = wewnętrzny + odstęp), pigułki dla akcji |
+| precyzja = perfect pixel | całe piksele w tokenach, `tabular-nums` w liczbach, polska typografia (twarde spacje), zaprojektowane stany hover/focus/active, oba motywy |
+| mikrointerakcje, wow | ruch krótki i celowy (UI ≤ 300 ms, krzywa `0.23, 1, 0.32, 1`), jeden zaaranżowany moment na stronę zamiast efektów wszędzie |
+| mobile first, niesamowity desktop | projektowane od 390 px; gesty dotykowe tam, gdzie mają sens; desktop wykorzystuje kursor (podgląd, światło, rozkładanie) |
+| czerń, biel, szarość | monochrom; jedyny kolor semantyczny to zielona kropka „dostępny”; kolor należy do realizacji (wideo, plakaty) |
 
-**Do zachowania:** neutralna paleta bez odcienia i linie 1 px zamiast cieni (80% kierunku już
-jest w kodzie), układ 3/9 z przyklejoną kolumną, numeracja kompetencji, katalog `/design-system`,
-transparentny cennik.
+## 2. System „Forma”
 
-## 2. Zasady „Precyzji”
+Wspólny fundament trzech koncepcji — specimen: **`/demo/forma`**. Źródło prawdy:
+`src/components/demo/forma/theme.css` (tokeny) i prymitywy obok.
 
-Twoje słowa: *chirurgiczna i architektoniczna precyzja z designerskim sznytem*.
-Czarny, biały, szarości. Jeden kolor może przyjść później.
+| Warstwa | Wartości |
+| --- | --- |
+| Kolor (jasny / ciemny) | płótno `oklch(0.985)` / `oklch(0.145)`, powierzchnia `1` / `0.18`, wypełnienie `0.967` / `0.215`, atrament `0.205` / `0.975`, drugi ton `0.44` / `0.77`, trzeci `0.53` / `0.66`, krawędź 8% / 9% |
+| Promienie | 6 · 8 · 10 · 12 · 16 · 20 · 24 · 32 px + pigułka |
+| Cienie | pierścień, karta (pierścień + 2 warstwy miękkie), pop, float; w ciemnym motywie jasny pierścień + światło górnej krawędzi |
+| Pismo | Geist: display 40 → 76 px (−0,045 em, interlinia 1,02), H2 30 → 48 px, H3 20 px, lead 18 → 22 px, body 16/26, small 14, micro 12. Geist Mono tylko dla kodu i wartości |
+| Ruch | wejście/wyjście `cubic-bezier(0.23,1,0.32,1)`, ruch po ekranie `(0.77,0,0.175,1)`, szuflada `(0.32,0.72,0,1)`, sprężyna bez odbicia jako `linear()`; nacisk `scale(0.97)` w 160 ms |
+| Układ | kontener 1200 px, marginesy 16 → 32 px, rytm sekcji 80 → 128 px |
+| Prymitywy | Button (3 warianty × 32/40/48 px), Chip + LiveDot + Kbd, CopyButton (morf ikony, stała szerokość), ThemeSwitch (kołowe odsłonięcie View Transitions), Count (Number Flow, „99,28%”), Reveal (wejście słów w CSS, dostępne dla czytników) |
 
-1. **Precyzja to struktura, nie dekoracja.** Elementy rysunku technicznego (wymiary, siatka,
-   podziałka) pojawiają się tylko tam, gdzie niosą **prawdziwą informację**.
-2. **Dwa głosy pisma.** Geist mówi, Geist Mono mierzy. Mono wyłącznie dla danych: wymiary,
-   daty, czasy, współrzędne w próbkach, kod.
-3. **Linia włosowa zamiast kart i cieni.** Kąty proste. Sekcje i rejestry rysuje linia 1 px.
-4. **Kolor należy do pracy, nie do interfejsu.** Obrazy w listach są czarno-białe i odzyskują
-   kolor przy wskazaniu. Akcent, jeśli wróci, to tylko jako „redline” (pomiar, fokus, zaznaczenie)
-   w jednym tokenie `--pz-signal`.
-5. **Ruch jest krótki i zdecydowany.** Elementy „wskakują” na miejsce, linie się rysują, liczby
-   się odliczają. Nic nie pływa. Przy „ogranicz ruch” wszystko stoi.
-6. **Interakcja nagradza ciekawość.** Rzeczy do dotknięcia, które pokazują warsztat:
-   uchwyty krzywej, pomiar elementów, generowanie tokenów.
-7. **Polska typografia jako podpis rzemiosła.** Twarde spacje po jednoliterowych spójnikach,
-   półpauzy, „cudzysłowy”.
+Dostępność i wydajność są wbudowane w system: `prefers-reduced-motion` (stan końcowy bez
+ruchu), fokus 2 px atramentu z odstępem, cele dotyku ≥ 44 px, wejścia nad zgięciem w CSS
+(nie czekają na JavaScript), wideo tylko w kadrze i z plakatem, Motion tylko tam, gdzie
+trzeba gestu albo animacji układu.
 
-### Czego unikamy (klisze, także stron generowanych przez AI)
+## 3. Trzy koncepcje
 
-Według oficjalnego skilla Anthropic `frontend-design` i researchu: numeracja 01/02/03 dla treści,
-które nie są sekwencją; etykiety kapitalikami w mono nad każdym nagłówkiem; metadane łączone
-kropką w środku (`A · B · C`); strzałka `→` doklejona do linków; prawie czarne tło z jednym
-jaskrawym akcentem; „Linear look” (poświaty, gradienty); magnetyczne przyciski i okrągłe
-„Get in touch”; ekran ładowania z licznikiem procentów; smooth scroll przejmujący przewijanie;
-display-groteski (Bricolage, Archivo) i ciepły papier z szeryfem.
+Wszystkie na tych samych treściach, które serwis już ma (nowe są tylko krótkie etykiety
+kontrolek). Różnią się tym, co mówią pierwsze.
 
-## 3. Demo: `/demo/precyzja`
-
-Strona główna w nowym języku, zbudowana **wyłącznie z treści, które serwis już ma**
-(`src/i18n`, `src/lib`). Nowe są tylko podpisy próbek i etykiety liczb. Oglądasz lokalnie
-(`pnpm dev` → http://localhost:3000/demo/precyzja) albo na podglądzie gałęzi na Vercelu.
-Na produkcji tego adresu nie ma.
-
-| Sekcja | Co pokazuje | Sygnatura |
-| --- | --- | --- |
-| Hero | H1 jako **zaznaczony obiekt w edytorze**: ramka, 8 uchwytów, etykieta z prawdziwymi wymiarami mierzonymi na żywo („h1 1081 × 346”), po najechaniu parametry kroju | wymiary z prawdziwymi liczbami |
-| Hero, tło | siatka konstrukcyjna widoczna tylko w „świetle” kursora | siatka na żądanie |
-| Hero, liczby | 12+ lat, 30+ klientów, 2016–2026 wykłady, 99,28% — liczniki mechaniczne (CSS) | dane z życiorysu |
-| Kompetencje | 4 obszary zamiast 3: **projektowanie** (krzywa Béziera do przeciągania: mysz, dotyk, klawiatura), **kod** (komponent pisany na żywo, kolorowanie składni wagą, nie barwą, wynik builda), **AI** (zdanie z hero generowane token po tokenie z prawdopodobieństwami), **wykłady** (skala 0–100 z lupą 99–100 dla 99,28%) | interaktywne objaśnienia — Twój wyróżnik jako wykładowcy |
-| Portfolio | rejestr: projekt, rodzaj pracy, dziedzina; kadr podąża za kursorem, czerń i biel → kolor przy wskazaniu, reszta wierszy przygasa | kolor należy do pracy |
-| Blog | rejestr wpisów: data, tytuł, kategoria, czas lektury | — |
-| Kontakt | formularz na samej linii bazowej, e-mail kopiowany jednym kliknięciem | — |
-| Stopka | fakty liczone przy buildzie: liczba artykułów i realizacji, data ostatniego wpisu | prawdziwe dane zamiast ozdób |
-| Nagłówek | miarka z podziałką jako wskaźnik lektury, czas w Warszawie, przełącznik „Wymiary” | miarka |
-| Tryb „Wymiary” | siatka 12 kolumn i pomiar dowolnego elementu pod kursorem (znacznik, szerokość × wysokość, stopień/interlinia), Esc zamyka | easter egg dla ludzi z branży |
-
-Techniczne: zero nowych zależności, wejścia i ujawnianie przez CSS (`animation-timeline: view()`
-działa od października 2026 we wszystkich trzech silnikach), JS tylko tam, gdzie mierzy
-albo reaguje na kursor; pełna obsługa `prefers-reduced-motion`; oba motywy; telefon.
-
-**Specimen systemu: `/demo/precyzja/system`** — kolor (8 tokenów, oba motywy), 7 stopni pisma,
-8 odstępów, siatka, 4 czasy ruchu, przyciski, link, pole. Źródło prawdy to jeden plik
-`src/components/demo/precyzja/precyzja.css` (pięć warstw: tokeny, baza, prymitywy, wzorce, ruch).
-
-Dawne warianty z sierpnia leżą obok: `/demo/main-secondary`, `/demo/main-third`, `/demo/main-fourth`.
-
-## 4. Plan prac nad UX/UI
-
-| Etap | Co | Wynik | Kto |
+| | **Żywy interfejs** — rekomendacja | **Indeks** | **Talia** |
 | --- | --- | --- | --- |
-| **A. Decyzja na demie** | Oglądasz `/demo/precyzja` na telefonie i komputerze, w obu motywach. Zapisujesz: co zostaje, co wylatuje, czego brakuje. Najlepiej w formie z §6 | „tak / nie / zmień” dla każdej sygnatury | Ty |
-| **B. System w serwisie** | Tokeny „Precyzji” jako druga warstwa w `globals.css` (bez ruszania obecnych), komponenty-prymitywy w `src/components/ui/`, katalog `/design-system` przepisany na nowy system | DS v2 w kodzie, katalog pokazuje nowe | Kod |
-| **C. Podstrony testowe** | Twoje „/page-test”: `/demo/podstrony/*` — wpis, `/uslugi`, `/o-mnie`, `/portfolio` w nowym języku, na prawdziwych danych | wzorce stron do akceptacji | Kod |
-| **D. Wdrożenie podstron** | Podstrony przechodzą do serwisu (strona główna nietknięta, strażnik `pnpm visual` pilnuje) | nowy wygląd serwisu poza główną | Kod |
-| **E. Strona główna** | Za Twoją zgodą, razem z nowymi tekstami (rola, 4 kompetencje, liczby) | nowa strona główna | Ty + kod |
-| **F. Case studies** | Szablon `/portfolio/[slug]` w języku „Precyzji”: para „zdjęcie + rysunek” (zrzut UI obok schematu), przejście kafel → case przez `<ViewTransition>` | 3 case studies | Ty + kod |
+| Adres | `/demo/zywy-interfejs` | `/demo/indeks` | `/demo/talia` |
+| Mówi | kompetencjami | rzemiosłem | pracą |
+| Idea | każda z czterech kompetencji udowadnia się działającym mini-interfejsem | jedna precyzyjna kolumna, każdy wiersz jest interaktywnym obiektem | realizacje jako talia miękkich kart, którą się rozkłada, przesuwa i filtruje |
+| Pierwszy ekran | wyśrodkowany nagłówek, który **czernieje pod kursorem** („przekształcam”), rząd liczb | zdanie-bio z chipami otwierającymi fakty, paleta ⌘K | nagłówek nad **wachlarzem 5 kart z wideo** (desktop) / stosem do przesuwania (telefon) |
+| Wow | inspektor promieni koncentrycznych, log builda z prawdziwymi liczbami, odpowiedź AI strumieniem, sala z dryfującymi kursorami | karta wideo płynąca za kursorem obok listy realizacji i „wlatująca” w odtwarzacz (View Transition) | karta wyjęta z talii przechodzi w podgląd; filtry tasują karty |
+| Telefon | kafle jeden pod drugim, wideo gra w kadrze | lista z rozwijanym wideo, paleta jako szuflada | stos z gestem (prędkość, rzut), pigułka-menu rośnie w panel |
+| Mocne strony | czytelna dla klienta spoza branży, najbliższa obecnej strukturze | najwięcej rzemiosła, najlżejsza i najszybsza | najmocniejsze pierwsze wrażenie, gotowy wzór pod case studies |
+| Ryzyka | cztery mini-interfejsy do utrzymania, najwięcej JS (ładowane w kadrze) | może być „za cicha” dla klienta szukającego efektu; wymaga świetnego tekstu | stoi na jakości kadrów; łatwo przesadzić z zabawą |
 
-Kolejność ma sens: etap A kosztuje Cię godzinę, a rozstrzyga wszystko dalej.
+Spis `/demo` jest napisany jak krótka prezentacja: koncepcje z mocnymi stronami i ryzykami,
+specimen systemu i archiwum odrzuconych kierunków (Precyzja, warianty z sierpnia).
 
-## 5. Narzędzia, które warto dołożyć
+## 4. Rekomendacja
 
-**Do pracy z Claude Code (zestaw minimalny):**
+**„Żywy interfejs” jako szkielet**, z dwoma zapożyczeniami do rozważenia:
+
+1. **sekcja realizacji z „Talii”** na telefonie (stos z gestem to najlepsze doświadczenie
+   mobilne z trzech) i przejście karta → podgląd jako wzór pod przyszłe case studies;
+2. **paleta ⌘K z „Indeksu”** jako ukryta nagroda dla ludzi z branży.
+
+Dlaczego: Twoja przewaga to połączenie czterech rzeczy (projektowanie, kod, AI, wykłady).
+„Żywy interfejs” jako jedyny pokazuje je wszystkie **działaniem** w pierwszych dwóch
+ekranach — klient widzi dowód, projektant widzi rzemiosło. „Indeks” jest piękny, ale
+zakłada czytelnika, który doceni ciszę. „Talia” sprzedaje kadry, nie kompetencje.
+
+## 5. Jak oglądać i oceniać
+
+- Lokalnie: `pnpm dev` → http://localhost:3000/demo.
+- Online: podgląd gałęzi `audyt-2026-11` na Vercelu (projekt `zeprzalka` → Deployments →
+  najnowszy Preview → `/demo`; podglądy są za logowaniem Vercel).
+- Oceniaj na telefonie i na komputerze, w obu motywach (przełącznik w nagłówku każdej
+  koncepcji). Sprawdź: najechanie na szarą część nagłówka i suwaki w kaflu „Projektowanie”
+  (Żywy interfejs), najechanie na wiersz realizacji i ⌘K (Indeks), najechanie na wachlarz
+  i przesuwanie stosu na telefonie (Talia).
+
+## 6. Plan prac nad UX/UI
+
+| Etap | Co | Kto |
+| --- | --- | --- |
+| **A. Wybór** | oglądasz trzy koncepcje; dla każdej sekcji „zostaje / zmień / wyrzuć” + wybór szkieletu i zapożyczeń | Ty |
+| **B. System w serwisie** | „Forma” jako druga warstwa tokenów w `globals.css`, prymitywy do `src/components/ui/`, katalog `/design-system` na nowym systemie | Kod |
+| **C. Podstrony testowe** | `/demo/podstrony/*`: wpis, `/uslugi`, `/o-mnie`, `/portfolio` w „Formie”, na prawdziwych danych | Kod |
+| **D. Wdrożenie podstron** | podstrony do serwisu (strażnik pilnuje, że główna się nie zmienia) | Kod |
+| **E. Strona główna** | za Twoją zgodą, razem z nowymi tekstami (rola, 4 kompetencje, liczby) | Ty + kod |
+| **F. Case studies** | szablon `/portfolio/[slug]` z przejściem karta → case study | Ty + kod |
+
+## 7. Narzędzia i metoda tej iteracji
+
+- Dwa niezależne researche: referencje (ponad 50 stron sfotografowanych w 1440 i 390 px,
+  style mierzone `getComputedStyle`, animacje rejestrowane podczas ładowania, najechania
+  i przewijania) oraz rzemiosło ruchu (Vercel Web Interface Guidelines, skille Emila
+  Kowalskiego, Jakuba Krehela i `frontend-design`, dokumentacja Motion 14, Number Flow,
+  View Transitions w React 19.3 / Next 16.4, wsparcie nowego CSS w przeglądarkach).
+- Koncepcje „Indeks” i „Talia” zbudowali równolegle dwaj agenci-projektanci w osobnych
+  worktree, na wspólnym briefie i systemie; „Żywy interfejs”, system i spis — ja.
+  Każda koncepcja przeszła co najmniej trzy rundy zrzutów (390 / 1440, oba motywy,
+  stany interakcji) i poprawek.
+
+**Warto dołożyć do pracy z Claude Code** (instalacja po Twojej stronie, raz):
 
 | Narzędzie | Po co | Instalacja |
 | --- | --- | --- |
-| skill **frontend-design** (Anthropic) | proces „plan → przegląd względem briefu → budowa → krytyka”, lista klisz AI | `/plugin install frontend-design@claude-plugins-official` |
-| **Chrome DevTools MCP** | pomiar LCP/INP, dostępność, ślad wydajności w prawdziwej przeglądarce | `claude mcp add chrome-devtools --scope user npx chrome-devtools-mcp@latest` |
-| **Playwright MCP** | zrzuty w wielu szerokościach, przejścia ścieżek (uzupełnia `pnpm visual`) | `claude mcp add playwright npx @playwright/mcp@latest` |
-| **Next.js DevTools MCP** | błędy i trasy z serwera dev Next 16 | `claude mcp add next-devtools npx next-devtools-mcp@latest` |
-| skille **emilkowalski/skill** i **jakubkrehel/skills** | rzemiosło ruchu i interfejsu (krzywe, czasy, optyczne wyrównanie) | `npx skills add emilkowalski/skill`, `npx skills add jakubkrehel/skills` |
-| **Figma MCP** | tylko jeśli projektujesz w Figmie — plan Starter daje 6 wywołań miesięcznie, sensownie od miejsca Dev/Full | `claude plugin install figma@claude-plugins-official` |
+| skill **frontend-design** | proces „plan → krytyka → budowa”, lista klisz | `/plugin install frontend-design@claude-plugins-official` |
+| skille Emila Kowalskiego i Jakuba Krehela | rzemiosło ruchu i detalu interfejsu | `npx skills add emilkowalski/skill`, `npx skills add jakubkrehel/skills` |
+| **Chrome DevTools MCP** | ślady wydajności, INP, dostępność w prawdziwej przeglądarce | `claude mcp add chrome-devtools --scope user npx chrome-devtools-mcp@latest` |
+| **Playwright MCP** | zrzuty i ścieżki interakcji bez pisania skryptów | `claude mcp add playwright npx @playwright/mcp@latest` |
+| **Figma MCP** | tylko jeśli projektujesz w Figmie (sensowne od planu Dev/Full) | `claude plugin install figma@claude-plugins-official` |
 
-**Biblioteki (dopiero gdy CSS nie wystarczy):** Motion 14 w trybie `LazyMotion` (~5 kB) do gestów
-i układu, Number Flow do liczników, `<ViewTransition>` z React 19.3 do przejść między stronami.
-**Niepotrzebne:** GSAP, Lenis, Spline, Unicorn Studio, ciężkie rejestry komponentów
-(21st.dev daje 2 darmowe komponenty dziennie, Aceternity/Magic UI to dziś klisze).
+## 8. Co od Ciebie (żeby kolejna iteracja była „laserowa”)
 
-**Krój:** zostajemy przy Geist + Geist Mono, dopóki układ i siatka nie dowiodą charakteru.
-Jeśli specimen pokaże, że czegoś brakuje: **GT Standard** (Grilli Type, superrodzina z wersjami
-Mono, koncepcyjnie najbliżej „standaryzacji”) na trialu, obok Geist, na tych samych tekstach.
-Darmowa alternatywa: Instrument Sans + Commit Mono.
+- [ ] **Wybór szkieletu** (Żywy interfejs / Indeks / Talia) i zapożyczeń; przy każdej sekcji
+      „zostaje / zmień / wyrzuć” + jedno zdanie dlaczego. Zrzut z zaznaczeniem jest wart więcej niż opis.
+- [ ] 5–10 referencji z jednym konkretnym detalem każda i 3 antyreferencje.
+- [ ] **Teksty** do nowej strony głównej: rola (jedna), cztery kompetencje (po 1 zdaniu),
+      liczby, które chcesz pokazać (dziś „ponad 12+ lat” powtarza „ponad”).
+- [ ] Materiał własny: portret i zdjęcia pracy w jednym świetle, do 3 case studies w surowcach
+      (zrzuty UI 1×/2×, szkice, jedna liczba efektu), lista klientów ze zgodą na nazwę, 3–5 opinii.
+- [ ] Decyzje: krój (zostajemy przy Geist — rekomendacja), kolor akcentu (na razie żaden),
+      mobilna wersja wideo hero i przekodowanie klipów portfolio (−2,9 MB na `/`, zmienia klatki).
 
-**Gdzie szukać inspiracji w tym kierunku:** makingsoftware.com (rysunek techniczny w blogu
-wykładowcy), devouringdetails.com i rauno.me (miarka, akcent jako „redline”), chanhdai.com
-(wymiarowanie na shadcn i Tailwindzie), stripe.dev i oxide.computer (podpisy „FIG.”, prawdziwy
-UI zamiast mockupów), officekgdvs.com (zdjęcie obok planu). Galerie: Siteinspire (Monochrome,
-Typographic, Architecture) zamiast Awwwards; recent.design (dawne godly.website).
-Pełna lista 25 stron z uzasadnieniem: `docs/prywatne/raporty-2026-11/iteracja-2/inspiracje.md`.
-
-## 6. Co od Ciebie (żeby kolejna iteracja była „laserowa”)
-
-**Do etapu A (najpierw):**
-- [ ] Notatki do `/demo/precyzja` i `/demo/precyzja/system`: przy każdej sekcji „zostaje / zmień /
-      wyrzuć” i jedno zdanie dlaczego. Zrzut z zaznaczeniem jest wart więcej niż opis.
-- [ ] 10–15 referencji: URL + **jeden** konkretny detal + dlaczego (np. „miarka przy krawędzi na
-      devouringdetails.com, bo pokazuje postęp bez paska”).
-- [ ] 3–5 antyreferencji z uzasadnieniem — przyspieszają bardziej niż referencje.
-- [ ] Decyzja, gdzie ma być jedno „wow” (404, stopka, intro case study).
-
-**Materiał własny (niezastąpiony):**
-- [ ] Portret i zdjęcia pracy w jednym świetle (ręce przy pracy, tablica z wykładu, szkice),
-      źródła ≥ 3000 px — konwersję do czerni i bieli robi kod.
-- [ ] Do 3 case studies **surowce, nie mockupy**: zrzuty prawdziwego UI w 1× i 2×, szkice,
-      wireframe'y, diagramy przepływu, jedna liczba efektu na projekt.
-- [ ] Lista klientów ze zgodą na użycie nazwy (NDA), 3–5 opinii z imieniem i rolą.
-- [ ] Materiały z wykładów nadające się na interaktywne objaśnienia na blogu.
-
-**Decyzje:** budżet na krój (0 zł / 1–3 tys. zł / więcej), plan w Figmie (jeśli w ogóle),
-kolor akcentu (rekomendacja: na razie żaden).
-
-## 7. Dług wizualny obecnej strony (stan po iteracji 2)
+## 9. Dług wizualny obecnej strony (stan po iteracji 3)
 
 | # | Pozycja | Gdzie | Dotyka głównej |
 | --- | --- | --- | :-: |
-| 1 | Zapętlone wideo bez pauzy (hero, kafle) — WCAG 2.2.2 | `HeroVideo.tsx`, `PortfolioCard.tsx` | tak |
-| 2 | Pięć rozmiarów CTA (48, 40, 36, 32 px i `lg`+`p-6`) | Hero, ContactForm, podstrony | tak |
-| 3 | Surowe `bg-green-500` w `StatusBadge` i komunikacie sukcesu | `StatusBadge.tsx`, `ContactForm.tsx` | tak |
-| 4 | Różne odstępy siatki i `top-22`/`top-24` — dziś jawne w propsach `HomeSection` | `home/*` | tak |
-| 5 | „Karta bez karty” w kontakcie, `-my-6` w kaflu portfolio | `home/Contact.tsx`, `PortfolioCard.tsx` | tak |
-| 6 | Pole wiadomości w formularzu ze starymi stylami (inne tło w ciemnym motywie, 14 px → zoom na iOS) | `ContactForm.tsx` | tak |
-| 7 | Podpisy kafli tylko po najechaniu, kursor-łapka bez akcji | `PortfolioCard.tsx` | tak |
-| 8 | Polski „Title Case” i wiszące spójniki — w demie rozwiązane (`typo()`), w serwisie to zmiana tekstów | copy | częściowo |
-| 9 | `transition-all` na H1 i leadzie hero | `home/Hero.tsx` | tak |
+| 1 | Zapętlone wideo bez pauzy (hero, kafle) — WCAG 2.2.2; poza kadrem kafle już się zatrzymują | `HeroVideo.tsx`, `LazyVideo.tsx` | tak |
+| 2 | Bitrate klipów 1,4–2,4 Mb/s (cel ~600 kb/s), brak lżejszej wersji hero na telefon | `public/*.mp4` | tak |
+| 3 | Pięć rozmiarów CTA, surowe `bg-green-500`, różne odstępy sekcji | `home/*`, `StatusBadge.tsx` | tak |
+| 4 | Pole wiadomości ze starymi stylami (inne tło w ciemnym motywie, 14 px → zoom na iOS) — dziś `Textarea` z jawnymi nadpisaniami | `ContactForm.tsx` | tak |
+| 5 | Podpisy kafli portfolio tylko po najechaniu | `PortfolioCard.tsx` | tak |
+| 6 | Zwinięte sekcje akordeonu kompetencji nie istnieją w HTML (−55 słów dla SEO); naprawa zmienia animację zamykania | `ui/accordion.tsx` | tak |
+| 7 | Polski „Title Case” i wiszące spójniki — w koncepcjach rozwiązane (`typo()`), w serwisie to zmiana tekstów | copy | częściowo |
+| 8 | Listy we wpisach w innym (niebieskawym) odcieniu szarości niż akapity | `PostView.tsx` (`prose`) | nie |
 
-Rozwiązane w iteracji 2 bez zmiany wyglądu głównej: martwa klasa `md:font-semi-bold`,
-cztery kopie nagłówka sekcji (`HomeSection`), dwie kopie odznaki (`StatusBadge`), tokeny
-`sidebar-*` i `chart-*`, fałszywe wartości ciemnej palety w katalogu.
+Rozwiązane w iteracji 3 bez zmiany wyglądu głównej: `transition-all` w hero, `Card`
+z wyłączonym wszystkim w kontakcie (teraz nagłówek h3), `div` w przycisku akordeonu,
+kafle portfolio z plakatem w HTML i pauzą poza kadrem, pasek postępu w CSS.

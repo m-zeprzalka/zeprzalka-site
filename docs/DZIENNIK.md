@@ -10,6 +10,109 @@ w dzienniku nie jest skończona.
 
 ---
 
+## Iteracja 3 — 3 listopada 2026: wdrożenie, GitHub i Vercel, przegląd seniorski, system „Forma”
+
+Zakres wyznaczony przez właściciela: (1) pełne prawo do wdrożenia i porządków na GitHubie
+i Vercelu, podręcznikowa jakość kodu, SEO i wydajność; (2) nowa próba UX/UI — „precyzja”
+jako jakość wykonania, nie styl: minimalizm Vercel/shadcn z mikrointerakcjami, miękkie
+kształty, mobile first, kilka koncepcji strony głównej w izolowanej piaskownicy.
+
+**Gałąź `audyt-2026-11` jest na produkcji** (commit `0f901a7`, wdrożenie READY 3.11 o 20:08).
+
+### Jak pracowaliśmy
+
+- Cztery niezależne przeglądy równolegle: jakość kodu (7 błędów, 20 rzeczy „nie podręcznikowo”,
+  40 drobnych), SEO/wydajność/dostępność buildu (Lighthouse ×3, axe, nagłówki, bajty),
+  referencje projektowe (ponad 50 stron, style zmierzone w przeglądarce) i rzemiosło ruchu.
+  Raporty: `docs/prywatne/raporty-2026-11/iteracja-3/`.
+- Każda zmiana sprawdzona względem buildu bazowego (`fd218ed`): piksele 11 stron × 1440/390 px,
+  style wyliczone treści wpisów (7 wpisów, 2 motywy), metadane 92 adresów, karty OG 95 stron.
+  **Strona główna PL i EN: 0 px różnicy.**
+- Ścieżka CI powtórzona lokalnie w czystym worktree z `VERCEL_ENV=production` przed wdrożeniem.
+- Koncepcje „Indeks” i „Talia” zbudowali dwaj agenci w osobnych worktree (cherry-pick do gałęzi).
+
+### GitHub (przez API)
+
+- Opis, adres strony, tematy; wiki i projekty wyłączone; usuwanie gałęzi po scaleniu.
+- Dependabot: alerty, poprawki bezpieczeństwa i `.github/dependabot.yml` (miesięcznie,
+  zgrupowane, 7 dni karencji); secret scanning i push protection były włączone.
+- Ruleset „main — ochrona produkcji”: zakaz force-push i usuwania `main`.
+- Usunięte dwie stare gałęzie bota Vercela z łatkami CVE (zastąpione Next 16.4.4);
+  wypchnięty tag `warianty-strony-glownej-2026-08`.
+- Pierwsze przebiegi workflowów na GitHubie: CI zielone; strażnik pokazał względem starego
+  `main` tylko znane zmiany z iteracji 1 (RODO pod formularzem, okładki WebP).
+
+### Vercel (API i CLI 65)
+
+- Ustawienia projektu zgodne z repozytorium: Node 24, bez nadpisań `npm install`/`npm run build`,
+  region fra1, Fluid Compute, Skew Protection 12 h.
+- Zmienne: usunięta nieużywana `DATABASE_URL` (baza Neon nadal istnieje po stronie Neon),
+  `SMTP_*` jako *Sensitive* i tylko w Production (podglądy nie znają hasła do poczty).
+- `zeprzalka-web.vercel.app` → 308 na `www.zeprzalka.com` (był duplikatem bez `noindex`);
+  testowy projekt `zeprzalka-test` za logowaniem (był publiczny, z podatnym Next 16.2).
+- Reguła zapory „Formularz — limit wysyłek” (5 POST z `next-action` / 10 min / IP)
+  przygotowana jako szkic — CLI wymaga zatwierdzenia przez człowieka (ROADMAP, Dzień 0).
+
+### Kod: błędy
+
+- Spis treści z tego samego drzewa co artykuł (`src/lib/mdx.ts`) — w 4 wpisach wskazywał
+  nieistniejące kotwice.
+- Archiwum bloga i strony tagów: karta `summary_large_image` bez obrazka → własne karty OG.
+- Fokus wraca na przycisk menu mobilnego; `ScrollToTop` bez nieaktualnej flagi; `div`
+  w przycisku akordeonu; ciemny motyw nie przecieka na wydruk; 404 z własnym tytułem
+  i jednym `robots`; `global-error.tsx`; `error.tsx` z `retry()`.
+
+### Kod: struktura i jakość
+
+- `src/i18n/alternates.ts` — jedno źródło „tej samej strony w drugim języku” (metadane,
+  mapa strony, przełącznik), `src/routes/params.ts` — wspólne parametry stron i kart OG.
+- `TermLink`, `PostGrid` z siatką i `sizes`, `Textarea`, `NavLink` (`aria-current`),
+  `LazyVideo`, `use-in-view`; liczebniki tylko przez `plural()`; treść wpisu: semantyka
+  w `mdx-components.tsx`, wygląd w jednej klasie `prose` (bez martwych i zdublowanych reguł).
+- `import "server-only"` w modułach treści i serwerowych `lib/*`; `LayoutProps` z Next;
+  `node:` w importach; `type: module`; formularz z `aria-invalid`, `useId`, jednym komunikatem.
+- Dane strukturalne: `Blog`, `ContactPage`, `CollectionPage` + okruszki; stały `url` osoby.
+- Mapa strony z archiwum bloga, prawdziwym `lastmod`, bez `priority`/`changefreq`.
+
+### Wydajność (zmierzone)
+
+- `cva` i `tailwind-merge` poza wspólnym JS: −9 KB br na podstronach (klasy liczone na serwerze).
+- Poster hero nie wycieka już do prefetchu podstron: −28 KB i −1 żądanie High na każdej podstronie.
+- Pasek postępu w CSS (`animation-timeline: scroll()`), kafle portfolio: plakat w HTML
+  (LCP `/portfolio` bez czekania na JS), wideo tylko w kadrze, pauza poza nim.
+- Cache: pliki `/_next` z hashem znów `immutable` (reguła mediów ich nie nadpisuje).
+- Produkcja po wdrożeniu (Lighthouse, pojedynczy przebieg): desktop 100/100/100/100 na
+  `/`, wpisie, `/uslugi`, `/portfolio` (LCP 0,5–0,6 s); telefon 86–97 (wydajność),
+  100 (dostępność, dobre praktyki, SEO). Audytor (mediana z 3, kontrolowane warunki):
+  telefon 97–100.
+
+### Narzędzia kontroli
+
+- `pnpm check:build` — kontrola gotowego HTML (karty OG, kotwice spisu treści, `lang`,
+  canonical, `robots`, JSON-LD, `/demo` w buildzie produkcyjnym); na buildzie sprzed
+  poprawek 87 problemów, dziś 0. W CI po buildzie produkcyjnym.
+- CI: akcje przypięte do SHA (najnowsze wersje), audyt przed buildem, `next typegen` przed
+  `tsc`, bez podwójnych przebiegów. Strażnik strony głównej przewija stronę i czeka na
+  pierwsze klatki wideo — porównuje stan po lekturze.
+
+### UX/UI: system „Forma” i trzy koncepcje
+
+Opis i rekomendacja: [KIERUNEK-WIZUALNY.md](KIERUNEK-WIZUALNY.md). W skrócie:
+`/demo/forma` (specimen), `/demo/zywy-interfejs` (rekomendacja), `/demo/indeks`,
+`/demo/talia`; spis `/demo` jako prezentacja z mocnymi stronami i ryzykami.
+
+### Otwarte po iteracji 3
+
+- **[Ty]** zatwierdzenie reguły zapory (jedno polecenie, ROADMAP), baza Neon (usunąć
+  albo zmienić hasło), osobne poświadczenia do wysyłki maili, rekordy poczty.
+- **[Ty]** wybór koncepcji (KIERUNEK-WIZUALNY.md §8) — od niego zależy etap B.
+- **[Zgoda]** wideo: przekodowanie klipów i mobilna wersja hero; treść zwiniętych sekcji
+  akordeonu w HTML; dług wizualny z KIERUNEK-WIZUALNY.md §9.
+- Angielska 404 dla `/en/*` wymaga trasy renderowanej na żądanie (sprawdzone: statyczny
+  catch-all z `dynamicParams = false` i tak kończy się globalną 404) — do decyzji.
+
+---
+
 ## Iteracja 2 — 3 listopada 2026: jakość kodu, piaskownica, kierunek wizualny
 
 Gałąź `audyt-2026-11` (dalej niewdrożona). Zakres wyznaczony przez właściciela:

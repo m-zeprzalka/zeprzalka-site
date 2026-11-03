@@ -12,7 +12,7 @@ Next.js 16 (App Router) + MDX, wersja polska i angielska, deploy na Vercel.
 | [docs/AUDYT-2026-11.md](docs/AUDYT-2026-11.md) | diagnoza serwisu: co jest dobre, co nie, decyzje do podjęcia |
 | [docs/SEO.md](docs/SEO.md) | stan techniczny SEO, reguły treści, plan tematów |
 | [docs/MONETYZACJA.md](docs/MONETYZACJA.md) | pozycjonowanie, oferta i ceny, lejek, pomiar, kanały |
-| [docs/KIERUNEK-WIZUALNY.md](docs/KIERUNEK-WIZUALNY.md) | kierunek „Precyzja”, demo, plan prac UX/UI, narzędzia |
+| [docs/KIERUNEK-WIZUALNY.md](docs/KIERUNEK-WIZUALNY.md) | system „Forma”, trzy koncepcje strony głównej, rekomendacja, plan UX/UI |
 | [docs/DWUJEZYCZNOSC.md](docs/DWUJEZYCZNOSC.md) | gdzie mieszkają teksty PL/EN, jak dodać stronę lub wpis |
 | [AGENTS.md](AGENTS.md) | zasady pracy w repozytorium dla agentów AI (i ludzi) |
 | `docs/prywatne/` | tylko lokalnie (w `.gitignore`): bezpieczeństwo konta, pełne raporty audytu |
@@ -28,11 +28,12 @@ Next.js 16 (App Router) + MDX, wersja polska i angielska, deploy na Vercel.
 | Język | TypeScript (strict) |
 | CSS / UI | Tailwind CSS 4, shadcn/ui + Radix (`radix-ui`), Prettier z sortowaniem klas |
 | Blog | MDX (`next-mdx-remote`), gray-matter, frontmatter walidowany przez zod |
-| Markdown | remark-gfm, remark-emoji, rehype-slug, rehype-autolink-headings, rehype-highlight |
+| Markdown | remark-gfm, remark-emoji, rehype-slug, rehype-highlight; spis treści z tego samego drzewa (`src/lib/mdx.ts`) |
 | Formularz | Server Action + nodemailer 10 (SMTP) + zod |
 | Analityka | Vercel Analytics + Speed Insights (bez ciasteczek) |
 | Wersje językowe | polska (`/`) i angielska (`/en`), bez bibliotek i18n — pary tekstów wymuszane typami |
 | Menedżer pakietów | pnpm 10 (`packageManager` w `package.json`, build na Vercelu przez `vercel.json`) |
+| Piaskownica `/demo` | Motion 14 i Number Flow — tylko `devDependencies`, import poza `/demo` blokuje ESLint |
 
 ## Polecenia
 
@@ -42,10 +43,12 @@ pnpm dev              # serwer deweloperski
 pnpm build            # build produkcyjny (sprawdza też typy)
 pnpm start            # serwer produkcyjny
 pnpm lint             # ESLint
-pnpm typecheck        # tsc --noEmit
+pnpm typecheck        # next typegen + tsc --noEmit (typy tras generowane przez Next)
 pnpm check:content    # reguły treści bloga (frontmatter, pary PL↔EN, obrazy, długości, slugi)
 pnpm format           # Prettier (format:check — tylko sprawdzenie)
-pnpm check            # treść + formatowanie + lint + build — przed każdym commitem
+pnpm check            # treść + formatowanie + lint + build + check:build — przed każdym commitem
+pnpm check:build      # kontrola gotowego HTML: karty OG, kotwice spisu treści, lang, canonical,
+                      # robots, JSON-LD; z --production także brak tras /demo
 pnpm visual <bazowy> <zmiana>   # porównanie pikseli / i /en (strażnik strony głównej)
 ```
 
@@ -76,7 +79,7 @@ SMTP_PORT=465
 SMTP_SECURE=true               # false dla 587 (wtedy wymuszany STARTTLS)
 SMTP_USER=...
 SMTP_PASS=...
-CONTACT_EMAIL=...              # opcjonalnie; domyślnie m@zeprzalka.com
+CONTACT_RECIPIENT=...          # opcjonalnie; domyślnie adres kontaktowy z src/lib/site.ts
 ```
 
 Bez kompletu `SMTP_*` formularz nie wysyła i prosi o kontakt mailowy (nie wywraca się).
@@ -96,21 +99,23 @@ src/
 │   ├── en/                      # wersja angielska — lustro (pl) z angielskimi adresami
 │   ├── demo/                    # PIASKOWNICA: trasy *.demo.tsx, tylko poza produkcją
 │   ├── actions/contact.ts       # Server Action formularza
-│   ├── global-not-found.tsx     # 404 dla nieznanych adresów
+│   ├── global-not-found.tsx     # 404 dla nieznanych adresów; global-error.tsx — błąd w układzie
 │   ├── sitemap.ts robots.ts manifest.ts icon.png apple-icon.png
 ├── routes/blog.tsx              # fabryki tras bloga (wpis, taksonomia, archiwum) dla obu języków
+├── routes/params.ts             # parametry tras — wspólne dla stron i ich kart OG
 ├── components/
 │   ├── views/                   # widoki stron — jeden na stronę, wspólny dla obu języków
 │   ├── home/                    # sekcje strony głównej (wygląd nietykalny), HomeSection
-│   ├── layout/                  # RootShell, Header, Footer, MobileNav(+Panel), Logo(+Glyph), ReadingProgress
-│   ├── blog/                    # PostCard, ActiveTOC, CodeBlock, PostCta, YouTubeEmbed, highlight.css
-│   ├── portfolio/               # PortfolioCard, PortfolioGrid
+│   ├── layout/                  # RootShell, Header, NavLink, Footer, MobileNav(+Panel), Logo(+Glyph), ReadingProgress (CSS)
+│   ├── blog/                    # PostCard/PostGrid, TermLink, mdx-components, ActiveTOC, CodeBlock, PostCta, YouTubeEmbed
+│   ├── portfolio/               # PortfolioCard (serwer), LazyVideo (klient), PortfolioGrid
 │   ├── design-system/           # sekcje katalogu /design-system
-│   ├── demo/                    # PIASKOWNICA: dawne warianty i demo „Precyzja” (README w środku)
-│   ├── ui/                      # shadcn/ui (9 komponentów, wszystkie w użyciu)
+│   ├── demo/                    # PIASKOWNICA: system „Forma”, trzy koncepcje, archiwum (README w środku)
+│   ├── ui/                      # shadcn/ui (10 komponentów, wszystkie w użyciu)
 │   ├── ContactForm.tsx CtaPanel.tsx StatusBadge.tsx ThemeToggle.tsx JsonLd.tsx PageHeader.tsx
 ├── i18n/
-│   ├── config.ts                # ROUTES, PATH_BASES, Localized<T>, INTL_LOCALE, hreflang
+│   ├── config.ts                # ROUTES, PATH_BASES, FEEDS, Localized<T>, INTL_LOCALE
+│   ├── alternates.ts            # „ta sama strona w drugim języku”: hreflang, mapa strony, przełącznik
 │   ├── format.ts                # fill, plural (Intl.PluralRules), daty, liczby, czas lektury
 │   ├── navigation.ts            # jedna lista menu (nagłówek, stopka, menu mobilne)
 │   ├── content/                 # teksty: common, home, pages, meta, legal, system (pl + en)
@@ -118,21 +123,24 @@ src/
 │   ├── metadata.ts              # metadane i viewport układów głównych
 │   └── page-metadata.ts         # buildMetadata — metadane każdej strony
 ├── lib/
-│   ├── posts.ts                 # odczyt i walidacja MDX, indeks kategorii/tagów, powiązane
+│   ├── posts.ts                 # odczyt i walidacja MDX, indeks kategorii/tagów, powiązane, latestUpdate
+│   ├── mdx.ts                   # kompilacja wpisu + spis treści z drzewa hast
 │   ├── blog-pages.ts            # paginacja archiwum bloga
 │   ├── og.tsx                   # karty Open Graph: wygląd + fabryki
 │   ├── schema.ts                # dane strukturalne (Person z @id i reszta)
 │   ├── site.ts                  # adres, autor, e-mail, profile
 │   ├── services.ts portfolio.ts # dane oferty i realizacji (pary PL/EN)
 │   ├── feed.ts rate-limit.ts escape.ts slug.ts utils.ts
-├── hooks/use-reduced-motion.ts  # useReducedMotion, useReducedMotionVideo
+├── hooks/                       # use-reduced-motion (useReducedMotion, useReducedMotionVideo), use-in-view
 content/
 ├── posts/*.mdx  en/posts/*.mdx  # wpisy
 └── drafts/*.txt                 # robocze notatki (nieparsowane)
 scripts/check-content.mjs        # pnpm check:content
+scripts/check-build.mjs          # pnpm check:build — kontrola wyniku buildu
 scripts/visual-diff.mjs          # pnpm visual — strażnik strony głównej
-.github/workflows/ci.yml         # CI: treść, formatowanie, typy, lint, build, audyt
+.github/workflows/ci.yml         # CI: audyt, treść, formatowanie, typy, lint, build, check:build
 .github/workflows/visual.yml     # porównanie pikseli / i /en z main
+.github/dependabot.yml           # aktualizacje miesięczne, zgrupowane; bezpieczeństwo od razu
 vercel.json                      # build przez pnpm z lockfile'a, region fra1, Fluid Compute
 AGENTS.md CLAUDE.md              # zasady dla agentów AI
 ```
@@ -179,12 +187,13 @@ Reguły SEO (długości, liczba kategorii) sprawdza `pnpm check:content`.
 ### Kontrola wizualna (porównanie zrzutów)
 
 `pnpm visual <bazowy> <zmiana>` (scripts/visual-diff.mjs): Playwright + pixelmatch,
-zrzuty pełnych stron w 1440 i 390 px z `reducedMotion: "reduce"` i wideo
-zatrzymanym na klatce 0 — szum między dwoma przebiegami tej samej wersji wynosi
-0,000%, więc każda różnica jest prawdziwa. Lokalnie: zbuduj stan wyjściowy
+zrzuty pełnych stron w 1440 i 390 px z `reducedMotion: "reduce"`. Strona jest najpierw
+przewijana jak przez czytelnika (leniwe kafle i obrazy się wczytują), a każde wideo
+staje na pierwszej klatce z wczytanym obrazem — szum między dwoma przebiegami tej samej
+wersji wynosi 0,000%, więc każda różnica jest prawdziwa. Lokalnie: zbuduj stan wyjściowy
 (np. `git worktree add ../base main`) i zmianę, uruchom na dwóch portach,
 `CHROME_PATH=… pnpm visual http://localhost:3200 http://localhost:3100`
-(`--all` dokłada podstrony). Wyjątek: `/portfolio` (leniwe wideo).
+(`--all` dokłada podstrony).
 
 ## Bezpieczeństwo (zaimplementowane)
 
@@ -195,4 +204,8 @@ zatrzymanym na klatce 0 — szum między dwoma przebiegami tej samej wersji wyno
   ochrona nagłówków przed CRLF, honeypot, limit zgłoszeń, timeouty SMTP, limit
   rozmiaru żądania 64 kB.
 - YouTube jako fasada „kliknij, by wczytać” z domeny youtube-nocookie.
-- Zależności: `pnpm audit --prod` = 0 (CI przerywa przy podatności wysokiej).
+- Zależności: `pnpm audit --prod` = 0 (CI przerywa przy podatności wysokiej), Dependabot
+  (alerty, poprawki bezpieczeństwa, aktualizacje miesięczne), akcje CI przypięte do SHA.
+- Repozytorium: ruleset na `main` (bez force-push i usuwania), secret scanning + push protection.
+- Vercel: sekrety SMTP jako *Sensitive* i tylko w Production, region fra1, Fluid Compute,
+  Skew Protection 12 h.

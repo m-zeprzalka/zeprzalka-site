@@ -1,6 +1,7 @@
-# Plan działania — od 2 listopada 2026
+# Plan działania — od 2 listopada 2026 (aktualizacja 3 listopada, iteracja 2)
 
-Jedyna lista rzeczy do zrobienia. Diagnoza i uzasadnienia: [AUDYT-2026-11.md](AUDYT-2026-11.md).
+Jedyna lista rzeczy do zrobienia. Diagnoza i uzasadnienia: [AUDYT-2026-11.md](AUDYT-2026-11.md),
+co już zrobiono: [DZIENNIK.md](DZIENNIK.md).
 Odhaczaj tutaj (`[x]`), żeby plan nie rozjechał się z rzeczywistością jak ten z sierpnia.
 
 **[Ty]** — Twoje konto, decyzja albo treść · **[Kod]** — praca w repozytorium ·
@@ -13,23 +14,29 @@ Odhaczaj tutaj (`[x]`), żeby plan nie rozjechał się z rzeczywistością jak t
 1. **Push na `main` = natychmiastowe wdrożenie na produkcję.** Dlatego pracuj na gałęzi:
    `git switch -c nazwa` → push → Vercel buduje **podgląd** (Preview) → GitHub Actions
    sprawdza treść, lint, typy, build i podatności → dopiero wtedy merge do `main`.
-2. Przed każdym commitem: `pnpm check` (treść + lint + build). Sam wpis: `pnpm check:content`.
-3. Zmiany wyglądu zaczynamy w `/design-system`, nie na stronie głównej.
-4. Każda zmiana pliku używanego przez stronę główną → porównanie zrzutów przed/po
-   (metoda w README, „Kontrola wizualna”).
+2. Przed każdym commitem: `pnpm check` (treść + formatowanie + lint + build). Sam wpis: `pnpm check:content`.
+3. Zmiany wyglądu zaczynamy w `/design-system`, nie na stronie głównej. I inicjujemy go później na przykładowe strony typu /page-test
+   → **od iteracji 2 tym miejscem jest piaskownica `/demo`** (demo „Precyzja”, specimen
+   `/demo/precyzja/system`; podstrony testowe trafią do `/demo/podstrony/*`). Na produkcji jej nie ma.
+4. Każda zmiana pliku używanego przez stronę główną → `pnpm visual` z wynikiem 0 px
+   (README, „Kontrola wizualna”). CI robi to samo automatycznie względem `main`.
+5. Każda iteracja kończy się wpisem w [DZIENNIK.md](DZIENNIK.md) i aktualizacją dotkniętych dokumentów.
 
 ---
 
 ## Dzień 0 — wdrożenie tej rundy (ok. 1 h)
 
-- [ ] **1. Przejrzyj zmiany.** `git log --oneline main..audyt-2026-11` i ten katalog `docs/`.
+- [ ] **1. Przejrzyj zmiany.** `git log --oneline main..audyt-2026-11` (iteracja 1 i 2),
+      [DZIENNIK.md](DZIENNIK.md) i ten katalog `docs/`. Obejrzyj `/demo` lokalnie (`pnpm dev`).
       Przeczytaj politykę prywatności: `src/i18n/content/legal.ts` (szczególnie okres
       przechowywania — 12 miesięcy to moja propozycja).
 - [ ] **2. Ustawienia projektu w Vercelu** (Settings):
       - *Build and Deployment* → wyłącz nadpisania **Install Command** i **Build Command**
         (dziś `npm install` / `npm run build`). `vercel.json` i tak ma pierwszeństwo,
         ale panel nie powinien mówić czego innego niż repozytorium.
-      - *Functions* → region **fra1** (Frankfurt) i włączone **Fluid Compute**.
+      - Region **fra1** i **Fluid Compute** ustawia od teraz `vercel.json` (wchodzi w życie
+        z pierwszym wdrożeniem tej gałęzi). W panelu nic nie trzeba zmieniać — jeśli chcesz,
+        ustaw to samo w *Functions*, żeby panel nie mówił czego innego niż repozytorium.
       - *Environment Variables* → `NEXT_PUBLIC_SITE_URL` = `https://www.zeprzalka.com`
         albo usuń (wartość domyślna jest poprawna). Resztę zmiennych uporządkuj według
         `docs/prywatne/BEZPIECZENSTWO.md`.
@@ -38,12 +45,14 @@ Odhaczaj tutaj (`[x]`), żeby plan nie rozjechał się z rzeczywistością jak t
       git push -u origin audyt-2026-11
       git push origin warianty-strony-glownej-2026-08   # tag z kodem odrzuconych wariantów
       ```
-      Vercel zbuduje podgląd, GitHub Actions uruchomi CI. Jeśli push zostanie odrzucony
+      Vercel zbuduje podgląd (z piaskownicą `/demo` — obejrzysz ją pod adresem podglądu),
+      GitHub Actions uruchomi CI i strażnika strony głównej. Jeśli push zostanie odrzucony
       z powodu `.github/workflows`, Twój token potrzebuje uprawnienia `workflow`
       (albo użyj `gh auth login`).
 - [ ] **4. Sprawdź log buildu podglądu:** ma być `Running "install" command: pnpm install
       --frozen-lockfile` i `Next.js 16.4.4`. Przejdź po podglądzie: strona główna, wpis,
-      `/blog/strona/2`, `/polityka-prywatnosci`, formularz (bez wysyłania).
+      `/blog/strona/2`, `/polityka-prywatnosci`, formularz (bez wysyłania), `/demo/precyzja`.
+      Na produkcji po wdrożeniu `/demo` ma zwracać 404.
 - [ ] **5. Wdrożenie:**
       ```bash
       git switch main && git merge --ff-only audyt-2026-11 && git push origin main
@@ -65,6 +74,19 @@ Odhaczaj tutaj (`[x]`), żeby plan nie rozjechał się z rzeczywistością jak t
       git push origin --delete vercel/react-flight-rce-vulnerability-t4208i vercel/react-server-components-cve-vu-06xirk
       git branch -d audyt-2026-11
       ```
+
+## Dzień 1
+
+- [ ] kompleksowa przebudowa strony pod kątem UX/UI. Nowy odświerzony lepszy Design, godny osoby z moim doświadczeniem. Obecna wersja wygląda bardzo słabo i jedynie poprawnie. Niegodnie osoby z takim doświadczeniem jak ja.
+  - [x] **[Kod]** Audyt UX/UI produkcji (3,9/10), nowy kierunek „Precyzja”, piaskownica `/demo`
+        z dawnymi wariantami, demo strony głównej `/demo/precyzja` i specimen systemu —
+        [KIERUNEK-WIZUALNY.md](KIERUNEK-WIZUALNY.md) (iteracja 2, 3.11.2026).
+  - [ ] **[Ty] Etap A:** obejrzyj demo na telefonie i komputerze, w obu motywach; przy każdej
+        sekcji „zostaje / zmień / wyrzuć” + materiały z KIERUNEK-WIZUALNY.md §6
+        (referencje, antyreferencje, zdjęcia, surowce do case studies).
+  - [ ] **[Kod] Etap B–D** po Twojej decyzji: system w serwisie, podstrony testowe w `/demo`,
+        wdrożenie podstron (KIERUNEK-WIZUALNY.md §4). **[Zgoda] Etap E:** strona główna.
+
 
 ## Dni 1–3 — konta i pomiar (same Twoje działania, ok. 3 h)
 
@@ -147,17 +169,18 @@ Uporządkowane według zysku. Pozycje [Zgoda] czekają na decyzję o stronie gł
 | P2 | BotID dla formularza (po regule WAF) | `next.config.ts`, `contact.ts` |
 | P2 | Menu mobilne jako „plansza” (e-mail, CTA, EN/PL) | `MobileNav.tsx` |
 | P2 | `llms.txt` generowany z `ROUTES`, usług i wpisów | nowa trasa |
-| P3 | Angielska 404 dla `/en/*` | `global-not-found.tsx` |
-| P3 | Lazy load panelu menu mobilnego (Radix Dialog, 11 KB na każdej stronie) | `MobileNav.tsx` |
+| P3 | Angielska 404 dla `/en/*` (statyczna `global-not-found` nie zna adresu; trasa catch-all byłaby dynamiczna) | `global-not-found.tsx` |
+| P3 [Zgoda] | Pole wiadomości jak pozostałe pola (tło w ciemnym motywie, 16 px na telefonie — dziś iOS powiększa stronę) | `ContactForm.tsx` |
+| P3 | `typedRoutes` (literówki w adresach łapane przy kompilacji) | `next.config.ts`, `ROUTES` |
 | P3 [Zgoda] | Hero: poster przez `next/image` zamiast `preload()` (dziś prefetch strony głównej pobiera 28 KB postera na każdej podstronie), wersja wideo dla telefonów | `HomeView.tsx`, `Hero.tsx` |
-| P3 [Zgoda] | Dług z `/design-system`: 5 rozmiarów CTA → 2, `top-22/24` → jedna zmienna, `md:font-semi-bold`, `bg-green-500` → token | strona główna i podstrony |
+| P3 [Zgoda] | Dług z `/design-system`: 5 rozmiarów CTA → 2, odstępy `HomeSection` → jedna skala, `bg-green-500` → token (rozwiąże go system „Precyzja”) | strona główna i podstrony |
 | P3 | Lucide 0.544 → 1.x, TypeScript 7, ESLint 10 (major — osobno, z testem) | `package.json` |
 
 ---
 
 ## Historia
 
-Ustalenia i prace z 12 i 26–29 sierpnia 2026 (domena kanoniczna, taksonomia, WebP,
+Iteracje od listopada 2026: [DZIENNIK.md](DZIENNIK.md). Ustalenia i prace z 12 i 26–29 sierpnia 2026 (domena kanoniczna, taksonomia, WebP,
 CSP, `/uslugi`, CV w PDF, wersja angielska) są opisane w historii gita —
 `git log --until=2026-08-30`. Stan po audycie z 2 listopada 2026 opisuje
 [AUDYT-2026-11.md](AUDYT-2026-11.md).

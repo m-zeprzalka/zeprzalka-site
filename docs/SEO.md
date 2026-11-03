@@ -4,7 +4,7 @@ Cel: pierwsze skojarzenie w wyszukiwarce dla „projektant i programista produkt
 z AI” i stały napływ zapytań ofertowych z Google. Horyzont: pierwsze efekty
 2–3 miesiące, stabilny ruch 6–12 miesięcy.
 
-Stan na: **2 listopada 2026** (po audycie i refaktorze — [AUDYT-2026-11.md](AUDYT-2026-11.md)).
+Stan na: **3 listopada 2026** (po iteracji 2 — [DZIENNIK.md](DZIENNIK.md)).
 
 ---
 
@@ -26,7 +26,12 @@ Stan na: **2 listopada 2026** (po audycie i refaktorze — [AUDYT-2026-11.md](AU
 | Kategorie z 1 wpisem `noindex`, poza sitemapą | ✅ automatycznie (`MIN_POSTS_TO_INDEX_CATEGORY = 2`) | `categoryMetadata`, `sitemap.ts` |
 | Długie tytuły bez sufiksu „\| Michał Zeprzałka” | ✅ automatycznie przy > 60 znakach | `pageTitle` w `page-metadata.ts` |
 | „Czytaj dalej” — 3 powiązane wpisy pod artykułem | ✅ | `getRelatedPosts` w `src/lib/posts.ts` |
-| Kontrola reguł treści przy każdym commicie | ✅ `pnpm check:content` + CI | `scripts/check-content.mjs` |
+| Kontrola reguł treści przy każdym commicie | ✅ `pnpm check:content` + CI (także adresy kategorii i tagów tylko ASCII) | `scripts/check-content.mjs` |
+| `og:title` bez sufiksu marki (markę niesie `og:site_name`) | ✅ jedna reguła na wszystkich stronach | `buildMetadata` |
+| JSON-LD oferty: `Service` z dostawcą `Person` (nie `ProfessionalService`, które wymaga adresu) | ✅ | `ServicesView.tsx` |
+| Język wersji angielskiej `en-GB` / `og:locale` `en_GB` (copy jest brytyjskie) | ✅ | `INTL_LOCALE`, `OG_LOCALE` |
+| Poprawna polska odmiana liczebników (także na kartach OG) | ✅ `Intl.PluralRules` | `src/i18n/format.ts` |
+| `rel=author` → strona „O mnie” | ✅ | `rootMetadata` |
 | Weryfikacja Google Search Console / Bing | ❌ **do zrobienia** (kod gotowy: `GOOGLE_SITE_VERIFICATION`, `BING_SITE_VERIFICATION` albo rekord TXT) | — |
 | LinkedIn w `sameAs` | ❌ **do zrobienia** (`NEXT_PUBLIC_LINKEDIN_URL`) | `src/lib/site.ts` |
 

@@ -8,7 +8,7 @@ twarda i pilnowana w kilku miejscach naraz.
 
 | Zasada | Jak jest wymuszona |
 | --- | --- |
-| Serwis nigdy nie importuje niczego z dem | konwencja + przegląd (`grep -r "components/demo" src --exclude-dir=demo` musi być pusty) |
+| Serwis nigdy nie importuje niczego z dem | reguła ESLint `no-restricted-imports` (błąd w `pnpm lint` i w CI) |
 | Klasy Tailwinda z dem nie trafiają do CSS serwisu | `@source not` w `src/app/globals.css` |
 | Dema mają własny arkusz i własny układ główny | `src/app/demo/layout.demo.tsx` + `src/app/demo/demo.css` (zamrożona kopia tokenów) |
 | Produkcja nie zna dem | pliki tras mają końcówkę `*.demo.tsx`, którą `pageExtensions` w `next.config.ts` rozpoznaje tylko poza produkcją — na produkcji `/demo` to zwykła strona 404 serwisu, a paczka nie zawiera ani bajtu dem (wyjątek: `DEMO_PUBLIC=1`) |
@@ -28,11 +28,20 @@ src/app/demo/
 └── (serwis)/             # dema osadzone w nagłówku i stopce serwisu
     ├── layout.demo.tsx
     └── main-secondary/ main-third/ main-fourth/
+src/app/demo/precyzja/    # page.demo.tsx, system/page.demo.tsx (bez nagłówka serwisu)
 src/components/demo/
 ├── registry.ts           # lista dem i ich metadane
 ├── shared/               # kopie zależności dawnych wariantów (zamrożone)
-└── main-secondary/ main-third/ main-fourth/   # kod wariantów z 25.08.2026
+├── main-secondary/ main-third/ main-fourth/   # kod wariantów z 25.08.2026 (zamrożony)
+└── precyzja/             # demo „Precyzja” (3.11.2026) i specimen systemu
 ```
+
+## „Precyzja” (3 listopada 2026)
+
+`/demo/precyzja` — propozycja nowej strony głównej, `/demo/precyzja/system` — specimen
+tokenów. Cały system w jednym pliku `precyzja/precyzja.css` (tokeny → baza → prymitywy →
+wzorce → ruch, wszystko w warstwie `components`, więc klasy Tailwinda wygrywają).
+Opis kierunku i plan: `docs/KIERUNEK-WIZUALNY.md`.
 
 ## Dawne warianty (25 sierpnia 2026)
 

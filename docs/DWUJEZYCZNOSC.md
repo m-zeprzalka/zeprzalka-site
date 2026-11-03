@@ -15,13 +15,14 @@ teksty i co trzeba zrobić, żeby dodać nową stronę albo nowy wpis.
 | Blog       | `/blog`             | `/en/blog`            |
 | Archiwum   | `/blog/strona/2`    | `/en/blog/page/2`     |
 | Kategorie  | `/blog/kategoria`   | `/en/blog/category`   |
-| Tagi       | `/blog/tag`         | `/en/blog/tag`        |
+| Tag (prefiks, bez strony indeksu) | `/blog/tag/<tag>` | `/en/blog/tag/<tag>` |
 | Kanał RSS  | `/feed.xml`         | `/en/feed.xml`        |
 | Prywatność | `/polityka-prywatnosci` | `/en/privacy`     |
 
 **Polskie adresy nie zmieniły się ani o znak.** Są zaindeksowane, więc polska
 wersja została w katalogu głównym, a angielska stanęła obok pod `/en`.
-Mapa adresów siedzi w jednym miejscu: `ROUTES` w `src/i18n/config.ts`.
+Mapa adresów siedzi w jednym miejscu: `ROUTES` (strony) i `PATH_BASES` (prefiksy bez
+własnej strony: archiwum bloga, tagi) w `src/i18n/config.ts`.
 
 ## Jedno źródło prawdy dla tekstów
 
@@ -40,6 +41,12 @@ Copy stron. Każdy moduł ma dwa drzewa — `pl` i `en` — przy czym `en` ma ty
 | `pages.ts`   | usługi, o mnie, kontakt, portfolio, blog                 |
 | `meta.ts`    | tytuły i opisy dla wyszukiwarki, teksty kart Open Graph  |
 | `legal.ts`   | polityka prywatności                                     |
+| `system.ts`  | 404 i ekran błędu (osobno, bo `error.tsx` jest kliencki)  |
+
+Formatowanie zależne od języka (liczebniki z poprawną odmianą przez `Intl.PluralRules`,
+daty, liczby, czas lektury, interpolacja `{klucz}`) mieszka w `src/i18n/format.ts`, a formy
+rzeczowników — w `common.ts` → `plurals`. Komponenty klienckie nie importują modułów
+treści: dostają teksty w propsach od komponentów serwerowych.
 
 ### 2. Pary `Localized<T>` przy danych
 
@@ -63,11 +70,15 @@ Typ `Localized<T> = Record<Locale, T>` wymusza obie wersje.
    `src/app/en/…/page.tsx`; każdy woła ten sam widok i funkcję metadanych
    z `src/i18n/page-metadata.ts` — wszystkie przechodzą przez `buildMetadata`,
    które dokłada canonical, hreflang, RSS i kartę Open Graph z adresem strony.
-5. Jeśli strona ma się dobrze udostępniać: plik `opengraph-image.tsx` w segmencie
-   trasy (wzór: `src/app/(pl)/uslugi/opengraph-image.tsx`, teksty w `meta.ts` → `og.cards`).
-   Bez niego strona nie ma obrazka karty — Next nie dziedziczy go, gdy strona podaje
-   własne `openGraph`.
-6. Dopisz stronę do `src/app/sitemap.ts`.
+5. Karta udostępniania: plik `opengraph-image.tsx` w segmencie trasy — sześć linii nad
+   `pageOgImage(locale, "klucz")` z `src/lib/og.tsx` (wzór: `src/app/(pl)/uslugi/opengraph-image.tsx`),
+   teksty w `meta.ts` → `og.cards`. Bez niego strona nie ma obrazka karty — Next nie
+   dziedziczy go, gdy strona podaje własne `openGraph`.
+6. Dopisz stronę do `src/app/sitemap.ts`, a jeśli ma być w menu — klucz do `MAIN_NAV`
+   w `src/i18n/navigation.ts`.
+
+Trasy bloga z parametrem (wpis, kategoria, tag, archiwum) nie mają własnej logiki:
+oba pliki (PL i EN) re-eksportują funkcje z `src/routes/blog.tsx`.
 
 ## Jak dodać nowy wpis na blogu
 

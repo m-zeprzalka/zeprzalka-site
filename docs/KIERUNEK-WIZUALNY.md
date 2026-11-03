@@ -1,109 +1,177 @@
-# Kierunek wizualny — jak dojść do poziomu elity
+# Kierunek wizualny: „Precyzja”
 
-Stan na 2 listopada 2026. To propozycja, nie wdrożenie: **wygląd strony głównej
-zmienia się wyłącznie za Twoją zgodą**, a każda zmiana zaczyna się jako specimen
-w `/design-system` (żywy katalog języka wizualnego, `src/app/(pl)/design-system`).
+Stan na 3 listopada 2026 (iteracja 2). Zastępuje propozycję „Studio nocą” z 2 listopada,
+którą odrzuciłeś: montaż i film odkładamy na bok. **Wygląd strony głównej zmienia się
+wyłącznie za Twoją zgodą.** Nowe rzeczy rodzą się w piaskownicy `/demo`, a dopiero
+potem przechodzą do serwisu.
+
+Raporty źródłowe (lokalnie, w `.gitignore`): `docs/prywatne/raporty-2026-11/iteracja-2/`
+`ux-ui.md` (audyt, 138 zrzutów) i `inspiracje.md` (25 wzorców, techniki, narzędzia, kroje).
 
 ---
 
-## 1. Diagnoza
+## 1. Diagnoza obecnego wyglądu: 3,9/10
 
-Ocena audytu UX/UI: **osobowość marki 3/10, spójność komponentów 5/10, kolor 4/10.**
+Interfejs jest już czarno-biały, więc nowy kierunek to ewolucja, a nie budowa od zera.
+Psuje go brak systemu i brak kierunku obrazu.
 
-- Serwis wygląda jak dobrze złożony szablon: Geist + shadcn „neutral” + odznaki
-  i przyciski `outline`. Doświadczony recenzent rozpozna go w 3 sekundy.
-- Paleta to nietknięta instalacja shadcn. Jedynym kolorem serwisu jest surowe
-  `bg-green-500` w kropce „Gotowy do współpracy” — klisza szablonów.
-- Trzy różne „głosy” nagłówków (H1 `font-medium` w hero, `font-medium tracking-tight`
-  na podstronach, `font-bold tracking-tighter` we wpisie), trzy skale odstępów sekcji,
-  pięć rozmiarów CTA.
-- Najmocniejszy kapitał — **kinowy materiał wideo** (Hilton, 4F, Porsche, wiolonczela)
-  — nie przekłada się na resztę strony. Realizacje web to białe mockupy, które na czarnym
-  tle dają jaskrawe, nierówne plamy.
-- Jedyny autorski element, losowy glif w logo, na części systemów wyświetla się
-  jako pusty prostokąt.
+1. **Czterech kompetencji nie widać.** Strona główna pokazuje inne trzy (projektowanie,
+   development, komunikacja wizualna). AI jest tagiem, a wykładów i Nagrody Rektora w HTML
+   strony głównej nie ma wcale.
+2. **Pierwszy ekran nie przedstawia autora.** H1 mógłby należeć do każdego software house'u,
+   a wideo to pastelowy render cudzej strony.
+3. **Kolor pochodzi z obrazów, nie z systemu.** Render w hero, białe mockupy, pomarańczowo-turkusowe
+   okładki AI, pięć identycznych tęczowych logo Makerkit.
+4. **Prace są anonimowe.** Podpis kafla pojawia się dopiero po najechaniu (na telefonie nigdy),
+   kursor-łapka nie prowadzi nigdzie, nie ma żadnego case study.
+5. **Nie ma systemu typografii:** 35 stylów tekstu, 11 stopni, 4 grubości, 7 wartości trackingu.
+   Geist Mono występuje tylko w blokach kodu.
+6. **Nie ma języka ruchu.** Jedyna animacja to pulsująca zielona kropka. `transition: all`
+   stoi na 29 elementach, a hover przycisku CTA jest niewidoczny.
+7. **Stany nie są zaprojektowane:** fokus na CTA niewidoczny, błędy formularza jako natywne dymki.
+8. Cztery osie wyrównania na podstronach, trzy skale odstępów sekcji, przyciski 48/40/36/32 px.
 
-Co jest naprawdę dobre i na czym budować: kinowe hero, ciemny motyw, Geist z poprawnymi
-polskimi znakami, jawny cennik, `/design-system` jako dojrzałe narzędzie.
+**Do zachowania:** neutralna paleta bez odcienia i linie 1 px zamiast cieni (80% kierunku już
+jest w kodzie), układ 3/9 z przyklejoną kolumną, numeracja kompetencji, katalog `/design-system`,
+transparentny cennik.
 
-## 2. Ograniczenia (Twój gust)
+## 2. Zasady „Precyzji”
 
-Odrzucone w sierpniu jako „kompletnie mi się nie podoba”: display-groteski (Bricolage,
-Archivo), chłodny „interfejsowy” minimalizm, ciepły papier z szeryfem (Fraunces).
-Kod tych wariantów jest w tagu `warianty-strony-glownej-2026-08`.
+Twoje słowa: *chirurgiczna i architektoniczna precyzja z designerskim sznytem*.
+Czarny, biały, szarości. Jeden kolor może przyjść później.
 
-**Zostaje:** ciemny motyw, Geist, kinowy film w hero.
+1. **Precyzja to struktura, nie dekoracja.** Elementy rysunku technicznego (wymiary, siatka,
+   podziałka) pojawiają się tylko tam, gdzie niosą **prawdziwą informację**.
+2. **Dwa głosy pisma.** Geist mówi, Geist Mono mierzy. Mono wyłącznie dla danych: wymiary,
+   daty, czasy, współrzędne w próbkach, kod.
+3. **Linia włosowa zamiast kart i cieni.** Kąty proste. Sekcje i rejestry rysuje linia 1 px.
+4. **Kolor należy do pracy, nie do interfejsu.** Obrazy w listach są czarno-białe i odzyskują
+   kolor przy wskazaniu. Akcent, jeśli wróci, to tylko jako „redline” (pomiar, fokus, zaznaczenie)
+   w jednym tokenie `--pz-signal`.
+5. **Ruch jest krótki i zdecydowany.** Elementy „wskakują” na miejsce, linie się rysują, liczby
+   się odliczają. Nic nie pływa. Przy „ogranicz ruch” wszystko stoi.
+6. **Interakcja nagradza ciekawość.** Rzeczy do dotknięcia, które pokazują warsztat:
+   uchwyty krzywej, pomiar elementów, generowanie tokenów.
+7. **Polska typografia jako podpis rzemiosła.** Twarde spacje po jednoliterowych spójnikach,
+   półpauzy, „cudzysłowy”.
 
-## 3. Propozycja: „Studio nocą”
+### Czego unikamy (klisze, także stron generowanych przez AI)
 
-Język wyrasta z Twojego najmocniejszego materiału: **światła, kadru i montażu**.
+Według oficjalnego skilla Anthropic `frontend-design` i researchu: numeracja 01/02/03 dla treści,
+które nie są sekwencją; etykiety kapitalikami w mono nad każdym nagłówkiem; metadane łączone
+kropką w środku (`A · B · C`); strzałka `→` doklejona do linków; prawie czarne tło z jednym
+jaskrawym akcentem; „Linear look” (poświaty, gradienty); magnetyczne przyciski i okrągłe
+„Get in touch”; ekran ładowania z licznikiem procentów; smooth scroll przejmujący przewijanie;
+display-groteski (Bricolage, Archivo) i ciepły papier z szeryfem.
 
-1. **Praca jako bohater.** Trzy case studies z filmem w hero i jednym zdaniem efektu.
-   Na głównej, pod H1, linia w Geist Mono: `Hilton · 4F · ORLEN Paczka · VINCI Facilities`.
-   Typografia zamiast ściany logo wygląda drożej.
-2. **Jeden kolor marki z materiału, nie z palety.** Ciepły „tungsten” z lampy studyjnej
-   widocznej w hero (np. `oklch(0.80 0.13 70)` w ciemnym motywie, przyciemniony do
-   kontrastu ≥ 4,5:1 w jasnym). Oszczędnie, w pięciu miejscach: pierścień fokusu,
-   kropka dostępności (zamiast `green-500`), podkreślenie linków, aktywna pozycja menu
-   i spisu treści, `::selection`. Tło o włos cieplejsze niż neutralna czerń
-   (`oklch(0.15 0.006 70)`) — ciemna sala kinowa, nie papier. Jasny motyw jako
-   „ekran projekcyjny”: złamana biel `oklch(0.985 0.004 80)`.
-3. **Drugi głos typograficzny: Geist Mono** (już jest w serwisie) dla wszystkiego, co jest
-   danymi — daty, czasy czytania, ceny, numeracja 01/02/03, metryczki realizacji. Daje
-   techniczno-filmowy charakter (napisy końcowe, timecode) bez display-groteski.
-   H1 waga 500, `tracking -0.02em`; wpisy 18 px, 66 znaków w wierszu.
-4. **Polska typografia jako podpis rzemiosła:** twarde spacje po jednoliterowych
-   spójnikach, „cudzysłowy”, półpauzy w zakresach (2016–2026), zapis zdaniowy
-   zamiast „Title Case”. Większość stron w Polsce tego nie ma — ludzie z branży to widzą.
-5. **Sygnatura ruchu „cięcie montażowe”:** View Transitions między kaflem a case study
-   (kadr rośnie do hero następnej strony). Na kaflach wideo nakładka z timecode `00:12:04`
-   w Geist Mono i przyciskiem ▶/❚❚ — **to jednocześnie rozwiązuje WCAG 2.2.2** (pauza
-   zapętlonego wideo) jako element stylu, a nie doklejony dodatek.
-6. **Własny znak SVG** zamiast losowego Unicode (np. monogram z kadrem 16:9 albo
-   znacznikami cięcia), rysowany raz przy wejściu. Losowe glify mogą zostać jako
-   easter egg po najechaniu.
-7. **Dowód w liczbach, na stałe, w mono:** `[15] lat · 30+ klientów · 10 lat wykładów ·
-   Nagroda Rektora (99,28%)` — autorytet, który dziś leży na dole `/o-mnie`.
-8. **Żywe detale zamiast zielonej kropki:** `Warszawa 14:32 · wolne terminy od [stycznia 2027]`
-   i e-mail kopiowany jednym kliknięciem.
-9. **Menu mobilne jako plansza tytułowa:** pozycje 36–40 px, pod nimi e-mail, CTA, EN/PL
-   i przełącznik ruchu. Dziś 70% ekranu jest puste.
-10. **Blog jako produkt:** kolumna 66 znaków wyśrodkowana, spis treści z postępem (także
-    na telefonie), nawigacja serii, bloki kodu z nazwą pliku, „następny wpis” z dużym kadrem.
-11. **Jedno „wow”** pokazujące warsztat 3D i motion — np. krótka pętla z Blendera
-    na 404 albo w stopce, z przyciskiem pauzy.
+## 3. Demo: `/demo/precyzja`
 
-**Czego nie robić:** smooth-scrolla przejmującego przewijanie, animowania każdego
-akapitu, zmiany kroju na display-grotesk, ciepłego papieru.
+Strona główna w nowym języku, zbudowana **wyłącznie z treści, które serwis już ma**
+(`src/i18n`, `src/lib`). Nowe są tylko podpisy próbek i etykiety liczb. Oglądasz lokalnie
+(`pnpm dev` → http://localhost:3000/demo/precyzja) albo na podglądzie gałęzi na Vercelu.
+Na produkcji tego adresu nie ma.
 
-## 4. Dług wizualny (z katalogu `/design-system`, zweryfikowany 2.11.2026)
+| Sekcja | Co pokazuje | Sygnatura |
+| --- | --- | --- |
+| Hero | H1 jako **zaznaczony obiekt w edytorze**: ramka, 8 uchwytów, etykieta z prawdziwymi wymiarami mierzonymi na żywo („h1 1081 × 346”), po najechaniu parametry kroju | wymiary z prawdziwymi liczbami |
+| Hero, tło | siatka konstrukcyjna widoczna tylko w „świetle” kursora | siatka na żądanie |
+| Hero, liczby | 12+ lat, 30+ klientów, 2016–2026 wykłady, 99,28% — liczniki mechaniczne (CSS) | dane z życiorysu |
+| Kompetencje | 4 obszary zamiast 3: **projektowanie** (krzywa Béziera do przeciągania: mysz, dotyk, klawiatura), **kod** (komponent pisany na żywo, kolorowanie składni wagą, nie barwą, wynik builda), **AI** (zdanie z hero generowane token po tokenie z prawdopodobieństwami), **wykłady** (skala 0–100 z lupą 99–100 dla 99,28%) | interaktywne objaśnienia — Twój wyróżnik jako wykładowcy |
+| Portfolio | rejestr: projekt, rodzaj pracy, dziedzina; kadr podąża za kursorem, czerń i biel → kolor przy wskazaniu, reszta wierszy przygasa | kolor należy do pracy |
+| Blog | rejestr wpisów: data, tytuł, kategoria, czas lektury | — |
+| Kontakt | formularz na samej linii bazowej, e-mail kopiowany jednym kliknięciem | — |
+| Stopka | fakty liczone przy buildzie: liczba artykułów i realizacji, data ostatniego wpisu | prawdziwe dane zamiast ozdób |
+| Nagłówek | miarka z podziałką jako wskaźnik lektury, czas w Warszawie, przełącznik „Wymiary” | miarka |
+| Tryb „Wymiary” | siatka 12 kolumn i pomiar dowolnego elementu pod kursorem (znacznik, szerokość × wysokość, stopień/interlinia), Esc zamyka | easter egg dla ludzi z branży |
+
+Techniczne: zero nowych zależności, wejścia i ujawnianie przez CSS (`animation-timeline: view()`
+działa od października 2026 we wszystkich trzech silnikach), JS tylko tam, gdzie mierzy
+albo reaguje na kursor; pełna obsługa `prefers-reduced-motion`; oba motywy; telefon.
+
+**Specimen systemu: `/demo/precyzja/system`** — kolor (8 tokenów, oba motywy), 7 stopni pisma,
+8 odstępów, siatka, 4 czasy ruchu, przyciski, link, pole. Źródło prawdy to jeden plik
+`src/components/demo/precyzja/precyzja.css` (pięć warstw: tokeny, baza, prymitywy, wzorce, ruch).
+
+Dawne warianty z sierpnia leżą obok: `/demo/main-secondary`, `/demo/main-third`, `/demo/main-fourth`.
+
+## 4. Plan prac nad UX/UI
+
+| Etap | Co | Wynik | Kto |
+| --- | --- | --- | --- |
+| **A. Decyzja na demie** | Oglądasz `/demo/precyzja` na telefonie i komputerze, w obu motywach. Zapisujesz: co zostaje, co wylatuje, czego brakuje. Najlepiej w formie z §6 | „tak / nie / zmień” dla każdej sygnatury | Ty |
+| **B. System w serwisie** | Tokeny „Precyzji” jako druga warstwa w `globals.css` (bez ruszania obecnych), komponenty-prymitywy w `src/components/ui/`, katalog `/design-system` przepisany na nowy system | DS v2 w kodzie, katalog pokazuje nowe | Kod |
+| **C. Podstrony testowe** | Twoje „/page-test”: `/demo/podstrony/*` — wpis, `/uslugi`, `/o-mnie`, `/portfolio` w nowym języku, na prawdziwych danych | wzorce stron do akceptacji | Kod |
+| **D. Wdrożenie podstron** | Podstrony przechodzą do serwisu (strona główna nietknięta, strażnik `pnpm visual` pilnuje) | nowy wygląd serwisu poza główną | Kod |
+| **E. Strona główna** | Za Twoją zgodą, razem z nowymi tekstami (rola, 4 kompetencje, liczby) | nowa strona główna | Ty + kod |
+| **F. Case studies** | Szablon `/portfolio/[slug]` w języku „Precyzji”: para „zdjęcie + rysunek” (zrzut UI obok schematu), przejście kafel → case przez `<ViewTransition>` | 3 case studies | Ty + kod |
+
+Kolejność ma sens: etap A kosztuje Cię godzinę, a rozstrzyga wszystko dalej.
+
+## 5. Narzędzia, które warto dołożyć
+
+**Do pracy z Claude Code (zestaw minimalny):**
+
+| Narzędzie | Po co | Instalacja |
+| --- | --- | --- |
+| skill **frontend-design** (Anthropic) | proces „plan → przegląd względem briefu → budowa → krytyka”, lista klisz AI | `/plugin install frontend-design@claude-plugins-official` |
+| **Chrome DevTools MCP** | pomiar LCP/INP, dostępność, ślad wydajności w prawdziwej przeglądarce | `claude mcp add chrome-devtools --scope user npx chrome-devtools-mcp@latest` |
+| **Playwright MCP** | zrzuty w wielu szerokościach, przejścia ścieżek (uzupełnia `pnpm visual`) | `claude mcp add playwright npx @playwright/mcp@latest` |
+| **Next.js DevTools MCP** | błędy i trasy z serwera dev Next 16 | `claude mcp add next-devtools npx next-devtools-mcp@latest` |
+| skille **emilkowalski/skill** i **jakubkrehel/skills** | rzemiosło ruchu i interfejsu (krzywe, czasy, optyczne wyrównanie) | `npx skills add emilkowalski/skill`, `npx skills add jakubkrehel/skills` |
+| **Figma MCP** | tylko jeśli projektujesz w Figmie — plan Starter daje 6 wywołań miesięcznie, sensownie od miejsca Dev/Full | `claude plugin install figma@claude-plugins-official` |
+
+**Biblioteki (dopiero gdy CSS nie wystarczy):** Motion 14 w trybie `LazyMotion` (~5 kB) do gestów
+i układu, Number Flow do liczników, `<ViewTransition>` z React 19.3 do przejść między stronami.
+**Niepotrzebne:** GSAP, Lenis, Spline, Unicorn Studio, ciężkie rejestry komponentów
+(21st.dev daje 2 darmowe komponenty dziennie, Aceternity/Magic UI to dziś klisze).
+
+**Krój:** zostajemy przy Geist + Geist Mono, dopóki układ i siatka nie dowiodą charakteru.
+Jeśli specimen pokaże, że czegoś brakuje: **GT Standard** (Grilli Type, superrodzina z wersjami
+Mono, koncepcyjnie najbliżej „standaryzacji”) na trialu, obok Geist, na tych samych tekstach.
+Darmowa alternatywa: Instrument Sans + Commit Mono.
+
+**Gdzie szukać inspiracji w tym kierunku:** makingsoftware.com (rysunek techniczny w blogu
+wykładowcy), devouringdetails.com i rauno.me (miarka, akcent jako „redline”), chanhdai.com
+(wymiarowanie na shadcn i Tailwindzie), stripe.dev i oxide.computer (podpisy „FIG.”, prawdziwy
+UI zamiast mockupów), officekgdvs.com (zdjęcie obok planu). Galerie: Siteinspire (Monochrome,
+Typographic, Architecture) zamiast Awwwards; recent.design (dawne godly.website).
+Pełna lista 25 stron z uzasadnieniem: `docs/prywatne/raporty-2026-11/iteracja-2/inspiracje.md`.
+
+## 6. Co od Ciebie (żeby kolejna iteracja była „laserowa”)
+
+**Do etapu A (najpierw):**
+- [ ] Notatki do `/demo/precyzja` i `/demo/precyzja/system`: przy każdej sekcji „zostaje / zmień /
+      wyrzuć” i jedno zdanie dlaczego. Zrzut z zaznaczeniem jest wart więcej niż opis.
+- [ ] 10–15 referencji: URL + **jeden** konkretny detal + dlaczego (np. „miarka przy krawędzi na
+      devouringdetails.com, bo pokazuje postęp bez paska”).
+- [ ] 3–5 antyreferencji z uzasadnieniem — przyspieszają bardziej niż referencje.
+- [ ] Decyzja, gdzie ma być jedno „wow” (404, stopka, intro case study).
+
+**Materiał własny (niezastąpiony):**
+- [ ] Portret i zdjęcia pracy w jednym świetle (ręce przy pracy, tablica z wykładu, szkice),
+      źródła ≥ 3000 px — konwersję do czerni i bieli robi kod.
+- [ ] Do 3 case studies **surowce, nie mockupy**: zrzuty prawdziwego UI w 1× i 2×, szkice,
+      wireframe'y, diagramy przepływu, jedna liczba efektu na projekt.
+- [ ] Lista klientów ze zgodą na użycie nazwy (NDA), 3–5 opinii z imieniem i rolą.
+- [ ] Materiały z wykładów nadające się na interaktywne objaśnienia na blogu.
+
+**Decyzje:** budżet na krój (0 zł / 1–3 tys. zł / więcej), plan w Figmie (jeśli w ogóle),
+kolor akcentu (rekomendacja: na razie żaden).
+
+## 7. Dług wizualny obecnej strony (stan po iteracji 2)
 
 | # | Pozycja | Gdzie | Dotyka głównej |
 | --- | --- | --- | :-: |
-| 1 | Zapętlone wideo bez pauzy (hero, 8 kafli, 15 na `/portfolio`) — WCAG 2.2.2 | `PortfolioCard.tsx`, `Hero.tsx` | tak |
-| 2 | **Pięć** rozmiarów CTA (48, 40, 36, 32 px i `lg`+`p-6`) | Hero, ContactForm, About, Services, Portfolio, PostCta, 404, BlogPreview | tak |
-| 3 | `md:font-semi-bold` — klasa, która nic nie robi | `Skills.tsx`, `Gallery.tsx`, `Contact.tsx` | tak |
-| 4 | Surowe `bg-green-500` / `text-green-*` zamiast tokenu | Hero, AboutView, ContactForm, CodeBlock | tak |
-| 5 | `top-22` i `top-24` przemieszane — powinna być jedna zmienna `--header-h` (nagłówek z paskiem ma 68 px) | home/*, ContactView, PostView | tak |
-| 6 | „Karta bez karty” w sekcji kontaktu (`Card` z wyzerowanym stylem) | `home/Contact.tsx` | tak |
-| 7 | Paleta shadcn „neutral” bez koloru marki; tokeny `chart-*` nieużywane | `globals.css` | tak |
-| 8 | Trzy systemy nagłówków i trzy skale odstępów sekcji | — | tak |
-| 9 | Polski „Title Case” („Zarezerwuj Bezpłatną Konsultację”, „Blog Technologiczny”) | `home.ts`, `pages.ts`, tytuły wpisów | częściowo |
-| 10 | Wiszące spójniki na końcach wierszy | wszędzie | tak |
-| 11 | Kafle portfolio: podpis tylko po najechaniu, `cursor-pointer` bez akcji, przesunięcie układu po załadowaniu wideo (`-my-6` jako łatka) | `PortfolioCard.tsx` | tak |
+| 1 | Zapętlone wideo bez pauzy (hero, kafle) — WCAG 2.2.2 | `HeroVideo.tsx`, `PortfolioCard.tsx` | tak |
+| 2 | Pięć rozmiarów CTA (48, 40, 36, 32 px i `lg`+`p-6`) | Hero, ContactForm, podstrony | tak |
+| 3 | Surowe `bg-green-500` w `StatusBadge` i komunikacie sukcesu | `StatusBadge.tsx`, `ContactForm.tsx` | tak |
+| 4 | Różne odstępy siatki i `top-22`/`top-24` — dziś jawne w propsach `HomeSection` | `home/*` | tak |
+| 5 | „Karta bez karty” w kontakcie, `-my-6` w kaflu portfolio | `home/Contact.tsx`, `PortfolioCard.tsx` | tak |
+| 6 | Pole wiadomości w formularzu ze starymi stylami (inne tło w ciemnym motywie, 14 px → zoom na iOS) | `ContactForm.tsx` | tak |
+| 7 | Podpisy kafli tylko po najechaniu, kursor-łapka bez akcji | `PortfolioCard.tsx` | tak |
+| 8 | Polski „Title Case” i wiszące spójniki — w demie rozwiązane (`typo()`), w serwisie to zmiana tekstów | copy | częściowo |
+| 9 | `transition-all` na H1 i leadzie hero | `home/Hero.tsx` | tak |
 
-Naprawione w tej rundzie (bez zmian wyglądu głównej): pierścień fokusu ≥ 3:1, wydruk,
-etykiety kategorii, zagnieżdżone nagłówki w akordeonie, jedna karta wpisu na podstronach,
-martwe klasy we wpisie, spis treści bez komponentu `Sidebar`.
-
-## 5. Kolejność
-
-1. **Specimen w `/design-system`:** tokeny `--brand`, `--focus`, `--available`,
-   Geist Mono w metadanych, znak SVG, kafel portfolio z timecode i pauzą. Oglądasz
-   na prawdziwych komponentach, w obu motywach.
-2. **Podstrony** (bez zgody na główną): wpis, `/portfolio`, `/uslugi`, `/o-mnie`, 404.
-3. **Strona główna — za Twoją zgodą**, z porównaniem zrzutów przed/po:
-   lista klientów, liczby w mono, pauza wideo, CTA, zapis zdaniowy, twarde spacje.
-
-Wybór kroju (gdyby kiedyś) zawsze przez specimen: prawdziwy polski nagłówek wyrenderowany
-na zrzucie, nie z pamięci.
+Rozwiązane w iteracji 2 bez zmiany wyglądu głównej: martwa klasa `md:font-semi-bold`,
+cztery kopie nagłówka sekcji (`HomeSection`), dwie kopie odznaki (`StatusBadge`), tokeny
+`sidebar-*` i `chart-*`, fałszywe wartości ciemnej palety w katalogu.

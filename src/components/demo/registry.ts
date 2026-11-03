@@ -21,6 +21,22 @@ export interface DemoEntry {
 
 export const DEMOS: readonly DemoEntry[] = [
   {
+    slug: "precyzja",
+    title: "Precyzja — kierunek z 3 listopada 2026",
+    date: "2026-11-03",
+    status: "propozycja",
+    summary:
+      "Monochrom, linia włosowa, Geist + Geist Mono. Nagłówek jako zaznaczony obiekt z wymiarami na żywo, tryb „Wymiary”, cztery kompetencje z interaktywnymi próbkami.",
+  },
+  {
+    slug: "precyzja/system",
+    title: "Precyzja — specimen systemu",
+    date: "2026-11-03",
+    status: "propozycja",
+    summary:
+      "Tokeny i prymitywy nowego języka na jednej stronie: kolor w obu motywach, skala pisma, odstępy, siatka, ruch, przyciski i pola.",
+  },
+  {
     slug: "main-secondary",
     title: "Wariant A — Bricolage Grotesque + Instrument Serif",
     date: "2026-08-25",

@@ -3,7 +3,7 @@
 import { useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import type { Locale } from "@/i18n/config"
-import { getCommon } from "@/i18n/content/common"
+import { getSystem } from "@/i18n/content/system"
 
 /** Ekran błędu — jedna treść, dwa układy główne. */
 export function ErrorView({
@@ -15,7 +15,7 @@ export function ErrorView({
   error: Error & { digest?: string }
   reset: () => void
 }) {
-  const copy = getCommon(locale).error
+  const copy = getSystem(locale).error
 
   useEffect(() => {
     console.error(error)

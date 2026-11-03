@@ -1,7 +1,7 @@
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import { Logo } from "@/components/layout/Logo"
-import { ModeToggle } from "@/components/Toggle"
+import { ThemeToggle } from "@/components/ThemeToggle"
 import {
   DsBlock,
   DsInline,
@@ -27,7 +27,7 @@ export function AppKitSection() {
             ["layout/Footer", "Trzy kolumny: opis, nawigacja, social", "Serwer"],
             ["layout/Logo", "Sygnet z podmienianym znakiem + nazwa domeny", "Klient"],
             ["layout/MobileNav", "Menu pełnoekranowe (Sheet, side=top)", "Klient"],
-            ["Toggle", "Przełącznik motywu (next-themes)", "Klient"],
+            ["ThemeToggle", "Przełącznik motywu (next-themes)", "Klient"],
             ["PageHeader", "Nagłówek podstrony: badge, H1, lead, separator", "Serwer"],
             ["ContactForm", "Formularz + akcja serwerowa, honeypot", "Klient"],
             ["ScrollToTop", "Przewija na górę po zmianie ścieżki", "Klient"],
@@ -51,7 +51,7 @@ export function AppKitSection() {
             <Logo locale="pl" />
           </DsPreview>
           <DsPreview label="Przełącznik motywu" code='variant="outline" size="icon"'>
-            <ModeToggle label={getCommon("pl").ui.themeToggle} />
+            <ThemeToggle label={getCommon("pl").ui.themeToggle} />
           </DsPreview>
         </div>
       </DsBlock>

@@ -1,11 +1,10 @@
 "use client"
 
-import * as React from "react"
 import { Moon, Sun } from "lucide-react"
 import { useTheme } from "next-themes"
 import { Button } from "@/components/ui/button"
 
-export function ModeToggle({ label }: { label: string }) {
+export function ThemeToggle({ label }: { label: string }) {
   // `resolvedTheme`, a nie `theme`: przy motywie „system" `theme` nie mówi,
   // co jest na ekranie, i pierwsze kliknięcie potrafiło nic nie zmienić.
   const { resolvedTheme, setTheme } = useTheme()

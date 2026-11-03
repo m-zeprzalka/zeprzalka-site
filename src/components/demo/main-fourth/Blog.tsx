@@ -2,7 +2,9 @@ import Image from "next/image"
 import Link from "next/link"
 import { ArrowUpRight } from "lucide-react"
 import { Button } from "@/components/demo/shared/ui/button"
-import { getAllPosts, slugify, type Post } from "@/lib/posts"
+import { getAllPosts, type Post } from "@/lib/posts"
+import { slugify } from "@/lib/slug"
+import { formatReadingTime } from "@/i18n/format"
 import { Reveal } from "@/components/demo/main-fourth/Reveal"
 import { Section, SectionHead } from "@/components/demo/main-fourth/Section"
 import { pl } from "@/components/demo/main-fourth/typography"
@@ -34,7 +36,7 @@ function Row({ post, index }: { post: Post; index: number }) {
               {dateFormat.format(new Date(post.frontmatter.date))}
             </time>
             <span aria-hidden="true"> · </span>
-            {post.readingTime.replace("min read", "min czytania")}
+            {formatReadingTime(post.readingMinutes, "pl")}
           </p>
           <ul className="m4-entry-tags" aria-label="Kategorie">
             {(post.frontmatter.categories || []).slice(0, 2).map((category) => (

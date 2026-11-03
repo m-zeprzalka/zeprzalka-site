@@ -3,7 +3,9 @@ import Link from "next/link"
 import { ArrowRight } from "lucide-react"
 import { Badge } from "@/components/demo/shared/ui/badge"
 import { Button } from "@/components/demo/shared/ui/button"
-import { getAllPosts, slugify, type Post } from "@/lib/posts"
+import { getAllPosts, type Post } from "@/lib/posts"
+import { slugify } from "@/lib/slug"
+import { formatReadingTime } from "@/i18n/format"
 import { Frame } from "@/components/demo/main-third/Frame"
 import { Rise } from "@/components/demo/main-third/Rise"
 import { blog, sections } from "@/components/demo/shared/home-content"
@@ -38,7 +40,7 @@ function Row({ post, index }: { post: Post; index: number }) {
             <span aria-hidden="true" className="text-muted-foreground/40">
               /
             </span>
-            <span>{post.readingTime.replace("min read", "min")}</span>
+            <span>{formatReadingTime(post.readingMinutes, "pl")}</span>
           </p>
 
           <h3 className="m3-row-title">

@@ -1,5 +1,5 @@
 import { MetadataRoute } from "next"
-import { getAllPosts, getAllCategorySlugs, getPostsByCategory } from "@/lib/posts"
+import { getAllPosts, getTerms } from "@/lib/posts"
 import { MIN_POSTS_TO_INDEX_CATEGORY } from "@/i18n/page-metadata"
 import { absoluteUrl } from "@/lib/site"
 import {
@@ -137,12 +137,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
     // Kategorie z jednym wpisem mają noindex (patrz categoryMetadata) —
     // mapa strony nie może wskazywać adresów wyłączonych z indeksu.
-    const indexedCategories = getAllCategorySlugs(locale).filter(
-      (slug) =>
-        getPostsByCategory(locale, slug).length >= MIN_POSTS_TO_INDEX_CATEGORY
+    const indexedCategories = getTerms(locale, "categories").filter(
+      (term) => term.posts.length >= MIN_POSTS_TO_INDEX_CATEGORY
     )
 
-    for (const slug of indexedCategories) {
+    for (const { slug } of indexedCategories) {
       const twin = translateCategorySlug(slug, locale, other)
       entries.push({
         url: absoluteUrl(categoryPath(locale, slug)),

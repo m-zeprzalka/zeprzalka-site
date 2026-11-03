@@ -21,7 +21,6 @@ const pl = {
     title: "Usługi i cennik",
     description:
       "Ile kosztuje strona internetowa? Widełki cenowe dla landing page'a, strony firmowej, wdrożeń AI i opieki miesięcznej. Wycena w 24 godziny, bez zobowiązań.",
-    ogTitle: "Usługi i cennik | Michał Zeprzałka",
     ogDescription:
       "Widełki cenowe dla stron, aplikacji, wdrożeń AI i opieki miesięcznej. Wycena w 24 godziny.",
   },
@@ -44,16 +43,13 @@ const pl = {
     title: "Portfolio",
     description:
       "Wszystkie realizacje: strony i aplikacje internetowe, projekty UX/UI oraz materiały wideo — relacje z wydarzeń, wideo produktowe i treści na social media.",
-    ogTitle: "Portfolio | Michał Zeprzałka",
     ogDescription:
       "Strony, aplikacje i materiały wideo z ponad dekady pracy dla ponad 30 klientów.",
-    ogAlt: "Portfolio — Michał Zeprzałka",
   },
   blog: {
     title: "Blog",
     description:
       "Artykuły o AI, Next.js, web developmencie i designie. Praktyczne poradniki i przemyślenia z realnych projektów.",
-    ogTitle: "Blog | Michał Zeprzałka",
     feedDescription: "Artykuły o AI, Next.js, web developmencie i designie.",
   },
   categories: {
@@ -70,16 +66,21 @@ const pl = {
     description: "Artykuły o tematyce: {name}",
   },
   og: {
-    homeEyebrow: "Digital Solutions Architect",
-    homeTitle: "Przekształcam ambitne projekty w produkty cyfrowe",
-    homeFooter: "Strony · Aplikacje · Design · AI",
-    portfolioEyebrow: "Portfolio",
-    portfolioTitle: "Strony, aplikacje i materiały wideo",
-    /** {count} to liczba realizacji. */
-    portfolioFooter: "{count} realizacji · ponad 30 klientów",
-    blogFallbackEyebrow: "Blog",
-    /** Karty Open Graph podstron: nadtytuł, tytuł, stopka. {count} = „29 artykułów”. */
+    /**
+     * Karty Open Graph: nadtytuł, tytuł, stopka. Tytuł jest też tekstem
+     * alternatywnym obrazka. `{count}` i `{name}` podstawia `src/lib/og.tsx`.
+     */
     cards: {
+      home: {
+        eyebrow: "Digital Solutions Architect",
+        title: "Przekształcam ambitne projekty w produkty cyfrowe",
+        footer: "Strony · Aplikacje · Design · AI",
+      },
+      portfolio: {
+        eyebrow: "Portfolio",
+        title: "Strony, aplikacje i materiały wideo",
+        footer: "{count} realizacji · ponad 30 klientów",
+      },
       services: {
         eyebrow: "Usługi i cennik",
         title: "Strony, aplikacje i wdrożenia AI — widełki cen",
@@ -132,7 +133,6 @@ const en: typeof pl = {
     title: "Services and pricing",
     description:
       "What does a website cost? Price ranges for a landing page, a company website, AI deployments and monthly care. A quote within 24 hours, with nothing to sign.",
-    ogTitle: "Services and pricing | Michał Zeprzałka",
     ogDescription:
       "Price ranges for websites, applications, AI deployments and monthly care. A quote within 24 hours.",
   },
@@ -155,16 +155,13 @@ const en: typeof pl = {
     title: "Portfolio",
     description:
       "Every project: websites and web applications, UX/UI work and video — event coverage, product films and social media content.",
-    ogTitle: "Portfolio | Michał Zeprzałka",
     ogDescription:
       "Websites, applications and video from over a decade of work for more than 30 clients.",
-    ogAlt: "Portfolio — Michał Zeprzałka",
   },
   blog: {
     title: "Blog",
     description:
       "Articles on AI, Next.js, web development and design. Practical guides and thoughts from real projects.",
-    ogTitle: "Blog | Michał Zeprzałka",
     feedDescription: "Articles on AI, Next.js, web development and design.",
   },
   categories: {
@@ -180,14 +177,17 @@ const en: typeof pl = {
     description: "Articles tagged: {name}",
   },
   og: {
-    homeEyebrow: "Digital Solutions Architect",
-    homeTitle: "I turn ambitious projects into digital products",
-    homeFooter: "Websites · Apps · Design · AI",
-    portfolioEyebrow: "Portfolio",
-    portfolioTitle: "Websites, applications and video",
-    portfolioFooter: "{count} projects · 30+ clients",
-    blogFallbackEyebrow: "Blog",
     cards: {
+      home: {
+        eyebrow: "Digital Solutions Architect",
+        title: "I turn ambitious projects into digital products",
+        footer: "Websites · Apps · Design · AI",
+      },
+      portfolio: {
+        eyebrow: "Portfolio",
+        title: "Websites, applications and video",
+        footer: "{count} projects · 30+ clients",
+      },
       services: {
         eyebrow: "Services and pricing",
         title: "Websites, applications and AI deployments — price ranges",

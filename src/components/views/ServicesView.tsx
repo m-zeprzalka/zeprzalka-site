@@ -4,13 +4,15 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { PageHeader } from "@/components/PageHeader"
-import { formatPrice, packages, process } from "@/lib/services"
+import { packages, processSteps } from "@/lib/services"
 import { JsonLd } from "@/components/JsonLd"
-import { AUTHOR, CONTACT_EMAIL, SITE_NAME, absoluteImage, absoluteUrl } from "@/lib/site"
+import { absoluteUrl } from "@/lib/site"
 import { PERSON_ID, breadcrumbSchema, graph } from "@/lib/schema"
-import { ROUTES, t, type Locale } from "@/i18n/config"
+import { ROUTES, type Locale } from "@/i18n/config"
 import { getCommon } from "@/i18n/content/common"
+import { getMeta } from "@/i18n/content/meta"
 import { getPages } from "@/i18n/content/pages"
+import { formatNumber } from "@/i18n/format"
 
 /**
  * Strona ofertowa. Jeden układ dla obu języków — pakiety i kwoty siedzą
@@ -23,27 +25,24 @@ export function ServicesView({ locale }: { locale: Locale }) {
    * Katalog usług w danych strukturalnych. Wyszukiwarka dostaje wprost, co
    * i za ile jest oferowane, zamiast domyślać się z treści strony.
    */
-  const minPrice = Math.min(...packages.map((pack) => pack.from))
   const offerJsonLd = graph(
     {
-      "@type": "ProfessionalService",
+      // `Service` świadczona przez osobę (Person z @id), a nie `ProfessionalService`:
+      // ten drugi to podtyp LocalBusiness i wymaga adresu siedziby.
+      "@type": "Service",
       "@id": `${absoluteUrl(ROUTES.services[locale])}#service`,
-      name: SITE_NAME,
+      name: getMeta(locale).services.title,
+      description: getMeta(locale).root.ogDescription,
       url: absoluteUrl(ROUTES.services[locale]),
-      image: absoluteImage(AUTHOR.avatar),
-      email: `mailto:${CONTACT_EMAIL}`,
       areaServed: "PL",
-      // Pole tekstowe — podajemy próg wejścia z cennika, nie wymyślony sufit.
-      priceRange: `od ${minPrice} PLN`,
-      founder: { "@id": PERSON_ID },
       provider: { "@id": PERSON_ID },
       hasOfferCatalog: {
         "@type": "OfferCatalog",
         name: copy.offerCatalog,
         itemListElement: packages.map((pack) => ({
           "@type": "Offer",
-          name: t(pack.name, locale),
-          description: t(pack.scope, locale),
+          name: pack.name[locale],
+          description: pack.scope[locale],
           priceSpecification: {
             "@type": "PriceSpecification",
             minPrice: pack.from,
@@ -52,14 +51,13 @@ export function ServicesView({ locale }: { locale: Locale }) {
         })),
       },
     },
-    breadcrumbSchema([
-      { name: getCommon(locale).nav.home, path: ROUTES.home[locale] },
+    breadcrumbSchema(locale, [
       { name: getCommon(locale).nav.services, path: ROUTES.services[locale] },
     ])
   )
 
   return (
-    <div className="container mx-auto px-4 py-12 md:py-16 lg:py-20">
+    <div className="page-shell">
       <JsonLd data={offerJsonLd} />
 
       <PageHeader
@@ -85,10 +83,10 @@ export function ServicesView({ locale }: { locale: Locale }) {
               <div className="flex items-start justify-between gap-4">
                 <div>
                   <h3 className="text-xl font-semibold tracking-tight">
-                    {t(pack.name, locale)}
+                    {pack.name[locale]}
                   </h3>
                   <p className="mt-1 text-sm text-muted-foreground">
-                    {t(pack.scope, locale)}
+                    {pack.scope[locale]}
                   </p>
                 </div>
                 {pack.highlight && (
@@ -101,17 +99,17 @@ export function ServicesView({ locale }: { locale: Locale }) {
                   {copy.priceFrom}
                 </span>
                 <span className="text-3xl font-medium tabular-nums">
-                  {formatPrice(pack.from, locale)} {copy.currency}
+                  {formatNumber(pack.from, locale)} {copy.currency}
                 </span>
                 {pack.unit && (
                   <span className="text-sm text-muted-foreground">
-                    / {t(pack.unit, locale)}
+                    / {pack.unit[locale]}
                   </span>
                 )}
               </p>
 
               <ul className="mt-6 flex flex-1 flex-col gap-3">
-                {t(pack.items, locale).map((item) => (
+                {pack.items[locale].map((item) => (
                   <li key={item} className="flex items-start gap-3 text-sm">
                     <Check className="mt-0.5 w-4 h-4 shrink-0 text-muted-foreground" />
                     {item}
@@ -134,14 +132,14 @@ export function ServicesView({ locale }: { locale: Locale }) {
           {copy.processHeading}
         </h2>
         <ol className="mt-8 grid gap-8 md:grid-cols-3">
-          {process.map((step, index) => (
-            <li key={t(step.title, locale)} className="flex flex-col gap-3">
+          {processSteps.map((step, index) => (
+            <li key={step.title[locale]} className="flex flex-col gap-3">
               <span className="text-sm tabular-nums text-muted-foreground">
                 {String(index + 1).padStart(2, "0")}
               </span>
-              <h3 className="text-base font-semibold">{t(step.title, locale)}</h3>
+              <h3 className="text-base font-semibold">{step.title[locale]}</h3>
               <p className="text-sm text-muted-foreground leading-relaxed">
-                {t(step.detail, locale)}
+                {step.detail[locale]}
               </p>
             </li>
           ))}

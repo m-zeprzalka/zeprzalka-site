@@ -1,5 +1,6 @@
 import { PageHeader } from "@/components/PageHeader"
-import { formatDate, type Locale } from "@/i18n/config"
+import type { Locale } from "@/i18n/config"
+import { formatDate } from "@/i18n/format"
 import { getLegal } from "@/i18n/content/legal"
 
 /** Polityka prywatności — ten sam układ co pozostałe podstrony tekstowe. */
@@ -7,7 +8,7 @@ export function PrivacyView({ locale }: { locale: Locale }) {
   const copy = getLegal(locale)
 
   return (
-    <div className="container mx-auto px-4 py-12 md:py-16 lg:py-20 max-w-4xl">
+    <div className="page-shell max-w-4xl">
       <PageHeader title={copy.title} description={copy.intro} />
 
       <div className="space-y-12">

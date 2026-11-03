@@ -8,6 +8,11 @@
 import type { Locale } from "@/i18n/config"
 
 const pl = {
+  /** Formy rzeczowników przy liczbach — patrz `plural()` w src/i18n/format.ts. */
+  plurals: {
+    articles: { one: "artykuł", few: "artykuły", many: "artykułów", other: "artykułu" },
+    projects: { one: "realizacja", few: "realizacje", many: "realizacji", other: "realizacji" },
+  },
   nav: {
     /** Etykieta pozycji menu; adresy biorą się z ROUTES w src/i18n/config.ts. */
     home: "Start",
@@ -69,27 +74,12 @@ const pl = {
     failed:
       "Nie udało się wysłać wiadomości. Spróbuj ponownie lub napisz na m@zeprzalka.com.",
   },
-  notFound: {
-    title: "Strona nie znaleziona",
-    description:
-      "Wygląda na to, że strona, której szukasz, zadziałała tylko w wyobraźni. Przejdźmy na stabilny grunt.",
-    cta: "Wróć na stronę główną",
-  },
-  error: {
-    title: "Coś poszło nie tak!",
-    description: "Wystąpił nieoczekiwany błąd. Spróbuj ponownie lub odśwież stronę.",
-    cta: "Spróbuj ponownie",
-  },
   ui: {
     themeToggle: "Zmień motyw",
     skipToContent: "Przejdź do treści",
     youtubePlay: "Odtwórz film (YouTube)",
     copyCode: "Kopiuj kod",
     tableOfContents: "Spis treści",
-    noImage: "Brak obrazka",
-    /** {label} to opis materiału wideo. */
-    videoPlay: "Odtwórz: {label}",
-    videoPause: "Wstrzymaj: {label}",
     videoFallback: "Twoja przeglądarka nie obsługuje wideo.",
   },
   postCta: {
@@ -102,6 +92,10 @@ const pl = {
 }
 
 const en: typeof pl = {
+  plurals: {
+    articles: { one: "article", few: "articles", many: "articles", other: "articles" },
+    projects: { one: "project", few: "projects", many: "projects", other: "projects" },
+  },
   nav: {
     home: "Home",
     services: "Services",
@@ -158,26 +152,12 @@ const en: typeof pl = {
     failed:
       "The message could not be sent. Try again or email m@zeprzalka.com.",
   },
-  notFound: {
-    title: "Page not found",
-    description:
-      "Looks like the page you are after only ever worked in theory. Let's get back to solid ground.",
-    cta: "Back to the home page",
-  },
-  error: {
-    title: "Something went wrong!",
-    description: "An unexpected error occurred. Try again or reload the page.",
-    cta: "Try again",
-  },
   ui: {
     themeToggle: "Toggle theme",
     skipToContent: "Skip to content",
     youtubePlay: "Play video (YouTube)",
     copyCode: "Copy code",
     tableOfContents: "Table of contents",
-    noImage: "No image",
-    videoPlay: "Play: {label}",
-    videoPause: "Pause: {label}",
     videoFallback: "Your browser does not support video.",
   },
   postCta: {
@@ -193,14 +173,4 @@ export const common = { pl, en } as const
 
 export function getCommon(locale: Locale) {
   return common[locale]
-}
-
-/** Podstawia `{klucz}` wartościami — jedyny mechanizm interpolacji w treściach. */
-export function fill(
-  template: string,
-  values: Record<string, string | number>
-): string {
-  return template.replace(/\{(\w+)\}/g, (match, key) =>
-    key in values ? String(values[key]) : match
-  )
 }

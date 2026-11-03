@@ -1,31 +1,22 @@
 import Link from "next/link"
 import { Logo } from "@/components/layout/Logo"
-import { ModeToggle } from "@/components/Toggle"
+import { ThemeToggle } from "@/components/ThemeToggle"
 import { MobileNav } from "@/components/layout/MobileNav"
 import { LanguageSwitcher } from "@/components/layout/LanguageSwitcher"
-import { ROUTES, type Locale } from "@/i18n/config"
+import type { Locale } from "@/i18n/config"
 import { getCommon } from "@/i18n/content/common"
+import { mainNav } from "@/i18n/navigation"
 
 export function Header({ locale }: { locale: Locale }) {
   const copy = getCommon(locale)
-  const navLinks = [
-    { href: ROUTES.services[locale], label: copy.nav.services },
-    { href: ROUTES.blog[locale], label: copy.nav.blog },
-    { href: ROUTES.about[locale], label: copy.nav.about },
-    { href: ROUTES.contact[locale], label: copy.nav.contact },
-  ]
 
   return (
-    <header className="sticky top-1 z-50 w-full border-b bg-background/65 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className="sticky top-1 z-50 w-full border-b surface-glass">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         <Logo locale={locale} />
         <div className="flex items-center gap-2">
-          {/* Desktop nav */}
-          <nav
-            aria-label={copy.nav.mainAria}
-            className="hidden md:flex items-center gap-6 mr-2"
-          >
-            {navLinks.map(({ href, label }) => (
+          <nav aria-label={copy.nav.mainAria} className="hidden md:flex items-center gap-6 mr-2">
+            {mainNav(locale).map(({ href, label }) => (
               <Link
                 key={href}
                 href={href}
@@ -35,9 +26,23 @@ export function Header({ locale }: { locale: Locale }) {
               </Link>
             ))}
           </nav>
-          <LanguageSwitcher locale={locale} />
-          <ModeToggle label={copy.ui.themeToggle} />
-          <MobileNav locale={locale} />
+          <LanguageSwitcher
+            locale={locale}
+            label={copy.languageSwitch.label}
+            aria={copy.languageSwitch.aria}
+          />
+          <ThemeToggle label={copy.ui.themeToggle} />
+          <MobileNav
+            locale={locale}
+            links={mainNav(locale, { withHome: true })}
+            labels={{
+              open: copy.nav.openMenu,
+              close: copy.nav.closeMenu,
+              title: copy.nav.menuTitle,
+              nav: copy.nav.mobileAria,
+              theme: copy.ui.themeToggle,
+            }}
+          />
         </div>
       </div>
     </header>

@@ -2,8 +2,10 @@ import { Separator } from "@/components/ui/separator"
 import { Mail, MapPin, Clock } from "lucide-react"
 import { ContactForm } from "@/components/ContactForm"
 import { PageHeader } from "@/components/PageHeader"
-import type { Locale } from "@/i18n/config"
+import { ROUTES, type Locale } from "@/i18n/config"
+import { getCommon } from "@/i18n/content/common"
 import { getPages } from "@/i18n/content/pages"
+import { CONTACT_EMAIL } from "@/lib/site"
 
 export function ContactView({ locale }: { locale: Locale }) {
   const copy = getPages(locale).contact
@@ -12,8 +14,8 @@ export function ContactView({ locale }: { locale: Locale }) {
     {
       icon: Mail,
       label: copy.emailLabel,
-      value: "m@zeprzalka.com",
-      href: "mailto:m@zeprzalka.com",
+      value: CONTACT_EMAIL,
+      href: `mailto:${CONTACT_EMAIL}`,
     },
     {
       icon: MapPin,
@@ -30,7 +32,7 @@ export function ContactView({ locale }: { locale: Locale }) {
   ]
 
   return (
-    <div className="container mx-auto px-4 py-12 md:py-16 lg:py-20">
+    <div className="page-shell">
       <PageHeader
         badge={copy.badge}
         title={copy.title}
@@ -73,7 +75,11 @@ export function ContactView({ locale }: { locale: Locale }) {
 
         {/* Formularz */}
         <div className="lg:col-span-8 xl:col-span-9 relative">
-          <ContactForm locale={locale} />
+          <ContactForm
+            locale={locale}
+            copy={getCommon(locale).form}
+            privacyHref={ROUTES.privacy[locale]}
+          />
         </div>
       </div>
     </div>

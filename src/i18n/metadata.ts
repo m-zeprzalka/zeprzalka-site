@@ -8,6 +8,7 @@
 import type { Metadata } from "next"
 import { OG_LOCALE, ROUTES, otherLocale, type Locale } from "@/i18n/config"
 import { getMeta } from "@/i18n/content/meta"
+import { feedAlternate } from "@/i18n/page-metadata"
 import { SITE_DESCRIPTION, SITE_NAME, SITE_URL, absoluteUrl } from "@/lib/site"
 
 export function rootMetadata(locale: Locale): Metadata {
@@ -20,7 +21,7 @@ export function rootMetadata(locale: Locale): Metadata {
       template: m.root.titleTemplate,
     },
     description: SITE_DESCRIPTION[locale],
-    authors: [{ name: SITE_NAME, url: SITE_URL }],
+    authors: [{ name: SITE_NAME, url: absoluteUrl(ROUTES.about[locale]) }],
     creator: SITE_NAME,
     openGraph: {
       type: "website",
@@ -57,12 +58,6 @@ export function rootMetadata(locale: Locale): Metadata {
         ? { "msvalidate.01": process.env.BING_SITE_VERIFICATION }
         : undefined,
     },
-    alternates: {
-      types: {
-        "application/rss+xml": [
-          { url: ROUTES.feed[locale], title: m.root.feedTitle },
-        ],
-      },
-    },
+    alternates: { types: feedAlternate(locale) },
   }
 }

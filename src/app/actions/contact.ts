@@ -5,7 +5,8 @@ import nodemailer from "nodemailer"
 import { z } from "zod"
 import { checkRateLimit, clientKey } from "@/lib/rate-limit"
 import { DEFAULT_LOCALE, locales, type Locale } from "@/i18n/config"
-import { fill, getCommon } from "@/i18n/content/common"
+import { getCommon } from "@/i18n/content/common"
+import { fill } from "@/i18n/format"
 import { CONTACT_EMAIL } from "@/lib/site"
 
 export interface ContactFormState {

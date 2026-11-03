@@ -30,15 +30,15 @@ import {
   type RouteKey,
 } from "@/i18n/config"
 import { getMeta } from "@/i18n/content/meta"
-import { fill } from "@/i18n/content/common"
 import { getPages } from "@/i18n/content/pages"
+import { fill } from "@/i18n/format"
 import {
   translateCategorySlug,
   translatePostSlug,
   translateTagSlug,
 } from "@/i18n/blog-map"
 import { AUTHOR, absoluteUrl } from "@/lib/site"
-import type { Post } from "@/lib/posts"
+import type { Post, Term } from "@/lib/posts"
 
 /** Kategoria z mniejszą liczbą wpisów to „cienka" strona — bez indeksu. */
 export const MIN_POSTS_TO_INDEX_CATEGORY = 2
@@ -48,7 +48,6 @@ interface PageMetaInput {
   description: string
   /** Ta sama strona w obu językach; `null` = brak odpowiednika. */
   paths: Localized<string | null>
-  ogTitle?: string
   ogDescription?: string
   /** `noindex, follow` — strona dostępna, ale poza wynikami wyszukiwania. */
   noindex?: boolean
@@ -65,10 +64,26 @@ function pageTitle(locale: Locale, title: string): Metadata["title"] {
   return title.length + suffix.length > 60 ? { absolute: title } : title
 }
 
-export function buildMetadata(locale: Locale, input: PageMetaInput): Metadata {
+/** Odnośnik do kanału RSS w `<head>` — na każdej stronie, w jej języku. */
+export function feedAlternate(locale: Locale) {
+  return {
+    "application/rss+xml": [{ url: ROUTES.feed[locale], title: getMeta(locale).root.feedTitle }],
+  }
+}
+
+/** Ta sama wartość dla każdego języka serwisu. */
+function mapLocales<T>(fn: (locale: Locale) => T): Localized<T> {
+  return Object.fromEntries(locales.map((locale) => [locale, fn(locale)])) as Record<Locale, T>
+}
+
+/**
+ * `og:title` to sam tytuł strony, bez sufiksu marki — tak zaleca Open Graph,
+ * a markę niesie `og:site_name`. Sufiks dostaje tylko `<title>`.
+ */
+function buildMetadata(locale: Locale, input: PageMetaInput): Metadata {
   const root = getMeta(locale).root
   const path = input.paths[locale]
-  const ogTitle = input.ogTitle ?? input.title
+  const ogTitle = input.title
   const ogDescription = input.ogDescription ?? input.description
 
   return {
@@ -76,9 +91,7 @@ export function buildMetadata(locale: Locale, input: PageMetaInput): Metadata {
     description: input.description,
     alternates: {
       ...alternatesFor(locale, input.paths),
-      types: {
-        "application/rss+xml": [{ url: ROUTES.feed[locale], title: root.feedTitle }],
-      },
+      types: feedAlternate(locale),
     },
     openGraph: {
       type: "website",
@@ -103,15 +116,9 @@ export function buildMetadata(locale: Locale, input: PageMetaInput): Metadata {
 function staticPage(
   locale: Locale,
   key: RouteKey,
-  m: { title: string; description: string; ogTitle?: string; ogDescription?: string }
+  m: { title: string; description: string; ogDescription?: string }
 ): Metadata {
-  return buildMetadata(locale, {
-    title: m.title,
-    description: m.description,
-    ogTitle: m.ogTitle,
-    ogDescription: m.ogDescription,
-    paths: ROUTES[key],
-  })
+  return buildMetadata(locale, { ...m, paths: ROUTES[key] })
 }
 
 /**
@@ -122,11 +129,7 @@ export function homeMetadata(locale: Locale): Metadata {
   return {
     alternates: {
       ...alternatesFor(locale, ROUTES.home),
-      types: {
-        "application/rss+xml": [
-          { url: ROUTES.feed[locale], title: getMeta(locale).root.feedTitle },
-        ],
-      },
+      types: feedAlternate(locale),
     },
   }
 }
@@ -149,10 +152,8 @@ export const portfolioMetadata = (locale: Locale) =>
 export const categoriesMetadata = (locale: Locale) =>
   staticPage(locale, "categories", getMeta(locale).categories)
 
-export function blogMetadata(locale: Locale): Metadata {
-  const m = getMeta(locale).blog
-  return staticPage(locale, "blog", { ...m, ogDescription: m.description })
-}
+export const blogMetadata = (locale: Locale) =>
+  staticPage(locale, "blog", getMeta(locale).blog)
 
 /**
  * Kolejna strona archiwum bloga. Canonical wskazuje ją samą (nie pierwszą
@@ -166,14 +167,10 @@ export function blogPageMetadata(
   pageCount: Localized<number>
 ): Metadata {
   const copy = getPages(locale).blog
-  const paths = {} as Record<Locale, string | null>
-  for (const other of locales) {
-    paths[other] = page <= pageCount[other] ? blogPagePath(other, page) : null
-  }
   return buildMetadata(locale, {
     title: fill(copy.pageTitle, { current: page }),
     description: fill(copy.pageDescription, { current: page }),
-    paths,
+    paths: mapLocales((other) => (page <= pageCount[other] ? blogPagePath(other, page) : null)),
   })
 }
 
@@ -184,30 +181,20 @@ function pathsFor(
   translate: (slug: string, from: Locale, to: Locale) => string | null,
   build: (locale: Locale, slug: string) => string
 ): Localized<string | null> {
-  const result = {} as Record<Locale, string | null>
-  for (const other of locales) {
-    if (other === locale) {
-      result[other] = build(locale, slug)
-      continue
-    }
+  return mapLocales((other) => {
+    if (other === locale) return build(locale, slug)
     const translated = translate(slug, locale, other)
-    result[other] = translated ? build(other, translated) : null
-  }
-  return result
+    return translated ? build(other, translated) : null
+  })
 }
 
-export function categoryMetadata(
-  locale: Locale,
-  slug: string,
-  label: string,
-  postCount: number
-): Metadata {
+export function categoryMetadata(locale: Locale, term: Term): Metadata {
   const m = getMeta(locale).category
   return buildMetadata(locale, {
-    title: fill(m.title, { name: label }),
-    description: fill(m.description, { name: label }),
-    paths: pathsFor(locale, slug, translateCategorySlug, categoryPath),
-    noindex: postCount < MIN_POSTS_TO_INDEX_CATEGORY,
+    title: fill(m.title, { name: term.label }),
+    description: fill(m.description, { name: term.label }),
+    paths: pathsFor(locale, term.slug, translateCategorySlug, categoryPath),
+    noindex: term.posts.length < MIN_POSTS_TO_INDEX_CATEGORY,
   })
 }
 
@@ -215,12 +202,12 @@ export function categoryMetadata(
  * Tagi są zawsze `noindex, follow`: to wąskie listy po kilka wpisów, które
  * powielają strony kategorii. Robot nadal przechodzi przez nie do wpisów.
  */
-export function tagMetadata(locale: Locale, slug: string, label: string): Metadata {
+export function tagMetadata(locale: Locale, term: Term): Metadata {
   const m = getMeta(locale).tag
   return buildMetadata(locale, {
-    title: fill(m.title, { name: label }),
-    description: fill(m.description, { name: label }),
-    paths: pathsFor(locale, slug, translateTagSlug, tagPath),
+    title: fill(m.title, { name: term.label }),
+    description: fill(m.description, { name: term.label }),
+    paths: pathsFor(locale, term.slug, translateTagSlug, tagPath),
     noindex: true,
   })
 }

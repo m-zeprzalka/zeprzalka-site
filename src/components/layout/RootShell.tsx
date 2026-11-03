@@ -1,13 +1,13 @@
 import { Geist, Geist_Mono } from "next/font/google"
 import "@/app/globals.css"
-import { ThemeProvider } from "@/components/theme-provider"
-import { Bar } from "@/components/layout/Bar"
+import { ThemeProvider } from "next-themes"
+import { ReadingProgress } from "@/components/layout/ReadingProgress"
 import { Header } from "@/components/layout/Header"
 import { Footer } from "@/components/layout/Footer"
 import { ScrollToTop } from "@/components/ScrollToTop"
 import { Analytics } from "@vercel/analytics/next"
 import { SpeedInsights } from "@vercel/speed-insights/next"
-import { HTML_LANG, type Locale } from "@/i18n/config"
+import type { Locale } from "@/i18n/config"
 import { getCommon } from "@/i18n/content/common"
 
 /*
@@ -51,12 +51,12 @@ export function RootShell({
     // font-family właśnie na tym elemencie, więc deklaracja na <body>
     // była o poziom za nisko i serwis renderował się krojem systemowym.
     <html
-      lang={HTML_LANG[locale]}
+      lang={locale}
       className={`${geistSans.variable} ${geistMono.variable}`}
       suppressHydrationWarning
     >
       <body className="antialiased">
-        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
+        <ThemeProvider attribute="class" defaultTheme="dark">
           {/* Widoczny tylko po wejściu klawiszem Tab — omija nagłówek (WCAG 2.4.1). */}
           <a
             href="#main"
@@ -66,7 +66,7 @@ export function RootShell({
             {getCommon(locale).ui.skipToContent}
           </a>
           <ScrollToTop />
-          <Bar />
+          <ReadingProgress />
           <Header locale={locale} />
           <main id="main" tabIndex={-1} className="outline-none">
             {children}

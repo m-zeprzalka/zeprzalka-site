@@ -2,7 +2,7 @@
 
 import { ErrorView } from "@/components/system/ErrorView"
 
-export default function Error(props: {
+export default function ErrorPage(props: {
   error: Error & { digest?: string }
   reset: () => void
 }) {

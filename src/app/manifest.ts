@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next"
 import { SITE_DESCRIPTION, SITE_NAME, SITE_TITLE } from "@/lib/site"
-import { DEFAULT_LOCALE, HTML_LANG } from "@/i18n/config"
+import { DEFAULT_LOCALE } from "@/i18n/config"
 
 /**
  * Manifest aplikacji webowej — pozwala dodać serwis do ekranu głównego
@@ -14,7 +14,7 @@ export default function manifest(): MetadataRoute.Manifest {
     description: SITE_DESCRIPTION[DEFAULT_LOCALE],
     start_url: "/",
     display: "standalone",
-    lang: HTML_LANG[DEFAULT_LOCALE],
+    lang: DEFAULT_LOCALE,
     background_color: "#0a0a0a",
     theme_color: "#0a0a0a",
     icons: [

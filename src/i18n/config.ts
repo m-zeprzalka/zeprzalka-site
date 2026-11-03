@@ -25,19 +25,20 @@ export const DEFAULT_LOCALE: Locale = "pl"
 /** Para tekstów: obie wersje albo błąd kompilacji. */
 export type Localized<T> = Readonly<Record<Locale, T>>
 
-/** Wybiera wersję językową z pary. */
-export function t<T>(value: Localized<T>, locale: Locale): T {
-  return value[locale]
+/** Strażnik typu dla wartości z zewnątrz (formularz, parametr). */
+export function isLocale(value: unknown): value is Locale {
+  return typeof value === "string" && (locales as readonly string[]).includes(value)
 }
 
-/** Wartość atrybutu `lang` na `<html>`. */
-export const HTML_LANG: Localized<string> = { pl: "pl", en: "en" }
+/**
+ * Znacznik języka z regionem (BCP 47) — dla `Intl`, danych strukturalnych
+ * (`inLanguage`) i kanału RSS. Angielskie copy jest brytyjskie, stąd `en-GB`.
+ * Atrybut `lang` na `<html>` i `hreflang` używają samego kodu języka (`Locale`).
+ */
+export const INTL_LOCALE: Localized<string> = { pl: "pl-PL", en: "en-GB" }
 
-/** `og:locale` — Open Graph wymaga formatu z regionem. */
-export const OG_LOCALE: Localized<string> = { pl: "pl_PL", en: "en_US" }
-
-/** Znacznik języka BCP 47 dla danych strukturalnych i kanału RSS. */
-export const BCP47: Localized<string> = { pl: "pl-PL", en: "en-US" }
+/** `og:locale` — Open Graph wymaga formatu `język_REGION`. */
+export const OG_LOCALE: Localized<string> = { pl: "pl_PL", en: "en_GB" }
 
 /**
  * Mapa adresów. Jedno miejsce, w którym para „ta sama strona w dwóch
@@ -100,7 +101,7 @@ export function alternatesFor(
   const languages: Record<string, string> = {}
   for (const other of locales) {
     const path = paths[other]
-    if (path) languages[HTML_LANG[other]] = path
+    if (path) languages[other] = path
   }
   if (paths.pl) languages["x-default"] = paths.pl
 
@@ -110,30 +111,7 @@ export function alternatesFor(
   }
 }
 
-/** Ta sama strona w drugim języku — `null`, jeśli tłumaczenia nie ma. */
+/** Drugi język serwisu. */
 export function otherLocale(locale: Locale): Locale {
   return locale === "pl" ? "en" : "pl"
-}
-
-/**
- * Data w formacie czytelnym w danym języku. Polska notacja `21.10.2025`
- * zostaje bez zmian; angielska świadomie nie jest `21/10/2025`, bo ten zapis
- * czyta się inaczej po obu stronach Atlantyku.
- */
-export function formatDate(value: string | Date, locale: Locale): string {
-  const date = value instanceof Date ? value : new Date(value)
-  if (locale === "pl") return date.toLocaleDateString("pl-PL")
-  return date.toLocaleDateString("en-GB", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  })
-}
-
-/**
- * `reading-time` zwraca zawsze angielskie „5 min read". Polska wersja
- * podmienia końcówkę; angielska zostaje bez zmian.
- */
-export function formatReadingTime(text: string, locale: Locale): string {
-  return locale === "pl" ? text.replace("min read", "min czytania") : text
 }

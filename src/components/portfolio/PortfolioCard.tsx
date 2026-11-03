@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge"
 import { useEffect, useRef } from "react"
 import { useReducedMotion } from "@/hooks/use-reduced-motion"
 import type { PortfolioItem } from "@/lib/portfolio"
-import { t, type Locale } from "@/i18n/config"
+import type { Locale } from "@/i18n/config"
 
 function LazyVideo({
   src,
@@ -84,8 +84,8 @@ export function PortfolioCard({
       <LazyVideo
         src={item.video}
         poster={item.poster}
-        title={t(item.title, locale)}
-        category={t(item.category, locale)}
+        title={item.title[locale]}
+        category={item.category[locale]}
       />
     </Card>
   )

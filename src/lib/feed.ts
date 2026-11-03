@@ -1,6 +1,6 @@
 import { getAllPosts } from "@/lib/posts"
 import { AUTHOR, SITE_URL, absoluteUrl } from "@/lib/site"
-import { BCP47, ROUTES, postPath, type Locale } from "@/i18n/config"
+import { INTL_LOCALE, ROUTES, postPath, type Locale } from "@/i18n/config"
 import { getMeta } from "@/i18n/content/meta"
 
 function escapeXml(value: string): string {
@@ -41,7 +41,7 @@ ${post.frontmatter.categories.map((c) => `      <category>${escapeXml(c)}</categ
     <title>${escapeXml(m.root.feedTitle)}</title>
     <link>${absoluteUrl(ROUTES.blog[locale])}</link>
     <description>${escapeXml(m.blog.feedDescription)}</description>
-    <language>${BCP47[locale]}</language>
+    <language>${INTL_LOCALE[locale]}</language>
     <lastBuildDate>${new Date(posts[0]?.frontmatter.updated || posts[0]?.frontmatter.date || Date.now()).toUTCString()}</lastBuildDate>
     <image>
       <url>${absoluteUrl("/icon-512.png")}</url>

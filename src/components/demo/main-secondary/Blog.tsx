@@ -3,7 +3,9 @@ import Link from "next/link"
 import { ArrowUpRight } from "lucide-react"
 import { Badge } from "@/components/demo/shared/ui/badge"
 import { Button } from "@/components/demo/shared/ui/button"
-import { getAllPosts, slugify, type Post } from "@/lib/posts"
+import { getAllPosts, type Post } from "@/lib/posts"
+import { slugify } from "@/lib/slug"
+import { formatReadingTime } from "@/i18n/format"
 import { Reveal } from "@/components/demo/main-secondary/Reveal"
 import { Section, SectionHeader } from "@/components/demo/main-secondary/Section"
 import { blog, sections } from "@/components/demo/shared/home-content"
@@ -32,7 +34,7 @@ function PostMeta({ post }: { post: Post }) {
         {dateFormat.format(new Date(post.frontmatter.date))}
       </time>
       <span className="ms-meta">
-        {post.readingTime.replace("min read", "min czytania")}
+        {formatReadingTime(post.readingMinutes, "pl")}
       </span>
     </div>
   )

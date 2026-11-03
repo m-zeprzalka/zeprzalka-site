@@ -1,18 +1,8 @@
-import { OG_SIZE, pageOgCard } from "@/components/og"
-import { getMeta } from "@/i18n/content/meta"
-import { getAllPosts } from "@/lib/posts"
-import { fill } from "@/i18n/content/common"
-import { countArticles } from "@/i18n/content/pages"
+import { OG_SIZE, pageOgImage } from "@/lib/og"
 
-const card = getMeta("pl").og.cards.blog
+const og = pageOgImage("pl", "blog")
 
-export const alt = card.title
+export const alt = og.alt
 export const size = OG_SIZE
 export const contentType = "image/png"
-
-export default function OpengraphImage() {
-  return pageOgCard({
-    ...card,
-    footer: fill(card.footer, { count: countArticles(getAllPosts("pl").length, "pl") }),
-  })
-}
+export default og.Image

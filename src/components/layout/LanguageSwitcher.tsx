@@ -17,7 +17,6 @@ import {
   translatePostSlug,
   translateTagSlug,
 } from "@/i18n/blog-map"
-import { getCommon } from "@/i18n/content/common"
 
 /**
  * Przełącznik języka prowadzi na **odpowiednik oglądanej strony**, a nie na
@@ -69,13 +68,21 @@ function counterpart(pathname: string, from: Locale, to: Locale): string {
   return route("home", to)
 }
 
-export function LanguageSwitcher({ locale }: { locale: Locale }) {
+export function LanguageSwitcher({
+  locale,
+  label,
+  aria,
+}: {
+  locale: Locale
+  /** Napis na przycisku — kod języka docelowego („EN”). */
+  label: string
+  aria: string
+}) {
   const pathname = usePathname()
   const target = otherLocale(locale)
-  const copy = getCommon(locale).languageSwitch
 
   return (
-    <Button asChild variant="outline" size="icon" aria-label={`${copy.label} — ${copy.aria}`}>
+    <Button asChild variant="outline" size="icon" aria-label={`${label} — ${aria}`}>
       {/*
         `hrefLang` mówi wyszukiwarce, dokąd prowadzi link — ten sam sygnał
         co znaczniki `alternate` w nagłówku, tylko widoczny dla czytelnika.
@@ -85,7 +92,7 @@ export function LanguageSwitcher({ locale }: { locale: Locale }) {
         hrefLang={target}
         className="text-xs font-medium tabular-nums"
       >
-        {copy.label}
+        {label}
       </Link>
     </Button>
   )

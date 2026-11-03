@@ -13,12 +13,12 @@ interface Heading {
  *
  * Wcześniej stała na komponencie `Sidebar` z shadcn — 700 linii z własnym
  * kontekstem, skrótem klawiszowym, ciasteczkiem, wersją mobilną w panelu
- * i podpowiedziami — po to, żeby wyświetlić listę linków. Klasy poniżej to
- * dokładnie te, które tamte komponenty nadawały (wynik `cn()`), więc wygląd
- * się nie zmienia, a do przeglądarki nie trafia nic poza tą listą.
+ * i podpowiedziami — po to, żeby wyświetlić listę linków. Wygląd jest ten
+ * sam (tokeny `sidebar-*` miały wartości identyczne z `accent` i `ring`),
+ * a do przeglądarki nie trafia nic poza tą listą.
  */
 const ITEM =
-  "flex w-full items-center gap-2 overflow-hidden rounded-md p-2 text-left text-xs h-auto whitespace-normal ring-sidebar-ring outline-hidden transition-[width,height,padding] hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 active:bg-sidebar-accent active:text-sidebar-accent-foreground data-[active=true]:bg-sidebar-accent data-[active=true]:font-medium data-[active=true]:text-sidebar-accent-foreground"
+  "flex w-full items-center gap-2 overflow-hidden rounded-md p-2 text-left text-xs h-auto whitespace-normal ring-ring outline-hidden hover:bg-accent hover:text-accent-foreground focus-visible:ring-2 active:bg-accent active:text-accent-foreground data-[active=true]:bg-accent data-[active=true]:font-medium data-[active=true]:text-accent-foreground"
 
 export function ActiveTOC({ headings }: { headings: Heading[] }) {
   const [activeId, setActiveId] = useState<string>("")

@@ -12,9 +12,9 @@ import {
 } from "@/lib/portfolio"
 import { JsonLd } from "@/components/JsonLd"
 import { SITE_NAME, absoluteUrl } from "@/lib/site"
-import { PERSON_ID } from "@/lib/schema"
-import { BCP47, ROUTES, t, type Locale } from "@/i18n/config"
-import { fill } from "@/i18n/content/common"
+import { PERSON_ID, breadcrumbSchema, graph } from "@/lib/schema"
+import { INTL_LOCALE, ROUTES, type Locale } from "@/i18n/config"
+import { fill } from "@/i18n/format"
 import { getPages } from "@/i18n/content/pages"
 
 export function PortfolioView({ locale }: { locale: Locale }) {
@@ -25,14 +25,14 @@ export function PortfolioView({ locale }: { locale: Locale }) {
    * `VideoObject`: ten drugi wymaga daty publikacji i opisu każdego materiału,
    * a tych danych po prostu nie mam — lepiej podać mniej i prawdziwie.
    */
-  const portfolioJsonLd = {
-    "@context": "https://schema.org",
+  const portfolioJsonLd = graph(
+    {
     "@type": "CollectionPage",
-    inLanguage: BCP47[locale],
+    inLanguage: INTL_LOCALE[locale],
     author: { "@id": PERSON_ID },
     name: fill(copy.collectionName, { name: SITE_NAME }),
     url: absoluteUrl(ROUTES.portfolio[locale]),
-    about: portfolioGroups.map((group) => t(group.label, locale)),
+    about: portfolioGroups.map((group) => group.label[locale]),
     mainEntity: {
       "@type": "ItemList",
       numberOfItems: portfolioItems.length,
@@ -41,17 +41,19 @@ export function PortfolioView({ locale }: { locale: Locale }) {
         position: index + 1,
         item: {
           "@type": "CreativeWork",
-          name: t(item.title, locale),
-          genre: t(item.category, locale),
+          name: item.title[locale],
+          genre: item.category[locale],
           image: absoluteUrl(item.poster),
           creator: { "@id": PERSON_ID },
         },
       })),
     },
-  }
+    },
+    breadcrumbSchema(locale, [{ name: copy.title, path: ROUTES.portfolio[locale] }])
+  )
 
   return (
-    <div className="container mx-auto px-4 py-12 md:py-16 lg:py-20">
+    <div className="page-shell">
       <JsonLd data={portfolioJsonLd} />
 
       <PageHeader
@@ -73,14 +75,14 @@ export function PortfolioView({ locale }: { locale: Locale }) {
                 id={group.id}
                 className="text-2xl font-semibold tracking-tight"
               >
-                {t(group.label, locale)}
+                {group.label[locale]}
               </h2>
               <p className="text-sm tabular-nums text-muted-foreground">
                 {countRealizations(items.length, locale)}
               </p>
             </div>
             <p className="mb-8 max-w-2xl text-muted-foreground leading-relaxed">
-              {t(group.description, locale)}
+              {group.description[locale]}
             </p>
 
             <PortfolioGrid items={items} locale={locale} />

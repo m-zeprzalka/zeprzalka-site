@@ -8,8 +8,6 @@ import { z } from "zod"
 import type { Locale, Localized } from "@/i18n/config"
 import { slugify } from "@/lib/slug"
 
-export { slugify }
-
 /**
  * Wpisy leżą w katalogu na język: polskie w `content/posts`, angielskie
  * w `content/en/posts`. Para „ten sam tekst w dwóch językach" nie jest
@@ -56,14 +54,15 @@ const frontmatterSchema = z.object({
   draft: z.boolean().default(false),
 })
 
-export type PostFrontmatter = z.infer<typeof frontmatterSchema>
+type PostFrontmatter = z.infer<typeof frontmatterSchema>
 
 export interface Post {
   slug: string
   locale: Locale
   content: string
   frontmatter: PostFrontmatter
-  readingTime: string
+  /** Minuty lektury (zaokrąglone w górę) — formatuje je `formatReadingTime`. */
+  readingMinutes: number
   /** Liczba słów — do danych strukturalnych (`wordCount`). */
   wordCount: number
   headings: { id: string; level: number; text: string }[]
@@ -71,7 +70,26 @@ export interface Post {
 
 const showDrafts = process.env.NODE_ENV === "development"
 
-export const getPostBySlug = cache(
+/**
+ * Treść jest statyczna, więc przy buildzie produkcyjnym każdy plik wystarczy
+ * sparsować raz na proces. `cache()` z Reacta deduplikuje tylko w obrębie
+ * jednego renderu — a stron jest ponad 200, do tego `generateStaticParams`,
+ * mapa strony i karty OG, gdzie `cache()` nie działa wcale. W `pnpm dev`
+ * zostaje `cache()`, żeby edycja wpisu była widoczna od razu.
+ */
+function memoize<A extends readonly (string | number)[], R>(fn: (...args: A) => R) {
+  if (process.env.NODE_ENV !== "production") return cache(fn)
+  const store = new Map<string, R>()
+  return (...args: A): R => {
+    const key = args.join("\u0000")
+    if (store.has(key)) return store.get(key) as R
+    const value = fn(...args)
+    store.set(key, value)
+    return value
+  }
+}
+
+export const getPostBySlug = memoize(
   (locale: Locale, slug: string): Post | null => {
     const fullPath = path.join(
       process.cwd(),
@@ -107,14 +125,15 @@ export const getPostBySlug = cache(
       locale,
       content,
       frontmatter: parsed.data,
-      readingTime: stats.text,
+      // Ta sama reguła co `stats.text` z reading-time („5 min read”).
+      readingMinutes: Math.ceil(Number(stats.minutes.toFixed(2))),
       wordCount: stats.words,
       headings: extractHeadings(content),
     }
   }
 )
 
-export const getAllPosts = cache((locale: Locale): Post[] => {
+export const getAllPosts = memoize((locale: Locale): Post[] => {
   if (!fs.existsSync(path.join(process.cwd(), "content", POSTS_SUBDIR[locale]))) {
     return []
   }
@@ -131,41 +150,33 @@ export const getAllPosts = cache((locale: Locale): Post[] => {
     )
 })
 
+/**
+ * Tekst nagłówka bez składni inline — spis treści pokazuje to, co czytelnik
+ * widzi w artykule („InstaWP”), a nie źródło („**InstaWP**”). Ta sama postać
+ * idzie do sluggera, więc id zgadzają się z tymi, które nadaje rehype-slug
+ * (liczy je z wyrenderowanego tekstu, bez adresów linków).
+ */
+function plainHeading(markdown: string): string {
+  return markdown
+    .replace(/!?\[([^\]]*)\]\([^)]*\)/g, "$1")
+    .replace(/<[^>]+>/g, "")
+    .replace(/(\*\*|__|\*|_|~~|`)(.+?)\1/g, "$2")
+    .trim()
+}
+
 function extractHeadings(content: string) {
   // Bloki kodu są pomijane: `# komentarz` w bashu to nie nagłówek wpisu.
   const withoutCode = content.replace(/^```[\s\S]*?^```/gm, "")
-  const headingRegex = /^(#{2,4})\s+(.+)$/gm
   const headings: { id: string; level: number; text: string }[] = []
   // Ten sam algorytm co rehype-slug (github-slugger) — id muszą się zgadzać z TOC
   const slugger = new GithubSlugger()
-  let match
 
-  while ((match = headingRegex.exec(withoutCode)) !== null) {
-    const level = match[1].length
-    const text = match[2].trim()
-    headings.push({ id: slugger.slug(text), level, text })
+  for (const [, hashes = "", raw = ""] of withoutCode.matchAll(/^(#{2,4})\s+(.+)$/gm)) {
+    const text = plainHeading(raw)
+    headings.push({ id: slugger.slug(text), level: hashes.length, text })
   }
 
   return headings
-}
-
-export function getPostsByCategory(
-  locale: Locale,
-  categorySlug: string
-): Post[] {
-  return getAllPosts(locale).filter((post) =>
-    post.frontmatter.categories.some((cat) => slugify(cat) === categorySlug)
-  )
-}
-
-export function getPostsByTag(locale: Locale, tagSlug: string): Post[] {
-  return getAllPosts(locale).filter((post) =>
-    post.frontmatter.tags.some((tag) => slugify(tag) === tagSlug)
-  )
-}
-
-export function getFeaturedPosts(locale: Locale): Post[] {
-  return getAllPosts(locale).filter((post) => post.frontmatter.featured)
 }
 
 /**
@@ -195,64 +206,37 @@ export function getRelatedPosts(post: Post, limit = 3): Post[] {
   return scored.slice(0, limit).map(({ other }) => other)
 }
 
-/**
- * Oryginalna nazwa kategorii dla danego slugu. Odtwarzanie jej z adresu
- * („ai" → „ai", „next.js" → „next.js") gubiło wielkość liter i kropki,
- * przez co nagłówek strony kategorii nie zgadzał się z etykietą przy wpisach.
- */
-export const getCategoryLabel = cache(
-  (locale: Locale, slug: string): string => {
-    for (const post of getAllPosts(locale)) {
-      for (const category of post.frontmatter.categories) {
-        if (slugify(category) === slug) return category
-      }
-    }
-    return slug
-  }
-)
+export type TaxonomyField = "categories" | "tags"
 
-/** To samo dla tagów. */
-export const getTagLabel = cache((locale: Locale, slug: string): string => {
+export interface Term {
+  slug: string
+  /** Oryginalna nazwa z frontmattera („Next.js”, „AI”) — adres jej nie odtworzy. */
+  label: string
+  posts: Post[]
+}
+
+/**
+ * Kategorie i tagi to ta sama logika na dwóch polach frontmattera — jeden
+ * indeks liczony raz zamiast siedmiu bliźniaczych funkcji. Kolejność terminów
+ * to kolejność pierwszego wystąpienia (wpisy są od najnowszych).
+ */
+const getTaxonomy = memoize((locale: Locale, field: TaxonomyField): Map<string, Term> => {
+  const terms = new Map<string, Term>()
   for (const post of getAllPosts(locale)) {
-    for (const tag of post.frontmatter.tags) {
-      if (slugify(tag) === slug) return tag
+    for (const label of post.frontmatter[field]) {
+      const slug = slugify(label)
+      const term = terms.get(slug) ?? { slug, label, posts: [] }
+      if (!term.posts.includes(post)) term.posts.push(post)
+      terms.set(slug, term)
     }
   }
-  return slug
+  return terms
 })
 
-/** Unikalne slugi kategorii ze wszystkich postów. */
-export function getAllCategorySlugs(locale: Locale): string[] {
-  const slugs = new Set<string>()
-  getAllPosts(locale).forEach((post) =>
-    post.frontmatter.categories.forEach((cat) => slugs.add(slugify(cat)))
-  )
-  return Array.from(slugs)
+export function getTerms(locale: Locale, field: TaxonomyField): Term[] {
+  return [...getTaxonomy(locale, field).values()]
 }
 
-/** Unikalne slugi tagów ze wszystkich postów. */
-export function getAllTagSlugs(locale: Locale): string[] {
-  const slugs = new Set<string>()
-  getAllPosts(locale).forEach((post) =>
-    post.frontmatter.tags.forEach((tag) => slugs.add(slugify(tag)))
-  )
-  return Array.from(slugs)
-}
-
-/** Kategorie z liczbą wpisów, od najliczniejszej — dla indeksu kategorii. */
-export function getCategoryCounts(
-  locale: Locale
-): { slug: string; label: string; count: number }[] {
-  const counts = new Map<string, { label: string; count: number }>()
-  for (const post of getAllPosts(locale)) {
-    for (const category of post.frontmatter.categories) {
-      const slug = slugify(category)
-      const entry = counts.get(slug)
-      if (entry) entry.count += 1
-      else counts.set(slug, { label: category, count: 1 })
-    }
-  }
-  return [...counts.entries()]
-    .map(([slug, entry]) => ({ slug, ...entry }))
-    .sort((a, b) => b.count - a.count)
+export function getTerm(locale: Locale, field: TaxonomyField, slug: string): Term | undefined {
+  return getTaxonomy(locale, field).get(slug)
 }

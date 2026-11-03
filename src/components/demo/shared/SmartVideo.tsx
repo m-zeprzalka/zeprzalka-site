@@ -7,8 +7,7 @@ import { Pause, Play } from "lucide-react"
 import { Button } from "@/components/demo/shared/ui/button"
 import { useReducedMotion } from "@/components/demo/shared/use-reduced-motion"
 import { cn } from "@/lib/utils"
-import { DEFAULT_LOCALE, type Locale } from "@/i18n/config"
-import { fill, getCommon } from "@/i18n/content/common"
+import { fill } from "@/i18n/format"
 
 interface VideoSource {
   src: string
@@ -31,8 +30,6 @@ interface SmartVideoProps {
   /** Klasa dla samego <video> / posteru (np. efekt hover). */
   mediaClassName?: string
   className?: string
-  /** Język etykiet przycisku odtwarzania. */
-  locale?: Locale
 }
 
 type Intent = "auto" | "play" | "pause"
@@ -66,9 +63,7 @@ export function SmartVideo({
   sizes = "100vw",
   mediaClassName,
   className,
-  locale = DEFAULT_LOCALE,
 }: SmartVideoProps) {
-  const ui = getCommon(locale).ui
   const reducedMotion = useReducedMotion()
   const videoRef = useRef<HTMLVideoElement>(null)
   const [intent, setIntent] = useState<Intent>("auto")
@@ -171,7 +166,7 @@ export function SmartVideo({
           variant="secondary"
           size="icon"
           onClick={toggle}
-          aria-label={fill(playing ? ui.videoPause : ui.videoPlay, { label })}
+          aria-label={fill(playing ? "Wstrzymaj: {label}" : "Odtwórz: {label}", { label })}
           aria-pressed={playing}
           className={cn(
             "absolute right-3 bottom-3 rounded-full transition-opacity duration-300",

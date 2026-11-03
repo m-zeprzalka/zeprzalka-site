@@ -1,13 +1,8 @@
-import { OG_SIZE, pageOgCard } from "@/components/og"
-import { getMeta } from "@/i18n/content/meta"
+import { OG_SIZE, pageOgImage } from "@/lib/og"
 
+const og = pageOgImage("en", "services")
 
-const card = getMeta("en").og.cards.services
-
-export const alt = card.title
+export const alt = og.alt
 export const size = OG_SIZE
 export const contentType = "image/png"
-
-export default function OpengraphImage() {
-  return pageOgCard(card)
-}
+export default og.Image

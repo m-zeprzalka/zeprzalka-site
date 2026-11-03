@@ -8,7 +8,8 @@
  * profilu), więc wyszukiwarka dostawała pięć częściowo sprzecznych opisów
  * zamiast jednego bytu, który da się skleić w panel wiedzy.
  */
-import { ROUTES, BCP47, postPath, type Locale } from "@/i18n/config"
+import { ROUTES, INTL_LOCALE, postPath, type Locale } from "@/i18n/config"
+import { getCommon } from "@/i18n/content/common"
 import { getPages } from "@/i18n/content/pages"
 import {
   AUTHOR,
@@ -74,18 +75,23 @@ export function websiteSchema(locale: Locale): Schema {
     name: AUTHOR.name,
     alternateName: "zeprzalka.com",
     url: absoluteUrl(ROUTES.home[locale]),
-    inLanguage: BCP47[locale],
+    inLanguage: INTL_LOCALE[locale],
     publisher: { "@id": PERSON_ID },
   }
 }
 
-/** Okruszki: zawsze od strony głównej, ostatni element to bieżąca strona. */
+/**
+ * Okruszki: strona główna dokładana automatycznie, ostatni element to
+ * bieżąca strona.
+ */
 export function breadcrumbSchema(
+  locale: Locale,
   items: { name: string; path: string }[]
 ): Schema {
+  const trail = [{ name: getCommon(locale).nav.home, path: ROUTES.home[locale] }, ...items]
   return {
     "@type": "BreadcrumbList",
-    itemListElement: items.map((item, index) => ({
+    itemListElement: trail.map((item, index) => ({
       "@type": "ListItem",
       position: index + 1,
       name: item.name,
@@ -108,7 +114,7 @@ export function blogPostingSchema(post: Post): Schema {
     datePublished: frontmatter.date,
     // Data aktualizacji, jeśli wpis był odświeżany — inaczej data publikacji.
     dateModified: frontmatter.updated || frontmatter.date,
-    inLanguage: BCP47[locale],
+    inLanguage: INTL_LOCALE[locale],
     wordCount: post.wordCount,
     articleSection: frontmatter.categories[0],
     keywords: frontmatter.tags.join(", ") || undefined,

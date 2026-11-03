@@ -4,10 +4,10 @@ import { Button } from "@/components/ui/button"
 import { MapPin, Mail, Globe, ExternalLink, Download } from "lucide-react"
 import Link from "next/link"
 import { JsonLd } from "@/components/JsonLd"
+import { StatusBadge } from "@/components/StatusBadge"
 import { CONTACT_EMAIL, SITE_URL, absoluteUrl } from "@/lib/site"
 import { PERSON_ID, breadcrumbSchema, graph, personSchema } from "@/lib/schema"
-import { BCP47, ROUTES, type Locale } from "@/i18n/config"
-import { getCommon } from "@/i18n/content/common"
+import { INTL_LOCALE, ROUTES, type Locale } from "@/i18n/config"
 import { getPages } from "@/i18n/content/pages"
 
 /**
@@ -21,28 +21,19 @@ export function AboutView({ locale }: { locale: Locale }) {
     {
       "@type": "ProfilePage",
       url: absoluteUrl(ROUTES.about[locale]),
-      inLanguage: BCP47[locale],
+      inLanguage: INTL_LOCALE[locale],
       mainEntity: { "@id": PERSON_ID },
     },
     personSchema(locale),
-    breadcrumbSchema([
-      { name: getCommon(locale).nav.home, path: ROUTES.home[locale] },
-      { name: copy.aboutHeading, path: ROUTES.about[locale] },
-    ])
+    breadcrumbSchema(locale, [{ name: copy.aboutHeading, path: ROUTES.about[locale] }])
   )
 
   return (
-    <div className="container mx-auto px-4 py-12 md:py-16 lg:py-20 max-w-4xl">
+    <div className="page-shell max-w-4xl">
       <JsonLd data={profileJsonLd} />
       {/* Header */}
       <header className="mb-16">
-        <Badge
-          variant="outline"
-          className="flex items-center gap-2 text-sm px-4 py-2 w-fit mb-6"
-        >
-          <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-          {copy.status}
-        </Badge>
+        <StatusBadge label={copy.status} className="w-fit mb-6" />
 
         <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6 mb-6">
           <div>

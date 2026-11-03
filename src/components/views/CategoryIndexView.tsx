@@ -1,4 +1,4 @@
-import { getCategoryCounts } from "@/lib/posts"
+import { getTerms } from "@/lib/posts"
 import { Badge } from "@/components/ui/badge"
 import Link from "next/link"
 import { PageHeader } from "@/components/PageHeader"
@@ -7,10 +7,11 @@ import { getPages } from "@/i18n/content/pages"
 
 export function CategoryIndexView({ locale }: { locale: Locale }) {
   const copy = getPages(locale).blog
-  const categories = getCategoryCounts(locale)
+  // Od najliczniejszej; przy remisie zostaje kolejność pierwszego wystąpienia.
+  const categories = getTerms(locale, "categories").sort((a, b) => b.posts.length - a.posts.length)
 
   return (
-    <div className="container mx-auto px-4 py-12 md:py-16 lg:py-20">
+    <div className="page-shell">
       <PageHeader
         badge={copy.categoriesBadge}
         title={copy.categoriesTitle}
@@ -18,14 +19,14 @@ export function CategoryIndexView({ locale }: { locale: Locale }) {
       />
 
       <div className="flex flex-wrap gap-3">
-        {categories.map(({ slug, label, count }) => (
+        {categories.map(({ slug, label, posts }) => (
           <Link key={slug} href={categoryPath(locale, slug)}>
             <Badge
               variant="outline"
               className="text-sm px-4 py-2 hover:bg-primary hover:text-primary-foreground transition-colors cursor-pointer gap-2"
             >
               {label}
-              <span className="text-muted-foreground font-normal">{count}</span>
+              <span className="text-muted-foreground font-normal">{posts.length}</span>
             </Badge>
           </Link>
         ))}

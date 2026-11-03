@@ -33,7 +33,7 @@ const facts = [
 
 export default function DesignSystemPage() {
   return (
-    <div className="container mx-auto px-4 py-12 md:py-16 lg:py-20">
+    <div className="page-shell">
       <PageHeader
         badge="Design System"
         title="System projektowy"

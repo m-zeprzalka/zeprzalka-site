@@ -1,4 +1,4 @@
-import { Bar } from "@/components/layout/Bar"
+import { ReadingProgress } from "@/components/layout/ReadingProgress"
 import { Header } from "@/components/layout/Header"
 import { Footer } from "@/components/layout/Footer"
 
@@ -6,7 +6,7 @@ import { Footer } from "@/components/layout/Footer"
 export default function ServiceChromeLayout({ children }: { children: React.ReactNode }) {
   return (
     <>
-      <Bar />
+      <ReadingProgress />
       <Header locale="pl" />
       <main id="main">{children}</main>
       <Footer locale="pl" />

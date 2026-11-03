@@ -1,36 +1,18 @@
-"use client"
-
-import { useEffect, useRef } from "react"
-import { useReducedMotion } from "@/hooks/use-reduced-motion"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { MousePointerClick } from "lucide-react"
 import Link from "next/link"
+import { MousePointerClick } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { StatusBadge } from "@/components/StatusBadge"
+import { HeroVideo } from "@/components/home/HeroVideo"
 import { ROUTES, type Locale } from "@/i18n/config"
-import { getHome } from "@/i18n/content/home"
 import { getCommon } from "@/i18n/content/common"
+import { getHome } from "@/i18n/content/home"
 
 export function Hero({ locale }: { locale: Locale }) {
-  const videoRef = useRef<HTMLVideoElement>(null)
-  const reducedMotion = useReducedMotion()
   const copy = getHome(locale).hero
-  const ui = getCommon(locale).ui
-
-  // Zapętlone wideo to ruch ciągły. Przy ustawieniu „ogranicz ruch"
-  // zostaje pierwsza klatka zamiast odtwarzania.
-  useEffect(() => {
-    if (reducedMotion) videoRef.current?.pause()
-  }, [reducedMotion])
 
   return (
     <section className="flex flex-col gap-6 lg:gap-8 xl:gap-10 p-4 py-6 md:py-8 lg:py-12 xl:py-16 min-h-[calc(100vh-4rem)] container mx-auto">
-      <Badge
-        variant="outline"
-        className="flex items-center gap-2 text-sm px-4 py-2"
-      >
-        <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-        <span>{copy.status}</span>
-      </Badge>
+      <StatusBadge label={copy.status} />
       <h1 className="text-4xl sm:text-5xl md:text-6xl xl:text-7xl font-medium max-w-5xl transition-all duration-300">
         {copy.title}
       </h1>
@@ -45,33 +27,7 @@ export function Hero({ locale }: { locale: Locale }) {
           {copy.cta}
         </Link>
       </Button>
-      <div className="relative aspect-video w-full rounded-lg overflow-hidden bg-muted/20">
-        {/*
-          Poster to pierwsza klatka materiału (28 KB WebP). Maluje się od razu,
-          więc największy element strony nie czeka na wideo — a `preload`
-          ograniczony do metadanych zdejmuje kilka megabajtów ze ścieżki
-          krytycznej. Wcześniej posterem był przezroczysty piksel, przez co
-          kadr pozostawał pusty aż do wczytania wideo.
-        */}
-        <video 
-          ref={videoRef}
-          autoPlay muted loop playsInline 
-          aria-hidden="true"
-          preload="metadata"
-          poster="/hero-poster.webp"
-          onPlay={(event) => {
-            if (reducedMotion) event.currentTarget.pause()
-          }}
-          className="absolute inset-0 w-full h-full object-cover"
-        >
-          {/* WAŻNE: Najpierw lżejszy format WebM */}
-          <source src="/hero_web.webm" type="video/webm" />
-          {/* WAŻNE: MP4 jako fallback dla starszych przeglądarek (np. Safari) */}
-          <source src="/hero_web.mp4" type="video/mp4" />
-          {/* Komunikat dla bardzo starych przeglądarek */}
-          {ui.videoFallback}
-        </video>
-      </div>
+      <HeroVideo fallback={getCommon(locale).ui.videoFallback} />
     </section>
   )
 }

@@ -1,8 +1,4 @@
-/**
- * Treść strony głównej. Polskie napisy są przeniesione z komponentów
- * `src/components/home/*` co do znaku — układ i wygląd strony nie zmieniają
- * się ani o piksel, zmienia się tylko miejsce, z którego bierze się tekst.
- */
+/** Treść strony głównej (`src/components/home/*`). */
 import type { Locale, Localized } from "@/i18n/config"
 
 const pl = {
@@ -15,7 +11,6 @@ const pl = {
     subtitleRest:
       "doświadczenia w tworzeniu innowacyjnych rozwiązań webowych i multimedialnych",
     cta: "Zarezerwuj Bezpłatną Konsultację",
-    videoLabel: "Prezentacja realizacji Michała Zeprzałki",
   },
   skills: {
     title: "Kompetencje",
@@ -37,8 +32,6 @@ const pl = {
     cardDescription:
       "Wypełnij formularz, im bardziej szczegółowy opis, tym bardziej precyzyjną wycenę otrzymasz.",
   },
-  /** Etykieta sekcji „Start" w wariantach z nawigacją po sekcjach. */
-  sectionStart: "Start",
 }
 
 const en: typeof pl = {
@@ -50,7 +43,6 @@ const en: typeof pl = {
     subtitleRest:
       "of experience building innovative web and multimedia solutions",
     cta: "Book a Free Consultation",
-    videoLabel: "Showreel of work by Michał Zeprzałka",
   },
   skills: {
     title: "Capabilities",
@@ -72,7 +64,6 @@ const en: typeof pl = {
     cardDescription:
       "Fill in the form — the more detailed the description, the more precise the quote you will get.",
   },
-  sectionStart: "Start",
 }
 
 export const home = { pl, en } as const
@@ -87,8 +78,6 @@ export function getHome(locale: Locale) {
  */
 export interface HomeSkill {
   id: string
-  /** Klucz semantyczny — używany przez warianty strony głównej. */
-  key: string
   number: string
   title: Localized<string>
   description: Localized<string>
@@ -98,7 +87,6 @@ export interface HomeSkill {
 export const homeSkills: readonly HomeSkill[] = [
   {
     id: "item-1",
-    key: "projektowanie",
     number: "01",
     title: { pl: "Projektowanie Produktu", en: "Product Design" },
     description: {
@@ -122,7 +110,6 @@ export const homeSkills: readonly HomeSkill[] = [
   },
   {
     id: "item-2",
-    key: "development",
     number: "02",
     title: { pl: "Development i Technologia", en: "Development & Technology" },
     description: {
@@ -158,7 +145,6 @@ export const homeSkills: readonly HomeSkill[] = [
   },
   {
     id: "item-3",
-    key: "komunikacja",
     number: "03",
     title: { pl: "Komunikacja Wizualna", en: "Visual Communication" },
     description: {

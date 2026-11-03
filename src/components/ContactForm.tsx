@@ -6,17 +6,28 @@ import { sendContactEmail, type ContactFormState } from "@/app/actions/contact"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { MousePointerClick, CheckCircle, AlertCircle } from "lucide-react"
-import { ROUTES, type Locale } from "@/i18n/config"
-import { getCommon } from "@/i18n/content/common"
+import type { Locale } from "@/i18n/config"
+import type { getCommon } from "@/i18n/content/common"
 
 const initialState: ContactFormState = { success: false, message: "" }
 
-export function ContactForm({ locale }: { locale: Locale }) {
+/**
+ * Formularz kontaktowy. Teksty przychodzą z komponentu serwerowego — moduły
+ * treści (`src/i18n/content/*`) nie trafiają do JavaScriptu przeglądarki.
+ */
+export function ContactForm({
+  locale,
+  copy,
+  privacyHref,
+}: {
+  locale: Locale
+  copy: ReturnType<typeof getCommon>["form"]
+  privacyHref: string
+}) {
   const [state, formAction, pending] = useActionState(
     sendContactEmail,
     initialState
   )
-  const copy = getCommon(locale).form
   const statusRef = useRef<HTMLDivElement>(null)
 
   // Po wysłaniu formularz znika albo dostaje komunikat — fokus przechodzi
@@ -83,7 +94,7 @@ export function ContactForm({ locale }: { locale: Locale }) {
       <div className="grid sm:grid-cols-2 gap-5">
         <div>
           <label htmlFor="name" className="text-sm font-medium mb-2 block">
-            {copy.name} <span className="text-destructive">*</span>
+            {copy.name} <span className="text-destructive" aria-hidden="true">*</span>
           </label>
           <Input
             id="name"
@@ -100,7 +111,7 @@ export function ContactForm({ locale }: { locale: Locale }) {
         </div>
         <div>
           <label htmlFor="email" className="text-sm font-medium mb-2 block">
-            {copy.email} <span className="text-destructive">*</span>
+            {copy.email} <span className="text-destructive" aria-hidden="true">*</span>
           </label>
           <Input
             id="email"
@@ -133,7 +144,7 @@ export function ContactForm({ locale }: { locale: Locale }) {
 
       <div>
         <label htmlFor="message" className="text-sm font-medium mb-2 block">
-          {copy.message} <span className="text-destructive">*</span>
+          {copy.message} <span className="text-destructive" aria-hidden="true">*</span>
         </label>
         <textarea
           id="message"
@@ -162,7 +173,7 @@ export function ContactForm({ locale }: { locale: Locale }) {
       <p className="text-xs text-muted-foreground">
         {copy.privacyNote}{" "}
         <Link
-          href={ROUTES.privacy[locale]}
+          href={privacyHref}
           className="underline underline-offset-2 hover:text-foreground transition-colors"
         >
           {copy.privacyLink}

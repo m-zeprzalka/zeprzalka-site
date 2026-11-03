@@ -1,22 +1,9 @@
-import { ImageResponse } from "next/og"
-import { OG_SIZE, OgCard } from "@/components/og"
-import { SITE_TITLE } from "@/lib/site"
-import { getMeta } from "@/i18n/content/meta"
+import { OG_SIZE, pageOgImage } from "@/lib/og"
 
-export const alt = SITE_TITLE
+/** Domyślna karta serwisu — także dla stron bez własnej. */
+const og = pageOgImage("en", "home")
+
+export const alt = og.alt
 export const size = OG_SIZE
 export const contentType = "image/png"
-
-export default function OpengraphImage() {
-  const og = getMeta("en").og
-  return new ImageResponse(
-    (
-      <OgCard
-        eyebrow={og.homeEyebrow}
-        title={og.homeTitle}
-        footer={og.homeFooter}
-      />
-    ),
-    size
-  )
-}
+export default og.Image

@@ -8,7 +8,7 @@
  * Kwoty i identyfikatory są wspólne dla obu wersji językowych; opisy
  * to pary `{ pl, en }`, więc pakiet nie może istnieć tylko po polsku.
  */
-import type { Locale, Localized } from "@/i18n/config"
+import type { Localized } from "@/i18n/config"
 
 export interface ServicePackage {
   id: string
@@ -139,7 +139,7 @@ export const packages: ServicePackage[] = [
 ]
 
 /** Kroki współpracy — te same, które opisuje strona kontaktu. */
-export const process: {
+export const processSteps: {
   title: Localized<string>
   detail: Localized<string>
 }[] = [
@@ -171,10 +171,3 @@ export const process: {
     },
   },
 ]
-
-/**
- * Kwota z separatorem tysięcy właściwym dla języka: `2 500` po polsku,
- * `2,500` po angielsku.
- */
-export const formatPrice = (value: number, locale: Locale) =>
-  new Intl.NumberFormat(locale === "pl" ? "pl-PL" : "en-GB").format(value)

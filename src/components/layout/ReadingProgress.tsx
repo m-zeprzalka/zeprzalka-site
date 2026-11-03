@@ -11,7 +11,7 @@ import { useEffect, useRef } from "react"
  * renderowanie komponentu kilkadziesiąt razy na sekundę — na słabszym
  * telefonie to realny koszt dla płynności (INP). Wygląd bez zmian.
  */
-export function Bar() {
+export function ReadingProgress() {
   const fillRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -42,7 +42,7 @@ export function Bar() {
     <div
       aria-hidden="true"
       data-print-hide
-      className="sticky top-0 z-60 h-1 bg-background/65 backdrop-blur supports-[backdrop-filter]:bg-background/60"
+      className="sticky top-0 z-60 h-1 surface-glass"
     >
       <div
         ref={fillRef}

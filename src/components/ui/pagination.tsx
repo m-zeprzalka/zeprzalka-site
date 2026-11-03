@@ -12,7 +12,6 @@ import { buttonVariants, type Button } from "@/components/ui/button"
 function Pagination({ className, ...props }: React.ComponentProps<"nav">) {
   return (
     <nav
-      role="navigation"
       aria-label="Pagination"
       data-slot="pagination"
       className={cn("mx-auto flex w-full justify-center", className)}
@@ -40,29 +39,51 @@ function PaginationItem({ ...props }: React.ComponentProps<"li">) {
 
 type PaginationLinkProps = {
   isActive?: boolean
+  /** Brak adresu = pozycja nieaktywna („Poprzednia” na pierwszej stronie). */
+  href?: string
 } & Pick<React.ComponentProps<typeof Button>, "size"> &
-  React.ComponentProps<typeof Link>
+  Omit<React.ComponentProps<typeof Link>, "href">
 
 function PaginationLink({
   className,
   isActive,
   size = "icon",
+  href,
+  children,
   ...props
 }: PaginationLinkProps) {
+  const classes = cn(
+    buttonVariants({
+      variant: isActive ? "outline" : "ghost",
+      size,
+    }),
+    className
+  )
+
+  // Nieaktywna pozycja to zwykły tekst, a nie link do bieżącej strony.
+  if (!href) {
+    return (
+      <span
+        aria-disabled="true"
+        data-slot="pagination-link"
+        className={cn(classes, "pointer-events-none opacity-50")}
+      >
+        {children}
+      </span>
+    )
+  }
+
   return (
     <Link
+      href={href}
       aria-current={isActive ? "page" : undefined}
       data-slot="pagination-link"
       data-active={isActive}
-      className={cn(
-        buttonVariants({
-          variant: isActive ? "outline" : "ghost",
-          size,
-        }),
-        className
-      )}
+      className={classes}
       {...props}
-    />
+    >
+      {children}
+    </Link>
   )
 }
 

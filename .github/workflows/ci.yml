@@ -1,12 +1,14 @@
 # Bramka jakości. Każdy push na `main` od razu wdraża się na produkcję
-# (integracja Vercel ↔ GitHub), więc te same kroki warto mieć zielone,
-# zanim zmiana tam trafi — najlepiej pracując na gałęzi i otwierając PR.
+# (integracja Vercel ↔ GitHub), więc te same kroki muszą być zielone na
+# gałęzi, zanim zmiana tam trafi.
 name: CI
 
 on:
   push:
-    branches: [main]
   pull_request:
+
+permissions:
+  contents: read
 
 concurrency:
   group: ci-${{ github.ref }}
@@ -17,25 +19,35 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - uses: pnpm/action-setup@v4
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
-          node-version: 24
+          node-version-file: .nvmrc
           cache: pnpm
 
       - run: pnpm install --frozen-lockfile
 
-      - name: Treść bloga (frontmatter, pary PL↔EN, obrazy)
+      - name: Treść bloga (frontmatter, pary PL↔EN, obrazy, slugi)
         run: pnpm check:content
+
+      - name: Formatowanie
+        run: pnpm format:check
 
       - name: Typy
         run: pnpm typecheck
 
       - name: Lint
         run: pnpm lint
+
+      # Cache Next.js przyspiesza kolejne buildy (klucz: lockfile + źródła).
+      - uses: actions/cache@v4
+        with:
+          path: .next/cache
+          key: next-${{ hashFiles('pnpm-lock.yaml') }}-${{ hashFiles('src/**', 'content/**') }}
+          restore-keys: next-${{ hashFiles('pnpm-lock.yaml') }}-
 
       - name: Build produkcyjny
         run: pnpm build

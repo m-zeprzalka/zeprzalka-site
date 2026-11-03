@@ -43,3 +43,6 @@ next-env.d.ts
 
 # prywatne notatki i raporty (np. szczegóły bezpieczeństwa) — tylko lokalnie
 /docs/prywatne/
+
+# pnpm visual — mapy różnic
+/.visual/

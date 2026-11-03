@@ -90,9 +90,22 @@ for (const [locale, dir] of Object.entries(DIRS)) {
       warn(rel, "okładka w SVG — next/image jej nie optymalizuje, użyj WebP")
     }
 
+    // Adres kategorii i tagu powstaje z nazwy (src/lib/slug.ts). Polska litera
+    // albo znak spoza ASCII dałby adres, który trzeba kodować w URL-u.
+    const slugOf = (label) => label.toLowerCase().replace(/\s+/g, "-")
+    const checkSlug = (kind, label) => {
+      if (!/^[a-z0-9.-]+$/.test(slugOf(label))) {
+        err(
+          rel,
+          `${kind} „${label}" daje adres „${slugOf(label)}" — dozwolone a-z, 0-9, kropka i myślnik`
+        )
+      }
+    }
+
     const categories = Array.isArray(data.categories) ? data.categories : []
     if (categories.length > 2) warn(rel, `${categories.length} kategorie — reguła: maks. 2`)
     for (const category of categories) {
+      checkSlug("kategoria", category)
       if (!categoryPairs.some((pair) => pair[locale] === category)) {
         err(rel, `kategoria „${category}" bez pary w CATEGORY_LABELS`)
       }
@@ -101,6 +114,7 @@ for (const [locale, dir] of Object.entries(DIRS)) {
     const tags = Array.isArray(data.tags) ? data.tags : []
     if (tags.length > 5) warn(rel, `${tags.length} tagów — reguła: maks. 5`)
     for (const tag of tags) {
+      checkSlug("tag", tag)
       if (!tagPairs.some((pair) => pair[locale] === tag)) {
         err(rel, `tag „${tag}" bez pary w TAG_LABELS (nowy tag zakładamy dla min. 3 wpisów)`)
       }

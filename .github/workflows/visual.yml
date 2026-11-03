@@ -1,0 +1,62 @@
+# Strażnik zasady „wygląd strony głównej jest nietykalny bez zgody właściciela”.
+# Buduje gałąź i `main`, porównuje `/` i `/en` piksel po pikselu (1440 i 390 px).
+# Czerwony wynik nie blokuje technicznie — mówi, że zmiana wymaga zgody.
+name: Strona główna — regresja wizualna
+
+on:
+  pull_request:
+  push:
+    branches-ignore: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: visual-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  homepage:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - name: Gałąź — build i start (:3100)
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm build
+          nohup pnpm start -p 3100 > /tmp/head.log 2>&1 &
+
+      - name: main — build i start (:3200)
+        run: |
+          git worktree add /tmp/base origin/main
+          cd /tmp/base
+          pnpm install --frozen-lockfile
+          pnpm build
+          nohup pnpm start -p 3200 > /tmp/base.log 2>&1 &
+
+      - name: Czekaj na oba serwery
+        run: |
+          for port in 3100 3200; do
+            for i in $(seq 1 30); do curl -sf "http://localhost:$port/" > /dev/null && break; sleep 1; done
+          done
+
+      - name: Porównanie pikseli
+        run: pnpm visual http://localhost:3200 http://localhost:3100
+
+      - name: Mapy różnic
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-diff
+          path: .visual/

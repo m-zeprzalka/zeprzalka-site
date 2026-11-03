@@ -2,6 +2,13 @@
 @import "tw-animate-css";
 @plugin "@tailwindcss/typography";
 
+/*
+ * Piaskownica /demo ma własny arkusz (src/app/demo/demo.css). Wykluczenie
+ * gwarantuje, że klasy z dem nie trafią do CSS serwisu.
+ */
+@source not "./demo";
+@source not "../components/demo";
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {

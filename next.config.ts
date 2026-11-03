@@ -6,6 +6,16 @@ import type { NextConfig } from "next"
  */
 const isDev = process.env.NODE_ENV === "development"
 
+/**
+ * Piaskownica `/demo` (src/app/demo) istnieje wyłącznie poza produkcją: jej
+ * pliki tras mają końcówkę `.demo.tsx`, którą rozpoznajemy jako trasę tylko
+ * w `pnpm dev`, lokalnym buildzie i podglądach Vercela. Build produkcyjny
+ * nie widzi ich wcale — `/demo` dostaje zwykłą stronę 404, a paczka nie
+ * zawiera ani bajtu dem. `DEMO_PUBLIC=1` świadomie to wyłącza.
+ */
+const withDemos =
+  process.env.VERCEL_ENV !== "production" || process.env.DEMO_PUBLIC === "1"
+
 const securityHeaders = [
   // Przeglądarka nie rozwiązuje z wyprzedzeniem domen linków zewnętrznych.
   { key: "X-DNS-Prefetch-Control", value: "off" },
@@ -93,6 +103,7 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
+  pageExtensions: withDemos ? ["demo.tsx", "tsx", "ts"] : ["tsx", "ts"],
 
   experimental: {
     /*

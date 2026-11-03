@@ -21,9 +21,9 @@ export function Competencies({ items }: { items: readonly Competency[] }) {
           <Accordion.Item key={item.id} value={item.id} className="ix-skill relative">
             <Accordion.Header asChild>
               <h3>
-                <Accordion.Trigger className="ix-row ix-bleed fm-focus text-fm-ink group rounded-fm-2xl relative flex min-h-14 items-center gap-4 text-left data-[state=open]:bg-transparent">
-                  <span className="bg-fm-surface shadow-fm-ring rounded-fm-sm grid size-8 shrink-0 place-items-center">
-                    <Icon aria-hidden="true" className="text-fm-ink-2 size-4" strokeWidth={1.75} />
+                <Accordion.Trigger className="ix-row ix-bleed group relative flex min-h-14 items-center gap-4 rounded-fm-2xl text-left text-fm-ink fm-focus data-[state=open]:bg-transparent">
+                  <span className="grid size-8 shrink-0 place-items-center rounded-fm-sm bg-fm-surface shadow-fm-ring">
+                    <Icon aria-hidden="true" className="size-4 text-fm-ink-2" strokeWidth={1.75} />
                   </span>
                   <span className="flex-1 font-medium tracking-[-0.01em]">{item.title}</span>
                   <span aria-hidden="true" className="ix-plus text-fm-ink-3" />
@@ -32,7 +32,7 @@ export function Competencies({ items }: { items: readonly Competency[] }) {
             </Accordion.Header>
             <Accordion.Content className="ix-acc relative">
               <div className="ps-12 pb-6">
-                <p className="text-fm-ink-2 text-pretty">{item.description}</p>
+                <p className="text-pretty text-fm-ink-2">{item.description}</p>
                 <ul className="mt-4 flex flex-wrap gap-1.5">
                   {item.tags.map((tag) => (
                     <li key={tag}>
@@ -42,20 +42,20 @@ export function Competencies({ items }: { items: readonly Competency[] }) {
                 </ul>
                 {item.proofs.items.length > 0 && (
                   <div className="mt-6">
-                    <p className="text-fm-micro text-fm-ink-3 font-medium">{item.proofs.heading}</p>
+                    <p className="text-fm-micro font-medium text-fm-ink-3">{item.proofs.heading}</p>
                     <ul className="-mx-2 mt-1.5">
                       {item.proofs.items.map((proof) => (
                         <li key={proof.href}>
                           <a
                             href={proof.href}
-                            className="group fm-focus hover:bg-fm-fill text-fm-small rounded-fm-md flex min-h-11 items-center gap-3 px-2 transition-colors duration-150 sm:min-h-10"
+                            className="group flex min-h-11 items-center gap-3 rounded-fm-md px-2 text-fm-small fm-focus transition-colors duration-150 hover:bg-fm-fill sm:min-h-10"
                           >
-                            <span className="text-fm-ink min-w-0 truncate">{proof.label}</span>
+                            <span className="min-w-0 truncate text-fm-ink">{proof.label}</span>
                             <ArrowUpRight
                               aria-hidden="true"
-                              className="ix-arrow text-fm-ink-3 -ms-1.5 size-3.5 shrink-0"
+                              className="ix-arrow -ms-1.5 size-3.5 shrink-0 text-fm-ink-3"
                             />
-                            <span className="text-fm-ink-3 ms-auto shrink-0 tabular-nums">
+                            <span className="ms-auto shrink-0 text-fm-ink-3 tabular-nums">
                               {proof.meta}
                             </span>
                           </a>

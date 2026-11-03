@@ -2,7 +2,7 @@
 
 import { Pause, Play } from "lucide-react"
 import { useReducedMotion } from "@/components/demo/forma/use-in-view"
-import { cn } from "@/lib/utils"
+import { cn } from "../forma/cn"
 import { useTalia } from "./TaliaProvider"
 
 /**
@@ -24,7 +24,7 @@ export function PauseToggle({ label, className }: { label: string; className?: s
       title={label}
       onClick={togglePaused}
       className={cn(
-        "fm-focus fm-press grid size-11 place-items-center rounded-full transition-[background-color,scale] [&_svg]:size-4",
+        "grid size-11 fm-press place-items-center rounded-full fm-focus transition-[background-color,scale] [&_svg]:size-4",
         className
       )}
     >

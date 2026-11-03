@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react"
 import Image from "next/image"
 import { useReducedMotion } from "@/components/demo/forma/use-in-view"
-import { cn } from "@/lib/utils"
+import { cn } from "../forma/cn"
 import { usePageReady, useVisible } from "./hooks"
 import { useTalia } from "./TaliaProvider"
 import type { Still } from "./types"
@@ -75,11 +75,11 @@ export function CardMedia({
   }, [shouldPlay, mounted])
 
   return (
-    <span ref={setFrame} className={cn("bg-fm-fill relative block overflow-hidden", className)}>
+    <span ref={setFrame} className={cn("relative block overflow-hidden bg-fm-fill", className)}>
       <span
         className={cn(
           "absolute inset-0 block",
-          zoom && "ease-fm-snap transition-[scale] duration-700 group-hover:scale-[1.035]"
+          zoom && "transition-[scale] duration-700 ease-fm-snap group-hover:scale-[1.035]"
         )}
       >
         <Image
@@ -116,7 +116,7 @@ export function CardMedia({
             onPlaying={() => setPlaying(true)}
             onPause={() => setPlaying(false)}
             className={cn(
-              "ease-fm-snap absolute inset-0 size-full object-cover transition-opacity duration-500",
+              "absolute inset-0 size-full object-cover transition-opacity duration-500 ease-fm-snap",
               playing ? "opacity-100" : "opacity-0"
             )}
           >

@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react"
 import { Check, Copy } from "lucide-react"
-import { cn } from "@/lib/utils"
+import { cn } from "./cn"
 
 /**
  * Kopiuje wartość (np. adres e-mail) jednym kliknięciem. Ikona przechodzi
@@ -46,7 +46,7 @@ export function CopyButton({
       onClick={copy}
       data-copied={copied || undefined}
       className={cn(
-        "group fm-focus fm-press bg-fm-surface text-fm-ink shadow-fm-ring hover:bg-fm-fill inline-flex h-10 items-center gap-2.5 rounded-full ps-4 pe-3.5 text-sm font-medium transition-[background-color,scale]",
+        "group inline-flex h-10 fm-press items-center gap-2.5 rounded-full bg-fm-surface ps-4 pe-3.5 text-sm font-medium text-fm-ink shadow-fm-ring fm-focus transition-[background-color,scale] hover:bg-fm-fill",
         className
       )}
     >
@@ -61,7 +61,7 @@ export function CopyButton({
           {copiedLabel}
         </span>
       </span>
-      <span aria-hidden="true" className="text-fm-ink-3 grid">
+      <span aria-hidden="true" className="grid text-fm-ink-3">
         <Copy
           className={cn(
             icon,
@@ -71,7 +71,7 @@ export function CopyButton({
         <Check
           className={cn(
             icon,
-            "text-fm-ink scale-50 opacity-0 blur-[2px] group-data-copied:scale-100 group-data-copied:opacity-100 group-data-copied:blur-none"
+            "scale-50 text-fm-ink opacity-0 blur-[2px] group-data-copied:scale-100 group-data-copied:opacity-100 group-data-copied:blur-none"
           )}
         />
       </span>

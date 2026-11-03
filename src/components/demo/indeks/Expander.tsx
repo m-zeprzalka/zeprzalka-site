@@ -40,13 +40,13 @@ export function Expander({
           aria-expanded={expanded}
           aria-controls={restId}
           onClick={() => setExpanded((value) => !value)}
-          className="group fm-focus fm-press text-fm-small text-fm-ink-2 hover:text-fm-ink hover:bg-fm-fill -ms-3 inline-flex h-11 items-center gap-1.5 rounded-full px-3 font-medium transition-[background-color,color,scale] duration-150 sm:h-10"
+          className="group -ms-3 inline-flex h-11 fm-press items-center gap-1.5 rounded-full px-3 text-fm-small font-medium text-fm-ink-2 fm-focus transition-[background-color,color,scale] duration-150 hover:bg-fm-fill hover:text-fm-ink sm:h-10"
         >
           {expanded ? labels.less : labels.more}
           {!expanded && <span className="text-fm-ink-3 tabular-nums">{count}</span>}
           <ChevronDown
             aria-hidden="true"
-            className="text-fm-ink-3 ease-fm-snap size-4 transition-transform duration-300 group-aria-expanded:rotate-180"
+            className="size-4 text-fm-ink-3 transition-transform duration-300 ease-fm-snap group-aria-expanded:rotate-180"
           />
         </button>
         {aside}

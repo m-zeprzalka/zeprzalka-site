@@ -3,7 +3,7 @@
 import type { MouseEvent } from "react"
 import { useTheme } from "next-themes"
 import { Moon, Sun } from "lucide-react"
-import { cn } from "@/lib/utils"
+import { cn } from "./cn"
 
 /**
  * Przełącznik motywu z kołowym odsłonięciem od przycisku (View Transitions).
@@ -50,7 +50,7 @@ export function ThemeSwitch({ label, className }: { label: string; className?: s
       aria-label={label}
       title={label}
       className={cn(
-        "fm-focus fm-press text-fm-ink-2 hover:bg-fm-fill hover:text-fm-ink grid size-10 place-items-center rounded-full transition-[background-color,color,scale]",
+        "grid size-10 fm-press place-items-center rounded-full text-fm-ink-2 fm-focus transition-[background-color,color,scale] hover:bg-fm-fill hover:text-fm-ink",
         className
       )}
     >

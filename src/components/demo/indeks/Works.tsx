@@ -153,7 +153,7 @@ export function Works({ works, labels }: { works: readonly Work[]; labels: Label
         <ol className="ix-dim flex flex-col gap-7 sm:gap-6">
           {groups.map(([id, group]) => (
             <li key={id} className="sm:grid sm:grid-cols-[var(--ix-lane)_1fr]">
-              <h3 className="text-fm-small text-fm-ink-3 mb-1 sm:mb-0 sm:pt-[0.8125rem]">
+              <h3 className="mb-1 text-fm-small text-fm-ink-3 sm:mb-0 sm:pt-[0.8125rem]">
                 {group.label}
               </h3>
               <ol>
@@ -168,15 +168,15 @@ export function Works({ works, labels }: { works: readonly Work[]; labels: Label
                         aria-controls={panelId}
                         onClick={(event) => onRowClick(event, work.slug)}
                         onPointerEnter={(event) => onRowPointer(event, work.slug)}
-                        className="ix-row ix-bleed fm-focus text-fm-ink rounded-fm-lg flex min-h-12 items-center gap-4 py-2.5 text-left"
+                        className="ix-row ix-bleed flex min-h-12 items-center gap-4 rounded-fm-lg py-2.5 text-left text-fm-ink fm-focus"
                       >
                         <span className="min-w-0 flex-1">
                           <span className="block tracking-[-0.01em]">{work.title}</span>
-                          <span className="ix-row__meta text-fm-small text-fm-ink-3 block transition-colors duration-150 sm:hidden">
+                          <span className="ix-row__meta block text-fm-small text-fm-ink-3 transition-colors duration-150 sm:hidden">
                             {work.category}
                           </span>
                         </span>
-                        <span className="ix-row__meta text-fm-small text-fm-ink-3 hidden shrink-0 transition-colors duration-150 sm:block">
+                        <span className="ix-row__meta hidden shrink-0 text-fm-small text-fm-ink-3 transition-colors duration-150 sm:block">
                           {work.category}
                         </span>
                         {/* Plus tylko na dotyku: myszą wiersz zdradza się kartą wideo, a piętnaście
@@ -207,13 +207,13 @@ export function Works({ works, labels }: { works: readonly Work[]; labels: Label
                                 labels={labels}
                               />
                             )}
-                            <div className="ix-caption text-fm-small mt-3 flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1">
-                              <p className="text-fm-ink-3 max-w-[26rem] text-pretty">
+                            <div className="ix-caption mt-3 flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 text-fm-small">
+                              <p className="max-w-[26rem] text-pretty text-fm-ink-3">
                                 {work.groupDescription}
                               </p>
                               <a
                                 href={labels.link.href}
-                                className="group fm-focus text-fm-ink rounded-fm-xs decoration-fm-edge-strong relative inline-flex items-center gap-1 font-medium underline underline-offset-4 transition-[text-decoration-color] duration-150 after:absolute after:-inset-x-1 after:-inset-y-3 after:content-[''] hover:decoration-current"
+                                className="group relative inline-flex items-center gap-1 rounded-fm-xs font-medium text-fm-ink underline decoration-fm-edge-strong underline-offset-4 fm-focus transition-[text-decoration-color] duration-150 after:absolute after:-inset-x-1 after:-inset-y-3 after:content-[''] hover:decoration-current"
                               >
                                 {labels.link.label}
                                 <ArrowUpRight aria-hidden="true" className="ix-arrow size-3.5" />

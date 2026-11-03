@@ -33,7 +33,7 @@ export function HeroFan({ projects, label }: { projects: readonly Project[]; lab
           <button
             type="button"
             aria-haspopup="dialog"
-            className="fm-focus rounded-fm-3xl block w-full cursor-pointer"
+            className="block w-full cursor-pointer rounded-fm-3xl fm-focus"
             onFocus={() => setHovered(index)}
             onBlur={() => setHovered(null)}
             onClick={(event) => openProject(project.slug, "fan", event.currentTarget)}

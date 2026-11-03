@@ -36,7 +36,7 @@ export function Facts({ facts }: { facts: IndeksContent["facts"] }) {
 function Fact({ label, children }: { label: string; children: ReactNode }) {
   return (
     <div className="flex flex-col gap-2">
-      <dt className="text-fm-small text-fm-ink-3 order-last">{label}</dt>
+      <dt className="order-last text-fm-small text-fm-ink-3">{label}</dt>
       <dd>{children}</dd>
     </div>
   )

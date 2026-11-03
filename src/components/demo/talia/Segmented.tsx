@@ -4,7 +4,7 @@ import { useRef, type KeyboardEvent } from "react"
 import { LayoutGroup } from "motion/react"
 import * as m from "motion/react-m"
 import { useReducedMotion } from "@/components/demo/forma/use-in-view"
-import { cn } from "@/lib/utils"
+import { cn } from "../forma/cn"
 
 export interface SegmentOption<T extends string> {
   id: T
@@ -64,7 +64,7 @@ export function Segmented<T extends string>({
         role="radiogroup"
         aria-labelledby={labelledBy}
         onKeyDown={onKeyDown}
-        className={cn("bg-fm-fill inline-flex shrink-0 gap-0.5 rounded-full p-1", className)}
+        className={cn("inline-flex shrink-0 gap-0.5 rounded-full bg-fm-fill p-1", className)}
       >
         {options.map((option) => {
           const selected = option.id === value
@@ -81,7 +81,7 @@ export function Segmented<T extends string>({
               tabIndex={selected ? 0 : -1}
               onClick={() => choose(option.id)}
               className={cn(
-                "fm-focus relative flex h-9 items-center gap-1.5 rounded-full px-4 text-sm font-medium whitespace-nowrap transition-colors duration-200",
+                "relative flex h-9 items-center gap-1.5 rounded-full px-4 text-sm font-medium whitespace-nowrap fm-focus transition-colors duration-200",
                 selected ? "text-fm-ink" : "text-fm-ink-3 hover:text-fm-ink-2"
               )}
             >
@@ -90,11 +90,11 @@ export function Segmented<T extends string>({
                   layoutId="pill"
                   transition={PILL}
                   style={{ borderRadius: 999 }}
-                  className="bg-fm-surface shadow-fm-card absolute inset-0"
+                  className="absolute inset-0 bg-fm-surface shadow-fm-card"
                 />
               )}
               <span className="relative">{option.label}</span>
-              <span className="text-fm-ink-3 relative text-xs tabular-nums">{option.count}</span>
+              <span className="relative text-xs text-fm-ink-3 tabular-nums">{option.count}</span>
             </button>
           )
         })}

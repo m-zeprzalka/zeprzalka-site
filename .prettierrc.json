@@ -4,5 +4,11 @@
   "trailingComma": "es5",
   "plugins": ["prettier-plugin-tailwindcss"],
   "tailwindStylesheet": "./src/app/globals.css",
-  "tailwindFunctions": ["cn", "cva"]
+  "tailwindFunctions": ["cn", "cva"],
+  "overrides": [
+    {
+      "files": ["src/components/demo/**", "src/app/demo/**"],
+      "options": { "tailwindStylesheet": "./src/app/demo/demo.css" }
+    }
+  ]
 }

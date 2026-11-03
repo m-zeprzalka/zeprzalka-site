@@ -1,7 +1,7 @@
 import type { ComponentProps } from "react"
 import { Slot } from "radix-ui"
 import { cva, type VariantProps } from "class-variance-authority"
-import { cn } from "@/lib/utils"
+import { cn } from "./cn"
 
 /**
  * Przycisk Formy: pigułka. Trzy warianty i trzy wysokości (32 / 40 / 48 px —
@@ -9,8 +9,8 @@ import { cn } from "@/lib/utils"
  */
 export const buttonVariants = cva(
   [
-    "fm-focus inline-flex shrink-0 items-center justify-center gap-2 rounded-full font-medium whitespace-nowrap select-none",
-    "ease-fm-snap transition-[background-color,box-shadow,color,scale] duration-150 active:scale-[0.97]",
+    "inline-flex shrink-0 items-center justify-center gap-2 rounded-full font-medium whitespace-nowrap fm-focus select-none",
+    "transition-[background-color,box-shadow,color,scale] duration-150 ease-fm-snap active:scale-[0.97]",
     "disabled:pointer-events-none disabled:opacity-50 [&_svg]:size-4 [&_svg]:shrink-0",
   ],
   {

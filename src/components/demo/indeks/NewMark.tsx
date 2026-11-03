@@ -25,7 +25,7 @@ export function NewMark({ label }: { label: string }) {
       ref={ref}
       data-armed={armed || undefined}
       data-drawn={inView || undefined}
-      className="ix-new text-fm-micro text-fm-ink relative ms-3 inline-block px-1.5 align-[0.12em] font-medium whitespace-nowrap"
+      className="ix-new relative ms-3 inline-block px-1.5 align-[0.12em] text-fm-micro font-medium whitespace-nowrap text-fm-ink"
     >
       {label}
       <svg

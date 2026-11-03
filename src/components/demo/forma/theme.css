@@ -154,6 +154,17 @@
   color-scheme: dark;
 }
 
+/*
+ * Dokument pod koncepcją ma kolor płótna — inaczej rynna paska przewijania
+ * i „odbicie” przy przewijaniu na telefonie pokazują białe tło przeglądarki.
+ */
+html:has(.fm) {
+  background: oklch(0.985 0 0);
+}
+html.dark:has(.fm) {
+  background: oklch(0.145 0 0);
+}
+
 .fm ::selection {
   background: var(--fm-ink);
   color: var(--fm-inverse);

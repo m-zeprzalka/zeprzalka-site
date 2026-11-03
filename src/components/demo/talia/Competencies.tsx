@@ -48,12 +48,12 @@ export function Competencies({
         <h2 id="kompetencje-tytul" className="text-fm-h2 font-semibold text-balance">
           {title}
         </h2>
-        <p className="text-fm-lead text-fm-ink-2 mt-3 text-pretty">{typo(lead)}</p>
+        <p className="mt-3 text-fm-lead text-pretty text-fm-ink-2">{typo(lead)}</p>
       </div>
 
       <ul className="mt-10 grid grid-cols-2 gap-3 lg:grid-cols-4 lg:gap-4">
         {facts.map((fact) => (
-          <li key={fact.label} className="bg-fm-fill rounded-fm-2xl flex flex-col p-4 md:p-5">
+          <li key={fact.label} className="flex flex-col rounded-fm-2xl bg-fm-fill p-4 md:p-5">
             <Tally
               value={fact.value}
               from={fact.from}
@@ -62,7 +62,7 @@ export function Competencies({
               suffix={fact.suffix}
               className="text-[clamp(1.625rem,1rem+2.4vw,2.5rem)] leading-none font-semibold tracking-[-0.04em] tabular-nums"
             />
-            <span className="text-fm-small text-fm-ink-2 mt-3 text-pretty md:mt-4">
+            <span className="mt-3 text-fm-small text-pretty text-fm-ink-2 md:mt-4">
               {typo(fact.label)}
             </span>
           </li>
@@ -76,10 +76,10 @@ export function Competencies({
             <li
               key={skill.kind}
               data-kind={skill.kind}
-              className="talia-skill bg-fm-surface shadow-fm-card rounded-fm-3xl flex flex-col p-6 md:p-7"
+              className="talia-skill flex flex-col rounded-fm-3xl bg-fm-surface p-6 shadow-fm-card md:p-7"
             >
               <div className="flex items-center gap-3.5">
-                <span className="talia-skill__icon bg-fm-fill rounded-fm-lg relative grid size-11 shrink-0 place-items-center">
+                <span className="talia-skill__icon relative grid size-11 shrink-0 place-items-center rounded-fm-lg bg-fm-fill">
                   <Icon aria-hidden="true" className="size-5" strokeWidth={1.75} />
                   {skill.kind === "design" && (
                     <span aria-hidden="true" className="talia-skill__select">
@@ -98,7 +98,7 @@ export function Competencies({
                 </span>
                 <h3 className="text-fm-h3 font-semibold">{skill.title}</h3>
               </div>
-              <p className="text-fm-small text-fm-ink-2 mt-4 text-pretty">
+              <p className="mt-4 text-fm-small text-pretty text-fm-ink-2">
                 {typo(skill.description)}
               </p>
               <ul className="mt-auto flex flex-wrap gap-1.5 pt-6">

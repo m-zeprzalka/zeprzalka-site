@@ -66,7 +66,7 @@ export function WorkMedia({
       ref={boxRef}
       data-media
       style={{ aspectRatio: ratio, width: `min(100%, calc(64svh * ${ratio}))` }}
-      className="ix-media-ring ix-skeleton rounded-fm-xl relative overflow-hidden"
+      className="ix-media-ring ix-skeleton relative overflow-hidden rounded-fm-xl"
     >
       {/* eslint-disable-next-line @next/next/no-img-element -- ten sam plik co w usePosterRatios */}
       <img src={work.poster} alt="" className="absolute inset-0 size-full object-cover" />
@@ -91,7 +91,7 @@ export function WorkMedia({
         type="button"
         onClick={() => setIntent(playing ? "pause" : "play")}
         aria-label={`${playing ? labels.pause : labels.play}: ${work.title}`}
-        className="fm-focus fm-press bg-fm-surface/85 text-fm-ink shadow-fm-ring absolute end-3 bottom-3 grid size-9 place-items-center rounded-full backdrop-blur-md after:absolute after:-inset-1 after:content-['']"
+        className="absolute end-3 bottom-3 grid size-9 fm-press place-items-center rounded-full bg-fm-surface/85 text-fm-ink shadow-fm-ring fm-focus backdrop-blur-md after:absolute after:-inset-1 after:content-['']"
       >
         {playing ? (
           <Pause aria-hidden="true" className="size-3.5" fill="currentColor" strokeWidth={0} />

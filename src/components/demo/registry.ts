@@ -17,6 +17,8 @@ export interface DemoEntry {
   date: string
   status: "rekomendacja" | "propozycja" | "odrzucony"
   summary: string
+  /** Koncepcje do oceny: dla kogo działa najlepiej i czego się bać. */
+  pitch?: { strengths: readonly string[]; risks: readonly string[] }
 }
 
 export const DEMOS: readonly DemoEntry[] = [
@@ -27,6 +29,17 @@ export const DEMOS: readonly DemoEntry[] = [
     status: "rekomendacja",
     summary:
       "Miękki minimalizm Vercel/shadcn. Każda kompetencja udowadnia się działającym mini-interfejsem: inspektor projektu, log builda, odpowiedź AI strumieniem, sala wykładowa.",
+    pitch: {
+      strengths: [
+        "Pokazuje cztery kompetencje działaniem, nie deklaracją — i rozumie to klient, który nie jest projektantem",
+        "Szkielet najbliższy dzisiejszej stronie: przejście bez rewolucji w treści",
+        "Nagłówek „przekształca się” pod kursorem — jeden moment wow, reszta spokojna",
+      ],
+      risks: [
+        "Cztery mini-interfejsy to cztery małe produkty do utrzymania",
+        "Najwięcej JavaScriptu z trzech koncepcji (kafle ładują się dopiero w kadrze)",
+      ],
+    },
   },
   {
     slug: "indeks",
@@ -35,6 +48,17 @@ export const DEMOS: readonly DemoEntry[] = [
     status: "propozycja",
     summary:
       "Jedna precyzyjna kolumna w stylu designerów-inżynierów. Lista realizacji z kartą wideo płynącą za kursorem, chipy w tekście, paleta ⌘K.",
+    pitch: {
+      strengths: [
+        "Najwięcej rzemiosła na piksel — docenią to projektanci i ludzie z branży",
+        "Najlżejsza i najszybsza; świetnie się czyta na telefonie",
+        "Paleta ⌘K i chipy w tekście nagradzają ciekawość",
+      ],
+      risks: [
+        "Może wyglądać „za cicho” dla klienta, który szuka efektu",
+        "Wymaga bardzo dobrego tekstu — forma niczego nie zasłania",
+      ],
+    },
   },
   {
     slug: "talia",
@@ -43,6 +67,17 @@ export const DEMOS: readonly DemoEntry[] = [
     status: "propozycja",
     summary:
       "Najpierw praca: realizacje jako talia miękkich kart z wideo — wachlarz na desktopie, stos do przesuwania palcem na telefonie, filtry tasujące karty.",
+    pitch: {
+      strengths: [
+        "Najmocniejsze pierwsze wrażenie: prawdziwe realizacje od pierwszego ekranu",
+        "Gest na telefonie (przesuwanie stosu) jak w natywnej aplikacji",
+        "Karta wyjęta z talii płynnie przechodzi w podgląd — gotowy wzór pod case studies",
+      ],
+      risks: [
+        "Stoi na materiale wizualnym: słabszy kadr psuje całość",
+        "Najbliżej „zabawy” — wymaga dyscypliny, żeby nie zjechać w efekciarstwo",
+      ],
+    },
   },
   {
     slug: "forma",

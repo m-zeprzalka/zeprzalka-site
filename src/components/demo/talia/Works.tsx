@@ -79,7 +79,7 @@ export function Works({
             <AnimatePresence mode="popLayout" initial={false}>
               <m.p
                 key={filter}
-                className="text-fm-lead text-fm-ink-2 col-start-1 row-start-1 text-pretty"
+                className="col-start-1 row-start-1 text-fm-lead text-pretty text-fm-ink-2"
                 initial={{ opacity: 0, y: 6, ...blur }}
                 animate={{ opacity: 1, y: 0, filter: "blur(0px)", transition: { duration: 0.32 } }}
                 exit={{ opacity: 0, y: -4, ...blur, transition: { duration: 0.16 } }}
@@ -148,7 +148,7 @@ function WorkCard({
       onPointerEnter={() => onHover(true)}
       onPointerLeave={() => onHover(false)}
       onClick={(event) => openProject(project.slug, "works", event.currentTarget)}
-      className="group fm-focus fm-press-soft rounded-fm-3xl block w-full cursor-pointer"
+      className="group block w-full fm-press-soft cursor-pointer rounded-fm-3xl fm-focus"
     >
       <DeckCard
         project={project}
@@ -156,7 +156,7 @@ function WorkCard({
         active={active}
         zoom
         sizes="(min-width: 1024px) 18rem, (min-width: 768px) 30vw, 80vw"
-        className="group-hover:shadow-fm-pop transition-shadow duration-300"
+        className="transition-shadow duration-300 group-hover:shadow-fm-pop"
       />
     </button>
   )

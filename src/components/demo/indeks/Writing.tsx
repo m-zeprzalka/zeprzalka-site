@@ -38,7 +38,7 @@ export function Writing({
       aside={
         <a
           href={link.href}
-          className="group fm-focus text-fm-small text-fm-ink-2 hover:text-fm-ink inline-flex h-11 items-center gap-1 rounded-full font-medium transition-colors duration-150 sm:h-10"
+          className="group inline-flex h-11 items-center gap-1 rounded-full text-fm-small font-medium text-fm-ink-2 fm-focus transition-colors duration-150 hover:text-fm-ink sm:h-10"
         >
           {link.label}
           {/* Strzałka wystaje poza kolumnę — tekst kończy się na tej samej linii co daty. */}
@@ -55,24 +55,24 @@ export function Writing({
 function Row({ post, showYear, newLabel }: { post: PostRow; showYear: boolean; newLabel: string }) {
   return (
     <li className="grid grid-cols-[3.25rem_1fr] sm:grid-cols-[var(--ix-lane)_1fr]">
-      <span className="text-fm-small text-fm-ink-3 pt-[0.8125rem] tabular-nums">
+      <span className="pt-[0.8125rem] text-fm-small text-fm-ink-3 tabular-nums">
         {showYear ? post.year : ""}
       </span>
       <a
         href={post.href}
-        className="ix-row ix-bleed fm-focus text-fm-ink group rounded-fm-lg flex min-h-12 items-baseline gap-4 py-3"
+        className="ix-row ix-bleed group flex min-h-12 items-baseline gap-4 rounded-fm-lg py-3 text-fm-ink fm-focus"
       >
         <span className="min-w-0 flex-1 text-pretty">
           <span className="tracking-[-0.01em]">{post.title}</span>
           {post.isNew && <NewMark label={newLabel} />}
           <ArrowUpRight
             aria-hidden="true"
-            className="ix-arrow text-fm-ink-3 ms-1 inline size-3.5 -translate-y-px align-middle"
+            className="ix-arrow ms-1 inline size-3.5 -translate-y-px align-middle text-fm-ink-3"
           />
         </span>
         <time
           dateTime={post.iso}
-          className="ix-row__meta text-fm-small text-fm-ink-3 shrink-0 tabular-nums transition-colors duration-150"
+          className="ix-row__meta shrink-0 text-fm-small text-fm-ink-3 tabular-nums transition-colors duration-150"
         >
           {post.day}
         </time>

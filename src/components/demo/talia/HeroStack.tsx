@@ -13,7 +13,7 @@ import * as m from "motion/react-m"
 import NumberFlow from "@number-flow/react"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import { useReducedMotion } from "@/components/demo/forma/use-in-view"
-import { cn } from "@/lib/utils"
+import { cn } from "../forma/cn"
 import { DeckCard } from "./DeckCard"
 import { PauseToggle } from "./PauseToggle"
 import { useTalia } from "./TaliaProvider"
@@ -146,7 +146,7 @@ export function HeroStack({
         </StackButton>
         <span
           aria-hidden="true"
-          className="bg-fm-fill inline-flex h-9 min-w-[5.75rem] items-center justify-center gap-1 rounded-full px-3.5 text-sm font-medium tabular-nums"
+          className="inline-flex h-9 min-w-[5.75rem] items-center justify-center gap-1 rounded-full bg-fm-fill px-3.5 text-sm font-medium tabular-nums"
         >
           <NumberFlow value={index + 1} format={{ minimumIntegerDigits: 2 }} />
           <span className="text-fm-ink-3">/ {pad(total)}</span>
@@ -157,7 +157,7 @@ export function HeroStack({
         {/* Ujemny margines równy szerokości + odstępowi: trójka ‹ licznik › zostaje na osi. */}
         <PauseToggle
           label={labels.pause}
-          className="text-fm-ink-2 hover:bg-fm-fill hover:text-fm-ink -me-14"
+          className="-me-14 text-fm-ink-2 hover:bg-fm-fill hover:text-fm-ink"
         />
       </div>
       <p aria-live="polite" className="sr-only">
@@ -246,7 +246,7 @@ function StackSlot({
             type="button"
             aria-haspopup="dialog"
             tabIndex={top ? 0 : -1}
-            className="fm-focus rounded-fm-3xl block size-full cursor-pointer select-none"
+            className="block size-full cursor-pointer rounded-fm-3xl fm-focus select-none"
             onClick={(event) => {
               // Puszczenie po przeciągnięciu myszą to też „click” — ignorujemy go.
               if (dragged.current) {
@@ -262,7 +262,7 @@ function StackSlot({
               active={top}
               hero={k < 3}
               sizes="(min-width: 768px) 1px, 20rem"
-              className="shadow-fm-pop size-full"
+              className="size-full shadow-fm-pop"
             />
           </button>
         </span>
@@ -286,7 +286,7 @@ function StackButton({
       aria-label={label}
       title={label}
       onClick={onClick}
-      className="fm-focus fm-press bg-fm-surface text-fm-ink shadow-fm-ring hover:bg-fm-fill grid size-11 place-items-center rounded-full transition-[background-color,scale] [&_svg]:size-[1.125rem]"
+      className="grid size-11 fm-press place-items-center rounded-full bg-fm-surface text-fm-ink shadow-fm-ring fm-focus transition-[background-color,scale] hover:bg-fm-fill [&_svg]:size-[1.125rem]"
     >
       {children}
     </button>

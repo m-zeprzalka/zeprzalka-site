@@ -5,7 +5,7 @@ import { AnimatePresence } from "motion/react"
 import * as m from "motion/react-m"
 import { Check, Info, LoaderCircle } from "lucide-react"
 import { useReducedMotion } from "@/components/demo/forma/use-in-view"
-import { cn } from "@/lib/utils"
+import { cn } from "../forma/cn"
 
 export interface SubmitResult {
   id: number
@@ -56,7 +56,7 @@ export function SubmitMorph({
         style={{ borderRadius: 999 }}
         transition={{ layout: LAYOUT }}
         className={cn(
-          "fm-focus relative inline-flex h-12 items-center justify-center overflow-hidden text-[0.9375rem] font-medium whitespace-nowrap",
+          "relative inline-flex h-12 items-center justify-center overflow-hidden text-[0.9375rem] font-medium whitespace-nowrap fm-focus",
           "transition-[background-color,color] duration-200",
           busy ? "w-12" : "w-full px-6",
           phase === "result" && result && !result.success
@@ -98,7 +98,7 @@ export function SubmitMorph({
           <m.p
             key={result.id}
             aria-hidden="true"
-            className="text-fm-small text-fm-ink-2 mt-3 text-center text-balance"
+            className="mt-3 text-center text-fm-small text-balance text-fm-ink-2"
             initial={{ opacity: 0, y: -4, ...blur }}
             animate={{ opacity: 1, y: 0, filter: "blur(0px)", transition: { delay: 0.12 } }}
             exit={{ opacity: 0, transition: { duration: 0.15 } }}

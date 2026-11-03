@@ -29,10 +29,10 @@ export function Header({
         <span aria-hidden="true" className="ix-capsule" />
         <a
           href={`#${SECTION.start}`}
-          className="fm-focus rounded-fm-sm relative flex min-w-0 flex-col text-[0.9375rem] leading-snug after:absolute after:inset-x-0 after:-inset-y-2 after:content-[''] sm:flex-row sm:gap-2"
+          className="relative flex min-w-0 flex-col rounded-fm-sm text-[0.9375rem] leading-snug fm-focus after:absolute after:inset-x-0 after:-inset-y-2 after:content-[''] sm:flex-row sm:gap-2"
         >
-          <span className="text-fm-ink font-medium tracking-[-0.01em]">{name}</span>
-          <span className="text-fm-ink-3 truncate">{role}</span>
+          <span className="font-medium tracking-[-0.01em] text-fm-ink">{name}</span>
+          <span className="truncate text-fm-ink-3">{role}</span>
         </a>
         <div className="relative -me-1.5 flex items-center gap-1 sm:me-0 sm:gap-2">
           <CommandPalette groups={palette} email={email} labels={paletteLabels} />

@@ -40,15 +40,15 @@ export function Intro({
     <section id={SECTION.start} className="ix-col scroll-mt-(--ix-header) pt-14 sm:pt-24">
       <p
         style={delay(0)}
-        className="ix-enter text-fm-small text-fm-ink-2 inline-flex items-center gap-2.5"
+        className="ix-enter inline-flex items-center gap-2.5 text-fm-small text-fm-ink-2"
       >
         <LiveDot />
         {intro.status}
       </p>
 
       <div className="mt-5 text-[1.4375rem] leading-[1.32] font-medium tracking-[-0.022em] text-pretty sm:mt-6 sm:text-[1.875rem] sm:leading-[1.27] sm:tracking-[-0.026em]">
-        <Reveal as="h1" delay={60} className="text-fm-ink inline" parts={[{ text: intro.title }]} />{" "}
-        <p className="text-fm-ink-3 inline">
+        <Reveal as="h1" delay={60} className="inline text-fm-ink" parts={[{ text: intro.title }]} />{" "}
+        <p className="inline text-fm-ink-3">
           {intro.lead.map((segment, index) =>
             "chip" in segment ? (
               <FactChip
@@ -77,7 +77,7 @@ export function Intro({
             {intro.cta}
             <ArrowRight
               aria-hidden="true"
-              className="ease-fm-snap transition-transform duration-200 group-hover:translate-x-0.5"
+              className="transition-transform duration-200 ease-fm-snap group-hover:translate-x-0.5"
             />
           </a>
         </Button>

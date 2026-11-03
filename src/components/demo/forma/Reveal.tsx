@@ -35,7 +35,7 @@ export function Reveal({
               .map((word, wordIndex, words) => (
                 <span key={wordIndex}>
                   <span
-                    className="fm-rise inline-block"
+                    className="inline-block fm-rise"
                     style={{ "--i": index++ } as CSSProperties}
                   >
                     {word}

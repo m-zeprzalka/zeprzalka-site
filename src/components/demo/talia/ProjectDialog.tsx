@@ -70,7 +70,7 @@ export function ProjectDialog({
                   onReturnFocus()
                 }}
                 style={{ "--ar": card.aspect } as CSSProperties}
-                className="bg-fm-surface shadow-fm-float relative flex max-h-[92dvh] w-full flex-col gap-3 overflow-y-auto overscroll-contain rounded-t-[2rem] p-3 outline-none md:w-auto md:max-w-[calc(100vw_-_3rem)] md:flex-row md:overflow-visible md:rounded-[2rem]"
+                className="relative flex max-h-[92dvh] w-full flex-col gap-3 overflow-y-auto overscroll-contain rounded-t-[2rem] bg-fm-surface p-3 shadow-fm-float outline-none md:w-auto md:max-w-[calc(100vw_-_3rem)] md:flex-row md:overflow-visible md:rounded-[2rem]"
               >
                 <ViewTransition
                   name={morphName(card.origin, project.slug)}
@@ -84,25 +84,25 @@ export function ProjectDialog({
                     inDialog
                     still={card.still}
                     sizes="(min-width: 768px) 54rem, 100vw"
-                    className="rounded-fm-2xl aspect-(--ar) w-full shrink-0 md:w-[min(calc(var(--ar)*min(100dvh_-_8rem,46rem)),calc(100vw_-_27rem),54rem)]"
+                    className="aspect-(--ar) w-full shrink-0 rounded-fm-2xl md:w-[min(calc(var(--ar)*min(100dvh_-_8rem,46rem)),calc(100vw_-_27rem),54rem)]"
                   />
                 </ViewTransition>
 
                 <div className="flex flex-col px-2 pt-1 pb-2 md:w-[19rem] md:px-3 md:pt-3">
                   <div className="flex flex-wrap gap-1.5 pe-12 [&>*]:whitespace-nowrap">
                     <Chip className="text-[0.75rem]">{project.category}</Chip>
-                    <Chip className="text-fm-ink-3 bg-transparent text-[0.75rem] shadow-[inset_0_0_0_1px_var(--fm-edge)]">
+                    <Chip className="bg-transparent text-[0.75rem] text-fm-ink-3 shadow-[inset_0_0_0_1px_var(--fm-edge)]">
                       {group.label}
                     </Chip>
                   </div>
-                  <Dialog.Title className="text-fm-h3 mt-4 font-semibold text-balance md:text-[1.625rem] md:leading-[1.15] md:tracking-[-0.025em]">
+                  <Dialog.Title className="mt-4 text-fm-h3 font-semibold text-balance md:text-[1.625rem] md:leading-[1.15] md:tracking-[-0.025em]">
                     {project.title}
                   </Dialog.Title>
-                  <Dialog.Description className="text-fm-small text-fm-ink-2 mt-3 text-pretty">
+                  <Dialog.Description className="mt-3 text-fm-small text-pretty text-fm-ink-2">
                     {typo(group.description)}
                   </Dialog.Description>
 
-                  <div className="bg-fm-fill rounded-fm-2xl mt-6 p-4 md:mt-auto">
+                  <div className="mt-6 rounded-fm-2xl bg-fm-fill p-4 md:mt-auto">
                     <p className="text-fm-small font-medium text-balance">
                       {typo(labels.ctaHeading)}
                     </p>
@@ -114,12 +114,12 @@ export function ProjectDialog({
 
                 <PauseToggle
                   label={labels.pause}
-                  className="bg-fm-surface/85 text-fm-ink shadow-fm-ring hover:bg-fm-fill absolute top-5 left-5 size-10 backdrop-blur-md"
+                  className="absolute top-5 left-5 size-10 bg-fm-surface/85 text-fm-ink shadow-fm-ring backdrop-blur-md hover:bg-fm-fill"
                 />
                 <Dialog.Close
                   aria-label={labels.close}
                   title={labels.close}
-                  className="fm-focus fm-press bg-fm-surface/85 text-fm-ink shadow-fm-ring hover:bg-fm-fill absolute top-5 right-5 grid size-10 place-items-center rounded-full backdrop-blur-md transition-[background-color,scale] md:top-4 md:right-4"
+                  className="absolute top-5 right-5 grid size-10 fm-press place-items-center rounded-full bg-fm-surface/85 text-fm-ink shadow-fm-ring fm-focus backdrop-blur-md transition-[background-color,scale] hover:bg-fm-fill md:top-4 md:right-4"
                 >
                   <X className="size-[1.125rem]" />
                 </Dialog.Close>

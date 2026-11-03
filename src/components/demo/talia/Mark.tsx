@@ -1,4 +1,4 @@
-import { cn } from "@/lib/utils"
+import { cn } from "../forma/cn"
 
 /**
  * Sygnet koncepcji: trzy karty w wachlarzu. Po najechaniu na link (rodzic

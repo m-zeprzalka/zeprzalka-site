@@ -128,7 +128,7 @@ export function FloatingPreview({
         initial={false}
         animate={{ width: size.w, height: size.h }}
         transition={reduced ? { duration: 0 } : RESIZE}
-        className="ix-float__card ix-media-ring bg-fm-fill shadow-fm-float rounded-fm-xl relative overflow-hidden"
+        className="ix-float__card ix-media-ring relative overflow-hidden rounded-fm-xl bg-fm-fill shadow-fm-float"
       >
         {armed &&
           works.map((work) => (

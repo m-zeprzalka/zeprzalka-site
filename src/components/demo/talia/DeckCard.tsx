@@ -1,7 +1,7 @@
 "use client"
 
 import { ViewTransition } from "react"
-import { cn } from "@/lib/utils"
+import { cn } from "../forma/cn"
 import { CardMedia } from "./CardMedia"
 import { morphName, useTalia } from "./TaliaProvider"
 import type { Origin, Project } from "./types"
@@ -36,12 +36,12 @@ export function DeckCard({
   return (
     <span
       className={cn(
-        "bg-fm-surface shadow-fm-card rounded-fm-3xl flex aspect-[4/5] flex-col p-1.5 text-left",
+        "flex aspect-[4/5] flex-col rounded-fm-3xl bg-fm-surface p-1.5 text-left shadow-fm-card",
         className
       )}
     >
       {pulled ? (
-        <span className="bg-fm-fill block flex-1 rounded-[1.125rem] shadow-[inset_0_0_0_1px_var(--fm-edge)]" />
+        <span className="block flex-1 rounded-[1.125rem] bg-fm-fill shadow-[inset_0_0_0_1px_var(--fm-edge)]" />
       ) : (
         <ViewTransition name={morphName(origin, project.slug)} share="talia-morph" default="none">
           <CardMedia
@@ -59,7 +59,7 @@ export function DeckCard({
         <span className="truncate text-[0.8125rem] leading-tight font-medium tracking-[-0.01em]">
           {project.title}
         </span>
-        <span className="text-fm-ink-3 truncate text-xs leading-tight">{project.category}</span>
+        <span className="truncate text-xs leading-tight text-fm-ink-3">{project.category}</span>
       </span>
     </span>
   )

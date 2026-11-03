@@ -52,13 +52,13 @@ export function FormaSpecimen() {
           </Chip>
           <Reveal
             as="h1"
-            className="text-fm-display mt-6 font-semibold text-balance"
+            className="mt-6 text-fm-display font-semibold text-balance"
             parts={[
               { text: "Miękki minimalizm," },
               { text: "precyzja co do piksela.", className: "text-fm-ink-3" },
             ]}
           />
-          <p className="text-fm-lead text-fm-ink-2 mt-6 max-w-xl">
+          <p className="mt-6 max-w-xl text-fm-lead text-fm-ink-2">
             Płótno i powierzchnie, krawędź jako cień, koncentryczne promienie, pigułki dla akcji.
             Ruch krótki, sprężysty i zawsze po coś.
           </p>
@@ -81,10 +81,10 @@ export function FormaSpecimen() {
             {COLORS.map((name) => (
               <li key={name} className="space-y-2">
                 <div
-                  className="rounded-fm-xl shadow-fm-ring h-20"
+                  className="h-20 rounded-fm-xl shadow-fm-ring"
                   style={{ background: `var(--fm-${name})` }}
                 />
-                <p className="text-fm-micro text-fm-ink-2 font-mono">--fm-{name}</p>
+                <p className="font-mono text-fm-micro text-fm-ink-2">--fm-{name}</p>
               </li>
             ))}
           </ul>
@@ -92,10 +92,10 @@ export function FormaSpecimen() {
 
         <section>
           <h2 className="text-fm-h3 font-semibold">Pismo</h2>
-          <ul className="divide-fm-edge mt-6 divide-y">
+          <ul className="mt-6 divide-y divide-fm-edge">
             {TYPE.map(([token, sample, classes]) => (
               <li key={token} className="grid items-baseline gap-2 py-5 md:grid-cols-[10rem_1fr]">
-                <span className="text-fm-micro text-fm-ink-3 font-mono">{token}</span>
+                <span className="font-mono text-fm-micro text-fm-ink-3">{token}</span>
                 <span className={classes}>{sample}</span>
               </li>
             ))}
@@ -109,10 +109,10 @@ export function FormaSpecimen() {
               {RADII.map((r) => (
                 <li key={r} className="text-center">
                   <div
-                    className="bg-fm-surface shadow-fm-card size-16"
+                    className="size-16 bg-fm-surface shadow-fm-card"
                     style={{ borderRadius: `var(--radius-fm-${r})` }}
                   />
-                  <p className="text-fm-micro text-fm-ink-3 mt-2 font-mono">{RADIUS_PX[r]}</p>
+                  <p className="mt-2 font-mono text-fm-micro text-fm-ink-3">{RADIUS_PX[r]}</p>
                 </li>
               ))}
             </ul>
@@ -123,10 +123,10 @@ export function FormaSpecimen() {
               {SHADOWS.map((s) => (
                 <li key={s}>
                   <div
-                    className="rounded-fm-2xl bg-fm-surface h-20"
+                    className="h-20 rounded-fm-2xl bg-fm-surface"
                     style={{ boxShadow: `var(--fm-shadow-${s})` }}
                   />
-                  <p className="text-fm-micro text-fm-ink-3 mt-2 font-mono">{s}</p>
+                  <p className="mt-2 font-mono text-fm-micro text-fm-ink-3">{s}</p>
                 </li>
               ))}
             </ul>
@@ -141,7 +141,7 @@ export function FormaSpecimen() {
             <Chip>
               <LiveDot /> Dostępny
             </Chip>
-            <span className="text-fm-small text-fm-ink-2 inline-flex items-center gap-1">
+            <span className="inline-flex items-center gap-1 text-fm-small text-fm-ink-2">
               <Kbd>⌘</Kbd>
               <Kbd>K</Kbd>
             </span>

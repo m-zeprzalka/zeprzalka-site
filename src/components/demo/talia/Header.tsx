@@ -7,7 +7,7 @@ import { Menu, X } from "lucide-react"
 import { Button } from "@/components/demo/forma/Button"
 import { LiveDot } from "@/components/demo/forma/Chip"
 import { ThemeSwitch } from "@/components/demo/forma/ThemeSwitch"
-import { cn } from "@/lib/utils"
+import { cn } from "../forma/cn"
 import { useMedia } from "./hooks"
 import { Mark } from "./Mark"
 import { useTalia } from "./TaliaProvider"
@@ -71,7 +71,7 @@ export function Header({ nav, labels }: { nav: readonly NavItem[]; labels: Heade
         {expanded && (
           <m.div
             aria-hidden="true"
-            className="bg-fm-canvas/70 fixed inset-0 z-30 backdrop-blur-[2px]"
+            className="fixed inset-0 z-30 bg-fm-canvas/70 backdrop-blur-[2px]"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0, transition: { duration: 0.15 } }}
@@ -103,7 +103,7 @@ export function Header({ nav, labels }: { nav: readonly NavItem[]; labels: Heade
             <a
               href="#top"
               onClick={() => close()}
-              className="group fm-focus text-fm-ink flex h-10 items-center gap-2 rounded-full ps-2 pe-3 text-sm font-semibold tracking-[-0.01em]"
+              className="group flex h-10 items-center gap-2 rounded-full ps-2 pe-3 text-sm font-semibold tracking-[-0.01em] text-fm-ink fm-focus"
             >
               <Mark />
               {labels.brand}
@@ -114,7 +114,7 @@ export function Header({ nav, labels }: { nav: readonly NavItem[]; labels: Heade
                 <a
                   key={item.href}
                   href={item.href}
-                  className="fm-focus text-fm-ink-2 hover:bg-fm-fill hover:text-fm-ink flex h-9 items-center rounded-full px-3.5 text-sm font-medium transition-colors duration-150 hover:duration-0"
+                  className="flex h-9 items-center rounded-full px-3.5 text-sm font-medium text-fm-ink-2 fm-focus transition-colors duration-150 hover:bg-fm-fill hover:text-fm-ink hover:duration-0"
                 >
                   {item.label}
                 </a>
@@ -122,11 +122,11 @@ export function Header({ nav, labels }: { nav: readonly NavItem[]; labels: Heade
             </nav>
 
             {/* Status: etykieta zwija się do kropki po przewinięciu (siatka 1fr → 0fr). */}
-            <div className="text-fm-small text-fm-ink-2 ms-1 hidden h-9 items-center rounded-full ps-3 pe-1 md:flex">
+            <div className="ms-1 hidden h-9 items-center rounded-full ps-3 pe-1 text-fm-small text-fm-ink-2 md:flex">
               <LiveDot />
               <span
                 className={cn(
-                  "ease-fm-snap grid transition-[grid-template-columns,opacity] duration-500",
+                  "grid transition-[grid-template-columns,opacity] duration-500 ease-fm-snap",
                   scrolled ? "grid-cols-[0fr] opacity-0" : "grid-cols-[1fr] opacity-100"
                 )}
               >
@@ -148,7 +148,7 @@ export function Header({ nav, labels }: { nav: readonly NavItem[]; labels: Heade
                 aria-controls={panelId}
                 aria-label={expanded ? labels.closeMenu : labels.openMenu}
                 onClick={() => setMenu((value) => !value)}
-                className="fm-focus fm-press text-fm-ink hover:bg-fm-fill grid size-10 place-items-center rounded-full transition-[background-color,scale]"
+                className="grid size-10 fm-press place-items-center rounded-full text-fm-ink fm-focus transition-[background-color,scale] hover:bg-fm-fill"
               >
                 <span className="grid [&>svg]:col-start-1 [&>svg]:row-start-1 [&>svg]:size-[1.125rem] [&>svg]:transition-[opacity,rotate,scale] [&>svg]:duration-300">
                   <Menu
@@ -181,14 +181,14 @@ export function Header({ nav, labels }: { nav: readonly NavItem[]; labels: Heade
                       key={item.href}
                       href={item.href}
                       onClick={() => close()}
-                      className="fm-focus text-fm-ink hover:bg-fm-fill flex h-14 items-center rounded-2xl px-3 text-[1.625rem] font-semibold tracking-[-0.03em] transition-colors"
+                      className="flex h-14 items-center rounded-2xl px-3 text-[1.625rem] font-semibold tracking-[-0.03em] text-fm-ink fm-focus transition-colors hover:bg-fm-fill"
                     >
                       {item.label}
                     </a>
                   ))}
                 </nav>
-                <div className="bg-fm-fill rounded-fm-2xl flex items-center justify-between py-1.5 ps-4 pe-1.5">
-                  <span className="text-fm-small text-fm-ink-2 flex items-center gap-2.5">
+                <div className="flex items-center justify-between rounded-fm-2xl bg-fm-fill py-1.5 ps-4 pe-1.5">
+                  <span className="flex items-center gap-2.5 text-fm-small text-fm-ink-2">
                     <LiveDot />
                     {labels.status}
                   </span>

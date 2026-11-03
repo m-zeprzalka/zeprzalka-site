@@ -29,7 +29,7 @@ export function IndeksHome() {
     <div id={ROOT_ID} className="fm ix">
       <a
         href="#main"
-        className="bg-fm-ink text-fm-inverse fixed top-3 left-3 z-[60] -translate-y-20 rounded-full px-4 py-2 text-sm font-medium transition-transform focus-visible:translate-y-0"
+        className="fixed top-3 left-3 z-[60] -translate-y-20 rounded-full bg-fm-ink px-4 py-2 text-sm font-medium text-fm-inverse transition-transform focus-visible:translate-y-0"
       >
         {content.skipLabel}
       </a>
@@ -76,7 +76,7 @@ export function IndeksHome() {
         </Section>
 
         <Section id={SECTION.contact} {...sections.contact}>
-          <div className="text-fm-small mb-8 flex flex-wrap items-center gap-x-5 gap-y-3">
+          <div className="mb-8 flex flex-wrap items-center gap-x-5 gap-y-3 text-fm-small">
             <CopyButton
               value={content.contact.email}
               label={content.contact.email}

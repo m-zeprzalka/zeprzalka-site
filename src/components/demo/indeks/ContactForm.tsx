@@ -4,7 +4,7 @@ import { useActionState, useEffect, useRef, useState, type ReactNode } from "rea
 import { useFormStatus } from "react-dom"
 import { ArrowRight, Check, CircleAlert, Info, LoaderCircle } from "lucide-react"
 import { sendContactEmail } from "@/components/demo/shared/demo-action"
-import { cn } from "@/lib/utils"
+import { cn } from "../forma/cn"
 
 type Field = "name" | "email" | "message"
 
@@ -145,7 +145,7 @@ export function ContactForm({
       </div>
 
       <fieldset>
-        <legend className="text-fm-small text-fm-ink-2 mb-2 font-medium">
+        <legend className="mb-2 text-fm-small font-medium text-fm-ink-2">
           {labels.projectType}
         </legend>
         <div className="flex flex-wrap gap-2">
@@ -158,8 +158,8 @@ export function ContactForm({
                 defaultChecked={state.values.types.includes(type)}
                 className="peer sr-only"
               />
-              <span className="bg-fm-fill text-fm-ink-2 hover:bg-fm-fill-strong peer-checked:bg-fm-ink peer-checked:text-fm-inverse peer-focus-visible:outline-fm-ink fm-press ease-fm-snap inline-flex h-11 items-center rounded-full ps-4 pe-4 text-sm font-medium outline-2 outline-offset-2 outline-transparent transition-[background-color,color,padding,scale] duration-200 peer-checked:ps-3 sm:h-10">
-                <span className="ease-fm-snap grid grid-cols-[0fr] transition-[grid-template-columns] duration-300 group-has-checked:grid-cols-[1fr]">
+              <span className="inline-flex h-11 fm-press items-center rounded-full bg-fm-fill ps-4 pe-4 text-sm font-medium text-fm-ink-2 outline-2 outline-offset-2 outline-transparent transition-[background-color,color,padding,scale] duration-200 ease-fm-snap peer-checked:bg-fm-ink peer-checked:ps-3 peer-checked:text-fm-inverse peer-focus-visible:outline-fm-ink hover:bg-fm-fill-strong sm:h-10">
+                <span className="grid grid-cols-[0fr] transition-[grid-template-columns] duration-300 ease-fm-snap group-has-checked:grid-cols-[1fr]">
                   <span className="overflow-hidden">
                     <Check aria-hidden="true" className="me-1.5 size-3.5" strokeWidth={2.5} />
                   </span>
@@ -186,11 +186,11 @@ export function ContactForm({
       </FieldShell>
 
       <div className="flex flex-col-reverse gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <p className="text-fm-micro text-fm-ink-3 max-w-[22rem] text-pretty">
+        <p className="max-w-[22rem] text-fm-micro text-pretty text-fm-ink-3">
           {labels.privacyNote}{" "}
           <a
             href={privacyHref}
-            className="fm-focus text-fm-ink-2 hover:text-fm-ink rounded-fm-xs decoration-fm-edge-strong underline underline-offset-2"
+            className="rounded-fm-xs text-fm-ink-2 underline decoration-fm-edge-strong underline-offset-2 fm-focus hover:text-fm-ink"
           >
             {labels.privacyLink}
           </a>
@@ -202,9 +202,9 @@ export function ContactForm({
         {state.status === "done" && (
           <p
             key={state.seq}
-            className="ix-enter bg-fm-fill text-fm-small text-fm-ink-2 rounded-fm-xl flex items-start gap-3 p-4"
+            className="ix-enter flex items-start gap-3 rounded-fm-xl bg-fm-fill p-4 text-fm-small text-fm-ink-2"
           >
-            <Info aria-hidden="true" className="text-fm-ink mt-0.5 size-4 shrink-0" />
+            <Info aria-hidden="true" className="mt-0.5 size-4 shrink-0 text-fm-ink" />
             {state.message}
           </p>
         )}
@@ -226,14 +226,14 @@ function FieldShell({
 }) {
   return (
     <div className="grid gap-2">
-      <label htmlFor={id} className="text-fm-small text-fm-ink-2 font-medium">
+      <label htmlFor={id} className="text-fm-small font-medium text-fm-ink-2">
         {label}
       </label>
       {children}
       {error && (
         <p
           id={`${id}-error`}
-          className="ix-enter text-fm-small text-fm-ink flex items-center gap-1.5"
+          className="ix-enter flex items-center gap-1.5 text-fm-small text-fm-ink"
         >
           <CircleAlert aria-hidden="true" className="size-3.5 shrink-0" />
           {error}
@@ -259,7 +259,7 @@ function Submit({ idle, pending: pendingLabel }: { idle: string; pending: string
         if (pending) event.preventDefault()
       }}
       className={cn(
-        "ix-submit group fm-focus bg-fm-ink text-fm-inverse hover:bg-fm-ink/85 inline-grid h-12 shrink-0 place-items-center overflow-hidden rounded-full px-6 text-[0.9375rem] font-medium transition-[background-color,scale] duration-150 active:scale-[0.97]",
+        "ix-submit group inline-grid h-12 shrink-0 place-items-center overflow-hidden rounded-full bg-fm-ink px-6 text-[0.9375rem] font-medium text-fm-inverse fm-focus transition-[background-color,scale] duration-150 hover:bg-fm-ink/85 active:scale-[0.97]",
         pending && "cursor-progress"
       )}
     >

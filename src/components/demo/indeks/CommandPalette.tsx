@@ -14,7 +14,7 @@ import { Dialog } from "radix-ui"
 import { Check, CornerDownLeft, Search } from "lucide-react"
 import { Kbd } from "@/components/demo/forma/Chip"
 import { plural, type PluralForms } from "@/i18n/format"
-import { cn } from "@/lib/utils"
+import { cn } from "../forma/cn"
 import { portalRoot, useIsApple } from "./hooks"
 import { ICONS } from "./icons"
 import { searchPalette, type Match } from "./palette-search"
@@ -166,7 +166,7 @@ export function CommandPalette({
     <Dialog.Root open={open} onOpenChange={(next) => (next ? show(false) : setOpen(false))}>
       <Dialog.Trigger
         aria-keyshortcuts="Meta+K Control+K"
-        className="fm-focus fm-press text-fm-ink-2 hover:bg-fm-fill hover:text-fm-ink sm:bg-fm-fill sm:text-fm-ink-3 sm:hover:bg-fm-fill-strong relative grid size-11 place-items-center rounded-full transition-[background-color,color,scale] duration-150 after:absolute after:-inset-1 after:content-[''] sm:flex sm:h-9 sm:w-auto sm:gap-2 sm:ps-3 sm:pe-1.5 sm:text-[0.8125rem] sm:font-medium"
+        className="relative grid size-11 fm-press place-items-center rounded-full text-fm-ink-2 fm-focus transition-[background-color,color,scale] duration-150 after:absolute after:-inset-1 after:content-[''] hover:bg-fm-fill hover:text-fm-ink sm:flex sm:h-9 sm:w-auto sm:gap-2 sm:bg-fm-fill sm:ps-3 sm:pe-1.5 sm:text-[0.8125rem] sm:font-medium sm:text-fm-ink-3 sm:hover:bg-fm-fill-strong"
       >
         <Search aria-hidden="true" className="size-[1.125rem] sm:size-3.5" />
         <span className="sr-only sm:not-sr-only">{labels.search}</span>
@@ -199,9 +199,9 @@ export function CommandPalette({
             goToAnchor(hash)
           }}
           className={cn(
-            "ix-palette bg-fm-surface shadow-fm-float fixed z-50 flex flex-col overflow-hidden outline-none",
+            "ix-palette fixed z-50 flex flex-col overflow-hidden bg-fm-surface shadow-fm-float outline-none",
             "inset-x-0 bottom-0 max-h-[85dvh] rounded-t-[1.75rem] pb-[max(env(safe-area-inset-bottom),0.5rem)]",
-            "sm:rounded-fm-2xl sm:inset-x-0 sm:top-[12vh] sm:bottom-auto sm:mx-auto sm:max-h-[min(34rem,76vh)] sm:w-[min(36rem,calc(100%-2rem))] sm:pb-0"
+            "sm:inset-x-0 sm:top-[12vh] sm:bottom-auto sm:mx-auto sm:max-h-[min(34rem,76vh)] sm:w-[min(36rem,calc(100%-2rem))] sm:rounded-fm-2xl sm:pb-0"
           )}
         >
           <Dialog.Title className="sr-only">{labels.search}</Dialog.Title>
@@ -211,11 +211,11 @@ export function CommandPalette({
             {...handleProps}
             className="flex h-5 shrink-0 cursor-grab touch-none items-end justify-center sm:hidden"
           >
-            <span className="bg-fm-edge-strong h-1 w-9 rounded-full" />
+            <span className="h-1 w-9 rounded-full bg-fm-edge-strong" />
           </div>
 
           <div className="flex h-14 shrink-0 items-center gap-3 px-5 sm:px-4">
-            <Search aria-hidden="true" className="text-fm-ink-3 size-4 shrink-0" />
+            <Search aria-hidden="true" className="size-4 shrink-0 text-fm-ink-3" />
             <input
               autoFocus
               role="combobox"
@@ -233,13 +233,13 @@ export function CommandPalette({
               onKeyDown={onInputKey}
               autoComplete="off"
               spellCheck={false}
-              className="text-fm-ink placeholder:text-fm-ink-3 h-full min-w-0 flex-1 bg-transparent text-base outline-none sm:text-[0.9375rem]"
+              className="h-full min-w-0 flex-1 bg-transparent text-base text-fm-ink outline-none placeholder:text-fm-ink-3 sm:text-[0.9375rem]"
             />
             <Kbd aria-hidden="true" className="hidden sm:inline-flex">
               esc
             </Kbd>
           </div>
-          <div aria-hidden="true" className="bg-fm-edge h-px shrink-0" />
+          <div aria-hidden="true" className="h-px shrink-0 bg-fm-edge" />
 
           <div
             id="ix-palette-list"
@@ -251,7 +251,7 @@ export function CommandPalette({
               <div key={group.id} role="group" aria-labelledby={`ix-pg-${group.id}`}>
                 <div
                   id={`ix-pg-${group.id}`}
-                  className="text-fm-micro text-fm-ink-3 px-3 pt-3 pb-1.5 font-medium"
+                  className="px-3 pt-3 pb-1.5 text-fm-micro font-medium text-fm-ink-3"
                 >
                   {group.heading}
                 </div>
@@ -269,11 +269,11 @@ export function CommandPalette({
               </div>
             ))}
             {flat.length === 0 && (
-              <p className="text-fm-small text-fm-ink-3 py-14 text-center">{labels.noResults}</p>
+              <p className="py-14 text-center text-fm-small text-fm-ink-3">{labels.noResults}</p>
             )}
           </div>
 
-          <div className="border-fm-edge text-fm-micro text-fm-ink-3 hidden h-10 shrink-0 items-center gap-4 border-t px-4 sm:flex">
+          <div className="hidden h-10 shrink-0 items-center gap-4 border-t border-fm-edge px-4 text-fm-micro text-fm-ink-3 sm:flex">
             <Hint keys={["↑", "↓"]}>{labels.hintNavigate}</Hint>
             <Hint keys={["↵"]}>{labels.hintOpen}</Hint>
             <Hint keys={["esc"]}>{labels.hintClose}</Hint>
@@ -308,7 +308,7 @@ function Option({
   const label = range ? (
     <>
       {item.label.slice(0, range[0])}
-      <mark className="text-fm-ink bg-transparent font-medium">
+      <mark className="bg-transparent font-medium text-fm-ink">
         {item.label.slice(range[0], range[1])}
       </mark>
       {item.label.slice(range[1])}
@@ -326,23 +326,23 @@ function Option({
       // pointermove, nie pointerenter: lista przewijana pod stojącym kursorem nie kradnie wyboru.
       onPointerMove={active ? undefined : onHover}
       onClick={onSelect}
-      className="group/opt data-active:bg-fm-fill rounded-fm-lg flex min-h-11 cursor-pointer items-center gap-3 px-3 text-[0.9375rem] select-none"
+      className="group/opt flex min-h-11 cursor-pointer items-center gap-3 rounded-fm-lg px-3 text-[0.9375rem] select-none data-active:bg-fm-fill"
     >
       <Icon
         aria-hidden="true"
-        className="text-fm-ink-3 group-data-active/opt:text-fm-ink size-4 shrink-0"
+        className="size-4 shrink-0 text-fm-ink-3 group-data-active/opt:text-fm-ink"
       />
-      <span className="text-fm-ink-2 group-data-active/opt:text-fm-ink min-w-0 flex-1 truncate">
+      <span className="min-w-0 flex-1 truncate text-fm-ink-2 group-data-active/opt:text-fm-ink">
         {label}
       </span>
       {item.hint && (
-        <span className="text-fm-small text-fm-ink-3 shrink-0 tabular-nums">
+        <span className="shrink-0 text-fm-small text-fm-ink-3 tabular-nums">
           {copied ? copiedLabel : item.hint}
         </span>
       )}
       <CornerDownLeft
         aria-hidden="true"
-        className="text-fm-ink-3 hidden size-3.5 shrink-0 opacity-0 group-data-active/opt:opacity-100 sm:block"
+        className="hidden size-3.5 shrink-0 text-fm-ink-3 opacity-0 group-data-active/opt:opacity-100 sm:block"
       />
     </div>
   )

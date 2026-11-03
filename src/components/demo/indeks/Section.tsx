@@ -25,19 +25,19 @@ export function Section({
       className="ix-col scroll-mt-(--ix-header) pt-(--fm-section)"
     >
       <div className="mb-5 flex items-baseline justify-between gap-6 sm:mb-6">
-        <div className="text-fm-body min-w-0 flex-1 text-pretty">
+        <div className="min-w-0 flex-1 text-fm-body text-pretty">
           <h2
             id={`${id}-title`}
             tabIndex={-1}
             data-anchor-focus
-            className="text-fm-ink rounded-fm-xs inline font-medium outline-none"
+            className="inline rounded-fm-xs font-medium text-fm-ink outline-none"
           >
             {title}
           </h2>{" "}
-          <p className="text-fm-ink-3 inline">{lead}</p>
+          <p className="inline text-fm-ink-3">{lead}</p>
         </div>
         {meta && (
-          <p className="text-fm-small text-fm-ink-3 hidden shrink-0 tabular-nums sm:block">
+          <p className="hidden shrink-0 text-fm-small text-fm-ink-3 tabular-nums sm:block">
             {meta}
           </p>
         )}

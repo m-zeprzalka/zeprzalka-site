@@ -17,7 +17,7 @@ import {
 } from "@/lib/portfolio"
 import { getAllPosts } from "@/lib/posts"
 import { CONTACT_EMAIL, SITE_NAME, SOCIAL_PROFILES } from "@/lib/site"
-import { cn } from "@/lib/utils"
+import { cn } from "../forma/cn"
 import { Competencies, type Fact, type Skill } from "./Competencies"
 import { ContactCard } from "./ContactCard"
 import { Header } from "./Header"
@@ -191,7 +191,7 @@ export function TaliaHome() {
       >
         <a
           href="#tresc"
-          className="fm-focus bg-fm-ink text-fm-inverse sr-only z-50 rounded-full px-4 py-2.5 text-sm font-medium focus:not-sr-only focus:fixed focus:top-4 focus:left-4"
+          className="sr-only z-50 rounded-full bg-fm-ink px-4 py-2.5 text-sm font-medium text-fm-inverse fm-focus focus:not-sr-only focus:fixed focus:top-4 focus:left-4"
         >
           {common.ui.skipToContent}
         </a>
@@ -218,14 +218,14 @@ export function TaliaHome() {
                 className="text-[clamp(2.25rem,1rem+3.9vw,4.25rem)] leading-[1.02] font-semibold tracking-[-0.045em] text-balance"
               />
               <p
-                className="fm-rise text-fm-lead text-fm-ink-2 mt-5 max-w-[44rem] text-pretty md:mt-6"
+                className="mt-5 max-w-[44rem] fm-rise text-fm-lead text-pretty text-fm-ink-2 md:mt-6"
                 style={{ "--fm-delay": "180ms" } as CSSProperties}
               >
-                <span className="text-fm-ink font-medium">{home.hero.subtitleRole}</span>
+                <span className="font-medium text-fm-ink">{home.hero.subtitleRole}</span>
                 {typo(`${home.hero.subtitleHighlight}${home.hero.subtitleRest}`)}
               </p>
               <div
-                className="fm-rise mt-8 flex w-full flex-col items-center gap-3 sm:w-auto sm:flex-row"
+                className="mt-8 flex w-full fm-rise flex-col items-center gap-3 sm:w-auto sm:flex-row"
                 style={{ "--fm-delay": "260ms" } as CSSProperties}
               >
                 <OpenContact
@@ -239,7 +239,7 @@ export function TaliaHome() {
                   className={cn(
                     buttonVariants({ variant: "ghost", size: "lg" }),
                     // Na telefonie talia stoi tuż pod spodem — drugi przycisk tylko by ją odsuwał.
-                    "text-fm-ink hidden sm:inline-flex"
+                    "hidden text-fm-ink sm:inline-flex"
                   )}
                 >
                   {pages.services.quotePortfolio}
@@ -327,7 +327,7 @@ export function TaliaHome() {
           </section>
         </main>
 
-        <footer className="fm-container text-fm-small text-fm-ink-3 flex flex-col gap-2 py-10 sm:flex-row sm:items-center sm:justify-between">
+        <footer className="fm-container flex flex-col gap-2 py-10 text-fm-small text-fm-ink-3 sm:flex-row sm:items-center sm:justify-between">
           <span>{typo(fill(common.footer.copyright, { year: new Date().getFullYear() }))}</span>
           <span>{common.footer.tagline}</span>
         </footer>

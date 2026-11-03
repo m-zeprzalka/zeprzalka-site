@@ -1,0 +1,129 @@
+/*
+ * Detale koncepcji „Żywy interfejs”, których nie da się zgrabnie zapisać
+ * w utility: suwak, połysk „myślenia”, dryf kursorów. Wszystko w warstwie
+ * `components`, więc utility Tailwinda mogą je nadpisać.
+ */
+@layer components {
+  /* Suwak: wypełniony tor do wartości (`--zi-fill`), uchwyt 18 px, pole dotyku 44 px. */
+  .zi-range {
+    appearance: none;
+    width: 100%;
+    height: 1.5rem;
+    background: transparent;
+    cursor: pointer;
+  }
+  .zi-range::-webkit-slider-runnable-track {
+    height: 4px;
+    border-radius: 9999px;
+    background: linear-gradient(
+      to right,
+      var(--fm-ink) var(--zi-fill),
+      var(--fm-fill-strong) var(--zi-fill)
+    );
+  }
+  .zi-range::-moz-range-track {
+    height: 4px;
+    border-radius: 9999px;
+    background: var(--fm-fill-strong);
+  }
+  .zi-range::-moz-range-progress {
+    height: 4px;
+    border-radius: 9999px;
+    background: var(--fm-ink);
+  }
+  .zi-range::-webkit-slider-thumb {
+    appearance: none;
+    margin-top: -7px;
+    width: 18px;
+    height: 18px;
+    border-radius: 9999px;
+    background: var(--fm-surface);
+    box-shadow: var(--fm-shadow-pop);
+    transition: scale 160ms var(--ease-fm-snap);
+  }
+  .zi-range::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    border: 0;
+    border-radius: 9999px;
+    background: var(--fm-surface);
+    box-shadow: var(--fm-shadow-pop);
+  }
+  .zi-range:active::-webkit-slider-thumb {
+    scale: 1.15;
+  }
+  .zi-range:focus-visible {
+    outline: 2px solid var(--fm-ink);
+    outline-offset: 4px;
+    border-radius: 9999px;
+  }
+
+  /* „Myślę…” — połysk przesuwający się po tekście. */
+  .zi-shimmer {
+    background: linear-gradient(
+        90deg,
+        var(--fm-ink-3) 0%,
+        var(--fm-ink-3) 40%,
+        var(--fm-ink) 50%,
+        var(--fm-ink-3) 60%,
+        var(--fm-ink-3) 100%
+      )
+      0 0 / 200% 100%;
+    background-clip: text;
+    color: transparent;
+    animation: fm-shimmer 1.6s linear infinite;
+  }
+
+  /* Kursory „studentów”: łagodny dryf w pętli, każdy w innym tempie. */
+  .zi-cursor {
+    animation: zi-drift ease-in-out infinite alternate;
+  }
+}
+
+@keyframes zi-drift {
+  to {
+    translate: var(--dx) var(--dy);
+  }
+}
+
+/*
+ * Nagłówek „Przekształcam” (InkHeadline): warstwa w atramencie odsłaniana
+ * maską radialną. Rozmiar plamy rośnie do 11 rem w 300 ms, znika w 450 ms.
+ */
+@property --ink-r {
+  syntax: "<length>";
+  inherits: true;
+  initial-value: 0px;
+}
+@layer components {
+  .zi-ink {
+    --ink-x: 50%;
+    --ink-y: 50%;
+    transition: --ink-r 450ms var(--ease-fm-snap);
+  }
+  .zi-ink[data-ink] {
+    --ink-r: 11rem;
+    transition-duration: 300ms;
+  }
+  .zi-ink__layer {
+    mask-image: radial-gradient(
+      circle var(--ink-r) at var(--ink-x) var(--ink-y),
+      #000 0%,
+      #000 35%,
+      transparent 100%
+    );
+  }
+  .zi-ink[data-sweep] .zi-ink__layer {
+    --ink-r: 9rem;
+    --ink-y: 70%;
+    animation: zi-sweep 2.4s 1.2s var(--ease-fm-move) both;
+  }
+}
+@keyframes zi-sweep {
+  from {
+    --ink-x: -20%;
+  }
+  to {
+    --ink-x: 120%;
+  }
+}

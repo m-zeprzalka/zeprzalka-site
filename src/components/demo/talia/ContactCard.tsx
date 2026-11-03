@@ -5,7 +5,7 @@ import { buttonVariants } from "@/components/demo/forma/Button"
 import { LiveDot } from "@/components/demo/forma/Chip"
 import { CopyButton } from "@/components/demo/forma/CopyButton"
 import { typo } from "@/components/demo/forma/typo"
-import { cn } from "@/lib/utils"
+import { cn } from "../forma/cn"
 import { LocalTime } from "./LocalTime"
 import { OpenContact } from "./OpenContact"
 
@@ -51,7 +51,7 @@ export function ContactCard({
 }: ContactCardProps) {
   const cards = deck.length + 1
   return (
-    <div className="talia-invert rounded-fm-4xl relative overflow-hidden p-6 pt-5 md:p-12 md:pt-10">
+    <div className="talia-invert relative overflow-hidden rounded-fm-4xl p-6 pt-5 md:p-12 md:pt-10">
       <ul className="talia-fan talia-fan--mini" style={{ "--n": cards } as CSSProperties}>
         {deck.map((card, index) => (
           <li
@@ -60,7 +60,7 @@ export function ContactCard({
             className="talia-fan__card"
             style={{ "--i": index } as CSSProperties}
           >
-            <span className="bg-fm-surface shadow-fm-ring rounded-fm-3xl block aspect-[4/5] p-1.5">
+            <span className="block aspect-[4/5] rounded-fm-3xl bg-fm-surface p-1.5 shadow-fm-ring">
               <span className="relative block size-full overflow-hidden rounded-[1.125rem] opacity-70">
                 <Image src={card.poster} alt="" fill sizes="10rem" className="object-cover" />
               </span>
@@ -70,9 +70,9 @@ export function ContactCard({
         <li className="talia-fan__card" style={{ "--i": deck.length } as CSSProperties}>
           <OpenContact
             href={`mailto:${email}`}
-            className="group fm-focus bg-fm-ink text-fm-inverse rounded-fm-3xl flex aspect-[4/5] flex-col justify-between p-4"
+            className="group flex aspect-[4/5] flex-col justify-between rounded-fm-3xl bg-fm-ink p-4 text-fm-inverse fm-focus"
           >
-            <span className="bg-fm-inverse/10 grid size-10 place-items-center rounded-full transition-[rotate] duration-500 group-hover:rotate-90">
+            <span className="grid size-10 place-items-center rounded-full bg-fm-inverse/10 transition-[rotate] duration-500 group-hover:rotate-90">
               <Plus aria-hidden="true" className="size-5" />
             </span>
             <span className="text-base leading-snug font-semibold tracking-[-0.02em] text-pretty">
@@ -82,7 +82,7 @@ export function ContactCard({
         </li>
       </ul>
 
-      <div className="text-fm-small text-fm-ink-2 flex items-center justify-between gap-4">
+      <div className="flex items-center justify-between gap-4 text-fm-small text-fm-ink-2">
         <span className="flex items-center gap-2.5">
           <LiveDot />
           {status}
@@ -92,11 +92,11 @@ export function ContactCard({
 
       <h2
         id="kontakt-tytul"
-        className="text-fm-display mt-14 max-w-[14ch] font-semibold text-balance md:mt-20"
+        className="mt-14 max-w-[14ch] text-fm-display font-semibold text-balance md:mt-20"
       >
         {typo(title)}
       </h2>
-      <p className="text-fm-lead text-fm-ink-2 mt-5 max-w-xl text-pretty">{typo(lead)}</p>
+      <p className="mt-5 max-w-xl text-fm-lead text-pretty text-fm-ink-2">{typo(lead)}</p>
 
       <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
         <OpenContact
@@ -113,23 +113,23 @@ export function ContactCard({
         />
       </div>
 
-      <dl className="border-fm-edge mt-12 grid gap-5 border-t pt-6 sm:grid-cols-3 md:mt-16">
+      <dl className="mt-12 grid gap-5 border-t border-fm-edge pt-6 sm:grid-cols-3 md:mt-16">
         {details.map((detail) => (
           <div key={detail.label}>
-            <dt className="text-fm-micro text-fm-ink-3 font-medium">{detail.label}</dt>
-            <dd className="text-fm-small mt-1">{detail.value}</dd>
+            <dt className="text-fm-micro font-medium text-fm-ink-3">{detail.label}</dt>
+            <dd className="mt-1 text-fm-small">{detail.value}</dd>
           </div>
         ))}
         <div>
-          <dt className="text-fm-micro text-fm-ink-3 font-medium">{socialLabel}</dt>
-          <dd className="text-fm-small mt-1 flex gap-4">
+          <dt className="text-fm-micro font-medium text-fm-ink-3">{socialLabel}</dt>
+          <dd className="mt-1 flex gap-4 text-fm-small">
             {socials.map((social) => (
               <a
                 key={social.url}
                 href={social.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="fm-focus rounded-sm underline decoration-current/25 underline-offset-[3px] transition-[text-decoration-color] hover:decoration-current"
+                className="rounded-sm underline decoration-current/25 underline-offset-[3px] fm-focus transition-[text-decoration-color] hover:decoration-current"
               >
                 {social.label}
               </a>

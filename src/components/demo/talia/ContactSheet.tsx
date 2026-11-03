@@ -8,7 +8,7 @@ import * as m from "motion/react-m"
 import { X } from "lucide-react"
 import { sendContactEmail } from "@/components/demo/shared/demo-action"
 import { typo } from "@/components/demo/forma/typo"
-import { cn } from "@/lib/utils"
+import { cn } from "../forma/cn"
 import { useMedia } from "./hooks"
 import { SubmitMorph, type SubmitResult } from "./SubmitMorph"
 
@@ -71,14 +71,14 @@ export function ContactSheet({
           <Dialog.Title className="text-fm-h3 font-semibold md:text-2xl md:tracking-[-0.025em]">
             {labels.title}
           </Dialog.Title>
-          <Dialog.Description className="text-fm-small text-fm-ink-2 mt-2 max-w-[26rem] text-pretty">
+          <Dialog.Description className="mt-2 max-w-[26rem] text-fm-small text-pretty text-fm-ink-2">
             {typo(labels.description)}
           </Dialog.Description>
         </div>
         <Dialog.Close
           aria-label={labels.close}
           title={labels.close}
-          className="fm-focus fm-press text-fm-ink-2 hover:bg-fm-fill hover:text-fm-ink -me-2 -mt-1 grid size-10 shrink-0 place-items-center rounded-full transition-[background-color,color,scale]"
+          className="-me-2 -mt-1 grid size-10 shrink-0 fm-press place-items-center rounded-full text-fm-ink-2 fm-focus transition-[background-color,color,scale] hover:bg-fm-fill hover:text-fm-ink"
         >
           <X className="size-[1.125rem]" />
         </Dialog.Close>
@@ -111,7 +111,7 @@ export function ContactSheet({
             >
               {desktop ? (
                 <m.div
-                  className="bg-fm-surface shadow-fm-float fixed inset-0 z-50 m-auto h-fit max-h-[calc(100dvh_-_3rem)] w-[min(34rem,calc(100vw_-_3rem))] overflow-y-auto rounded-[2rem] p-8 outline-none"
+                  className="fixed inset-0 z-50 m-auto h-fit max-h-[calc(100dvh_-_3rem)] w-[min(34rem,calc(100vw_-_3rem))] overflow-y-auto rounded-[2rem] bg-fm-surface p-8 shadow-fm-float outline-none"
                   initial={{ opacity: 0, scale: 0.96, y: 8 }}
                   animate={{ opacity: 1, scale: 1, y: 0, transition: DIALOG_SPRING }}
                   exit={{ opacity: 0, scale: 0.98, y: 4, transition: { duration: 0.15 } }}
@@ -120,7 +120,7 @@ export function ContactSheet({
                 </m.div>
               ) : (
                 <m.div
-                  className="bg-fm-surface shadow-fm-float fixed inset-x-0 bottom-0 z-50 flex max-h-[calc(100dvh_-_1.5rem)] flex-col rounded-t-[2rem] outline-none"
+                  className="fixed inset-x-0 bottom-0 z-50 flex max-h-[calc(100dvh_-_1.5rem)] flex-col rounded-t-[2rem] bg-fm-surface shadow-fm-float outline-none"
                   initial={{ y: "100%" }}
                   animate={{ y: 0, transition: SHEET_SPRING }}
                   exit={{ y: "100%", transition: { duration: 0.28, ease: [0.32, 0.72, 0, 1] } }}
@@ -137,7 +137,7 @@ export function ContactSheet({
                     className="flex shrink-0 cursor-grab touch-none justify-center pt-3 pb-2 active:cursor-grabbing"
                     onPointerDown={(event) => drag.start(event)}
                   >
-                    <span className="bg-fm-fill-strong h-1.5 w-10 rounded-full" />
+                    <span className="h-1.5 w-10 rounded-full bg-fm-fill-strong" />
                   </div>
                   <div className="overflow-y-auto overscroll-contain px-5 pt-2 pb-[max(1.25rem,env(safe-area-inset-bottom))]">
                     {body}
@@ -211,11 +211,11 @@ function ContactForm({ labels }: { labels: ContactLabels }) {
           labels={{ submit: labels.submit, submitting: labels.submitting }}
         />
       </div>
-      <p className="text-fm-micro text-fm-ink-3 text-center text-pretty">
+      <p className="text-center text-fm-micro text-pretty text-fm-ink-3">
         {typo(labels.privacyNote)}{" "}
         <Link
           href={labels.privacyHref}
-          className="fm-focus text-fm-ink-2 hover:text-fm-ink rounded-sm underline decoration-current/30 underline-offset-2 transition-colors"
+          className="rounded-sm text-fm-ink-2 underline decoration-current/30 underline-offset-2 fm-focus transition-colors hover:text-fm-ink"
         >
           {labels.privacyLink}
         </Link>

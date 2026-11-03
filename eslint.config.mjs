@@ -13,11 +13,18 @@ const eslintConfig = [
       "no-restricted-imports": [
         "error",
         {
-          // Biblioteki ruchu są dziś zależnością wyłącznie piaskownicy (devDependencies).
-          paths: ["motion", "motion/react", "motion/react-m", "@number-flow/react"].map((name) => ({
+          // Zależności wyłącznie piaskownicy (devDependencies): biblioteki ruchu nowych
+          // koncepcji i react-intersection-observer zamrożonych wariantów z sierpnia.
+          paths: [
+            "motion",
+            "motion/react",
+            "motion/react-m",
+            "@number-flow/react",
+            "react-intersection-observer",
+          ].map((name) => ({
             name,
             message:
-              "Motion i Number Flow są tylko w piaskownicy. Do serwisu trafiają razem z decyzją o nowym wyglądzie.",
+              "Ta zależność jest tylko w piaskownicy /demo. Do serwisu trafia razem z decyzją o nowym wyglądzie.",
           })),
           patterns: [
             {
@@ -36,7 +43,7 @@ const eslintConfig = [
     rules: { "no-restricted-imports": "off" },
   },
   {
-    ignores: ["node_modules/**", ".next/**", "out/**", "build/**", "next-env.d.ts"],
+    ignores: ["node_modules/**", ".next/**", ".claude/**", "out/**", "build/**", "next-env.d.ts"],
   },
 ]
 

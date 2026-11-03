@@ -4,9 +4,10 @@
 name: Strona główna — regresja wizualna
 
 on:
-  pull_request:
   push:
     branches-ignore: [main]
+    paths-ignore: ["docs/**", "**/*.md"]
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -20,16 +21,24 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
 
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
 
-      - uses: actions/setup-node@v5
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version-file: .nvmrc
           cache: pnpm
+
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: |
+            .next/cache
+            /tmp/base/.next/cache
+          key: visual-${{ hashFiles('pnpm-lock.yaml') }}-${{ github.sha }}
+          restore-keys: visual-${{ hashFiles('pnpm-lock.yaml') }}-
 
       - name: Gałąź — build i start (:3100)
         run: |
@@ -48,7 +57,11 @@ jobs:
       - name: Czekaj na oba serwery
         run: |
           for port in 3100 3200; do
-            for i in $(seq 1 30); do curl -sf "http://localhost:$port/" > /dev/null && break; sleep 1; done
+            for i in $(seq 1 30); do
+              curl -sf "http://localhost:$port/" > /dev/null && continue 2
+              sleep 1
+            done
+            echo "Serwer na porcie $port nie wystartował"; cat /tmp/head.log /tmp/base.log; exit 1
           done
 
       - name: Porównanie pikseli
@@ -56,7 +69,7 @@ jobs:
 
       - name: Mapy różnic
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: visual-diff
           path: .visual/

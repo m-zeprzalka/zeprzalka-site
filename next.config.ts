@@ -42,7 +42,6 @@ const securityHeaders = [
       "usb=()",
       "serial=()",
       "hid=()",
-      "bluetooth=()",
       "midi=()",
       "magnetometer=()",
       "display-capture=()",
@@ -155,8 +154,9 @@ const nextConfig: NextConfig = {
          * podmiana pliku pod tą samą nazwą musi dotrzeć do czytelnika.
          * Tydzień cache + dzień rewalidacji w tle zamiast domyślnego
          * `max-age=0` Vercela. Plik zmieniony? Nowa nazwa albo odczekaj tydzień.
+         * `_next/` wykluczone: tam pliki mają skrót w nazwie i rok `immutable`.
          */
-        source: "/:file*.:ext(webp|avif|png|jpg|jpeg|svg|ico|mp4|webm)",
+        source: "/:file((?!_next/).*)\\.:ext(webp|avif|png|jpg|jpeg|svg|ico|mp4|webm)",
         headers: [
           {
             key: "Cache-Control",

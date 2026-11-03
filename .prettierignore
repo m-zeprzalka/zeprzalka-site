@@ -6,6 +6,7 @@ docs/
 public/
 pnpm-lock.yaml
 .next/
+.claude/
 # Dawne warianty strony głównej — zamrożone, odtworzone 1:1 z tagu gita.
 src/components/demo/main-*/
 src/components/demo/shared/

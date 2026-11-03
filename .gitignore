@@ -46,3 +46,6 @@ next-env.d.ts
 
 # pnpm visual — mapy różnic
 /.visual/
+
+# Claude Code — ustawienia lokalne i worktree agentów
+/.claude/

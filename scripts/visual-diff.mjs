@@ -60,11 +60,32 @@ const browser = await chromium.launch(
 async function shoot(context, url) {
   const page = await context.newPage()
   await page.goto(url, { waitUntil: "networkidle" })
+  // Przewinięcie całej strony jak czytelnik: leniwe kafle i obrazy wczytują się,
+  // więc porównujemy stan, który widać po lekturze, a nie zastępcze ramki.
   await page.evaluate(async () => {
-    for (const video of document.querySelectorAll("video")) {
-      video.pause()
-      video.currentTime = 0
+    for (let y = 0; y < document.documentElement.scrollHeight; y += window.innerHeight / 2) {
+      window.scrollTo(0, y)
+      await new Promise((resolve) => setTimeout(resolve, 60))
     }
+    window.scrollTo(0, 0)
+  })
+  await page.waitForLoadState("networkidle")
+  await page.evaluate(async () => {
+    // Każde wideo na pierwszej klatce i z wczytanym obrazem (bez tego jedno
+    // pokazuje poster, drugie klatkę — zależnie od tego, czy zdążyło ruszyć).
+    await Promise.all(
+      [...document.querySelectorAll("video")].map((video) => {
+        video.pause()
+        video.currentTime = 0
+        if (video.readyState >= 2) return null
+        video.preload = "auto"
+        video.load()
+        return new Promise((resolve) => {
+          video.addEventListener("loadeddata", resolve, { once: true })
+          setTimeout(resolve, 8000)
+        })
+      })
+    )
     for (const img of document.querySelectorAll("img[loading=lazy]")) img.loading = "eager"
     await document.fonts.ready
   })
@@ -95,7 +116,7 @@ for (const [name, options] of Object.entries(VIEWPORTS)) {
 
     if (pixels > 0) {
       failed = true
-      const file = `${name}${pathname.replace(/\//g, "_") || "_home"}.png`
+      const file = `${name}${pathname === "/" ? "_home" : pathname.replace(/\//g, "_")}.png`
       fs.writeFileSync(path.join(OUT, file), PNG.sync.write(diff))
     }
   }

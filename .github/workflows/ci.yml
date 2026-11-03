@@ -1,11 +1,13 @@
 # Bramka jakości. Każdy push na `main` od razu wdraża się na produkcję
 # (integracja Vercel ↔ GitHub), więc te same kroki muszą być zielone na
-# gałęzi, zanim zmiana tam trafi.
+# gałęzi, zanim zmiana tam trafi. Tylko `push` — gałęzie PR (także Dependabota)
+# leżą w tym repozytorium, więc `pull_request` uruchamiałby wszystko drugi raz.
+# Akcje przypięte do SHA (aktualizuje je Dependabot), komentarz podaje wersję.
 name: CI
 
 on:
   push:
-  pull_request:
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -19,16 +21,19 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
 
-      - uses: actions/setup-node@v5
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version-file: .nvmrc
           cache: pnpm
 
       - run: pnpm install --frozen-lockfile
+
+      - name: Podatności zależności produkcyjnych
+        run: pnpm audit --prod --audit-level high
 
       - name: Treść bloga (frontmatter, pary PL↔EN, obrazy, slugi)
         run: pnpm check:content
@@ -36,14 +41,14 @@ jobs:
       - name: Formatowanie
         run: pnpm format:check
 
-      - name: Typy
+      - name: Typy (z typami tras z next typegen)
         run: pnpm typecheck
 
       - name: Lint
         run: pnpm lint
 
       # Cache Next.js przyspiesza kolejne buildy (klucz: lockfile + źródła).
-      - uses: actions/cache@v4
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: .next/cache
           key: next-${{ hashFiles('pnpm-lock.yaml') }}-${{ hashFiles('src/**', 'content/**') }}
@@ -51,6 +56,8 @@ jobs:
 
       - name: Build produkcyjny
         run: pnpm build
+        env:
+          VERCEL_ENV: production
 
-      - name: Podatności zależności produkcyjnych
-        run: pnpm audit --prod --audit-level high
+      - name: Wynik buildu (karty OG, spis treści, szczątki dem)
+        run: pnpm check:build --production

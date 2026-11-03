@@ -27,6 +27,9 @@ import fs from "node:fs"
 import path from "node:path"
 import matter from "gray-matter"
 
+// Node 24 usuwa typy z plików .ts — reguła slugów jest jedna, wspólna z serwisem.
+import { slugify } from "../src/lib/slug.ts"
+
 const ROOT = path.resolve(import.meta.dirname, "..")
 const DIRS = { pl: "content/posts", en: "content/en/posts" }
 
@@ -90,9 +93,9 @@ for (const [locale, dir] of Object.entries(DIRS)) {
       warn(rel, "okładka w SVG — next/image jej nie optymalizuje, użyj WebP")
     }
 
-    // Adres kategorii i tagu powstaje z nazwy (src/lib/slug.ts). Polska litera
-    // albo znak spoza ASCII dałby adres, który trzeba kodować w URL-u.
-    const slugOf = (label) => label.toLowerCase().replace(/\s+/g, "-")
+    // Adres kategorii i tagu powstaje z nazwy (ta sama funkcja co w serwisie).
+    // Polska litera albo znak spoza ASCII dałby adres, który trzeba kodować w URL-u.
+    const slugOf = slugify
     const checkSlug = (kind, label) => {
       if (!/^[a-z0-9.-]+$/.test(slugOf(label))) {
         err(

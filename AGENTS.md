@@ -18,7 +18,9 @@ React 19, TypeScript strict, Tailwind 4, shadcn/ui, pnpm, Vercel. Opis architekt
    `dynamicParams = false` (literał w pliku trasy). Nie czytamy `searchParams`.
 5. **Piaskownica `/demo` jest odizolowana.** Serwis nie importuje z `src/components/demo`
    ani `src/app/demo` ani zależności piaskownicy (`motion`, `@number-flow/react`) —
-   ESLint to blokuje. Pliki tras dem mają końcówkę `.demo.tsx`.
+   ESLint to blokuje. Pliki tras dem mają końcówkę `.demo.tsx` (na produkcji tylko przy
+   `DEMO_PUBLIC=1` — ustawione w Vercelu na czas prac nad wyglądem). Build z demami trzeba
+   sprawdzić osobno (`VERCEL_ENV=production DEMO_PUBLIC=1 pnpm build`) — CI buduje bez nich.
    Komponenty systemu „Forma” łączą klasy przez `forma/cn.ts` (zna tokeny `fm-*`).
 6. **Jedna gałąź: `main`. Push = wdrożenie produkcyjne.** Przed pushem `pnpm check`;
    commit i push tylko na prośbę właściciela (albo przy jego zgodzie w zadaniu).

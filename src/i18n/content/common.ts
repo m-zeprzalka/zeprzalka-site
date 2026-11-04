@@ -14,7 +14,7 @@ const pl = {
     articles: { one: "artykuł", few: "artykuły", many: "artykułów", other: "artykułu" },
     projects: { one: "realizacja", few: "realizacje", many: "realizacji", other: "realizacji" },
   },
-  /** Czas lektury — `formatReadingTime()` w src/i18n/format.ts. */
+  /** Czas lektury — `formatReadingTime()` w src/lib/posts.ts. */
   readingTime: "{minutes} min czytania",
   nav: {
     /** Etykieta pozycji menu; adresy biorą się z ROUTES w src/i18n/config.ts. */

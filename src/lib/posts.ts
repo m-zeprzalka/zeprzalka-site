@@ -6,6 +6,8 @@ import matter from "gray-matter"
 import readingTime from "reading-time"
 import { z } from "zod"
 import type { Locale, Localized } from "@/i18n/config"
+import { getCommon } from "@/i18n/content/common"
+import { fill } from "@/i18n/format"
 import { slugify } from "@/lib/slug"
 
 /**
@@ -205,4 +207,9 @@ export function getTerms(locale: Locale, field: TaxonomyField): Term[] {
 
 export function getTerm(locale: Locale, field: TaxonomyField, slug: string): Term | undefined {
   return getTaxonomy(locale, field).get(slug)
+}
+
+/** „5 min czytania” / „5 min read” — wzorzec w `common.readingTime`. */
+export function formatReadingTime(minutes: number, locale: Locale): string {
+  return fill(getCommon(locale).readingTime, { minutes })
 }

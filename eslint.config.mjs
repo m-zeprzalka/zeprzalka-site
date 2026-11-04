@@ -32,6 +32,25 @@ const eslintConfig = [
     },
   },
   {
+    // Moduły wspólne dla serwera i klienta: bez modułów treści (`server-only`) — inaczej
+    // pierwszy komponent kliencki, który je zaimportuje, wywraca build.
+    files: ["src/i18n/format.ts", "src/i18n/config.ts", "src/lib/utils.ts", "src/lib/slug.ts"],
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          patterns: [
+            {
+              group: ["@/i18n/content/*", "@/lib/posts", "@/lib/portfolio", "@/lib/services"],
+              message:
+                "Moduł wspólny dla serwera i klienta nie może importować modułów `server-only`.",
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
     // Piaskownica importuje sama z siebie i z serwisu — odwrotnie nie wolno.
     files: ["src/components/demo/**", "src/app/demo/**"],
     rules: { "no-restricted-imports": "off" },

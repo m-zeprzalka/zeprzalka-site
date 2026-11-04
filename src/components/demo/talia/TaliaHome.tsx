@@ -8,14 +8,14 @@ import { ROUTES, postPath } from "@/i18n/config"
 import { getCommon } from "@/i18n/content/common"
 import { getHome, homeSkills } from "@/i18n/content/home"
 import { getPages } from "@/i18n/content/pages"
-import { fill, formatDate, formatReadingTime } from "@/i18n/format"
+import { fill, formatDate } from "@/i18n/format"
 import {
   featuredPortfolioItems,
   portfolioGroups,
   portfolioItems,
   type PortfolioItem,
 } from "@/lib/portfolio"
-import { getAllPosts } from "@/lib/posts"
+import { formatReadingTime, getAllPosts } from "@/lib/posts"
 import { CONTACT_EMAIL, SITE_NAME, SOCIAL_PROFILES } from "@/lib/site"
 import { cn } from "../forma/cn"
 import { Competencies, type Fact, type Skill } from "./Competencies"

@@ -19,8 +19,9 @@ Plan i budżet jakości: [KIERUNEK-WIZUALNY.md](KIERUNEK-WIZUALNY.md) §3.
       `/portfolio`, `/kontakt`, menu mobilne) — z długiem z KIERUNEK §5 (pauza wideo, podpisy
       kafli, pole wiadomości, akordeon w HTML, `/portfolio` w nawigacji, CTA przy pakietach, FAQ).
 - [ ] **[Kod]** Wideo: przekodowanie klipów do ~600 kb/s i lżejsze hero na telefon (po decyzji).
-- [ ] **[Kod]** Po wdrożeniu: usunięcie piaskownicy `/demo` i zależności `motion`, `@number-flow/react`,
-      jeśli nowy serwis ich nie używa (archiwum: tag `piaskownica-archiwum-2026-11`).
+- [ ] **[Kod]** Po wdrożeniu: usunięcie piaskownicy `/demo`, zmiennej `DEMO_PUBLIC` z Vercela
+      (dziś dema są na zeprzalka.com/demo do testów na telefonie) i zależności `motion`,
+      `@number-flow/react`, jeśli nowy serwis ich nie używa (archiwum: tag `piaskownica-archiwum-2026-11`).
 
 ## 2. Bezpieczeństwo — Twoje konta (ok. 30 min)
 

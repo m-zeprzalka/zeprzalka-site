@@ -2,7 +2,8 @@
 
 Miejsce na pracę kreatywną: koncepcje strony głównej i specimen systemu „Forma”.
 Każda koncepcja we własnym folderze, na wspólnym systemie. Granica z serwisem jest
-twarda i pilnowana w kilku miejscach naraz. Oglądanie: `pnpm dev` → http://localhost:3000/demo.
+twarda i pilnowana w kilku miejscach naraz. Oglądanie: https://www.zeprzalka.com/demo (na czas
+prac nad wyglądem `DEMO_PUBLIC=1` w Vercelu, tylko Production) albo `pnpm dev` → http://localhost:3000/demo.
 Odrzucone kierunki (Precyzja, warianty z sierpnia): tag `piaskownica-archiwum-2026-11`.
 
 ## Granica z serwisem

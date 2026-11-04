@@ -1,8 +1,9 @@
 # Kierunek wizualny — system „Forma” i trzy koncepcje strony głównej
 
-Stan na 4 listopada 2026. Wszystko poniżej żyje w piaskownicy `/demo`, której nie ma na
-produkcji. Oglądanie: `pnpm dev` → http://localhost:3000/demo (telefon i komputer, oba
-motywy). Historia odrzuconych kierunków: `docs/DZIENNIK.md`, kod: tag `piaskownica-archiwum-2026-11`.
+Stan na 4 listopada 2026. Wszystko poniżej żyje w piaskownicy `/demo`. Na czas prac nad
+wyglądem jest też na produkcji: **https://www.zeprzalka.com/demo** (zmienna `DEMO_PUBLIC=1`
+w Vercelu, `noindex`, poza mapą strony); lokalnie `pnpm dev` → http://localhost:3000/demo.
+Oglądaj na telefonie i komputerze, w obu motywach. Historia odrzuconych kierunków: `docs/DZIENNIK.md`, kod: tag `piaskownica-archiwum-2026-11`.
 
 **Zasada:** precyzja to jakość wykonania, nie styl — minimalizm Vercel/shadcn, miękkie
 kształty, monochrom, mikrointerakcje krótkie i celowe, mobile first.

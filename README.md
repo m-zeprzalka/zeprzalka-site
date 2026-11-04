@@ -59,8 +59,9 @@ Pracujemy na jednej gałęzi, `main`. **Push na `main` od razu wdraża produkcj�
    workflow „Strona główna — porównanie pikseli” w GitHub Actions.
 3. `git push` → Vercel wdraża, GitHub Actions powtarza `pnpm check` (+ audyt zależności).
 
-Większy eksperyment (np. nowy wygląd) rodzi się lokalnie w piaskownicy `/demo`
-(`pnpm dev`), której nie ma na produkcji. Nowy wpis: sekcja „Dwujęzyczność” niżej.
+Większy eksperyment (np. nowy wygląd) rodzi się w piaskownicy `/demo`. Domyślnie nie ma
+jej na produkcji; na czas prac nad wyglądem Vercel ma `DEMO_PUBLIC=1`, więc dema są pod
+zeprzalka.com/demo (`noindex`, poza mapą strony). Nowy wpis: sekcja „Dwujęzyczność” niżej.
 
 ### Zmienne środowiskowe (`.env.local` / Vercel)
 

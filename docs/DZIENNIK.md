@@ -68,6 +68,12 @@ usunięte — instrukcje do README, strategia do `docs/prywatne/MARKETING.md`, o
 do ROADMAP (tylko otwarte), bezpieczeństwo do `docs/prywatne/BEZPIECZENSTWO.md`; surowe
 raporty audytów skasowane, referencje projektowe w `docs/prywatne/referencje/`.
 
+**Dema na telefonie (po uwadze właściciela):** `/demo` było celowo poza produkcją, a bez
+podglądów gałęzi nie dało się go obejrzeć na telefonie → `DEMO_PUBLIC=1` w Vercelu (Production).
+Build z demami ujawnił błąd z tej iteracji: `format.ts` (wspólny dla klienta) zaczął importować
+serwerowy `common.ts` → `formatReadingTime` przeniesiony do `src/lib/posts.ts`, a ESLint
+blokuje odtąd importy modułów `server-only` w modułach wspólnych.
+
 **Sprawdzone:** `pnpm check` (0 błędów treści, format, lint, typy, 275 stron statycznych,
 `check:build` 134 strony bez problemów, także `--production`); piksele 11 stron × 2
 szerokości względem produkcji — różnice wyłącznie z zamówionych tekstów i nowej oferty;

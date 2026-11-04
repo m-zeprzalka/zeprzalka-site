@@ -1,11 +1,11 @@
 /**
  * Formatowanie zależne od języka — jedno miejsce dla interpolacji, liczebników,
- * dat, liczb i czasu lektury. Region bierze się zawsze z `INTL_LOCALE`
- * (copy angielskie jest pisane po brytyjsku, więc `en-GB`). Moduł serwerowy —
- * teksty (np. czas lektury) bierze z modułów treści.
+ * dat i liczb. Region bierze się zawsze z `INTL_LOCALE` (copy angielskie jest
+ * pisane po brytyjsku, więc `en-GB`). Moduł wspólny dla serwera i klienta —
+ * nie importuje modułów treści (mają `server-only`; pilnuje tego ESLint).
+ * Wzorce tekstów dostaje w argumentach.
  */
 import { INTL_LOCALE, type Locale } from "@/i18n/config"
-import { getCommon } from "@/i18n/content/common"
 
 /** Podstawia `{klucz}` wartościami — jedyny mechanizm interpolacji w treściach. */
 export function fill(template: string, values: Record<string, string | number>): string {
@@ -51,9 +51,4 @@ export function formatDate(value: string | Date, locale: Locale): string {
 /** Kwota z separatorem tysięcy właściwym dla języka: `2 500`, `2,500`. */
 export function formatNumber(value: number, locale: Locale): string {
   return new Intl.NumberFormat(INTL_LOCALE[locale]).format(value)
-}
-
-/** „5 min czytania” / „5 min read”. */
-export function formatReadingTime(minutes: number, locale: Locale): string {
-  return fill(getCommon(locale).readingTime, { minutes })
 }

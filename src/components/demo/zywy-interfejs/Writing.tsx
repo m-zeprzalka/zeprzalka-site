@@ -1,8 +1,8 @@
 import Link from "next/link"
 import { ArrowRight } from "lucide-react"
 import { postPath, type Locale } from "@/i18n/config"
-import { formatDate, formatReadingTime } from "@/i18n/format"
-import type { Post } from "@/lib/posts"
+import { formatDate } from "@/i18n/format"
+import { formatReadingTime, type Post } from "@/lib/posts"
 
 /**
  * Najnowsze wpisy jako lista: data, tytuł, kategoria, czas lektury. Cały

@@ -2,13 +2,14 @@
 
 zeprzalka.com — strona osobista: portfolio, blog MDX, oferta. Next.js 16 App Router,
 React 19, TypeScript strict, Tailwind 4, shadcn/ui, pnpm, Vercel. Opis architektury:
-`README.md`; lista zadań: `docs/ROADMAP.md`; dziennik iteracji: `docs/DZIENNIK.md`.
+`README.md`; jedyna lista otwartych zadań: `docs/ROADMAP.md`; dziennik: `docs/DZIENNIK.md`.
 
 ## Twarde zasady
 
 1. **Wygląd strony głównej (`/`, `/en`) jest nietykalny bez zgody właściciela.**
    Każda zmiana pliku z `src/components/home/*`, `layout/*`, `ContactForm`,
-   `PortfolioCard` albo `ui/*` → `pnpm visual <bazowy> <zmiana>` musi pokazać 0 px.
+   `PortfolioCard` albo `ui/*` → `pnpm visual <bazowy> <zmiana>` musi pokazać 0 px
+   (albo tylko zmiany, na które właściciel się zgodził).
 2. **Nie zmieniamy tekstów na stronie bez prośby** — copy mieszka w `src/i18n/content/*`.
 3. **Żaden tekst nie istnieje w jednym języku.** Moduły treści to lustrzane drzewa
    `pl`/`en` (`en: typeof pl`); dane mają pary `Localized<T>`. Wyjątki: katalog
@@ -16,12 +17,14 @@ React 19, TypeScript strict, Tailwind 4, shadcn/ui, pnpm, Vercel. Opis architekt
 4. **Wszystkie strony są statyczne.** Trasy z segmentem: `generateStaticParams` +
    `dynamicParams = false` (literał w pliku trasy). Nie czytamy `searchParams`.
 5. **Piaskownica `/demo` jest odizolowana.** Serwis nie importuje z `src/components/demo`
-   ani `src/app/demo` ani zależności piaskownicy (`motion`, `@number-flow/react`,
-   `react-intersection-observer`) — ESLint to blokuje. Pliki tras dem mają końcówkę `.demo.tsx`.
+   ani `src/app/demo` ani zależności piaskownicy (`motion`, `@number-flow/react`) —
+   ESLint to blokuje. Pliki tras dem mają końcówkę `.demo.tsx`.
    Komponenty systemu „Forma” łączą klasy przez `forma/cn.ts` (zna tokeny `fm-*`).
-6. **Push na `main` = wdrożenie produkcyjne.** Pracujemy na gałęzi; commit/push tylko na prośbę.
+6. **Jedna gałąź: `main`. Push = wdrożenie produkcyjne.** Przed pushem `pnpm check`;
+   commit i push tylko na prośbę właściciela (albo przy jego zgodzie w zadaniu).
 7. **Repozytorium jest publiczne.** Szczegóły bezpieczeństwa wyłącznie w `docs/prywatne/` (gitignore).
-8. Każda iteracja dopisuje wpis do `docs/DZIENNIK.md` i aktualizuje dotknięte dokumenty.
+8. Każda iteracja dopisuje krótki wpis do `docs/DZIENNIK.md`; zrobione punkty znikają
+   z `docs/ROADMAP.md` (tam tylko otwarte), dotknięte dokumenty idą do aktualizacji.
 
 ## Pułapki
 
@@ -40,9 +43,17 @@ React 19, TypeScript strict, Tailwind 4, shadcn/ui, pnpm, Vercel. Opis architekt
 - Wrappery `relative` wokół `ContactForm` (strona główna, `/kontakt`) zostają: bez nich
   pole-pułapka (`absolute -z-10`) zmienia kompozycję warstw i antyaliasing tekstu formularza.
 - Klasy przycisków w nagłówku liczy serwer (`buttonVariants`) i podaje propsem do
-  komponentów klienckich — `cva` i `tailwind-merge` nie trafiają do wspólnego JS.
+  komponentów klienckich — `cva` i `tailwind-merge` nie trafiają do wspólnego JS. Z tego
+  samego powodu granice błędów ładują ekran leniwie (`LazyErrorView`).
 - Lokalny build z `VERCEL_ENV=production` po `pnpm dev`: najpierw `rm -rf .next/dev`
-  (typy tras dev zawierają dema, których build produkcyjny nie zna).
+  (typy tras dev zawierają dema, których build produkcyjny nie zna). Gdy `pnpm dev` wciąż
+  działa, odtwarza ten katalog — wtedy build w czystej kopii (`git archive`/`rsync` + `pnpm install --offline`).
+- Kroje (`next/font`) są w `src/app/fonts.ts` — wspólne dla układów, `global-error` i `/demo`.
+- Wideo: `play()` tylko w efekcie po zatwierdzeniu `src` (inaczej przeglądarka przerywa
+  odtwarzanie nowym ładowaniem) — wzór w `LazyVideo.tsx`.
+- Warianty Tailwinda 4 działają od lewej: `prose-a:hover:underline`, nie `hover:prose-a:…`
+  (to drugie podkreśla wszystkie linki przy najechaniu na cały artykuł).
+- Po zmianie `/o-mnie` albo `/en/about`: `pnpm cv` na działającym buildzie (PDF w `public/`).
 
 ## Przed commitem
 

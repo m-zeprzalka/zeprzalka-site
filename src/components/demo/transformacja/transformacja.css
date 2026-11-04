@@ -1,0 +1,1053 @@
+/*
+ * „Transformacja” — arkusz koncepcji. Tokeny z Formy (`--fm-*`, `--ease-fm-*`,
+ * `--radius-fm-*`); tutaj scena sterowana przewijaniem i to, czego nie da się
+ * czysto zapisać utility.
+ *
+ * Hero sprzedaje od pierwszej klatki (prawdziwy h1 i akcje po lewej), a rama
+ * obok pokazuje, jak ten sam nagłówek powstaje. Style bazowe = stan końcowy:
+ * tak wygląda strona bez `animation-timeline`, przy „ogranicz ruch” i bez JS.
+ * Scena jest ulepszeniem w `@supports` + `no-preference`: oś przewijania
+ * rośnie (maks. 250 vh), kadr się przykleja, a warstwy ramy jadą po nazwanym
+ * view timeline (`--tf-scene`). Czas etapów to procenty w `animation-range`:
+ *
+ *   0–24  Szkic    makieta, zaznaczenia, kursor, linie wymiarów
+ *   24–48 Projekt  tekst roboczy → krój, paski → tekst, CTA, plakat + tokeny
+ *   48–72 Kod      edytor (kod i terminal w jednej nakładce) → Ready
+ *   72–96 Produkt  pasek adresu, wideo rusza
+ *
+ * Nakładki (tokeny, edytor) nie jadą po osi — przełącza je `data-stage`
+ * (StageSync) przejściami: wyjście 150 ms, wejście 250 ms po wyjściu.
+ * Animowane są wyłącznie transform / opacity / filter / clip-path.
+ */
+
+.tf {
+  --tf-header: 3.5rem;
+  /* Długość osi sceny ponad kadr: telefon (pod hero) 85 svh, desktop 150 svh. */
+  --tf-run: 85svh;
+  --tf-page: var(--fm-canvas);
+  /* Kolor zaznaczenia narzędzia — tylko w etapie Szkic, gaśnie razem z narzędziem. */
+  --tf-tool: oklch(0.58 0.2 258);
+  --tf-tool-ink: oklch(1 0 0);
+  /* Edytor kodu: odwrócona powierzchnia. */
+  --tf-code: oklch(0.185 0 0);
+  --tf-code-edge: oklch(1 0 0 / 0.08);
+  --tf-code-ink: oklch(0.96 0 0);
+  --tf-code-ink-2: oklch(0.78 0 0);
+  --tf-code-ink-3: oklch(0.6 0 0);
+
+  /* Jeden kontener dla nagłówka, hero i sekcji (jak u Vercela ~1400 px). */
+  --tf-max: 86rem;
+  /* Mnożniki promieni i gęstości — zmienia je panel „Tokeny” po scenie. */
+  --tf-r: 1;
+  --tf-d: 1;
+  timeline-scope: --tf-scene;
+  background: var(--tf-page);
+}
+@media (min-width: 48rem) {
+  .tf {
+    --tf-header: 4rem;
+  }
+}
+@media (min-width: 64rem) {
+  .tf {
+    --tf-run: 150svh;
+  }
+}
+.dark .tf {
+  --tf-tool: oklch(0.7 0.15 255);
+  --tf-tool-ink: oklch(0.16 0 0);
+  --tf-code: oklch(0.2 0 0);
+  --tf-code-edge: oklch(1 0 0 / 0.1);
+}
+
+:root:has(.tf) {
+  scroll-padding-top: calc(var(--tf-header, 4rem) + 1rem);
+}
+
+/* ——— Nagłówek ——— */
+.tf-header {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: 40;
+  height: var(--tf-header);
+}
+.tf-header__bg {
+  position: absolute;
+  inset: 0;
+  background: color-mix(in oklab, var(--tf-page) 84%, transparent);
+  box-shadow: 0 1px 0 var(--fm-edge);
+  -webkit-backdrop-filter: blur(16px) saturate(1.4);
+  backdrop-filter: blur(16px) saturate(1.4);
+  pointer-events: none;
+}
+
+/* Znak: glif „&” (projektant & programista) w kwadracie. W szkicu kwadrat jest
+   przerywanym obrysem z uchwytami zaznaczenia, potem wypełnia się atramentem. */
+.tf-mark {
+  position: relative;
+  display: grid;
+  width: 1.75rem;
+  height: 1.75rem;
+  flex-shrink: 0;
+  place-items: center;
+  color: var(--fm-inverse);
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  line-height: 1;
+}
+.tf-mark__fill,
+.tf-mark__wire {
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius-fm-sm);
+}
+.tf-mark__fill {
+  background: var(--fm-ink);
+}
+.tf-mark__wire {
+  display: none;
+  outline: 1px dashed color-mix(in oklab, var(--fm-ink-3) 60%, transparent);
+  outline-offset: -1px;
+}
+.tf-mark__glyph {
+  position: relative;
+}
+.tf-mark__frame {
+  display: none;
+  position: absolute;
+  inset: -0.3125rem;
+  border: 1px solid var(--tf-tool);
+  pointer-events: none;
+}
+.tf-mark__frame > i {
+  position: absolute;
+  width: 0.3125rem;
+  height: 0.3125rem;
+  border: 1px solid var(--tf-tool);
+  background: var(--fm-surface);
+}
+.tf-mark__frame > i:nth-child(1) {
+  top: -0.1875rem;
+  left: -0.1875rem;
+}
+.tf-mark__frame > i:nth-child(2) {
+  top: -0.1875rem;
+  right: -0.1875rem;
+}
+.tf-mark__frame > i:nth-child(3) {
+  bottom: -0.1875rem;
+  left: -0.1875rem;
+}
+.tf-mark__frame > i:nth-child(4) {
+  right: -0.1875rem;
+  bottom: -0.1875rem;
+}
+
+/* ——— Hero sceny: układ bazowy (stan końcowy, bez przyklejenia) ——— */
+.tf-container {
+  width: min(100% - 2 * var(--fm-gutter), var(--tf-max));
+  margin-inline: auto;
+}
+.tf-pin {
+  display: grid;
+  gap: 2.5rem;
+  padding-top: calc(var(--tf-header) + clamp(1.5rem, 5svh, 3rem));
+  padding-bottom: clamp(2.5rem, 7svh, 4.5rem);
+}
+.tf-intro__title {
+  font-size: clamp(2.5rem, 0.6rem + 5vw, 3.5rem);
+  line-height: 1.02;
+  letter-spacing: -0.045em;
+  font-weight: 500;
+  text-wrap: balance;
+}
+.tf-lead {
+  font-size: var(--text-fm-lead);
+  line-height: 1.5;
+  letter-spacing: -0.015em;
+  text-wrap: pretty;
+}
+.tf-stepper,
+.tf-framelabel,
+.tf-hint,
+.tf-panel,
+.tf-wire,
+.tf-draft,
+.tf-hl,
+.tf-sel,
+.tf-redline {
+  display: none;
+}
+@media (min-width: 64rem) {
+  .tf-pin {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+    align-content: center;
+    align-items: center;
+    column-gap: clamp(3rem, 5vw, 6rem);
+    row-gap: 2.75rem;
+    min-height: 100svh;
+  }
+  .tf-run,
+  .tf-stage {
+    display: contents;
+  }
+  .tf-intro {
+    grid-column: 1;
+    grid-row: 1 / span 2;
+  }
+  .tf-framebox {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+  }
+  .tf-intro__title {
+    font-size: clamp(2.75rem, 0.5rem + 3.5vw, 4rem);
+  }
+}
+
+/*
+ * Rama: naturalny rozmiar makiety (telefon ~390 × 600, od 40rem ~1280 × 800)
+ * pomniejszony skalą `--tf-s`. Szerokość naturalna = szerokość ramy / skala —
+ * dzielenie długości przez liczbę CSS zna, więc rama zawsze wypełnia swoją
+ * kolumnę, a skala ustala tylko wielkość tekstu (na telefonie ≥ 11 px).
+ */
+.tf-framebox {
+  position: relative;
+  container-type: inline-size;
+}
+.tf-frame {
+  --tf-s: 0.92;
+  --tf-nh: 600px;
+  position: relative;
+  height: calc(var(--tf-nh) * var(--tf-s));
+  overflow: clip;
+  border-radius: var(--radius-fm-2xl);
+  background: var(--fm-surface);
+  box-shadow: var(--fm-shadow-pop);
+}
+@media (min-width: 40rem) {
+  .tf-frame {
+    --tf-s: 0.55;
+    --tf-nh: 800px;
+  }
+}
+@media (min-width: 64rem) {
+  .tf-frame {
+    --tf-s: 0.37;
+  }
+}
+@media (min-width: 80rem) {
+  .tf-frame {
+    --tf-s: 0.46;
+  }
+}
+@media (min-width: 90rem) {
+  .tf-frame {
+    --tf-s: 0.52;
+  }
+}
+@media (max-width: 39.99rem) and (max-height: 44rem) {
+  .tf-frame {
+    --tf-s: 0.8;
+    --tf-nh: 520px;
+  }
+}
+.tf-board {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: calc(100cqw / var(--tf-s));
+  height: var(--tf-nh);
+  transform: scale(var(--tf-s));
+  transform-origin: 0 0;
+  container: tf-board / inline-size;
+}
+
+/* Wnętrze makiety — układ telefonu, od 40rem naturalnej szerokości układ desktopu. */
+.tf-hero {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  padding: 20px 16px 16px;
+}
+.tf-el {
+  position: relative;
+}
+.tf-el--title {
+  margin-top: 24px;
+  max-width: 66rem;
+}
+.tf-board__title {
+  position: relative;
+  font-size: 40px;
+  line-height: 1.02;
+  letter-spacing: -0.045em;
+  font-weight: 500;
+  text-wrap: balance;
+}
+.tf-draft {
+  font-size: 0.55em;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+}
+.tf-word {
+  display: inline-block;
+}
+.tf-el--lead {
+  margin-top: 24px;
+  max-width: 44rem;
+}
+.tf-board__lead {
+  font-size: 16px;
+  line-height: 1.5;
+  letter-spacing: -0.015em;
+  text-wrap: pretty;
+}
+.tf-el--actions {
+  margin-top: 32px;
+}
+.tf-board__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.tf-board__second {
+  display: none;
+}
+.tf-media {
+  position: relative;
+  flex: 1 1 0;
+  min-height: 0;
+  margin-top: 24px;
+}
+@container tf-board (min-width: 40rem) {
+  .tf-hero {
+    padding: 48px 64px;
+  }
+  .tf-board__title {
+    font-size: 76px;
+  }
+  .tf-board__lead {
+    font-size: 22px;
+  }
+  .tf-board__actions {
+    flex-direction: row;
+  }
+  .tf-board__second {
+    display: inline-flex;
+  }
+  .tf-media {
+    margin-top: 40px;
+  }
+}
+.tf-media__frame {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: calc(var(--radius-fm-3xl) * var(--tf-r));
+  transition: border-radius 300ms var(--ease-fm-move);
+  background: var(--fm-fill);
+  box-shadow: inset 0 0 0 1px var(--fm-edge);
+}
+
+/* Paski makiety: ten sam tekst co oryginał, przezroczysty, z tłem w każdej
+   linii (`box-decoration-break`) — łamanie wierszy zgadza się co do piksela. */
+.tf-bars {
+  color: transparent;
+}
+.tf-bars > span {
+  border-radius: 0.375rem;
+  background: color-mix(in oklab, var(--fm-ink) 10%, transparent);
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+/* Edytor i log: odwrócona powierzchnia, monochromatyczne podświetlenie składni. */
+.tf-codebox {
+  background: var(--tf-code);
+  color: var(--tf-code-ink);
+  box-shadow:
+    0 0 0 1px var(--tf-code-edge),
+    0 8px 16px -8px oklch(0 0 0 / 0.2),
+    0 28px 56px -16px oklch(0 0 0 / 0.32);
+}
+.tf-code {
+  font-size: 0.65625rem;
+  line-height: 1rem;
+}
+.tf-log {
+  font-size: 0.6875rem;
+  line-height: 1.125rem;
+}
+@media (min-width: 64rem) {
+  .tf-code {
+    font-size: 0.75rem;
+    line-height: 1.125rem;
+  }
+  .tf-log {
+    font-size: 0.75rem;
+    line-height: 1.25rem;
+  }
+}
+
+/* Kompetencje: stała sekcja z trzema kartami (kadry etapów) pod liczbami. */
+.tf-skills {
+  display: grid;
+  /* minmax(0, …): kod w kadrze (white-space: pre) nie może rozpychać kolumny. */
+  grid-template-columns: minmax(0, 1fr);
+  gap: calc(2.5rem * var(--tf-d)) 2rem;
+}
+@media (min-width: 64rem) {
+  .tf-skills {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+.tf-tools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+}
+
+/* ——— Produkt po scenie ——— */
+.tf[data-tf-radius="0"] {
+  --tf-r: 0;
+}
+.tf[data-tf-radius="12"] {
+  --tf-r: 0.5;
+}
+.tf[data-tf-density="compact"] {
+  --tf-d: 0.55;
+}
+.tf-r-2xl,
+.tf-r-3xl {
+  transition: border-radius 300ms var(--ease-fm-move);
+}
+.tf-r-2xl {
+  border-radius: calc(var(--radius-fm-2xl) * var(--tf-r));
+}
+.tf-r-3xl {
+  border-radius: calc(var(--radius-fm-3xl) * var(--tf-r));
+}
+/* Każda sekcja ma pół rytmu nad i pod sobą — między sekcjami wychodzi pełny rytm. */
+.tf-pad {
+  padding-block: calc(var(--fm-section) * 0.5 * var(--tf-d));
+}
+.tf-pad-top {
+  padding-top: calc(var(--fm-section) * 0.375 * var(--tf-d));
+}
+.tf-gap {
+  gap: calc(2.5rem * var(--tf-d)) calc(1.5rem * var(--tf-d));
+}
+
+/* Masonry: kolumny CSS, kafle nie łamią się między kolumnami. */
+.tf-works {
+  columns: 2;
+  column-gap: calc(0.5rem * var(--tf-d) + 0.5rem);
+}
+@media (min-width: 40rem) {
+  .tf-works {
+    column-gap: calc(1rem * var(--tf-d) + 0.5rem);
+  }
+}
+@media (min-width: 80rem) {
+  .tf-works {
+    columns: 3;
+  }
+}
+.tf-tile {
+  break-inside: avoid;
+  padding-bottom: calc(1.25rem * var(--tf-d) + 0.5rem);
+}
+@media (min-width: 40rem) {
+  .tf-tile {
+    padding-bottom: calc(1.75rem * var(--tf-d) + 0.5rem);
+  }
+}
+.tf-works[data-vt] .tf-tile {
+  view-transition-name: var(--vt);
+  view-transition-class: tf-tile;
+}
+::view-transition-group(.tf-tile) {
+  animation-duration: 340ms;
+  animation-timing-function: var(--ease-fm-move);
+}
+::view-transition-old(.tf-tile),
+::view-transition-new(.tf-tile) {
+  animation-duration: 220ms;
+}
+
+/* Panel „Tokeny” w rogu — w scenie pojawia się dopiero po jej końcu. */
+.tf-tweaks {
+  position: fixed;
+  right: max(var(--fm-gutter), env(safe-area-inset-right));
+  bottom: max(1rem, env(safe-area-inset-bottom));
+  z-index: 30;
+}
+.tf-tweaks__inner {
+  transition:
+    translate 320ms var(--ease-fm-drawer),
+    opacity 200ms var(--ease-fm-snap);
+}
+.tf-tweaks__inner[data-tucked]:not(:focus-within) {
+  translate: 0 calc(100% + 1.5rem);
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ——— Scena: tryb przewijany ——— */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    /* Wspólny zegar warstw ramy: czas = `animation-range` na osi sceny. */
+    .tf-anim {
+      animation-timeline: --tf-scene;
+      animation-range: contain 0% contain 100%;
+      animation-fill-mode: both;
+      animation-timing-function: linear;
+      animation-duration: 1ms;
+      animation-duration: auto;
+    }
+
+    /* Telefon i tablet: hero płynie, przykleja się stepper z ramą. */
+    @media (max-width: 63.99rem) {
+      .tf-pin {
+        padding-bottom: 0;
+      }
+      .tf-run {
+        height: calc(100svh + var(--tf-run));
+        view-timeline: --tf-scene block;
+        /* Bez tego oś bierze `scroll-padding-top` i startuje przesunięta. */
+        view-timeline-inset: 0px;
+      }
+      .tf-stage {
+        position: sticky;
+        top: 0;
+        display: flex;
+        height: 100svh;
+        flex-direction: column;
+        justify-content: center;
+        gap: 1.25rem;
+        padding-top: var(--tf-header);
+      }
+    }
+
+    /* Desktop: przykleja się cały kadr z obiema kolumnami. */
+    @media (min-width: 64rem) {
+      .tf-track {
+        height: calc(100svh + var(--tf-run));
+        view-timeline: --tf-scene block;
+        view-timeline-inset: 0px;
+      }
+      .tf-pin {
+        position: sticky;
+        top: 0;
+        height: 100svh;
+        min-height: 0;
+        padding-top: var(--tf-header);
+        padding-bottom: 0;
+      }
+      .tf-intro {
+        grid-row: 1;
+        align-self: end;
+      }
+      .tf-stepper {
+        grid-column: 1;
+        grid-row: 2;
+        align-self: start;
+      }
+    }
+
+    .tf-stepper {
+      display: block;
+    }
+    .tf-steps__fill {
+      transform-origin: 0 50%;
+      animation-name: tf-k-fill;
+      animation-range: contain 0% contain 96%;
+    }
+    .tf-step {
+      animation-name: tf-k-step;
+    }
+    /* Etap 1 jest aktywny od początku. */
+    .tf-step:first-child {
+      animation-name: none;
+    }
+    .tf-steps__ghost {
+      opacity: 0;
+      animation: tf-k-ghost 1.8s var(--ease-fm-move) 1.2s 2;
+    }
+    /* Podpis etapu: trzy kompetencje w jednej komórce, zmiana z lekkim rozmyciem. */
+    .tf-comps {
+      display: grid;
+    }
+    .tf-comp {
+      grid-area: 1 / 1;
+      --tf-blur: 3px;
+    }
+    .tf-comp:nth-of-type(1) {
+      animation-name: tf-k-out;
+      animation-range: contain 47% contain 50%;
+    }
+    .tf-comp:nth-of-type(2) {
+      animation-name: tf-k-in, tf-k-out;
+      animation-fill-mode: both, forwards;
+      animation-range:
+        contain 48.5% contain 52%,
+        contain 71% contain 74%;
+    }
+    .tf-comp:nth-of-type(3) {
+      animation-name: tf-k-in;
+      animation-range: contain 72.5% contain 76%;
+    }
+
+    /* Etykieta ramy: narzędzie → pasek adresu w etapie Produkt. */
+    .tf-framebox {
+      padding-top: 1.75rem;
+    }
+    .tf-framelabel {
+      display: block;
+      position: absolute;
+      inset: 0 0 auto;
+    }
+    .tf-framelabel__tool {
+      animation-name: tf-k-out;
+      animation-range: contain 73% contain 75.5%;
+      --tf-to: 0 -0.25rem;
+      --tf-blur: 2px;
+    }
+    .tf-framelabel__url {
+      animation-name: tf-k-in;
+      animation-range: contain 74% contain 77%;
+      --tf-from: 0 0.25rem;
+      --tf-blur: 2px;
+    }
+
+    /* Makieta: szkic nad gotowymi elementami. */
+    .tf-wire {
+      display: block;
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+    .tf-draft {
+      display: block;
+      position: absolute;
+      inset: 0 0 auto;
+      pointer-events: none;
+      animation-name: tf-k-out;
+      animation-range: contain 26% contain 30%;
+      --tf-to: 0 0;
+    }
+    .tf-word {
+      animation-name: tf-k-in;
+      --tf-from: 0 0.14em;
+      --tf-blur: 8px;
+    }
+    .tf-el--chip .tf-wire,
+    .tf-el--lead .tf-wire {
+      animation-name: tf-k-out;
+      animation-range: contain 31% contain 34%;
+      --tf-to: 0 0;
+    }
+    .tf-el--chip .tf-real,
+    .tf-el--lead .tf-real {
+      animation-name: tf-k-in;
+      animation-range: contain 31% contain 35%;
+      --tf-from: 0 0;
+    }
+    .tf-el--chip .tf-dot {
+      animation-name: tf-k-pop;
+      animation-range: contain 34% contain 37%;
+    }
+    .tf-el--actions .tf-wire {
+      animation-name: tf-k-out;
+      animation-range: contain 34% contain 37%;
+      --tf-to: 0 0;
+    }
+    .tf-el--actions .tf-real {
+      animation-name: tf-k-in;
+      animation-range: contain 34% contain 38%;
+      --tf-from: 0 0.25rem;
+    }
+    .tf-media .tf-wire {
+      animation-name: tf-k-out;
+      animation-range: contain 37% contain 41%;
+      --tf-to: 0 0;
+    }
+    .tf-media .tf-real {
+      animation-name: tf-k-media;
+      animation-range: contain 37% contain 43%;
+    }
+    .tf-late {
+      animation-name: tf-k-in;
+      animation-range: contain 74% contain 77%;
+      --tf-from: 0 0.25rem;
+    }
+    /* Fokus z klawiatury pokazuje przycisk pauzy niezależnie od etapu. */
+    .tf-late:focus-visible {
+      animation: none;
+    }
+
+    /* Etap Kod: element, którego kod właśnie się pisze, podświetla się jak w DevTools. */
+    .tf-hl {
+      display: block;
+      position: absolute;
+      inset: -0.5rem;
+      z-index: 1;
+      border-radius: var(--radius-fm-md);
+      background: color-mix(in oklab, var(--fm-ink) 5%, transparent);
+      box-shadow: inset 0 0 0 calc(1px / var(--tf-s, 0.62))
+        color-mix(in oklab, var(--fm-ink) 40%, transparent);
+      pointer-events: none;
+      animation-name: tf-k-in, tf-k-out;
+      animation-fill-mode: both, forwards;
+      --tf-from: 0 0;
+      --tf-to: 0 0;
+      --tf-blur: 0px;
+    }
+
+    /* Zanim ktoś przewinie: karetka mrugnie trzy razy, kursor dwa razy drgnie. */
+    .tf-caret {
+      animation: tf-k-blink 1s steps(1) 0.6s 3;
+    }
+    .tf-sel--1 .tf-sel__cursor > svg {
+      animation: tf-k-nudge 900ms var(--ease-fm-move) 1.4s 2;
+    }
+
+    /* Zaznaczenia: nagłówek → podtytuł → wideo, każde z kursorem. */
+    .tf-sel {
+      display: block;
+      position: absolute;
+      inset: -0.625rem -0.75rem;
+      border: calc(1px / var(--tf-s, 0.62)) solid var(--tf-tool);
+      pointer-events: none;
+    }
+    .tf-sel--1 {
+      animation-name: tf-k-out;
+      animation-range: contain 8% contain 10%;
+      --tf-to: 0 0;
+    }
+    .tf-sel--2 {
+      animation-name: tf-k-in, tf-k-out;
+      animation-fill-mode: both, forwards;
+      animation-range:
+        contain 9% contain 11%,
+        contain 15.5% contain 17.5%;
+      --tf-from: 0 0;
+      --tf-to: 0 0;
+      --tf-blur: 0px;
+    }
+    .tf-sel--3 {
+      inset: -0.625rem;
+      animation-name: tf-k-in, tf-k-out;
+      animation-fill-mode: both, forwards;
+      animation-range:
+        contain 16.5% contain 18.5%,
+        contain 23.5% contain 26.5%;
+      --tf-from: 0 0;
+      --tf-to: 0 0;
+      --tf-blur: 0px;
+    }
+    .tf-sel__cursor {
+      animation-name: tf-k-in;
+      --tf-from: -3rem -2.5rem;
+      --tf-blur: 2px;
+    }
+    /* Pierwsze zaznaczenie, jego kursor i pierwsza linia wymiaru stoją od klatki 0. */
+    .tf-sel--1 .tf-sel__cursor {
+      animation-name: none;
+    }
+    .tf-sel--2 .tf-sel__cursor {
+      animation-range: contain 9% contain 12%;
+    }
+    .tf-sel--3 .tf-sel__cursor {
+      animation-range: contain 16.5% contain 19.5%;
+      --tf-from: 2rem -4rem;
+    }
+    .tf-redline {
+      display: block;
+      animation-name: tf-k-out;
+      animation-range: contain 22% contain 25%;
+      --tf-to: 0 0;
+      --tf-blur: 0px;
+    }
+    .tf-redline--late {
+      animation-name: tf-k-in, tf-k-out;
+      animation-fill-mode: both, forwards;
+      animation-range:
+        contain 10% contain 12%,
+        contain 22% contain 25%;
+      --tf-from: 0 0;
+    }
+
+    /*
+     * Nakładki: wewnątrz ramy (przycięte do niej), wcięcie 12 px na telefonie
+     * i 24 px na desktopie. Najwyżej jedna naraz: etap ustawia `data-stage`,
+     * a przejścia dają wyjście w 150 ms i wejście w 250 ms dopiero po nim.
+     */
+    .tf-overlays {
+      position: absolute;
+      inset: 0.75rem;
+      z-index: 3;
+      pointer-events: none;
+    }
+    .tf-panel {
+      display: block;
+      position: absolute;
+      inset: auto 0 0;
+      opacity: 0;
+      translate: 0 0.75rem;
+      visibility: hidden;
+      transition:
+        opacity 150ms var(--ease-fm-snap),
+        translate 150ms var(--ease-fm-snap),
+        visibility 0s linear 150ms;
+    }
+    .tf-panel--editor {
+      height: 46%;
+    }
+    .tf-scene[data-stage="1"] .tf-panel--tokens,
+    .tf-scene[data-stage="2"] .tf-panel--editor {
+      opacity: 1;
+      translate: 0 0;
+      visibility: visible;
+      transition:
+        opacity 250ms var(--ease-fm-snap) 150ms,
+        translate 250ms var(--ease-fm-snap) 150ms,
+        visibility 0s linear 150ms;
+    }
+    .tf-token {
+      opacity: 0;
+      translate: 0.5rem 0;
+      transition:
+        opacity 150ms var(--ease-fm-snap),
+        translate 150ms var(--ease-fm-snap);
+    }
+    .tf-scene[data-stage="1"] .tf-token {
+      opacity: 1;
+      translate: 0 0;
+      transition:
+        opacity 250ms var(--ease-fm-snap) calc(220ms + var(--i) * 35ms),
+        translate 250ms var(--ease-fm-snap) calc(220ms + var(--i) * 35ms);
+    }
+    @media (min-width: 40rem) {
+      .tf-overlays {
+        inset: 1.5rem;
+      }
+      .tf-panel--tokens {
+        left: auto;
+        width: min(17rem, 100%);
+      }
+      .tf-panel--editor {
+        left: auto;
+        width: min(28rem, 58%);
+        height: 62%;
+      }
+    }
+
+    /* Edytor: kod pisze się wiersz po wierszu, okna kodu i terminala jadą za kursorem. */
+    .tf-code-line {
+      animation-name: tf-k-type;
+    }
+    .tf-code__list {
+      animation-name: tf-k-scroll;
+      animation-range: contain 55% contain 61.5%;
+      --tf-scroll: -55%;
+    }
+    .tf-termwin {
+      height: calc(3 * 1.125rem + 1rem);
+    }
+    .tf-log__list {
+      animation-name: tf-k-scroll;
+      animation-range: contain 65.75% contain 69.25%;
+      --tf-scroll: -44%;
+    }
+    .tf-log-line {
+      animation-name: tf-k-in;
+      --tf-from: 0 0.25rem;
+      --tf-blur: 0px;
+    }
+    .tf-log-line .tf-pending {
+      animation-name: tf-k-out;
+      --tf-to: 0 0;
+      --tf-blur: 0px;
+    }
+    @media (min-width: 64rem) {
+      .tf-termwin {
+        height: calc(3 * 1.25rem + 1rem);
+      }
+    }
+
+    /* Zachęta: pigułka u dołu ramy, gaśnie przy pierwszym przewinięciu. */
+    .tf-hint {
+      display: block;
+      position: absolute;
+      bottom: 1rem;
+      left: 50%;
+      z-index: 4;
+      transform: translateX(-50%);
+      pointer-events: none;
+      animation-name: tf-k-out;
+      animation-range: contain 0.25% contain 3%;
+      --tf-to: 0 0.5rem;
+      --tf-blur: 2px;
+    }
+    .tf-hint__inner {
+      animation: tf-k-breathe 2.4s var(--ease-fm-move) 0.9s 2 both;
+    }
+    .tf-hint__arrow {
+      animation: tf-k-bob 1.2s var(--ease-fm-move) 0.9s 4;
+    }
+
+    /* Znak w nagłówku: szkic z uchwytami → wypełniony glif. */
+    .tf-mark__frame {
+      display: block;
+      animation-name: tf-k-out;
+      animation-range: contain 30% contain 38%;
+      --tf-to: 0 0;
+      --tf-blur: 0px;
+    }
+    .tf-mark__wire {
+      display: block;
+      animation-name: tf-k-out;
+      animation-range: contain 30% contain 34%;
+      --tf-to: 0 0;
+      --tf-blur: 0px;
+    }
+    .tf-mark__fill {
+      animation-name: tf-k-in;
+      animation-range: contain 30% contain 36%;
+      --tf-from: 0 0;
+      --tf-blur: 0px;
+    }
+    .tf-mark__glyph {
+      animation-name: tf-k-glyph;
+      animation-range: contain 30% contain 36%;
+    }
+  }
+}
+
+/* ——— Klatki kluczowe sceny ——— */
+@keyframes tf-k-in {
+  from {
+    opacity: 0;
+    filter: blur(var(--tf-blur, 6px));
+    translate: var(--tf-from, 0 0.75rem);
+  }
+  to {
+    opacity: 1;
+    filter: none;
+    translate: 0 0;
+  }
+}
+@keyframes tf-k-out {
+  from {
+    opacity: 1;
+    filter: none;
+    translate: 0 0;
+  }
+  to {
+    opacity: 0;
+    filter: blur(var(--tf-blur, 4px));
+    translate: var(--tf-to, 0 -0.5rem);
+  }
+}
+@keyframes tf-k-breathe {
+  0%,
+  100% {
+    scale: 1;
+  }
+  50% {
+    scale: 1.035;
+  }
+}
+@keyframes tf-k-bob {
+  50% {
+    transform: translateY(3px);
+  }
+}
+@keyframes tf-k-ghost {
+  50% {
+    opacity: 1;
+  }
+}
+@keyframes tf-k-blink {
+  50% {
+    opacity: 0;
+  }
+}
+@keyframes tf-k-nudge {
+  40% {
+    transform: translate(5px, 3px);
+  }
+}
+@keyframes tf-k-glyph {
+  from {
+    color: var(--fm-ink-3);
+  }
+  to {
+    color: var(--fm-inverse);
+  }
+}
+@keyframes tf-k-fade {
+  to {
+    opacity: 0;
+  }
+}
+@keyframes tf-k-pop {
+  from {
+    scale: 0.4;
+    opacity: 0;
+  }
+  60% {
+    scale: 1.25;
+    opacity: 1;
+  }
+  to {
+    scale: 1;
+    opacity: 1;
+  }
+}
+@keyframes tf-k-media {
+  from {
+    opacity: 0;
+    scale: 0.97;
+  }
+  to {
+    opacity: 1;
+    scale: 1;
+  }
+}
+@keyframes tf-k-type {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+@keyframes tf-k-scroll {
+  to {
+    translate: 0 var(--tf-scroll);
+  }
+}
+@keyframes tf-k-fill {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+@keyframes tf-k-step {
+  from {
+    color: var(--fm-ink-3);
+  }
+  to {
+    color: var(--fm-ink);
+  }
+}
+
+/* Arkusz menu jest w portalu — dostaje `.fm` dla tokenów, ale nie wysokość strony. */
+.tf-sheet.fm {
+  min-height: 0;
+}

@@ -1,8 +1,8 @@
-# Kierunek wizualny — system „Forma” i trzy koncepcje strony głównej
+# Kierunek wizualny — system „Forma” i propozycje strony głównej
 
-Stan na 4 listopada 2026. Wszystko poniżej żyje w piaskownicy `/demo`. Na czas prac nad
-wyglądem jest też na produkcji: **https://www.zeprzalka.com/demo** (zmienna `DEMO_PUBLIC=1`
-w Vercelu, `noindex`, poza mapą strony); lokalnie `pnpm dev` → http://localhost:3000/demo.
+Stan na 4 listopada 2026 (iteracja 5). Wszystko poniżej żyje w piaskownicy `/demo`. Na czas
+prac nad wyglądem jest też na produkcji: **https://www.zeprzalka.com/demo** (zmienna
+`DEMO_PUBLIC=1` w Vercelu, `noindex`, poza mapą strony); lokalnie `pnpm dev` → http://localhost:3000/demo.
 Oglądaj na telefonie i komputerze, w obu motywach. Historia odrzuconych kierunków: `docs/DZIENNIK.md`, kod: tag `piaskownica-archiwum-2026-11`.
 
 **Zasada:** precyzja to jakość wykonania, nie styl — minimalizm Vercel/shadcn, miękkie
@@ -22,22 +22,34 @@ Specimen: `/demo/forma`. Źródło prawdy: `src/components/demo/forma/theme.css`
 | Układ | kontener 1200 px, marginesy 16 → 32 px, rytm sekcji 80 → 128 px, cele dotyku ≥ 44 px |
 | Prymitywy | Button, Chip + LiveDot + Kbd, CopyButton, ThemeSwitch (View Transitions), Count (Number Flow), Reveal |
 
-## 2. Trzy koncepcje
+## 2. Pięć propozycji strony głównej (iteracja 5)
 
-| | **Żywy interfejs** — rekomendacja | **Indeks** | **Talia** |
-| --- | --- | --- | --- |
-| Adres | `/demo/zywy-interfejs` | `/demo/indeks` | `/demo/talia` |
-| Idea | każda kompetencja udowadnia się działającym mini-interfejsem | jedna precyzyjna kolumna, każdy wiersz to interaktywny obiekt, paleta ⌘K | realizacje jako talia kart: wachlarz (desktop), stos z gestem (telefon) |
-| Mocne strony | czytelna dla klienta spoza branży, najbliższa obecnej strukturze | najwięcej rzemiosła, najlżejsza | najmocniejsze pierwsze wrażenie, wzór pod case studies |
-| Ryzyka | cztery mini-interfejsy do utrzymania, najwięcej JS (ładowane w kadrze) | może być „za cicha”, wymaga świetnego tekstu | stoi na jakości kadrów |
+Ta sama treść (obecna strona główna + fakty z „O mnie”, `src/components/demo/shared/content.ts`),
+pięć charakterów. Każda przeszła trzy rundy: dwie uwag art directora i jedną z niezależnej krytyki.
 
-**Rekomendacja:** „Żywy interfejs” jako szkielet + stos kart z „Talii” w realizacjach na
-telefonie + paleta ⌘K z „Indeksu” jako ukryta nagroda.
+| | Zadanie z briefu | Idea | Mocne strony | Ryzyka | JS na start* |
+| --- | --- | --- | --- | --- | --- |
+| [Tryptyk](https://www.zeprzalka.com/demo/tryptyk) | ulepszony „Indeks” | od 1280 px trzy kolumny: spis z ⌘K, dokument, scena multimediów; portfolio jako galeria albo lista | najwięcej rzemiosła i treści na ekranie, przełączanie realizacji bez przelewania tekstu, paleta ⌘K | najcichsza; stoi na dobrym tekście | 244 KB |
+| [Esencja](https://www.zeprzalka.com/demo/esencja) | wolna interpretacja | Framer w czerni i bieli: H1 z rozmycia, reel rosnący przy przewijaniu, nieskończony pokaz prac cyfrowych, manifest wypełniany przewijaniem, cztery żywe kompetencje, masonry wideo | najbliżej opisanego gustu; kompetencje „się dzieją” | najwięcej ruchu do utrzymania | 224 KB |
+| [Glif](https://www.zeprzalka.com/demo/glif) | zaskocz mnie | tożsamość z migającego znaku: portret ASCII jako pole glifów, realizacje jako wydruki z glifów odkodowywane w kolor | najbardziej zapamiętywalna; kolor ma uzasadnienie (kolor mają tylko realizacje) | canvas — płynność do potwierdzenia na telefonie | 218 KB |
+| [Reedycja](https://www.zeprzalka.com/demo/reedycja) | wariacja obecnej | obecny układ i treść w drugim wydaniu: ciemny motyw, „Forma”, reel rosnący przy przewijaniu, zakładki z 19 realizacjami, dialog z morfem | najbezpieczniejsza i najlżejsza; spłaca dług z §5 w piaskownicy | najmniej zaskakuje | 205 KB |
+| [Transformacja](https://www.zeprzalka.com/demo/transformacja) | Projekt X | hero od razu, a rama obok przy przewijaniu zamienia ten sam nagłówek: szkic → projekt → kod → produkt | jedyna, która pokazuje projekt i kod jednym gestem; scena na samym CSS | scena musi zostać krótka (dziś 250 vh) | 231 KB |
+
+\* gzip, build produkcyjny; dla porównania spis `/demo` 189 KB, obecna strona główna 208 KB.
+Koncepcje z iteracji 3 (Żywy interfejs, Indeks, Talia) zostają w `/demo` do porównania.
+
+**Rekomendacja:** decyzja zależy od roli tej domeny.
+- **zeprzalka.com jako spokojny dokument eksperta:** wtedy Tryptyk, bo efektowne strony
+  powstaną na innych domenach (startupper.pl, identi.design).
+- **zeprzalka.com jako główna wizytówka:** wtedy Esencja.
+
+W obu wariantach sygnet z migającym glifem i portret ASCII z „Glifu” mogą zostać podpisem marki.
+Niezależna krytyka (przed trzecią rundą) uszeregowała: Esencja, Tryptyk, Glif, Reedycja, Transformacja.
 
 ## 3. Plan (praca na `main`, bez gałęzi i podglądów)
 
-1. **[Ty] Wybór:** szkielet i zapożyczenia; przy każdej sekcji „zostaje / zmień / wyrzuć”
-   + jedno zdanie dlaczego (zrzut z zaznaczeniem jest wart więcej niż opis).
+1. **[Ty] Wybór:** jedna z pięciu propozycji albo szkielet + zapożyczenia; przy każdej sekcji
+   „zostaje / zmień / wyrzuć” + jedno zdanie dlaczego (zrzut z zaznaczeniem jest wart więcej niż opis).
 2. **[Kod] System w serwisie:** tokeny „Formy” do `globals.css`, prymitywy przepisane do
    `src/components/ui/` (nie kopiowane z piaskownicy), `/design-system` na nowym systemie.
 3. **[Kod] Strona główna i podstrony** w „Formie” — bezpośrednio w serwisie, sekcja po
@@ -51,7 +63,7 @@ z plakatem, wszystkie strony nadal statyczne.
 
 ## 4. Co od Ciebie
 
-- [ ] Wybór (pkt 3.1), 5–10 referencji z jednym konkretnym detalem i 3 antyreferencje.
+- [ ] Wybór propozycji (pkt 3.1); jeśli potrzeba, 5–10 referencji z jednym konkretnym detalem i 3 antyreferencje.
 - [ ] Teksty pod nowy szkielet (szkic: `docs/prywatne/MARKETING.md` §1): cztery kompetencje
       po jednym zdaniu, liczby do pokazania.
 - [ ] Materiał: portret i zdjęcia pracy w jednym świetle, zrzuty UI 1×/2×, lista klientów
@@ -77,14 +89,8 @@ z plakatem, wszystkie strony nadal statyczne.
 | 12 | Przyciski-ikony menu mobilnego bez stylu `focus-visible` (reszta nagłówka ma `buttonVariants`) | `MobileNav.tsx`, `MobileNavPanel.tsx` |
 | 13 | `<br />` jako odstęp w stopce; `sizes` zdjęć bloga na głównej pobiera za duże pliki przy 1024–1279 px | `Footer.tsx`, `BlogPreview.tsx` |
 
-## 6. Narzędzia do pracy z Claude Code (instalacja po Twojej stronie, raz)
+## 6. Materiał źródłowy
 
-| Narzędzie | Po co | Instalacja |
-| --- | --- | --- |
-| skill **frontend-design** | proces „plan → krytyka → budowa” | `/plugin install frontend-design@claude-plugins-official` |
-| skille E. Kowalskiego i J. Krehela | rzemiosło ruchu i detalu | `npx skills add emilkowalski/skill`, `npx skills add jakubkrehel/skills` |
-| **Chrome DevTools MCP** | ślady wydajności, INP w prawdziwej przeglądarce | `claude mcp add chrome-devtools --scope user npx chrome-devtools-mcp@latest` |
-| **Playwright MCP** | zrzuty i ścieżki interakcji | `claude mcp add playwright npx @playwright/mcp@latest` |
-
-Materiał źródłowy (lokalnie): `docs/prywatne/referencje/design-referencje.md` (20 referencji
-ze zmierzonymi stylami, 29 mikrointerakcji) i `rzemioslo-ruchu.md` (czasy, krzywe, przepisy).
+Lokalnie: `docs/prywatne/referencje/design-referencje.md` (20 referencji ze zmierzonymi stylami,
+29 mikrointerakcji) i `rzemioslo-ruchu.md` (czasy, krzywe, przepisy). Narzędzia (skille ruchu,
+frontend-design, MCP Chrome DevTools i Playwright) są zainstalowane.

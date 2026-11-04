@@ -1,0 +1,509 @@
+/*
+ * „Reedycja” — arkusz koncepcji. Tokeny przychodzą z Formy (`--fm-*`,
+ * `--ease-fm-*`, `--radius-fm-*`); tutaj skala pisma i siatka strony oraz to,
+ * czego nie da się czysto zapisać utility: animacje sterowane przewijaniem,
+ * wejścia i wyjścia Radiksa, morf kadru (View Transitions).
+ * Ruch jest opt-in: wszystko, co się przesuwa, stoi w `no-preference`.
+ */
+
+.re {
+  /* Szeroka strona jak dziś (1280 px przy 1440), marginesy 16 → 40 px. */
+  --re-max: 80rem;
+  --re-gutter: clamp(1rem, 0.4rem + 3vw, 2.5rem);
+  /* Odstęp sekcji to dwa razy padding: 96 px na telefonie, ok. 150 px na desktopie. */
+  --re-section: clamp(3rem, 2.1rem + 2.8vw, 4.75rem);
+  --re-header: 3.5rem;
+}
+@media (min-width: 48rem) {
+  .re {
+    --re-header: 4rem;
+  }
+}
+
+/* Lepki nagłówek nie zasłania celu kotwicy ani fokusu (WCAG 2.4.11). */
+:root:has(.re) {
+  scroll-padding-top: calc(var(--re-header) + 1.5rem);
+}
+@media (prefers-reduced-motion: no-preference) {
+  :root:has(.re) {
+    scroll-behavior: smooth;
+  }
+}
+
+.re-container {
+  width: min(100% - 2 * var(--re-gutter), var(--re-max));
+  margin-inline: auto;
+}
+
+.re-section {
+  padding-block: var(--re-section);
+}
+
+/* ——— Skala pisma (Geist) ——— */
+.re-display {
+  font-size: clamp(2.5rem, 1.55rem + 4.1vw, 5rem);
+  line-height: 1.02;
+  letter-spacing: -0.045em;
+  font-weight: 500;
+  text-wrap: balance;
+}
+.re-h2 {
+  font-size: clamp(2rem, 1.6rem + 1.6vw, 3rem);
+  line-height: 1.06;
+  letter-spacing: -0.035em;
+  font-weight: 500;
+  text-wrap: balance;
+}
+.re-lead {
+  font-size: clamp(1.125rem, 0.95rem + 0.7vw, 1.5rem);
+  line-height: 1.45;
+  letter-spacing: -0.015em;
+  text-wrap: pretty;
+}
+.re-skill-title {
+  font-size: clamp(1.5rem, 1rem + 2.1vw, 2.75rem);
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  font-weight: 500;
+}
+.re-statement {
+  font-size: clamp(1.625rem, 1.25rem + 1.55vw, 2.5rem);
+  line-height: 1.2;
+  letter-spacing: -0.032em;
+  font-weight: 500;
+  text-wrap: pretty;
+}
+
+/* ——— Nagłówek: szkło pojawia się z przewinięciem (0 → 96 px) ——— */
+.re-header {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  height: var(--re-header);
+  padding-top: env(safe-area-inset-top, 0px);
+  box-sizing: content-box;
+}
+.re-header::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: color-mix(in oklab, var(--fm-canvas) 80%, transparent);
+  box-shadow: 0 1px 0 var(--fm-edge);
+  -webkit-backdrop-filter: blur(16px) saturate(1.4);
+  backdrop-filter: blur(16px) saturate(1.4);
+}
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: scroll()) {
+    .re-header::before {
+      animation: re-glass linear both;
+      animation-timeline: scroll(root block);
+      animation-range: 0 6rem;
+    }
+  }
+}
+@keyframes re-glass {
+  from {
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-transparency: reduce) {
+  .re-header::before {
+    background: var(--fm-canvas);
+    backdrop-filter: none;
+  }
+}
+
+/* ——— Wejście strony: jedno zaaranżowane (hero) ——— */
+@media (prefers-reduced-motion: no-preference) {
+  .re-enter {
+    animation: re-enter 700ms var(--ease-fm-snap) both;
+    animation-delay: var(--d, 0ms);
+  }
+  .re-enter-frame {
+    animation: re-enter-frame 900ms var(--ease-fm-snap) both;
+    animation-delay: var(--d, 0ms);
+  }
+}
+@keyframes re-enter {
+  from {
+    opacity: 0;
+    filter: blur(4px);
+    translate: 0 0.5rem;
+  }
+}
+@keyframes re-enter-frame {
+  from {
+    opacity: 0;
+    scale: 0.98;
+  }
+}
+
+/*
+ * Kadr hero: w spoczynku szerokość kontenera, przy pierwszych ~60% ekranu
+ * przewijania rośnie ponad kontener do szerokości okna minus 20 px, a promień
+ * maleje do 20 px (dzielony przez skalę, bo skala powiększa też narożniki).
+ * `--re-grow` i `--re-grow-space` (zapas pod kadrem, żeby nic nie nachodziło)
+ * liczy HeroVideo; bez JS albo bez wsparcia kadr po prostu stoi.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: scroll()) {
+    .re-reel {
+      margin-bottom: var(--re-grow-space, 0px);
+      animation: re-reel linear both;
+      animation-timeline: scroll(root block);
+      animation-range: 0 60vh;
+    }
+  }
+}
+@keyframes re-reel {
+  to {
+    scale: var(--re-grow, 1);
+    border-radius: calc(20px / var(--re-grow, 1));
+  }
+}
+/* Przycisk pauzy zachowuje swoje 40 px — skala kadru nie powiększa kontrolek. */
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: scroll()) {
+    .re-reel__control {
+      transform-origin: 100% 100%;
+      animation: re-reel-control linear both;
+      animation-timeline: scroll(root block);
+      animation-range: 0 60vh;
+    }
+  }
+}
+@keyframes re-reel-control {
+  to {
+    scale: calc(1 / var(--re-grow, 1));
+  }
+}
+
+/* ——— Biogram: słowa nabierają atramentu przy przewijaniu ——— */
+.re-ink-scope {
+  view-timeline-name: --re-bio;
+}
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    .re-ink {
+      animation: re-ink linear both;
+      animation-timeline: --re-bio;
+      /* Ostatnie słowo nabiera koloru, zanim akapit dojdzie do ~40% wysokości ekranu. */
+      animation-range: cover calc(10% + var(--k) * 26%) cover calc(16% + var(--k) * 26%);
+    }
+  }
+}
+/* Niewypełnione słowo to wciąż czytelny atrament (30%) — „jeszcze nie”, nie „nie ma”. */
+@keyframes re-ink {
+  from {
+    opacity: 0.3;
+  }
+}
+
+/* ——— Akordeon kompetencji: wysokość przez siatkę 0fr → 1fr ——— */
+.re-panel {
+  display: grid;
+  grid-template-rows: 0fr;
+}
+.re-panel[data-open] {
+  grid-template-rows: 1fr;
+}
+.re-panel > div {
+  min-height: 0;
+  overflow: hidden;
+}
+.re-panel__inner {
+  opacity: 0;
+}
+.re-panel[data-open] .re-panel__inner {
+  opacity: 1;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .re-panel {
+    transition: grid-template-rows 320ms var(--ease-fm-snap);
+  }
+  .re-panel__inner {
+    transition:
+      opacity 180ms var(--ease-fm-snap),
+      translate 320ms var(--ease-fm-snap);
+    translate: 0 -0.375rem;
+  }
+  .re-panel[data-open] .re-panel__inner {
+    transition-delay: 60ms;
+    translate: 0 0;
+  }
+}
+
+/* Plus → minus: pionowa kreska obraca się i znika w poziomej. */
+.re-plus {
+  position: relative;
+  width: 0.75rem;
+  height: 0.75rem;
+  flex: none;
+}
+.re-plus::before,
+.re-plus::after {
+  content: "";
+  position: absolute;
+  inset: 50% 0 auto;
+  height: 1.5px;
+  margin-top: -0.75px;
+  border-radius: 1px;
+  background: currentColor;
+}
+.re-plus::after {
+  rotate: 90deg;
+}
+[aria-expanded="true"] .re-plus::after {
+  rotate: 0deg;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .re-plus::after {
+    transition: rotate 200ms var(--ease-fm-snap);
+  }
+}
+
+/* ——— Kafle realizacji ——— */
+.re-tile__media {
+  position: relative;
+  overflow: hidden;
+  /* Mniejszy kafel (2 kolumny na telefonie) — mniejszy promień. */
+  border-radius: var(--radius-fm-xl);
+  background: var(--fm-fill);
+  box-shadow: 0 0 0 1px var(--fm-edge);
+  isolation: isolate;
+}
+/* Obrys obrazu nad treścią (ostre krawędzie jasnych zrzutów na jasnym płótnie). */
+@media (min-width: 40rem) {
+  .re-tile__media {
+    border-radius: var(--radius-fm-2xl);
+  }
+}
+.re-tile__media::after,
+.re-dialog__media::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 1px var(--fm-edge);
+  pointer-events: none;
+}
+.re-tile__media > video,
+.re-tile__media > img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .re-tile__media > video,
+  .re-tile__media > img {
+    transition: scale 500ms var(--ease-fm-snap);
+  }
+}
+@media (hover: hover) and (pointer: fine) {
+  .re-tile:hover .re-tile__media > video,
+  .re-tile:hover .re-tile__media > img {
+    scale: 1.025;
+  }
+}
+.re-tile__arrow {
+  opacity: 0;
+  translate: -0.25rem 0.25rem;
+  transition:
+    opacity 150ms ease,
+    translate 200ms var(--ease-fm-snap);
+}
+.re-tile:hover .re-tile__arrow,
+.re-tile:focus-visible .re-tile__arrow {
+  opacity: 1;
+  translate: 0 0;
+}
+@media (pointer: coarse) {
+  .re-tile__arrow {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+/* Karty bloga: okładka przybliża się powoli pod kursorem. */
+.re-cover {
+  box-shadow: 0 0 0 1px var(--fm-edge);
+}
+.re-cover::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 1px var(--fm-edge);
+  pointer-events: none;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .re-cover img {
+    transition: scale 600ms var(--ease-fm-snap);
+  }
+}
+@media (hover: hover) and (pointer: fine) {
+  .re-post:hover .re-cover img {
+    scale: 1.03;
+  }
+}
+
+/* ——— Dialog realizacji i menu (Radix): wejście dłuższe niż wyjście ——— */
+@media (prefers-reduced-motion: no-preference) {
+  .re-veil[data-state="open"] {
+    animation: re-fade-in 250ms var(--ease-fm-snap);
+  }
+  .re-veil[data-state="closed"] {
+    animation: re-fade-out 150ms var(--ease-fm-snap);
+  }
+  .re-dialog[data-state="open"] {
+    animation: re-sheet-in 420ms var(--ease-fm-drawer);
+  }
+  .re-dialog[data-state="closed"] {
+    animation: re-sheet-out 200ms var(--ease-fm-snap);
+  }
+  .re-menu[data-state="open"] {
+    animation: re-menu-in 320ms var(--ease-fm-drawer);
+  }
+  .re-menu[data-state="closed"] {
+    animation: re-fade-out 180ms var(--ease-fm-snap);
+  }
+  .re-dialog__media[data-swap] {
+    animation: re-swap 220ms var(--ease-fm-snap);
+  }
+}
+@media (min-width: 48rem) and (prefers-reduced-motion: no-preference) {
+  .re-dialog[data-state="open"] {
+    animation: re-pop-in 260ms var(--ease-fm-snap);
+  }
+  .re-dialog[data-state="closed"] {
+    animation: re-pop-out 150ms var(--ease-fm-snap);
+  }
+}
+/* Podczas morfu kadru animację prowadzą View Transitions — Radix nie dokłada swojej
+   (bez animacji wyjścia Radix odmontowuje okno od razu, w tym samym kroku przejścia). */
+.re-veil[data-morph][data-state],
+.re-dialog[data-morph][data-state] {
+  animation: none;
+}
+
+@keyframes re-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes re-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+@keyframes re-sheet-in {
+  from {
+    translate: 0 100%;
+  }
+}
+@keyframes re-sheet-out {
+  to {
+    translate: 0 100%;
+  }
+}
+@keyframes re-pop-in {
+  from {
+    opacity: 0;
+    scale: 0.96;
+  }
+}
+@keyframes re-pop-out {
+  to {
+    opacity: 0;
+    scale: 0.98;
+  }
+}
+@keyframes re-menu-in {
+  from {
+    opacity: 0;
+    translate: 0 -0.75rem;
+  }
+}
+@keyframes re-swap {
+  from {
+    opacity: 0.4;
+    filter: blur(6px);
+  }
+}
+
+/* Morf kadru kafel ↔ dialog: ruch po ekranie, nie wejście. */
+::view-transition-group(re-work) {
+  animation-duration: 420ms;
+  animation-timing-function: var(--ease-fm-move);
+}
+::view-transition-old(re-work),
+::view-transition-new(re-work) {
+  height: 100%;
+  object-fit: cover;
+  animation-duration: 420ms;
+}
+::view-transition-group(re-sheet),
+::view-transition-group(re-veil) {
+  animation-duration: 300ms;
+}
+
+/* ——— Wiersz akordeonu: numer | tytuł | plus; opis wyrównany do tytułu ——— */
+.re-acc {
+  --re-title: clamp(1.5rem, 1rem + 2.1vw, 2.75rem);
+  --re-num: calc(var(--re-title) * 1.35);
+  --re-gap: clamp(0.75rem, 0.4rem + 1.2vw, 1.5rem);
+}
+.re-acc__row {
+  display: grid;
+  grid-template-columns: var(--re-num) minmax(0, 1fr) auto;
+  align-items: center;
+  column-gap: var(--re-gap);
+}
+@media (min-width: 40rem) {
+  .re-acc__body {
+    padding-inline-start: calc(var(--re-num) + var(--re-gap));
+    padding-inline-end: 3.5rem;
+  }
+}
+
+/* ——— Zakładki realizacji: pigułka pod aktywną pozycją ——— */
+/* Zanim JS zmierzy pozycję (HTML z serwera), tło niesie sama aktywna zakładka. */
+.re-tabs:not([data-pill]) [role="tab"][data-state="active"] {
+  background: var(--fm-surface);
+  box-shadow: var(--fm-shadow-card);
+}
+.dark .re-tabs:not([data-pill]) [role="tab"][data-state="active"] {
+  background: var(--fm-fill-strong);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .re-pill {
+    transition:
+      translate 250ms var(--ease-fm-snap),
+      width 250ms var(--ease-fm-snap);
+  }
+  .re-tabpanel[data-state="active"] {
+    animation: re-fade-in 220ms var(--ease-fm-snap);
+  }
+}
+
+/*
+ * Kafle wchodzą, gdy wjeżdżają w ekran: przenikanie i 24 px w górę, sterowane
+ * przewijaniem (bez JS i bez opóźnień — kolejność daje sama pozycja w siatce).
+ */
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    .re-tile-in {
+      animation: re-tile-in linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 55%;
+    }
+  }
+}
+@keyframes re-tile-in {
+  from {
+    opacity: 0;
+    translate: 0 1.5rem;
+  }
+}

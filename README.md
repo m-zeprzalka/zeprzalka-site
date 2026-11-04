@@ -111,7 +111,7 @@ src/
 │   ├── blog/                    # PostCard/PostGrid, TermLink, mdx-components, ActiveTOC, CodeBlock, PostCta, YouTubeEmbed
 │   ├── portfolio/               # PortfolioCard (serwer), LazyVideo (klient), PortfolioGrid
 │   ├── design-system/           # sekcje katalogu /design-system
-│   ├── demo/                    # PIASKOWNICA: system „Forma” i trzy koncepcje (README w środku)
+│   ├── demo/                    # PIASKOWNICA: system „Forma” i propozycje strony głównej (README w środku)
 │   ├── system/                  # ErrorView (+ LazyErrorView), NotFoundView
 │   ├── ui/                      # shadcn/ui (10 komponentów, wszystkie w użyciu)
 │   ├── ContactForm.tsx CtaPanel.tsx StatusBadge.tsx ThemeToggle.tsx JsonLd.tsx PageHeader.tsx

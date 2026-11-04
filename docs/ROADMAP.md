@@ -12,7 +12,8 @@ publiczne (bezpieczeństwo, marketing), są w `docs/prywatne/` — tutaj tylko o
 
 Plan i budżet jakości: [KIERUNEK-WIZUALNY.md](KIERUNEK-WIZUALNY.md) §3.
 
-- [ ] **[Ty]** Wybór koncepcji (`pnpm dev` → `/demo`) i uwagi do sekcji (KIERUNEK §4).
+- [ ] **[Ty]** Wybór jednej z pięciu propozycji z iteracji 5 (https://www.zeprzalka.com/demo — Tryptyk,
+      Esencja, Glif, Reedycja, Transformacja) albo szkielet + zapożyczenia; uwagi do sekcji (KIERUNEK §2–4).
 - [ ] **[Kod]** System „Forma” w serwisie: tokeny w `globals.css`, prymitywy w `src/components/ui/`,
       `/design-system` na nowym systemie.
 - [ ] **[Kod]** Strona główna w wybranej koncepcji; potem podstrony (wpis, `/uslugi`, `/o-mnie`,

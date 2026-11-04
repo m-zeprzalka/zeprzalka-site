@@ -1,7 +1,7 @@
 # Piaskownica `/demo`
 
-Miejsce na pracę kreatywną: koncepcje strony głównej i specimen systemu „Forma”.
-Każda koncepcja we własnym folderze, na wspólnym systemie. Granica z serwisem jest
+Miejsce na pracę kreatywną: propozycje strony głównej i specimen systemu „Forma”.
+Każda propozycja we własnym folderze, na wspólnym systemie i wspólnej treści. Granica z serwisem jest
 twarda i pilnowana w kilku miejscach naraz. Oglądanie: https://www.zeprzalka.com/demo (na czas
 prac nad wyglądem `DEMO_PUBLIC=1` w Vercelu, tylko Production) albo `pnpm dev` → http://localhost:3000/demo.
 Odrzucone kierunki (Precyzja, warianty z sierpnia): tag `piaskownica-archiwum-2026-11`.
@@ -23,17 +23,23 @@ Odrzucone kierunki (Precyzja, warianty z sierpnia): tag `piaskownica-archiwum-20
 src/app/demo/
 ├── layout.demo.tsx       # układ główny piaskownicy (html lang=pl, noindex, motyw systemowy)
 ├── demo.css              # Tailwind + system „Forma”
-├── page.demo.tsx         # spis dem jako prezentacja: koncepcje, mocne strony i ryzyka
-└── forma/ zywy-interfejs/ indeks/ talia/   # page.demo.tsx
+├── page.demo.tsx         # spis dem jako prezentacja: propozycje z iteracji 5, niżej iteracja 3
+└── <slug>/page.demo.tsx  # jedna trasa na propozycję
 src/components/demo/
-├── registry.ts           # lista dem, metadane, mocne strony i ryzyka koncepcji
+├── registry.ts           # lista dem: zadanie z briefu, opis, mocne strony i ryzyka
+├── shared/content.ts     # WSPÓLNA TREŚĆ propozycji: wszystko z obecnej strony głównej
+│                         # i „O mnie” (+ wymiary plakatów) — serwerowe, do klientów przez propsy
 ├── forma/                # SYSTEM „Forma”: theme.css (tokeny → utility Tailwinda), cn.ts,
 │                         # Button, Chip/LiveDot/Kbd, CopyButton, ThemeSwitch, Count, Reveal,
 │                         # use-in-view, typo, Specimen, demo-action
-├── zywy-interfejs/       # koncepcja „Żywy interfejs” (rekomendacja)
-├── indeks/               # koncepcja „Indeks”
-└── talia/                # koncepcja „Talia”
+├── tryptyk/ esencja/ glif/ reedycja/ transformacja/   # iteracja 5 — pięć propozycji
+└── zywy-interfejs/ indeks/ talia/                     # iteracja 3 — do porównania
 ```
+
+Każda propozycja ma własny prefiks klas, animacji i `view-transition-name` (`tk-`, `es-`,
+`gl-`, `re-`, `tf-`) — arkusze dem są globalne po przejściu między nimi. „Glif” ma własny
+krój z symbolami (`glif/glif-symbols.woff2`, podzbiór DejaVu Sans Mono pod zmienioną nazwą,
+licencja w `glif/glif-symbols.LICENSE.md`).
 
 ## System „Forma”
 
@@ -50,7 +56,8 @@ i `@number-flow/react` (liczby).
 
 1. Komponenty w `src/components/demo/<nazwa>/`, trasa w `src/app/demo/<nazwa>/page.demo.tsx`.
    **Końcówka `.demo.tsx` jest obowiązkowa** — zwykły `page.tsx` trafiłby na produkcję.
-2. Wpis w `DEMOS` w `registry.ts`; korzeń z klasą `fm`, prymitywy z `forma/`, klasy przez `forma/cn.ts`.
+2. Wpis w `DEMOS` w `registry.ts`; korzeń z klasą `fm` i własnym prefiksem, treść
+   z `shared/content.ts`, prymitywy z `forma/`, klasy przez `forma/cn.ts`.
 3. Wdrożenie do serwisu: przepisujemy **od nowa** do `src/components/` według zasad serwisu —
    nie przenosimy plików z piaskownicy. Lista rzeczy do poprawienia przy migracji
    „Żywego interfejsu”: `docs/prywatne/referencje/migracja-piaskownicy.md`.

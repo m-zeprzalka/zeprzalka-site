@@ -1,0 +1,405 @@
+/*
+ * Glif (iteracja 5) — arkusz koncepcji. Wszystko w zakresie `.gl`, nazwy z prefiksem
+ * `gl-` (arkusze dem są globalne po przejściu między koncepcjami). Tokeny bazowe
+ * z Formy; tutaj tylko to, czego Forma nie ma: tusz glifów dla canvasu (hex),
+ * krój glifów i elementy samej koncepcji.
+ */
+
+.gl {
+  /* Tusz glifów zapisany szesnastkowo — canvas nie musi rozumieć oklch. */
+  --gl-glyph-ink: #171717;
+  /* Zakodowane kafle i okładki: miękki wydruk — glify w ink-2 na fm-fill. */
+  --gl-print-ink: #525252;
+  --gl-print-paper: #f4f4f4;
+  --gl-header: 4rem;
+  /* Szerszy kontener niż w Formie (1200 → 1312 px): obok tekstu stoi duże pole glifów. */
+  --fm-max: 82rem;
+
+  -webkit-tap-highlight-color: transparent;
+}
+
+.dark .gl {
+  --gl-glyph-ink: #f7f7f7;
+  --gl-print-ink: #b4b4b4;
+  --gl-print-paper: #191919;
+}
+
+.gl-glyph {
+  font-family: var(--gl-font-glyph), monospace;
+  font-variant-ligatures: none;
+}
+
+/* ——— Sygnet ——— */
+
+.gl-mark {
+  display: inline-grid;
+  place-items: center;
+  width: 1.15em;
+  height: 1.15em;
+  font-size: 1.125em;
+  line-height: 1;
+}
+
+/* ——— Nagłówek: pełne tło płótna (nic pod nim nie prześwituje), krawędź po zjechaniu ze szczytu ——— */
+
+.gl-header {
+  height: var(--gl-header);
+  background: var(--fm-canvas);
+  box-shadow: 0 1px 0 transparent;
+}
+
+@supports (animation-timeline: scroll()) {
+  .gl-header {
+    animation: gl-header-edge linear both;
+    animation-timeline: scroll(root);
+    animation-range: 0 8px;
+  }
+}
+
+@keyframes gl-header-edge {
+  to {
+    box-shadow: 0 1px 0 var(--fm-edge);
+  }
+}
+
+/* ——— Pole glifów ——— */
+
+.gl-field {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  /* Pionowe przewijanie palcem zostaje przeglądarce; poziome ruchy mieszają glify. */
+  touch-action: pan-y;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+@media (min-width: 64rem) {
+  .gl-field {
+    aspect-ratio: 5 / 6;
+  }
+}
+
+.gl-field__fallback {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  height: 100%;
+  width: auto;
+  max-width: 100%;
+  object-fit: contain;
+  filter: grayscale(1) contrast(1.05);
+  mix-blend-mode: multiply;
+  opacity: 0.85;
+  transition: opacity 500ms var(--ease-fm-snap);
+}
+
+.dark .gl-field__fallback {
+  filter: grayscale(1) invert(1);
+  mix-blend-mode: screen;
+}
+
+.gl-field[data-ready] .gl-field__fallback {
+  opacity: 0;
+}
+
+.gl-field__canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* ——— Pismo ——— */
+
+.gl-display {
+  font-size: clamp(2.5rem, 1.6rem + 3.9vw, 4.75rem);
+  line-height: 1.02;
+  letter-spacing: -0.045em;
+  font-weight: 500;
+}
+
+.gl-h2 {
+  font-size: clamp(2.25rem, 1.5rem + 3.2vw, 4rem);
+  line-height: 1.02;
+  letter-spacing: -0.042em;
+  font-weight: 500;
+}
+
+/* Sekcje: rytm 96 → 160 px. */
+.gl-section {
+  padding-block: clamp(5rem, 3.5rem + 4.5vw, 8rem);
+  scroll-margin-top: var(--gl-header);
+}
+
+/* ——— Dekodowanie liter: litera zostaje w układzie, glif rysuje się nad nią ——— */
+
+.gl-decode [data-g],
+.gl-statement [data-g] {
+  position: relative;
+  color: transparent;
+}
+
+.gl-decode [data-g]::after,
+.gl-statement [data-g]::after {
+  content: attr(data-g);
+  position: absolute;
+  inset-inline: -0.2em;
+  top: 50%;
+  translate: 0 -46%;
+  font-family: var(--gl-font-glyph), monospace;
+  font-size: 0.62em;
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: 1;
+  text-align: center;
+  color: var(--fm-ink-3);
+}
+
+/* Akapit przed odczytaniem: glify drobne i ciche — zapowiedź tekstu, nie ściana znaków. */
+.gl-statement [data-g]::after {
+  font-size: 0.46em;
+  color: color-mix(in oklch, var(--fm-ink-3) 70%, transparent);
+}
+
+.gl-statement {
+  font-size: clamp(1.75rem, 1.1rem + 2.7vw, 3.25rem);
+  line-height: 1.12;
+  letter-spacing: -0.032em;
+  font-weight: 500;
+  text-wrap: pretty;
+}
+
+.gl-fact {
+  font-size: clamp(2rem, 1.5rem + 1.8vw, 3rem);
+  line-height: 1;
+  letter-spacing: -0.04em;
+  font-weight: 500;
+}
+
+.gl-emblem {
+  display: block;
+  width: 1em;
+  font-size: 4rem;
+  line-height: 1;
+  /* Glif z kroju mono ma 0,6 em szerokości — przesunięcie wyrównuje go optycznie do tekstu. */
+  margin-inline-start: -0.08em;
+  color: var(--fm-ink);
+}
+
+/* ——— Obraz zakodowany w glifach (kafle realizacji, okładki) ——— */
+
+.gl-coded {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  background: var(--fm-fill);
+}
+
+.gl-coded::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 1px var(--fm-edge);
+  pointer-events: none;
+}
+
+.gl-coded__image,
+.gl-coded__video,
+.gl-coded__canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.gl-coded__image,
+.gl-coded__video {
+  object-fit: cover;
+}
+
+.gl-coded__video {
+  opacity: 0;
+  transition: opacity 240ms var(--ease-fm-snap);
+}
+
+.gl-coded__video[data-playing] {
+  opacity: 1;
+}
+
+.gl-coded__canvas {
+  z-index: 2;
+}
+
+/* ——— Podgląd realizacji (okno; na telefonie arkusz od dołu) ——— */
+
+.gl-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+  background: color-mix(in oklch, var(--fm-canvas) 70%, transparent);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.gl-overlay[data-state="open"] {
+  animation: fm-fade 220ms var(--ease-fm-snap);
+}
+
+.gl-overlay[data-state="closed"] {
+  animation: gl-fade-out 160ms ease-out forwards;
+}
+
+.gl-dialog {
+  position: fixed;
+  z-index: 71;
+  inset-inline: 0;
+  bottom: 0;
+  max-height: calc(100dvh - 1.5rem);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 0.5rem 0.5rem calc(1.5rem + env(safe-area-inset-bottom, 0px));
+  border-radius: 1.75rem 1.75rem 0 0;
+  background: var(--fm-surface);
+  box-shadow: var(--fm-shadow-float);
+  outline: none;
+}
+
+.gl-dialog[data-state="open"] {
+  animation: gl-sheet-in 420ms var(--ease-fm-drawer);
+}
+
+.gl-dialog[data-state="closed"] {
+  animation: gl-sheet-out 220ms var(--ease-fm-snap) forwards;
+}
+
+.gl-dialog__media {
+  width: min(100%, calc(58dvh * var(--gl-ratio, 1.5)));
+  margin-inline: auto;
+}
+
+@media (min-width: 40rem) {
+  .gl-dialog {
+    inset: 50% auto auto 50%;
+    translate: -50% -50%;
+    width: min(100% - 2 * var(--fm-gutter), 56rem);
+    max-height: calc(100dvh - 2 * var(--fm-gutter));
+    padding: 0.625rem 0.625rem 1.75rem;
+    border-radius: 2rem;
+  }
+
+  .gl-dialog[data-state="open"] {
+    animation: gl-dialog-in 280ms var(--ease-fm-snap);
+  }
+
+  .gl-dialog[data-state="closed"] {
+    animation: gl-dialog-out 160ms ease-out forwards;
+  }
+
+  .gl-dialog__media {
+    width: min(100%, calc(64dvh * var(--gl-ratio, 1.5)));
+  }
+}
+
+@keyframes gl-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes gl-sheet-in {
+  from {
+    transform: translateY(100%);
+  }
+}
+
+@keyframes gl-sheet-out {
+  to {
+    transform: translateY(100%);
+  }
+}
+
+@keyframes gl-dialog-in {
+  from {
+    opacity: 0;
+    scale: 0.96;
+  }
+}
+
+@keyframes gl-dialog-out {
+  to {
+    opacity: 0;
+    scale: 0.97;
+  }
+}
+
+/* ——— Pola formularza: wypełnione, 16 px (bez powiększania na iOS) ——— */
+
+.gl-input {
+  width: 100%;
+  border-radius: var(--radius-fm-xl);
+  background: var(--fm-fill);
+  color: var(--fm-ink);
+  font-size: 1rem;
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+  transition:
+    background-color 150ms var(--ease-fm-snap),
+    box-shadow 150ms var(--ease-fm-snap);
+}
+
+textarea.gl-input {
+  field-sizing: content;
+}
+
+.gl-input::placeholder {
+  color: var(--fm-ink-3);
+}
+
+.gl-input:hover {
+  background: var(--fm-fill-strong);
+}
+
+.gl-input:focus-visible {
+  background: var(--fm-surface);
+  box-shadow: 0 0 0 1px var(--fm-edge-strong);
+  outline-color: var(--fm-ink);
+}
+
+.gl-input[aria-invalid="true"] {
+  box-shadow: inset 0 0 0 1px var(--fm-ink);
+}
+
+/* Menu: zawsze arkusz od dołu (także na tablecie). */
+@media (min-width: 40rem) {
+  .gl-dialog.gl-menu {
+    inset: auto 0 0 0;
+    translate: none;
+    width: auto;
+    max-width: 32rem;
+    margin-inline: auto;
+    border-radius: 1.75rem 1.75rem 0 0;
+    padding: 0.5rem 0.5rem calc(1.5rem + env(safe-area-inset-bottom, 0px));
+  }
+
+  .gl-dialog.gl-menu[data-state="open"] {
+    animation: gl-sheet-in 420ms var(--ease-fm-drawer);
+  }
+
+  .gl-dialog.gl-menu[data-state="closed"] {
+    animation: gl-sheet-out 220ms var(--ease-fm-snap) forwards;
+  }
+}
+
+.gl-wordmark .gl-mark {
+  width: 0.9em;
+  font-size: 0.78em;
+}
+
+.gl-wordmark {
+  font-size: clamp(2.5rem, 1rem + 6.4vw, 6.5rem);
+  line-height: 1;
+  letter-spacing: -0.05em;
+  font-weight: 500;
+}

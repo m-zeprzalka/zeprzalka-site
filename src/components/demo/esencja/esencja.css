@@ -1,0 +1,645 @@
+/*
+ * Esencja (iteracja 5) — arkusz koncepcji. Jedna zasada ruchu: wyostrzanie
+ * (rozmycie → ostrość) w tekstach i kadrach, a przewijanie „dopełnia” treść.
+ * Wszystkie klasy, keyframes i nazwy osi czasu mają prefiks `es-` (arkusze
+ * dem są globalne po przejściu między demami). Ruch sterowany przewijaniem
+ * żyje tylko w `@supports` + `prefers-reduced-motion: no-preference`
+ * (globalna reguła z demo.css nie wyłącza osi czasu przewijania).
+ */
+
+.es {
+  /* Długi ease-out „framerowy” dla tekstów i kadrów (wejścia jednorazowe). */
+  --es-ease-text: cubic-bezier(0.22, 1, 0.36, 1);
+  /* Margines kadru pełnej szerokości — 12 px od krawędzi okna. */
+  --es-edge: 0.75rem;
+  /* Pigułka nagłówka: wysokość i odstęp od góry (z bezpiecznym obszarem). */
+  --es-header: 3.5rem;
+  --es-header-top: calc(0.75rem + env(safe-area-inset-top, 0px));
+
+  -webkit-tap-highlight-color: transparent;
+  overflow-x: clip;
+}
+
+.es :where(a, button, [role="button"], summary, label) {
+  touch-action: manipulation;
+}
+
+.es :where(button, [role="button"], [role="radio"]) {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Kotwice nie chowają się pod pływającą pigułką. */
+html:has(.es) {
+  scroll-padding-top: calc(var(--es-header, 3.5rem) + 2rem);
+}
+
+/* ——— Typografia ——— */
+
+.es-display {
+  /*
+   * Telefon: rozmiar liczony z szerokości ekranu, tak żeby najdłuższa linia
+   * („w produkty cyfrowe.”, ≈ 8,8 em przy światle −0,045 em) mieściła się
+   * w kontenerze — trzy linie bez sieroty od 360 do 430 px
+   * (360 → 36 px, 390 → 39 px, 430 → 43,4 px).
+   */
+  font-size: min(calc(10.55vw - 0.125rem), 3.25rem);
+  line-height: 0.98;
+  letter-spacing: -0.045em;
+  font-weight: 550;
+}
+
+@media (min-width: 40rem) {
+  .es-display {
+    font-size: clamp(2.625rem, 1.25rem + 4.6vw, 5rem);
+  }
+}
+
+.es-h2 {
+  font-size: clamp(2rem, 1.35rem + 2.5vw, 3.5rem);
+  line-height: 1.02;
+  letter-spacing: -0.045em;
+  font-weight: 550;
+}
+
+.es-manifest {
+  font-size: clamp(1.75rem, 1.05rem + 2.75vw, 3.25rem);
+  line-height: 1.12;
+  letter-spacing: -0.035em;
+  font-weight: 500;
+}
+
+/*
+ * Wejście hero: rozmywają się wyłącznie słowa H1 (8 px → 0, 450 ms, co 35 ms,
+ * start po 40 ms — całość ≤ 700 ms). Status, lead, akcje i wizytówka wchodzą
+ * bez rozmycia: krycie + 8 px w 300 ms. Kadr z wideo stoi od razu (LCP).
+ * Czysty CSS — nic nie czeka na JavaScript.
+ */
+@keyframes es-word-in {
+  from {
+    opacity: 0;
+    filter: blur(8px);
+    translate: 0 0.18em;
+  }
+}
+
+@keyframes es-rise {
+  from {
+    opacity: 0;
+    translate: 0 0.5rem;
+  }
+}
+
+.es-word {
+  display: inline-block;
+  animation: es-word-in 450ms var(--es-ease-text) both;
+  animation-delay: calc(var(--es-t0, 0ms) + var(--w, 0) * 35ms);
+}
+
+.es-rise {
+  animation: es-rise 300ms var(--ease-fm-snap) both;
+  animation-delay: var(--es-d, 0ms);
+}
+
+/* ——— Wejścia przy przewijaniu (Appear.tsx dopisuje `data-in`) ——— */
+
+@media (prefers-reduced-motion: no-preference) {
+  .es[data-es-js] [data-es-in]:not([data-in]),
+  .es[data-es-js] .es-reveal:not([data-in]),
+  .es[data-es-js] [data-es-words]:not([data-in]) .es-w {
+    opacity: 0;
+    filter: blur(6px);
+    translate: 0 1rem;
+  }
+
+  .es[data-es-js] [data-es-words]:not([data-in]) .es-w {
+    filter: blur(10px);
+    translate: 0 0.3em;
+  }
+
+  .es [data-es-in],
+  .es .es-reveal {
+    transition:
+      opacity 800ms var(--es-ease-text),
+      filter 800ms var(--es-ease-text),
+      translate 800ms var(--es-ease-text);
+    transition-delay: calc(var(--i, 0) * 70ms);
+  }
+
+  .es [data-es-words] .es-w {
+    transition:
+      opacity 900ms var(--es-ease-text),
+      filter 900ms var(--es-ease-text),
+      translate 1000ms var(--es-ease-text);
+    transition-delay: calc(var(--i, 0) * 55ms);
+  }
+
+  /* Element widoczny już przy hydratacji — bez animacji, bez mignięcia. */
+  .es [data-instant],
+  .es [data-instant] .es-w {
+    transition: none !important;
+  }
+}
+
+.es-w {
+  display: inline-block;
+}
+
+/* ——— Nagłówek-pigułka ——— */
+
+.es-pill {
+  background: color-mix(in oklch, var(--fm-surface) 72%, transparent);
+  box-shadow: var(--fm-shadow-ring);
+  -webkit-backdrop-filter: blur(14px) saturate(1.4);
+  backdrop-filter: blur(14px) saturate(1.4);
+}
+
+/* Po zjechaniu z góry pigułka dostaje cień „unoszenia” (oś czasu przewijania strony). */
+@supports (animation-timeline: scroll()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .es-pill {
+      animation: es-pill-lift linear both;
+      animation-timeline: scroll(root);
+      animation-range: 0 5rem;
+    }
+  }
+}
+
+@keyframes es-pill-lift {
+  to {
+    background: color-mix(in oklch, var(--fm-surface) 84%, transparent);
+    box-shadow: var(--fm-shadow-pop);
+  }
+}
+
+/* Chowanie przy przewijaniu w dół: pigułka wyjeżdża nad krawędź, wraca przy ruchu w górę. */
+.es-header {
+  transition: translate 320ms var(--ease-fm-snap);
+}
+
+.es-header[data-hidden] {
+  translate: 0 calc(-100% - 0.5rem);
+}
+
+/* Znak ASCII: stała szerokość trzech znaków — dekodowanie nie przesuwa nazwy. */
+.es-glyph {
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-feature-settings:
+    "liga" 0,
+    "calt" 0;
+  width: 2.25rem;
+}
+
+/* ——— Kadr reelu: skala z szerokości kontenera do pełnej przy przewijaniu ——— */
+
+.es-reel {
+  /* Pełna szerokość, ale nie wyższy niż ekran — na szerokich monitorach kadr 16:9 mieści się w całości. */
+  width: min(calc(100% - 2 * var(--es-edge)), calc((100svh - 1.5rem) * 1080 / 606));
+  margin-inline: auto;
+  transform-origin: 50% 0;
+  scale: var(--es-reel-from, 1);
+}
+
+@supports (animation-timeline: scroll()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .es-reel {
+      animation: es-reel linear both;
+      animation-timeline: scroll(root);
+      animation-range: 0 70vh;
+    }
+  }
+}
+
+@keyframes es-reel {
+  from {
+    scale: var(--es-reel-from, 1);
+  }
+  to {
+    scale: 1;
+  }
+}
+
+/* ——— Panel menu (telefon): pigułka rozwija się w dół od swojej krawędzi ——— */
+
+@keyframes es-sheet-in {
+  from {
+    opacity: 0;
+    scale: 0.96;
+    translate: 0 -0.5rem;
+  }
+}
+
+@keyframes es-sheet-out {
+  to {
+    opacity: 0;
+    scale: 0.97;
+    translate: 0 -0.25rem;
+  }
+}
+
+@keyframes es-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes es-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
+.es-sheet {
+  transform-origin: 50% 0;
+}
+
+.es-sheet[data-state="open"] {
+  animation: es-sheet-in 280ms var(--ease-fm-snap);
+}
+
+.es-sheet[data-state="closed"] {
+  animation: es-sheet-out 160ms var(--ease-fm-snap);
+}
+
+.es-overlay[data-state="open"] {
+  animation: es-fade-in 240ms var(--ease-fm-snap);
+}
+
+.es-overlay[data-state="closed"] {
+  animation: es-fade-out 160ms var(--ease-fm-snap);
+}
+
+/* ——— Podgląd realizacji: okno (desktop) i arkusz od dołu (telefon) ——— */
+
+@keyframes es-pop-in {
+  from {
+    opacity: 0;
+    scale: 0.97;
+    filter: blur(4px);
+  }
+}
+
+@keyframes es-pop-out {
+  to {
+    opacity: 0;
+    scale: 0.98;
+  }
+}
+
+@keyframes es-sheet-up {
+  from {
+    translate: 0 100%;
+  }
+}
+
+@keyframes es-sheet-down {
+  to {
+    translate: 0 100%;
+  }
+}
+
+.es-lightbox[data-state="open"] {
+  animation: es-pop-in 320ms var(--ease-fm-snap);
+}
+
+.es-lightbox[data-state="closed"] {
+  animation: es-pop-out 180ms var(--ease-fm-snap);
+}
+
+@media (max-width: 47.99rem) {
+  .es-lightbox[data-state="open"] {
+    animation: es-sheet-up 420ms var(--ease-fm-drawer);
+  }
+
+  .es-lightbox[data-state="closed"] {
+    animation: es-sheet-down 240ms var(--ease-fm-drawer);
+  }
+}
+
+/* Zmiana realizacji w podglądzie: nowy kadr i opis wyostrzają się na miejscu. */
+@keyframes es-swap {
+  from {
+    opacity: 0;
+    filter: blur(6px);
+  }
+}
+
+.es-swap {
+  animation: es-swap 300ms var(--ease-fm-snap) both;
+}
+
+/* ——— Pokaz realizacji: dwa nieskończone rzędy ——— */
+
+.es-marquee {
+  --es-gap: 0.75rem;
+  --es-h: 11.25rem;
+  /* Wysokość karty / prędkość (px/s): czas pętli = suma proporcji × to tempo. */
+  --es-pace: 4.7;
+  --es-fade: 1.5rem;
+}
+
+@media (min-width: 40rem) {
+  .es-marquee {
+    --es-gap: 1rem;
+    --es-h: 15rem;
+    --es-pace: 5.6;
+    --es-fade: 4rem;
+  }
+}
+
+@media (min-width: 64rem) {
+  .es-marquee {
+    --es-h: 17.5rem;
+    --es-pace: 6.2;
+  }
+}
+
+.es-row {
+  display: flex;
+  gap: var(--es-gap);
+  overflow: hidden;
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    #000 var(--es-fade),
+    #000 calc(100% - var(--es-fade)),
+    transparent
+  );
+}
+
+.es-track {
+  display: flex;
+  flex-shrink: 0;
+  gap: var(--es-gap);
+}
+
+.es-mcard {
+  height: var(--es-h);
+}
+
+@keyframes es-marquee {
+  to {
+    translate: calc(-100% - var(--es-gap)) 0;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .es-track {
+    animation: es-marquee calc(var(--es-units) * var(--es-pace) * 1s) linear infinite;
+  }
+
+  .es-row[data-reverse] .es-track {
+    animation-direction: reverse;
+  }
+
+  .es-marquee[data-paused] .es-track,
+  .es-row[data-hold] .es-track,
+  .es-row:has(:focus-visible) .es-track {
+    animation-play-state: paused;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) and (hover: hover) and (pointer: fine) {
+  .es-row:hover .es-track {
+    animation-play-state: paused;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .es-row {
+    overflow-x: auto;
+    mask-image: none;
+    scroll-snap-type: x proximity;
+    scrollbar-width: none;
+    padding-inline: var(--fm-gutter);
+    scroll-padding-inline: var(--fm-gutter);
+  }
+
+  .es-track li {
+    scroll-snap-align: start;
+  }
+
+  .es-track + .es-track {
+    display: none;
+  }
+}
+
+/* ——— Manifest: atrament wypełnia akapit słowo po słowie (oś czasu widoku) ——— */
+
+.es-fill {
+  view-timeline: --es-fill block;
+}
+
+@keyframes es-fill {
+  to {
+    color: var(--fm-ink);
+  }
+}
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    /*
+     * Niewypełnione słowo: atrament 28% krycia (czytelne od razu, także na
+     * zrzucie). Zakres: start, gdy akapit wchodzi od dołu (~85% wysokości
+     * ekranu), koniec, gdy środek akapitu jest na ~45% wysokości — przy
+     * akapicie wysokim na 0,4–0,7 ekranu to ok. 51–53% zakresu `cover`.
+     */
+    .es-fw {
+      color: color-mix(in oklch, var(--fm-ink) 28%, transparent);
+      animation: es-fill linear both;
+      animation-timeline: --es-fill;
+      animation-range: cover calc(10% + var(--i) * 39% / var(--n)) cover
+        calc(10% + (var(--i) + 3) * 39% / var(--n));
+    }
+  }
+}
+
+/* ——— Kafel „Projektowanie”: karta w edycji, suwaki, przełącznik ——— */
+
+.es-design-card {
+  border-radius: var(--es-r);
+  padding: var(--es-p);
+  transition:
+    border-radius 140ms var(--ease-fm-snap),
+    padding 140ms var(--ease-fm-snap),
+    box-shadow 300ms var(--ease-fm-snap);
+}
+
+.es-design-media {
+  border-radius: var(--es-ri);
+  transition: border-radius 140ms var(--ease-fm-snap);
+}
+
+.es-switch[aria-checked="true"] > span {
+  translate: 1rem 0;
+}
+
+.es-range {
+  appearance: none;
+  height: 1.5rem;
+  background: transparent;
+  cursor: pointer;
+  touch-action: pan-y;
+}
+
+.es-range::-webkit-slider-runnable-track {
+  height: 4px;
+  border-radius: 9999px;
+  background: linear-gradient(
+    to right,
+    var(--fm-ink) var(--es-fill),
+    var(--fm-fill-strong) var(--es-fill)
+  );
+}
+
+.es-range::-moz-range-track {
+  height: 4px;
+  border-radius: 9999px;
+  background: linear-gradient(
+    to right,
+    var(--fm-ink) var(--es-fill),
+    var(--fm-fill-strong) var(--es-fill)
+  );
+}
+
+.es-range::-webkit-slider-thumb {
+  appearance: none;
+  width: 1rem;
+  height: 1rem;
+  margin-top: -6px;
+  border-radius: 9999px;
+  background: var(--fm-surface);
+  box-shadow:
+    0 0 0 1px var(--fm-edge-strong),
+    0 1px 3px oklch(0 0 0 / 0.2);
+  transition: scale 150ms var(--ease-fm-snap);
+}
+
+.es-range::-moz-range-thumb {
+  width: 1rem;
+  height: 1rem;
+  border: 0;
+  border-radius: 9999px;
+  background: var(--fm-surface);
+  box-shadow:
+    0 0 0 1px var(--fm-edge-strong),
+    0 1px 3px oklch(0 0 0 / 0.2);
+}
+
+.es-range:active::-webkit-slider-thumb {
+  scale: 1.15;
+}
+
+.es-range:focus-visible {
+  outline: 2px solid var(--fm-ink);
+  outline-offset: 2px;
+  border-radius: 9999px;
+}
+
+/* ——— Kafel „AI”: dymek pytania i połysk „myślenia” ——— */
+
+@keyframes es-bubble-in {
+  from {
+    opacity: 0;
+    scale: 0.94;
+    translate: 0 0.5rem;
+    filter: blur(4px);
+  }
+}
+
+.es-bubble {
+  transform-origin: 100% 100%;
+  animation: es-bubble-in 380ms var(--ease-fm-snap) both;
+}
+
+.es-shimmer {
+  background: linear-gradient(90deg, var(--fm-ink-3) 20%, var(--fm-ink) 50%, var(--fm-ink-3) 80%) 0
+    0 / 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: fm-shimmer 1.4s linear infinite;
+}
+
+/* ——— Kontakt: lokalny ciemny zakres tokenów (panel ciemny w obu motywach) ——— */
+
+.es-ink {
+  --fm-canvas: oklch(0.17 0 0);
+  --fm-surface: oklch(0.23 0 0);
+  --fm-fill: oklch(0.26 0 0);
+  --fm-fill-strong: oklch(0.3 0 0);
+  --fm-ink: oklch(0.975 0 0);
+  --fm-ink-2: oklch(0.78 0 0);
+  --fm-ink-3: oklch(0.66 0 0);
+  --fm-edge: oklch(1 0 0 / 0.1);
+  --fm-edge-strong: oklch(1 0 0 / 0.18);
+  --fm-inverse: oklch(0.145 0 0);
+  --fm-shadow-ring: 0 0 0 1px var(--fm-edge);
+  color-scheme: dark;
+}
+
+.dark .es-ink {
+  --fm-canvas: oklch(0.205 0 0);
+  box-shadow: inset 0 0 0 1px oklch(1 0 0 / 0.06);
+}
+
+/* ——— Stopka: wielki znak przycięty dolną krawędzią ——— */
+
+.es-wordmark {
+  font-size: min(23vw, 21rem);
+  letter-spacing: -0.065em;
+  margin-bottom: -0.16em;
+  /* Optyczne wyśrodkowanie: ujemne światło zostawia pustkę za ostatnią literą. */
+  padding-inline-start: 0.065em;
+}
+
+/* Podpowiedzi czatu przewijane w poziomie — ostatnia gaśnie przy krawędzi zamiast się urywać. */
+.es-chips {
+  mask-image: linear-gradient(to right, #000 calc(100% - 1.5rem), transparent);
+}
+
+/* Portret ASCII na białym tle — w ciemnym motywie odwrócony (jasność), z zachowanym odcieniem. */
+.dark .es-avatar img {
+  filter: invert(1) hue-rotate(180deg);
+}
+
+.dark .es-avatar {
+  background: #000;
+}
+
+/* Wielki znak w stopce wchodzi mocniej niż reszta: z dołu i z większego rozmycia. */
+@media (prefers-reduced-motion: no-preference) {
+  .es[data-es-js] .es-wordmark:not([data-in]) {
+    translate: 0 30%;
+    filter: blur(14px);
+  }
+
+  .es .es-wordmark {
+    transition-duration: 1200ms;
+  }
+}
+
+/* Podgląd: telefon — nagłówek, kadr, opis; desktop — kadr po lewej, nagłówek i opis po prawej. */
+.es-lb {
+  grid-template-areas: "head" "media" "info";
+}
+
+.es-lb-head {
+  grid-area: head;
+}
+
+.es-lb-media {
+  grid-area: media;
+}
+
+.es-lb-info {
+  grid-area: info;
+}
+
+@media (min-width: 48rem) {
+  .es-lb {
+    grid-template-columns: minmax(0, 1fr) 20rem;
+    grid-template-rows: auto 1fr;
+    grid-template-areas: "media head" "media info";
+  }
+}

@@ -1,0 +1,804 @@
+/*
+ * „Tryptyk” — arkusz koncepcji. Tokeny przychodzą z Formy (`--fm-*`, `--ease-fm-*`,
+ * `--radius-fm-*`); tutaj siatka trzech kolumn i to, czego nie da się czysto
+ * zapisać utility: selektory relacyjne, animacje sterowane przewijaniem,
+ * warstwy sceny, View Transitions. Wszystko, co się przesuwa, stoi w `no-preference`.
+ * Każda klasa, keyframes i nazwa przejścia ma prefiks `tk-`.
+ */
+
+.tk {
+  /* Kolumna dokumentu na telefonie i tablecie; „wylew” tła wierszy poza kolumnę. */
+  --tk-col: 40rem;
+  --tk-bleed: 0.5rem;
+  --tk-header: 4rem;
+  --tk-lane: 8.5rem;
+  /* Scena: odstęp od góry. */
+  --tk-stage-top: calc(var(--tk-header) + 1rem);
+  /* Szerokość paska u góry; `100%` liczy się tam, gdzie zmienną użyto (pasek, panel menu). */
+  --tk-bar-w: min(100% - 2 * var(--fm-gutter), var(--tk-col));
+}
+@media (min-width: 64rem) {
+  .tk {
+    --tk-bar-w: min(100% - 2 * var(--fm-gutter), 43rem + clamp(19.5rem, 28vw, 21rem));
+  }
+}
+@media (min-width: 40rem) {
+  .tk {
+    --tk-bleed: 0.75rem;
+  }
+}
+@media (min-width: 80rem) {
+  .tk {
+    --tk-header: 0rem;
+    --tk-stage-top: 1.5rem;
+  }
+}
+
+/* Lepki nagłówek (< 1280 px) nie zasłania celu kotwicy ani fokusu (WCAG 2.4.11). */
+:root:has(.tk) {
+  scroll-padding-top: calc(var(--tk-header, 4rem) + 1.25rem);
+  -webkit-tap-highlight-color: transparent;
+}
+@media (min-width: 80rem) {
+  :root:has(.tk) {
+    scroll-padding-top: 2.5rem;
+  }
+}
+
+/* ——— Siatka: 1 → 2 → 3 kolumny ——— */
+.tk-frame {
+  display: grid;
+  grid-template-columns: minmax(0, var(--tk-col));
+  justify-content: center;
+  padding-inline: var(--fm-gutter);
+}
+@media (min-width: 64rem) {
+  .tk-frame {
+    grid-template-columns: minmax(0, 40rem) clamp(19.5rem, 28vw, 21rem);
+    column-gap: 3rem;
+  }
+}
+@media (min-width: 80rem) {
+  .tk-frame {
+    grid-template-columns:
+      clamp(12.5rem, 15vw, 15rem) minmax(0, 44rem)
+      clamp(20rem, 25vw, 26rem);
+    column-gap: clamp(3rem, 4vw, 5rem);
+  }
+}
+/* Od 1440 px prace dostają więcej miejsca: scena 440–480 px, dokument nadal ≥ 640 px. */
+@media (min-width: 90rem) {
+  .tk-frame {
+    grid-template-columns:
+      clamp(12.5rem, 13vw, 14rem) minmax(0, 44rem)
+      clamp(27.5rem, 31vw, 30rem);
+    column-gap: clamp(2.5rem, 3vw, 4rem);
+  }
+}
+
+/* Pasek u góry ma szerokość ramy (dokument + scena od 1024 px). */
+.tk-bar {
+  width: var(--tk-bar-w);
+  margin-inline: auto;
+}
+/* Panel menu (≥ 640 px) trzyma prawą krawędź paska. */
+@media (min-width: 40rem) {
+  .tk-menu-panel {
+    right: max(var(--fm-gutter), (100% - var(--tk-bar-w)) / 2);
+  }
+}
+
+/* Jawna szerokość: <button> nie rozciąga się jak blok, więc samo `width: 100%`
+   z ujemnymi marginesami wylewałoby tło tylko w lewo. */
+.tk-bleed {
+  box-sizing: border-box;
+  width: calc(100% + 2 * var(--tk-bleed));
+  margin-inline: calc(-1 * var(--tk-bleed));
+  padding-inline: var(--tk-bleed);
+}
+
+/* ——— Nagłówek (< 1280 px): kapsuła pojawia się wraz z przewinięciem (0 → 64 px) ——— */
+.tk-capsule {
+  position: absolute;
+  inset: 0.5rem calc(-1 * var(--tk-bleed) - 0.25rem);
+  border-radius: var(--radius-fm-2xl);
+  background: color-mix(in oklab, var(--fm-surface) 82%, transparent);
+  box-shadow:
+    0 0 0 1px var(--fm-edge),
+    0 8px 24px -12px oklch(0 0 0 / 0.12);
+  -webkit-backdrop-filter: blur(12px) saturate(1.5);
+  backdrop-filter: blur(12px) saturate(1.5);
+  pointer-events: none;
+}
+@supports (animation-timeline: scroll()) {
+  .tk-capsule {
+    animation: tk-capsule linear both;
+    animation-timeline: scroll(root block);
+    animation-range: 0 4rem;
+  }
+}
+@keyframes tk-capsule {
+  from {
+    opacity: 0;
+    scale: 0.985;
+  }
+}
+@media (prefers-reduced-transparency: reduce) {
+  .tk-capsule {
+    background: var(--fm-surface);
+    backdrop-filter: none;
+  }
+}
+
+/* ——— Spis w lewej szynie: tło aktywnej pozycji przesuwa się w pionie ——— */
+.tk-nav__pill {
+  translate: 0 var(--y, 0);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .tk-nav__pill {
+    transition: translate 300ms var(--ease-fm-move);
+  }
+}
+.tk-nav__glyph {
+  transition: color 150ms ease;
+}
+
+/* ——— Pierwszy ekran: animuje się wyłącznie nagłówek, reszta stoi od pierwszej klatki ———
+   Słowa wyostrzają się z rozmycia co 26 ms, każde 520 ms — całość ≤ 700 ms. */
+@keyframes tk-word {
+  from {
+    opacity: 0;
+    filter: blur(8px);
+    translate: 0 0.22em;
+  }
+}
+@keyframes tk-rise {
+  from {
+    opacity: 0;
+    filter: blur(4px);
+    translate: 0 0.5rem;
+  }
+}
+@keyframes tk-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes tk-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+.tk-appear {
+  animation: tk-fade-in 600ms var(--ease-fm-snap) both;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .tk-word {
+    animation: tk-word 520ms var(--ease-fm-snap) both;
+    animation-delay: calc(var(--i, 0) * 26ms);
+  }
+  /* Komunikaty formularza (błąd, wynik) — wejście odpowiedzi, nie dekoracja. */
+  .tk-enter {
+    animation: tk-rise 360ms var(--ease-fm-snap) both;
+  }
+}
+
+/* ——— Chip w tekście: czytelna pigułka w linii zdania, łamie się razem z nim ———
+   Wypełnienie i pierścień jak chipy Formy; pole trafienia ≥ 44 px dzięki pseudo-elementowi. */
+.tk-chip {
+  position: relative;
+  cursor: pointer;
+  border-radius: 999px;
+  padding: 0.04em 0.42em 0.08em 0.36em;
+  margin-inline: 0.02em;
+  background: var(--fm-fill);
+  box-shadow: inset 0 0 0 1px var(--fm-edge);
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  transition: background-color 150ms ease;
+}
+.tk-chip::after {
+  content: "";
+  position: absolute;
+  inset: -0.6em -0.15em;
+}
+.tk-chip[data-state="open"] {
+  background-color: var(--fm-fill-strong);
+}
+@media (hover: hover) and (pointer: fine) {
+  .tk-chip:hover {
+    background-color: var(--fm-fill-strong);
+    transition-duration: 0ms;
+  }
+}
+.tk-chip__icon {
+  display: inline-block;
+  width: 0.66em;
+  height: 0.66em;
+  margin-inline-end: 0.24em;
+  vertical-align: -0.04em;
+  color: var(--fm-ink-3);
+}
+
+/* ——— Popover, paleta i arkusze: wejście od wyzwalacza, wyjście szybsze ——— */
+@keyframes tk-pop-in {
+  from {
+    opacity: 0;
+    scale: 0.96;
+    filter: blur(2px);
+  }
+}
+@keyframes tk-pop-out {
+  to {
+    opacity: 0;
+    scale: 0.98;
+  }
+}
+@keyframes tk-sheet-in {
+  from {
+    translate: 0 100%;
+  }
+}
+@keyframes tk-sheet-out {
+  to {
+    translate: 0 100%;
+  }
+}
+.tk-popover {
+  transform-origin: var(--radix-popover-content-transform-origin);
+}
+.tk-popover[data-state="open"] {
+  animation: tk-pop-in 200ms var(--ease-fm-snap);
+}
+.tk-popover[data-state="closed"] {
+  animation: tk-pop-out 120ms var(--ease-fm-snap) forwards;
+}
+.tk-overlay[data-state="open"] {
+  animation: tk-fade-in 200ms var(--ease-fm-snap);
+}
+.tk-overlay[data-state="closed"] {
+  animation: tk-fade-out 150ms var(--ease-fm-snap) forwards;
+}
+/* Na telefonie arkusz od dołu, od 640 px paleta to okno pod górną krawędzią. */
+.tk-sheet[data-state="open"] {
+  animation: tk-sheet-in 420ms var(--ease-fm-drawer);
+}
+.tk-sheet[data-state="closed"] {
+  animation: tk-sheet-out 240ms var(--ease-fm-drawer) forwards;
+}
+@media (min-width: 40rem) {
+  .tk-palette {
+    transform-origin: 50% 0;
+  }
+  .tk-palette[data-state="open"] {
+    animation: tk-pop-in 200ms var(--ease-fm-snap);
+  }
+  .tk-palette[data-state="closed"] {
+    animation: tk-pop-out 120ms var(--ease-fm-snap) forwards;
+  }
+}
+/* Otwarta skrótem klawiszowym: bez animacji (akcja wykonywana dziesiątki razy dziennie). */
+.tk-palette[data-instant],
+.tk-overlay[data-instant] {
+  animation: none !important;
+}
+
+/* ——— Akordeon kompetencji: wysokość z Radiksa, treść wyostrza się z opóźnieniem ——— */
+@keyframes tk-acc-open {
+  from {
+    height: 0;
+  }
+  to {
+    height: var(--radix-accordion-content-height);
+  }
+}
+@keyframes tk-acc-close {
+  from {
+    height: var(--radix-accordion-content-height);
+  }
+  to {
+    height: 0;
+  }
+}
+.tk-acc {
+  overflow: hidden;
+}
+.tk-acc[data-state="open"] {
+  animation: tk-acc-open 280ms var(--ease-fm-snap);
+}
+.tk-acc[data-state="closed"] {
+  animation: tk-acc-close 200ms var(--ease-fm-snap);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .tk-acc[data-state="open"] > * {
+    animation: tk-rise 360ms var(--ease-fm-snap) 60ms both;
+  }
+}
+/* Otwarta kompetencja = wiersz staje się kartą (tło przenika, nie animujemy cienia). */
+.tk-skill::before {
+  content: "";
+  position: absolute;
+  inset: 0 calc(-1 * var(--tk-bleed));
+  border-radius: var(--radius-fm-2xl);
+  background: var(--fm-surface);
+  box-shadow: var(--fm-shadow-card);
+  opacity: 0;
+  transition: opacity 200ms var(--ease-fm-snap);
+  pointer-events: none;
+}
+.tk-skill[data-state="open"]::before {
+  opacity: 1;
+}
+
+/* ——— Wiersze list: podświetlenie wchodzi od razu, schodzi w 150 ms ——— */
+.tk-row {
+  touch-action: manipulation;
+  transition:
+    background-color 150ms ease,
+    color 150ms ease,
+    scale 160ms var(--ease-fm-snap);
+}
+.tk-row:active {
+  scale: 0.99;
+}
+.tk-row[data-state="open"] {
+  background-color: transparent !important;
+}
+/* Wybrana realizacja (scena) — wiersz zostaje podświetlony jak zaznaczenie w Finderze. */
+.tk-row[aria-current="true"] {
+  background-color: var(--fm-fill);
+}
+@media (hover: hover) and (pointer: fine) {
+  .tk-row:hover {
+    background-color: var(--fm-fill);
+    transition-duration: 0ms, 0ms, 160ms;
+  }
+  /* Wskazany wiersz zostaje w atramencie, reszta listy cofa się do szarości. */
+  .tk-dim:has(.tk-row:hover) .tk-row:not(:hover, [aria-current="true"]) {
+    color: var(--fm-ink-3);
+  }
+  .tk-dim:has(.tk-row:hover) .tk-row:not(:hover) .tk-row__meta {
+    color: color-mix(in oklab, var(--fm-ink-3) 70%, transparent);
+  }
+}
+
+/* Miniatura w indeksie: szarość, kolor przy wskazaniu, fokusie i wyborze (kolor = nagroda). */
+.tk-thumb img {
+  filter: grayscale(1) contrast(0.92);
+  opacity: 0.88;
+  transition:
+    filter 220ms ease,
+    opacity 220ms ease;
+}
+.tk-row[aria-current="true"] .tk-thumb img,
+.tk-row[aria-expanded="true"] .tk-thumb img,
+.tk-row:focus-visible .tk-thumb img {
+  filter: none;
+  opacity: 1;
+}
+@media (hover: hover) and (pointer: fine) {
+  .tk-row:hover .tk-thumb img {
+    filter: none;
+    opacity: 1;
+    transition-duration: 120ms;
+  }
+}
+/* Dotyk nie ma wskazania, więc szara lista byłaby martwa: na telefonie i tablecie
+   miniatury są w kolorze od razu (szarość zostaje tylko tam, gdzie da się wskazać). */
+@media (pointer: coarse) {
+  .tk-thumb img {
+    filter: none;
+    opacity: 1;
+  }
+}
+
+/* Ikona linku: pojawia się (skala 0,75 → 1, 2 px po skosie) w 200 ms. */
+.tk-arrow {
+  opacity: 0;
+  scale: 0.75;
+  translate: -2px 2px;
+  transition:
+    opacity 200ms var(--ease-fm-snap),
+    scale 200ms var(--ease-fm-snap),
+    translate 200ms var(--ease-fm-snap);
+}
+@media (hover: hover) and (pointer: fine) {
+  :is(a, button):hover > .tk-arrow,
+  :is(a, button):hover .tk-arrow {
+    opacity: 1;
+    scale: 1;
+    translate: 0 0;
+  }
+}
+:is(a, button):focus-visible .tk-arrow {
+  opacity: 1;
+  scale: 1;
+  translate: 0 0;
+}
+
+/* Plus → minus: pionowa kreska obraca się i kładzie na poziomej. */
+.tk-plus {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  width: 1rem;
+  height: 1rem;
+  flex: none;
+}
+.tk-plus::before,
+.tk-plus::after {
+  content: "";
+  grid-area: 1 / 1;
+  width: 0.75rem;
+  height: 1.5px;
+  border-radius: 1px;
+  background: currentColor;
+  transition: rotate 300ms var(--ease-fm-snap);
+}
+.tk-plus::after {
+  rotate: 90deg;
+}
+[data-state="open"] > .tk-plus::after,
+[aria-expanded="true"] > .tk-plus::after {
+  rotate: 180deg;
+}
+
+/* ——— Panel realizacji (< 1024 px): wysokość przez siatkę 0fr → 1fr ——— */
+.tk-panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 340ms var(--ease-fm-snap);
+}
+.tk-panel[data-open] {
+  grid-template-rows: 1fr;
+}
+.tk-panel > * {
+  min-height: 0;
+  overflow: hidden;
+}
+.tk-panel__inner {
+  opacity: 0;
+  filter: blur(4px);
+  translate: 0 -0.25rem;
+  transition:
+    opacity 220ms var(--ease-fm-snap),
+    filter 220ms var(--ease-fm-snap),
+    translate 340ms var(--ease-fm-snap);
+}
+.tk-panel[data-open] .tk-panel__inner {
+  opacity: 1;
+  filter: none;
+  translate: 0 0;
+  transition-delay: 70ms;
+}
+/* Zamykanie szybsze niż otwieranie — decyzja już zapadła. */
+.tk-panel:not([data-open]) {
+  transition-duration: 240ms;
+}
+
+/* ——— Scena: warstwy przenikają (nowa 320 ms, stara 160 ms), rama stoi ——— */
+.tk-stage {
+  top: var(--tk-stage-top);
+}
+/* Panel na wysokość ekranu (jak lewa szyna), na bardzo wysokich ekranach z sufitem. */
+.tk-stage__card {
+  height: min(100dvh - var(--tk-stage-top) - 1.5rem, 54rem);
+}
+/* Lightbox 4:5 (proporcja pionowych klipów); na niskich ekranach kurczy się
+   i oddaje miejsce podpisowi, który nie kurczy się nigdy. */
+.tk-lightbox {
+  container-type: size;
+  aspect-ratio: 4 / 5;
+  flex: 0 1 auto;
+  min-height: 11rem;
+}
+.tk-caption {
+  flex: 1 0 auto;
+}
+/* Pasek miniatur: bieżący kadr obwiedziony atramentem, reszta przygaszona. */
+.tk-strip img {
+  opacity: 0.7;
+  transition: opacity 150ms ease;
+}
+.tk-strip[aria-current="true"] {
+  outline: 1.5px solid var(--fm-ink);
+  outline-offset: 2px;
+}
+.tk-strip[aria-current="true"] img,
+.tk-strip:focus-visible img {
+  opacity: 1;
+}
+@media (hover: hover) and (pointer: fine) {
+  .tk-strip:hover img {
+    opacity: 1;
+  }
+}
+.tk-layer {
+  transition:
+    opacity 320ms var(--ease-fm-snap),
+    filter 320ms var(--ease-fm-snap),
+    translate 320ms var(--ease-fm-snap),
+    scale 320ms var(--ease-fm-snap);
+}
+@starting-style {
+  .tk-layer[data-enter="fade"] {
+    opacity: 0;
+    filter: blur(6px);
+    scale: 1.015;
+  }
+  .tk-layer[data-enter="next"] {
+    opacity: 0;
+    filter: blur(4px);
+    translate: 1rem 0;
+  }
+  .tk-layer[data-enter="prev"] {
+    opacity: 0;
+    filter: blur(4px);
+    translate: -1rem 0;
+  }
+}
+/* Przylot kadru: warstwa stoi (ostry kadr leci w przejściu), przenikają tylko napisy. */
+.tk-layer[data-enter="fly"] > * > :not(.tk-lightbox) {
+  transition: opacity 220ms var(--ease-fm-snap) 40ms;
+}
+@starting-style {
+  .tk-layer[data-enter="fly"] > * > :not(.tk-lightbox) {
+    opacity: 0;
+  }
+}
+.tk-layer[data-leaving] {
+  opacity: 0;
+  filter: blur(4px);
+  pointer-events: none;
+  transition-duration: 160ms;
+}
+.tk-layer[data-leaving][data-dir="next"] {
+  translate: -0.75rem 0;
+}
+.tk-layer[data-leaving][data-dir="prev"] {
+  translate: 0.75rem 0;
+}
+/* Medium w lightboksie: zawsze w całości, w proporcji materiału (jednostki kontenera). */
+.tk-fit {
+  width: min(100cqw - 2rem, (100cqh - 2rem) * var(--r));
+  aspect-ratio: var(--r);
+}
+
+/* Morf: kadr ze sceny w pełnej rozdzielczości startuje w miejscu miniatury i rośnie do
+   sceny (nowy stan jest źródłem — nic się nie rozmazuje). Miniatura znika od razu (bez
+   przenikania dwóch różnych klatek — inaczej widać podwójny kontur), para obrazów jest
+   przycięta do kształtu grupy. */
+::view-transition-group(tk-fly) {
+  animation-duration: 300ms;
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+::view-transition-image-pair(tk-fly) {
+  overflow: hidden;
+  border-radius: var(--radius-fm-lg);
+}
+::view-transition-old(tk-fly),
+::view-transition-new(tk-fly) {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  animation: none;
+}
+::view-transition-old(tk-fly) {
+  opacity: 0;
+}
+/* W locie medium nie ma cienia (zrzut cienia skalowałby się jako szara obwódka). */
+[data-flying] {
+  box-shadow: none !important;
+}
+::view-transition-group(tk-stage-old) {
+  animation-duration: 140ms;
+}
+::view-transition-old(tk-stage-old) {
+  animation: tk-stage-out 140ms var(--ease-fm-snap) both;
+}
+@keyframes tk-stage-out {
+  to {
+    opacity: 0;
+    scale: 0.96;
+    filter: blur(4px);
+  }
+}
+
+/* Pierścień nad mediami: obraz przykrywa tło, więc krawędź rysujemy na wierzchu. */
+.tk-ring::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 1px var(--fm-edge);
+  pointer-events: none;
+}
+.tk-video {
+  opacity: 0;
+  transition: opacity 240ms ease;
+}
+.tk-video[data-ready] {
+  opacity: 1;
+}
+/* Portret ASCII to PNG na białym tle: w jasnym motywie biel znika w tle (multiply),
+   w ciemnym odwracamy jasność i zostawiamy kolory znaków (screen). */
+.tk-portrait {
+  mix-blend-mode: multiply;
+  /* PNG ma blade pionowe kreski przy krawędziach — wygaszamy brzegi. */
+  -webkit-mask-image: radial-gradient(closest-side, #000 74%, transparent);
+  mask-image: radial-gradient(closest-side, #000 74%, transparent);
+}
+.dark .tk-portrait {
+  filter: invert(1) hue-rotate(180deg);
+  mix-blend-mode: screen;
+}
+
+/* Połysk na plakacie, zanim zdjęcie się wczyta. */
+@keyframes tk-shimmer {
+  from {
+    background-position: 150% 0;
+  }
+  to {
+    background-position: -50% 0;
+  }
+}
+.tk-skeleton {
+  background: linear-gradient(
+      100deg,
+      transparent 30%,
+      color-mix(in oklab, var(--fm-surface) 70%, transparent) 50%,
+      transparent 70%
+    )
+    var(--fm-fill);
+  background-size: 200% 100%;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .tk-skeleton {
+    animation: tk-shimmer 1.2s linear infinite;
+  }
+}
+
+/* Lista zwinięta: dolne wiersze gasną pod gradientem w kolorze płótna. */
+.tk-fade {
+  position: relative;
+}
+.tk-fade::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0;
+  height: 7rem;
+  background: linear-gradient(to bottom, transparent, var(--fm-canvas) 92%);
+  opacity: 0;
+  transition: opacity 300ms var(--ease-fm-snap);
+  pointer-events: none;
+}
+.tk-fade[data-collapsed]::after {
+  opacity: 1;
+}
+
+/* ——— Formularz: wypełnione pola, fokus jako miękki pierścień ——— */
+.tk-field {
+  width: 100%;
+  border-radius: var(--radius-fm-lg);
+  background: var(--fm-fill);
+  color: var(--fm-ink);
+  font-size: 1rem;
+  outline: none;
+  box-shadow: 0 0 0 1px transparent;
+  transition:
+    background-color 150ms ease,
+    box-shadow 150ms ease;
+}
+@media (min-width: 40rem) and (pointer: fine) {
+  .tk-field {
+    font-size: 0.9375rem;
+  }
+}
+.tk-field::placeholder {
+  color: var(--fm-ink-3);
+}
+@media (hover: hover) and (pointer: fine) {
+  .tk-field:hover {
+    background: var(--fm-fill-strong);
+  }
+}
+.tk-field:focus {
+  background: var(--fm-surface);
+  box-shadow:
+    0 0 0 1px var(--fm-ink-3),
+    0 0 0 4px var(--fm-edge);
+}
+.tk-field[aria-invalid="true"] {
+  background: var(--fm-surface);
+  box-shadow: 0 0 0 1px var(--fm-ink);
+}
+textarea.tk-field {
+  field-sizing: content;
+  resize: none;
+}
+
+/* Przycisk wysyłania: stany w jednej komórce siatki — szerokość nie skacze. */
+.tk-submit__layer {
+  grid-area: 1 / 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition:
+    opacity 200ms var(--ease-fm-snap),
+    filter 200ms var(--ease-fm-snap),
+    translate 400ms var(--ease-fm-spring);
+}
+.tk-submit:not([data-pending]) [data-layer="pending"],
+.tk-submit[data-pending] [data-layer="idle"] {
+  opacity: 0;
+  filter: blur(2px);
+  translate: 0 0.6em;
+}
+.tk-submit[data-pending] [data-layer="idle"] {
+  translate: 0 -0.6em;
+}
+@keyframes tk-spin {
+  to {
+    rotate: 1turn;
+  }
+}
+.tk-spin {
+  animation: tk-spin 0.8s linear infinite;
+}
+
+/* ——— Galeria (masonry): fokus obejmuje cały kafel, wybrany kafel ma obwódkę atramentu ——— */
+.tk-tile:has([data-row-button]:focus-visible) [data-thumb],
+.tk-tile[data-current] [data-thumb] {
+  outline: 2px solid var(--fm-ink);
+  outline-offset: 3px;
+}
+.tk-tile [data-thumb] img {
+  transition: scale 500ms var(--ease-fm-snap);
+}
+@media (hover: hover) and (pointer: fine) {
+  .tk-tile:hover [data-thumb] img {
+    scale: 1.02;
+  }
+}
+
+/* „Kontakt” w pasku: pojawia się po przewinięciu wstępu, znika przy formularzu. */
+.tk-barcta {
+  transition:
+    opacity 200ms var(--ease-fm-snap),
+    scale 200ms var(--ease-fm-snap),
+    visibility 0s linear 0s;
+}
+.tk-barcta:not([data-shown]) {
+  opacity: 0;
+  scale: 0.92;
+  visibility: hidden;
+  pointer-events: none;
+  transition:
+    opacity 150ms var(--ease-fm-snap),
+    scale 150ms var(--ease-fm-snap),
+    visibility 0s linear 150ms;
+}
+
+/* Skróty klawiszowe: 12 px zamiast 11 px Formy — czytelne obok tekstu 13–14 px. */
+.tk kbd {
+  font-size: 0.75rem;
+}
+
+/* Kontrolki nie zaznaczają się przy długim przytrzymaniu (telefon). */
+.tk :is(button, [role="button"], [role="option"]) {
+  -webkit-user-select: none;
+  user-select: none;
+  touch-action: manipulation;
+}
+
+/* „Ogranicz ruch”: zostaje samo przenikanie — bez rozmycia, skali i przesunięć. */
+@media (prefers-reduced-motion: reduce) {
+  .tk-layer,
+  .tk-panel__inner,
+  .tk-submit__layer,
+  .tk-barcta {
+    filter: none !important;
+    scale: 1 !important;
+    translate: none !important;
+  }
+}

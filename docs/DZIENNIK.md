@@ -6,6 +6,58 @@ w `docs/prywatne/` (poza repozytorium). Iteracja bez wpisu tutaj nie jest skońc
 
 ---
 
+## Iteracja 5 — 4 listopada 2026: pięć propozycji strony głównej
+
+Zakres od właściciela: tylko strona główna, tylko piaskownica. Pięć propozycji:
+- ulepszony „Indeks”;
+- wolna interpretacja jego wskazówek;
+- „zaskocz mnie”;
+- wariacja obecnej strony;
+- „Projekt X”.
+
+Wymagania: czerń i biel, mobile first, shadcn na własnych tokenach, ruch w duchu Framera
+(rozmycia, tekst wypełniany przewijaniem, nieskończone slidery, masonry), sygnet z migającym
+glifem jako motyw. Poprzednie dema zostają.
+
+**Proces (jak w studiu)**
+- Pięciu agentów: każdy z jedną propozycją, własnym planem i pętlą zrzutów 360–1920 px w obu
+  motywach i przy „ogranicz ruch”.
+- Dwie rundy uwag art directora (odbiór własnymi zrzutami).
+- Niezależna krytyka: agent bez kontekstu, na buildzie produkcyjnym, z rankingiem i dowodami.
+- Trzecia runda poprawek z krytyki, z filtrem gustu właściciela (np. żywe kafle kompetencji
+  zostały, choć krytyk chciał je usunąć).
+
+**Propozycje** (`/demo/<slug>`, opis i porównanie: KIERUNEK §2)
+- **Tryptyk:** trzy kolumny od 1280 px (spis z ⌘K i scroll-spy, dokument, scena multimediów),
+  H1 w skali display, portfolio jako galeria albo lista, przelot kadru do sceny.
+- **Esencja:** Framer w czerni i bieli; pokaz prac cyfrowych w dwóch rzędach, manifest
+  wypełniany przewijaniem, cztery żywe kompetencje (karta prfct.dev, deploy, czat z wpisów
+  bloga, oś czasu animacji), masonry wideo, wielki znak w stopce.
+- **Glif:** portret ASCII jako pole glifów reagujące na kursor; realizacje jako rastrowe wydruki
+  z glifów, które odkodowują się w kolor przy pierwszym spojrzeniu. Własny krój „Glif Symbols”
+  (podzbiór DejaVu, licencja obok pliku).
+- **Reedycja:** obecny układ i treść na „Formie”, ciemny motyw jako główny, reel rosnący przy
+  przewijaniu, zakładki z 19 realizacjami i dialog z morfem. Spłaca w piaskownicy 10 z 13
+  pozycji długu z KIERUNEK §5.
+- **Transformacja:** hero od klatki 0, a rama obok przy przewijaniu (250 vh, sam CSS) zamienia
+  ten sam nagłówek: szkic → projekt → kod (build → Ready) → produkt. Na koniec inspektor tokenów.
+
+**Wspólne:**
+- `src/components/demo/shared/content.ts`: cała treść z obecnej strony i „O mnie”, wymiary
+  plakatów znane z góry, bez `fs`.
+- Spis `/demo` jako prezentacja iteracji 5; rejestr z zadaniem, mocnymi stronami i ryzykami.
+- Prefiksy klas na propozycję.
+
+**Najważniejsze poprawki po krytyce**
+- **Esencja:** media przy przewinięciu na telefonie 15,9 → 2,1 MB; portfolio bez duplikatu;
+  rozmycie tylko na H1, wejście ≤ 700 ms.
+- **Glif:** kafle zostają w kolorze po pierwszym spojrzeniu, czytelny portret;
+  przewijanie na telefonie przy CPU ×4 wzrosło z 32–44 do 48–60 fps.
+- **Transformacja:** hero sprzedaje od pierwszej klatki, nakładki bez kolizji.
+- **Reedycja:** komplet realizacji i formularz z własną walidacją.
+
+---
+
 ## Iteracja 4 — 4 listopada 2026: ostatni przegląd przed nowym wyglądem
 
 Zakres od właściciela: werdykt audytu (galeria zamiast case studies, 15 lat, oferta

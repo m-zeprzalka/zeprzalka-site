@@ -110,7 +110,10 @@ for (const [name, options] of Object.entries(VIEWPORTS)) {
     }
 
     const diff = new PNG({ width: a.width, height: a.height })
-    const pixels = pixelmatch(a.data, b.data, diff.data, a.width, a.height, { threshold: 0.1 })
+    const pixels = pixelmatch(a.data, b.data, diff.data, a.width, a.height, {
+      threshold: 0,
+      includeAA: true,
+    })
     const share = ((100 * pixels) / (a.width * a.height)).toFixed(3)
     console.log(`${label} ${pixels === 0 ? "bez zmian" : `${pixels} px (${share}%)`}`)
 

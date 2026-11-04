@@ -1,7 +1,7 @@
-# Bramka jakości. Każdy push na `main` od razu wdraża się na produkcję
-# (integracja Vercel ↔ GitHub), więc te same kroki muszą być zielone na
-# gałęzi, zanim zmiana tam trafi. Tylko `push` — gałęzie PR (także Dependabota)
-# leżą w tym repozytorium, więc `pull_request` uruchamiałby wszystko drugi raz.
+# Bramka jakości. Pracujemy na jednej gałęzi: każdy push na `main` od razu wdraża
+# się na produkcję (integracja Vercel ↔ GitHub), więc przed pushem uruchamiamy
+# lokalnie `pnpm check`, a CI powtarza te same kroki po pushu (i na gałęziach
+# Dependabota). Tylko `push` — `pull_request` uruchamiałby wszystko drugi raz.
 # Akcje przypięte do SHA (aktualizuje je Dependabot), komentarz podaje wersję.
 name: CI
 

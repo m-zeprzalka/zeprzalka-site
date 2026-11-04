@@ -1,13 +1,17 @@
-# Strażnik zasady „wygląd strony głównej jest nietykalny bez zgody właściciela”.
-# Buduje gałąź i `main`, porównuje `/` i `/en` piksel po pikselu (1440 i 390 px).
-# Czerwony wynik nie blokuje technicznie — mówi, że zmiana wymaga zgody.
-name: Strona główna — regresja wizualna
+# Porównanie pikseli strony głównej (`/`, `/en`; 1440 i 390 px) między dwiema
+# wersjami. Pracujemy na jednej gałęzi (`main`), więc uruchamiamy je ręcznie
+# (Actions → „Run workflow”), np. po refaktorze, który nie powinien zmienić
+# wyglądu: bieżący commit kontra `base` (domyślnie poprzedni commit).
+# To samo lokalnie: `pnpm visual <bazowy> <zmiana>` (README, „Kontrola wizualna”).
+name: Strona główna — porównanie pikseli
 
 on:
-  push:
-    branches-ignore: [main]
-    paths-ignore: ["docs/**", "**/*.md"]
   workflow_dispatch:
+    inputs:
+      base:
+        description: "Wersja bazowa: commit, tag albo gałąź"
+        default: "HEAD~1"
+        required: true
 
 permissions:
   contents: read
@@ -32,23 +36,24 @@ jobs:
           node-version-file: .nvmrc
           cache: pnpm
 
-      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
-        with:
-          path: |
-            .next/cache
-            /tmp/base/.next/cache
-          key: visual-${{ hashFiles('pnpm-lock.yaml') }}-${{ github.sha }}
-          restore-keys: visual-${{ hashFiles('pnpm-lock.yaml') }}-
-
-      - name: Gałąź — build i start (:3100)
+      # Build bez cache: ręczne, rzadkie przebiegi nie uzasadniają ~160 MB cache na commit,
+      # a przywrócony cache w /tmp/base blokował `git worktree add`. Build jak na produkcji
+      # (bez tras piaskownicy).
+      - name: Bieżąca wersja — build i start (:3100)
+        env:
+          VERCEL_ENV: production
         run: |
           pnpm install --frozen-lockfile
           pnpm build
           nohup pnpm start -p 3100 > /tmp/head.log 2>&1 &
 
-      - name: main — build i start (:3200)
+      - name: Wersja bazowa — build i start (:3200)
+        # Wejście przez zmienną środowiskową, nie wklejone w skrypt (bez wstrzyknięcia poleceń).
+        env:
+          BASE: ${{ inputs.base }}
+          VERCEL_ENV: production
         run: |
-          git worktree add /tmp/base origin/main
+          git worktree add /tmp/base "$BASE"
           cd /tmp/base
           pnpm install --frozen-lockfile
           pnpm build

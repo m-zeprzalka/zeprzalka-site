@@ -115,9 +115,10 @@ export function MotionSection() {
         </div>
         <DsCode>
           {`// Leniwe wczytanie kadru — components/portfolio/LazyVideo.tsx
-const [frameRef, inView] = useInViewOnce<HTMLDivElement>("600px")
-// wideo montuje się dopiero 600 px przed wejściem w kadr; poster maluje
-// się od razu, a przy „ogranicz ruch” film stoi na pierwszej klatce`}
+const [frameRef, near] = useInViewOnce<HTMLDivElement>("200px 0px")
+// plik wideo dostaje dopiero kafel 200 px przed kadrem, gra tylko ten w kadrze
+// (play() w efekcie po ustawieniu src); poster maluje się od razu, a przy
+// „ogranicz ruch” film stoi na pierwszej klatce`}
         </DsCode>
       </DsBlock>
     </DsSection>

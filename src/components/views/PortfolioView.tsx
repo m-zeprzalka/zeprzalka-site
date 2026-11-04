@@ -73,7 +73,14 @@ export function PortfolioView({ locale }: { locale: Locale }) {
               {group.description[locale]}
             </p>
 
-            <PortfolioGrid items={items} locale={locale} priorityCount={index === 0 ? 2 : 0} />
+            <PortfolioGrid
+              items={items}
+              locale={locale}
+              priorityCount={index === 0 ? 2 : 0}
+              // Same zrzuty (bez wideo) mają równy kadr 16:10 — trzy kolumny masonry
+              // zostawiały przy czterech kaflach pustą kolumnę; dwie dają równy blok.
+              className={items.every((item) => !item.video) ? "lg:columns-2" : undefined}
+            />
           </section>
         )
       })}

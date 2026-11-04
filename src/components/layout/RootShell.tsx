@@ -1,6 +1,6 @@
 import type { ReactNode } from "react"
-import { Geist, Geist_Mono } from "next/font/google"
 import "@/app/globals.css"
+import { fontVariables } from "@/app/fonts"
 import { ThemeProvider } from "next-themes"
 import { ReadingProgress } from "@/components/layout/ReadingProgress"
 import { Header } from "@/components/layout/Header"
@@ -10,26 +10,6 @@ import { Analytics } from "@vercel/analytics/next"
 import { SpeedInsights } from "@vercel/speed-insights/next"
 import type { Locale } from "@/i18n/config"
 import { getCommon } from "@/i18n/content/common"
-
-/*
- * `latin-ext` jest konieczny: ą, ę, ł, ś, ż… leżą poza podstawowym zakresem
- * łacińskim. Bez tego plik z polskimi znakami był wykrywany dopiero po
- * zbudowaniu układu i doczytywany osobno — ogonki pojawiały się z opóźnieniem.
- */
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin", "latin-ext"],
-})
-
-/*
- * Krój mono pojawia się wyłącznie w blokach kodu wpisów, więc nie ma powodu
- * pobierać go z wyprzedzeniem na każdej stronie serwisu.
- */
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin", "latin-ext"],
-  preload: false,
-})
 
 /**
  * Wspólny szkielet dokumentu dla obu wersji językowych.
@@ -49,7 +29,7 @@ export function RootShell({ locale, children }: { locale: Locale; children: Reac
     // nawigacji tylko wtedy, gdy wie, że arkusz je włącza (globals.css).
     <html
       lang={locale}
-      className={`${geistSans.variable} ${geistMono.variable}`}
+      className={fontVariables}
       data-scroll-behavior="smooth"
       suppressHydrationWarning
     >

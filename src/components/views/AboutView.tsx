@@ -5,7 +5,7 @@ import { MapPin, Mail, Globe, ArrowRight, Download } from "lucide-react"
 import Link from "next/link"
 import { JsonLd } from "@/components/JsonLd"
 import { StatusBadge } from "@/components/StatusBadge"
-import { CONTACT_EMAIL, SITE_HOST, SITE_URL, absoluteUrl } from "@/lib/site"
+import { CONTACT_EMAIL, CV_PDF, SITE_HOST, SITE_URL, absoluteUrl } from "@/lib/site"
 import { PERSON_ID, breadcrumbSchema, graph, personSchema } from "@/lib/schema"
 import { INTL_LOCALE, ROUTES, type Locale } from "@/i18n/config"
 import { getPages } from "@/i18n/content/pages"
@@ -194,9 +194,9 @@ export function AboutView({ locale }: { locale: Locale }) {
         <Button asChild size="lg" className="w-fit">
           <Link href={ROUTES.contact[locale]}>{copy.ctaContact}</Link>
         </Button>
-        {/* PDF jest generowany z tej strony — jedna treść, dwa formaty. */}
+        {/* PDF jest generowany z tej strony (`pnpm cv`) — jedna treść, dwa formaty. */}
         <Button asChild variant="outline" size="lg" className="w-fit gap-2">
-          <a href="/cv-michal-zeprzalka.pdf" download>
+          <a href={CV_PDF[locale]} download>
             <Download className="h-4 w-4" />
             {copy.ctaCv}
           </a>

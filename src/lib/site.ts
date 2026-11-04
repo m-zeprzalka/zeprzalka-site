@@ -21,17 +21,15 @@ export const SITE_HOST = new URL(SITE_URL).host
 export const SITE_DOMAIN = SITE_HOST.replace(/^www\./, "")
 
 export const SITE_NAME = "Michał Zeprzałka"
-export const SITE_TITLE = "Michał Zeprzałka - Digital Solutions Architect"
-
-/** Opis serwisu — trafia do metadanych, manifestu i kanału RSS. */
-export const SITE_DESCRIPTION: Localized<string> = {
-  pl: "Strony internetowe, aplikacje webowe, design i integracje AI. Ponad 12 lat doświadczenia w tworzeniu rozwiązań webowych i multimedialnych dla biznesu.",
-  en: "Websites, web applications, design and AI integrations. Over 12 years of building web and multimedia solutions for business.",
-}
-
 /** Bezwzględny adres dla metadanych i danych strukturalnych. */
 export function absoluteUrl(path = "/"): string {
   return `${SITE_URL}${path.startsWith("/") ? path : `/${path}`}`
+}
+
+/** CV do pobrania z „O mnie” — PDF z tej samej strony (`pnpm cv`), osobno dla każdego języka. */
+export const CV_PDF: Localized<string> = {
+  pl: "/cv-michal-zeprzalka.pdf",
+  en: "/cv-michal-zeprzalka-en.pdf",
 }
 
 /** Adres, na który przychodzą wiadomości i który widnieje na stronach. */
@@ -44,7 +42,10 @@ export const CONTACT_EMAIL = "m@zeprzalka.com"
  */
 export const AUTHOR = {
   name: SITE_NAME,
-  jobTitle: "Digital Solutions Architect",
+  jobTitle: {
+    pl: "Projektant i programista produktów cyfrowych",
+    en: "Digital Product Designer & Developer",
+  } satisfies Localized<string>,
   bio: {
     pl: "Tworzę rozwiązania łączące biznes z technologią.",
     en: "I build solutions that connect business with technology.",
@@ -58,8 +59,8 @@ export const AUTHOR = {
 /**
  * Profile, które potwierdzają tożsamość autora (pole `sameAs` w danych
  * strukturalnych). LinkedIn dochodzi automatycznie po ustawieniu zmiennej
- * NEXT_PUBLIC_LINKEDIN_URL — docs/SEO.md §5 wskazuje go jako najważniejszy
- * brakujący kanał, a dopisanie adresu nie powinno wymagać zmiany w kodzie.
+ * NEXT_PUBLIC_LINKEDIN_URL — to najważniejszy brakujący kanał, a dopisanie
+ * adresu nie powinno wymagać zmiany w kodzie.
  */
 export const SOCIAL_PROFILES: readonly { label: string; url: string }[] = [
   { label: "GitHub", url: "https://github.com/m-zeprzalka" },

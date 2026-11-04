@@ -93,7 +93,9 @@ if (production) {
 
 if (errors.length > 0) {
   console.error(errors.map((error) => `✖ ${error}`).join("\n"))
-  console.error(`\nBuild: ${errors.length} problemów na ${pages.length} stronach.`)
+  const form = new Intl.PluralRules("pl").select(errors.length)
+  const noun = form === "one" ? "problem" : form === "few" ? "problemy" : "problemów"
+  console.error(`\nBuild: ${errors.length} ${noun} na ${pages.length} stronach.`)
   process.exit(1)
 }
 

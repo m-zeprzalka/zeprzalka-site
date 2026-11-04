@@ -76,7 +76,8 @@ export function RulesSection() {
             <strong className="font-medium text-foreground">wideo bez sterowania</strong> —
             materiały w portfolio odtwarzają się w pętli i osoba bez ustawienia „ogranicz
             ruch&rdquo; nie ma jak ich zatrzymać (WCAG 2.2.2). Przycisk pauzy w kaflu portfolio
-            zmienia wygląd strony głównej, więc czeka na decyzję (docs/AUDYT-2026-11.md).
+            zmienia wygląd strony głównej, więc wchodzi razem z nowym wyglądem
+            (docs/KIERUNEK-WIZUALNY.md).
           </>
         }
       >

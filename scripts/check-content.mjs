@@ -3,7 +3,7 @@
  * Kontrola treści bloga — uruchamiana przez `pnpm check:content`
  * (i w CI przed buildem).
  *
- * Pilnuje reguł, które wcześniej żyły tylko w docs/SEO.md i rozjeżdżały
+ * Pilnuje reguł treści (README, „Blog — frontmatter”), które wcześniej żyły tylko w dokumentacji i rozjeżdżały
  * się przy każdym nowym wpisie:
  *
  *   BŁĘDY (zatrzymują CI):
@@ -95,12 +95,11 @@ for (const [locale, dir] of Object.entries(DIRS)) {
 
     // Adres kategorii i tagu powstaje z nazwy (ta sama funkcja co w serwisie).
     // Polska litera albo znak spoza ASCII dałby adres, który trzeba kodować w URL-u.
-    const slugOf = slugify
     const checkSlug = (kind, label) => {
-      if (!/^[a-z0-9.-]+$/.test(slugOf(label))) {
+      if (!/^[a-z0-9.-]+$/.test(slugify(label))) {
         err(
           rel,
-          `${kind} „${label}" daje adres „${slugOf(label)}" — dozwolone a-z, 0-9, kropka i myślnik`
+          `${kind} „${label}" daje adres „${slugify(label)}" — dozwolone a-z, 0-9, kropka i myślnik`
         )
       }
     }
@@ -139,8 +138,14 @@ for (const pair of postPairs) {
 
 for (const line of warnings) console.warn(`⚠ ${line}`)
 for (const line of errors) console.error(`✖ ${line}`)
+/** Liczebnik z polską odmianą: 1 błąd, 2 błędy, 5 błędów. */
+function count(n, [one, few, many]) {
+  const form = new Intl.PluralRules("pl").select(n)
+  return `${n} ${form === "one" ? one : form === "few" ? few : many}`
+}
 console.log(
-  `\nTreść: ${errors.length} błędów, ${warnings.length} ostrzeżeń ` +
+  `\nTreść: ${count(errors.length, ["błąd", "błędy", "błędów"])}, ` +
+    `${count(warnings.length, ["ostrzeżenie", "ostrzeżenia", "ostrzeżeń"])} ` +
     `(${postPairs.length} par wpisów, ${categoryPairs.length} kategorii, ${tagPairs.length} tagów).`
 )
 process.exit(errors.length ? 1 : 0)

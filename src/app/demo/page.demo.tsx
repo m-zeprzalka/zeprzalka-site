@@ -19,12 +19,11 @@ const VOICE: Record<string, string> = {
 /**
  * Spis piaskownicy jako krótka prezentacja dla właściciela: trzy koncepcje
  * strony głównej w systemie „Forma” (z rekomendacją, mocnymi stronami
- * i ryzykami), specimen systemu i archiwum odrzuconych kierunków.
+ * i ryzykami) i specimen systemu.
  */
 export default function DemoIndexPage() {
   const concepts = CONCEPTS.flatMap((slug) => DEMOS.filter((demo) => demo.slug === slug))
   const system = DEMOS.find((demo) => demo.slug === "forma")
-  const archive = DEMOS.filter((demo) => demo.status === "odrzucony")
 
   return (
     <div className="fm">
@@ -70,31 +69,6 @@ export default function DemoIndexPage() {
             <ArrowUpRight className="size-5 shrink-0 text-fm-ink-3 transition-[translate,color] duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-fm-ink" />
           </Link>
         )}
-
-        <section aria-labelledby="archiwum" className="mt-20">
-          <h2 id="archiwum" className="text-fm-h3 font-semibold">
-            Archiwum
-            <span className="text-fm-ink-3"> — kierunki odrzucone, do porównania</span>
-          </h2>
-          <ul className="mt-6 overflow-hidden rounded-fm-3xl bg-fm-surface p-1.5 shadow-fm-card">
-            {archive.map((demo) => (
-              <li key={demo.slug}>
-                <Link
-                  href={`/demo/${demo.slug}`}
-                  className="group grid gap-1 rounded-[18px] px-4 py-4 fm-focus transition-colors hover:bg-fm-fill md:grid-cols-[7rem_1fr] md:px-5"
-                >
-                  <time dateTime={demo.date} className="text-fm-micro text-fm-ink-3 tabular-nums">
-                    {demo.date}
-                  </time>
-                  <span>
-                    <span className="block text-[0.9375rem] font-medium">{demo.title}</span>
-                    <span className="mt-0.5 block text-fm-small text-fm-ink-2">{demo.summary}</span>
-                  </span>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </section>
 
         <p className="mt-12 text-fm-small text-fm-ink-3">
           Piaskownica istnieje tylko w <code className="font-mono">pnpm dev</code> i na podglądach

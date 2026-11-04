@@ -1,10 +1,9 @@
 import Link from "next/link"
-import { SOCIAL_PROFILES } from "@/lib/site"
 import { ROUTES, type Locale } from "@/i18n/config"
 import { getCommon } from "@/i18n/content/common"
 import { fill } from "@/i18n/format"
 import { mainNav } from "@/i18n/navigation"
-import { SITE_DOMAIN } from "@/lib/site"
+import { SITE_DOMAIN, SOCIAL_PROFILES } from "@/lib/site"
 import { cn } from "@/lib/utils"
 
 const LINK = cn("text-muted-foreground transition-colors hover:text-foreground")

@@ -3,7 +3,7 @@
 import { useActionState, useEffect, useRef, useState, type ReactNode } from "react"
 import { useFormStatus } from "react-dom"
 import { ArrowRight, Check, CircleAlert, Info, LoaderCircle } from "lucide-react"
-import { sendContactEmail } from "@/components/demo/shared/demo-action"
+import { sendContactEmail } from "@/components/demo/forma/demo-action"
 import { cn } from "../forma/cn"
 
 type Field = "name" | "email" | "message"
@@ -59,7 +59,7 @@ function projectTypes(placeholder: string): string[] {
 /**
  * Krótki formularz w kolumnie. Walidacja po stronie przeglądarki z komunikatami
  * serwisu, fokus na pierwszym błędnym polu, wynik w regionie `status`.
- * Demo niczego nie wysyła — odpowiedź pochodzi z `shared/demo-action.ts`.
+ * Demo niczego nie wysyła — odpowiedź pochodzi z `forma/demo-action.ts`.
  */
 export function ContactForm({
   labels,

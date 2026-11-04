@@ -40,8 +40,6 @@ ${post.frontmatter.categories.map((c) => `      <category>${escapeMarkup(c)}</ca
       <url>${absoluteUrl("/icon.png")}</url>
       <title>${escapeMarkup(m.root.feedTitle)}</title>
       <link>${absoluteUrl(ROUTES.blog[locale])}</link>
-      <width>144</width>
-      <height>144</height>
     </image>
     <atom:link href="${absoluteUrl(FEEDS[locale])}" rel="self" type="application/rss+xml"/>
 ${items}

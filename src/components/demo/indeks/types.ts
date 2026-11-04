@@ -26,7 +26,8 @@ export interface Work {
   group: PortfolioGroup
   groupLabel: string
   groupDescription: string
-  video: string
+  /** Brak wideo (produkt ze zrzutem) — kafel pokazuje sam plakat. */
+  video?: string
   poster: string
 }
 

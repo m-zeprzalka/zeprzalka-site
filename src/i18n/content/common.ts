@@ -14,6 +14,8 @@ const pl = {
     articles: { one: "artykuł", few: "artykuły", many: "artykułów", other: "artykułu" },
     projects: { one: "realizacja", few: "realizacje", many: "realizacji", other: "realizacji" },
   },
+  /** Czas lektury — `formatReadingTime()` w src/i18n/format.ts. */
+  readingTime: "{minutes} min czytania",
   nav: {
     /** Etykieta pozycji menu; adresy biorą się z ROUTES w src/i18n/config.ts. */
     home: "Start",
@@ -34,26 +36,26 @@ const pl = {
     aria: "Zmień język na angielski",
   },
   footer: {
-    tagline: "Projektant / Strateg / Full-Stack Developer.",
+    tagline: "Projektant i programista produktów cyfrowych.",
     description: "Tworzę rozwiązania, które łączą biznes z technologią.",
     navigation: "Nawigacja",
     social: "Social",
     /** {year} podstawia się w komponencie. */
-    copyright: "Michał Zeprzałka - Copyright {year}",
+    copyright: "Michał Zeprzałka — Copyright {year}",
   },
   form: {
     honeypot: "Nie wypełniaj tego pola",
     name: "Imię",
     namePlaceholder: "Twoje imię",
-    email: "Email",
+    email: "E-mail",
     emailPlaceholder: "twoj@email.pl",
     projectType: "Rodzaj projektu",
-    projectTypePlaceholder: "Strona internetowa / Animacja / Grafika...",
+    projectTypePlaceholder: "Strona internetowa / Animacja / Grafika…",
     message: "Wiadomość",
     messagePlaceholder:
-      "Opisz swój projekt lub pytanie. Im więcej szczegółów, tym lepiej...",
+      "Opisz swój projekt lub zadaj pytanie. Im więcej szczegółów, tym lepiej…",
     submit: "Wyślij wiadomość",
-    submitting: "Wysyłanie...",
+    submitting: "Wysyłanie…",
     privacyNote:
       "Dane z formularza wykorzystam wyłącznie do odpowiedzi na wiadomość.",
     privacyLink: "Polityka prywatności",
@@ -81,6 +83,7 @@ const pl = {
     youtubePlay: "Odtwórz film (YouTube)",
     copyCode: "Kopiuj kod",
     copied: "Skopiowano",
+    newTab: "otwiera się w nowej karcie",
     tableOfContents: "Spis treści",
     scrollableTable: "Tabela (przewijana w poziomie)",
     codeBlock: "Blok kodu",
@@ -100,6 +103,7 @@ const en: typeof pl = {
     articles: { one: "article", few: "articles", many: "articles", other: "articles" },
     projects: { one: "project", few: "projects", many: "projects", other: "projects" },
   },
+  readingTime: "{minutes} min read",
   nav: {
     home: "Home",
     services: "Services",
@@ -118,11 +122,11 @@ const en: typeof pl = {
     aria: "Switch language to Polish",
   },
   footer: {
-    tagline: "Designer / Strategist / Full-Stack Developer.",
+    tagline: "Digital Product Designer & Developer.",
     description: "I build solutions that connect business with technology.",
     navigation: "Navigation",
     social: "Social",
-    copyright: "Michał Zeprzałka - Copyright {year}",
+    copyright: "Michał Zeprzałka — Copyright {year}",
   },
   form: {
     honeypot: "Do not fill in this field",
@@ -131,12 +135,12 @@ const en: typeof pl = {
     email: "Email",
     emailPlaceholder: "you@email.com",
     projectType: "Project type",
-    projectTypePlaceholder: "Website / Animation / Graphic design...",
+    projectTypePlaceholder: "Website / Animation / Graphic design…",
     message: "Message",
     messagePlaceholder:
-      "Describe your project or question. The more detail, the better...",
+      "Describe your project or question. The more detail, the better…",
     submit: "Send message",
-    submitting: "Sending...",
+    submitting: "Sending…",
     privacyNote: "I will use the details you send only to reply to your message.",
     privacyLink: "Privacy policy",
   },
@@ -162,6 +166,7 @@ const en: typeof pl = {
     youtubePlay: "Play video (YouTube)",
     copyCode: "Copy code",
     copied: "Copied",
+    newTab: "opens in a new tab",
     tableOfContents: "Table of contents",
     scrollableTable: "Table (scrolls horizontally)",
     codeBlock: "Code block",

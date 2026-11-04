@@ -10,7 +10,7 @@ import type { Locale } from "@/i18n/config"
 
 const pl = {
   notFound: {
-    title: "Strona nie znaleziona",
+    title: "Nie znaleziono strony",
     description:
       "Wygląda na to, że strona, której szukasz, zadziałała tylko w wyobraźni. Przejdźmy na stabilny grunt.",
     cta: "Wróć na stronę główną",

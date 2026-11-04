@@ -3,14 +3,14 @@
 import { useActionState, useId } from "react"
 import { ArrowUpRight, Info } from "lucide-react"
 import { cn } from "../forma/cn"
-import { sendContactEmail, type DemoFormState } from "../shared/demo-action"
+import { sendContactEmail, type DemoFormState } from "../forma/demo-action"
 
 const initial: DemoFormState = { success: false, message: "" }
 
 /**
  * Formularz w karcie: pola wypełnione (bez ramek), 16 px na telefonie (iOS
  * nie powiększa strony), przycisk, który morfuje „wyślij → wysyłanie”
- * bez zmiany szerokości. Demo niczego nie wysyła (shared/demo-action.ts).
+ * bez zmiany szerokości. Demo niczego nie wysyła (forma/demo-action.ts).
  */
 export function Contact({
   copy,

@@ -47,7 +47,7 @@ export function ContentSection() {
         description="Treść wpisu składana jest przez wtyczkę typography Tailwinda i nadpisania w mdxComponents. Nagłówki są w wadze bold, akapity w kolorze foreground (nie muted), odnośniki w kolorze primary bez podkreślenia do czasu najechania."
       >
         <DsPreview label="Próbka składu">
-          <div className="prose prose-lg max-w-none dark:prose-invert prose-headings:font-bold prose-headings:tracking-tight prose-p:text-base prose-p:leading-relaxed prose-a:text-primary prose-a:no-underline hover:prose-a:underline">
+          <div className="prose prose-lg max-w-none dark:prose-invert prose-headings:font-bold prose-headings:tracking-tight prose-p:text-base prose-p:leading-relaxed prose-a:text-primary prose-a:no-underline prose-a:hover:underline">
             <p className="text-2xl font-bold tracking-tight">Nagłówek drugiego stopnia</p>
             <p>
               Akapit treści z <a href="#tresc">odnośnikiem</a>, <strong>wyróżnieniem</strong> oraz{" "}

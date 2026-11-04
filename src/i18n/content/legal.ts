@@ -8,12 +8,12 @@
  * Zmiana któregokolwiek z tych mechanizmów wymaga aktualizacji tego pliku.
  *
  * Okres przechowywania (12 miesięcy) i dane usługodawcy to decyzje właściciela
- * — patrz docs/AUDYT-2026-11.md, sekcja 4.
+ * — patrz docs/ROADMAP.md, sekcja 3.
  */
 import "server-only"
 import type { Locale } from "@/i18n/config"
 
-export interface LegalSection {
+interface LegalSection {
   heading: string
   paragraphs: readonly string[]
 }
@@ -55,20 +55,20 @@ const pl = {
     {
       heading: "Statystyki odwiedzin",
       paragraphs: [
-        "Korzystam z Vercel Web Analytics i Speed Insights. Narzędzia te nie używają plików cookie i nie tworzą identyfikatorów pozwalających rozpoznać konkretną osobę — widzę wyłącznie zbiorcze dane: które strony są czytane, z jakich krajów i na jakich urządzeniach, oraz jak szybko się ładują.",
+        "Korzystam z Vercel Web Analytics i Speed Insights. Narzędzia te nie używają plików cookie i nie tworzą identyfikatorów pozwalających rozpoznać konkretną osobę — widzę wyłącznie zbiorcze dane: które strony są czytane, z jakich krajów i na jakich urządzeniach oraz jak szybko się ładują.",
       ],
     },
     {
       heading: "Pliki cookie i pamięć przeglądarki",
       paragraphs: [
-        "Serwis nie zapisuje plików cookie. Wybrany przez Ciebie motyw (jasny lub ciemny) zapamiętuje pamięć przeglądarki (localStorage) wyłącznie na Twoim urządzeniu — nie trafia on do mnie.",
+        "Serwis nie zapisuje plików cookie. Wybrany przez Ciebie motyw (jasny lub ciemny) jest zapisywany w pamięci przeglądarki (localStorage) wyłącznie na Twoim urządzeniu — nie trafia do mnie.",
       ],
     },
     {
       heading: "Bezpieczeństwo i treści zewnętrzne",
       paragraphs: [
         "Aby chronić formularz przed spamem, adres IP nadawcy jest przez kilka minut używany do liczenia wysłanych wiadomości. Nie jest nigdzie zapisywany na stałe. Serwer hostingu prowadzi krótkotrwałe logi techniczne.",
-        "Niektóre wpisy na blogu zawierają filmy z YouTube, osadzone w trybie ograniczonego śledzenia (youtube-nocookie.com). Po uruchomieniu filmu dane przetwarza Google na zasadach własnej polityki prywatności.",
+        "Niektóre wpisy na blogu zawierają filmy z YouTube'a, osadzone w trybie ograniczonego śledzenia (youtube-nocookie.com). Po uruchomieniu filmu dane przetwarza Google na zasadach własnej polityki prywatności.",
       ],
     },
     {
@@ -86,7 +86,7 @@ const en: typeof pl = {
   updatedLabel: "Last updated",
   updated: "2026-11-02",
   intro:
-    "This page explains what personal data reaches me through zeprzalka.com, why, and what your rights are. No hidden consents and no tracking.",
+    "This page explains what personal data reaches me through zeprzalka.com, why, and what your rights are. I have written it in plain language — no hidden consents and no tracking.",
   sections: [
     {
       heading: "Who controls your data",

@@ -12,7 +12,8 @@ import { usePathname } from "next/navigation"
  * Wcześniej robił to bezwarunkowo, co psuło dwie rzeczy, które przeglądarka
  * robi sama dobrze: powrót przyciskiem „wstecz" na zapamiętaną pozycję listy
  * i wejście z linku z kotwicą (`/blog/wpis#sekcja`). Teraz pomija:
- * - pierwsze wyrenderowanie (przeładowanie i wejście z zewnątrz),
+ * - pierwsze wyrenderowanie (przeładowanie i wejście z zewnątrz) — porównujemy
+ *   z poprzednią ścieżką, więc podwójny efekt w StrictMode niczego nie przewija,
  * - nawigację wstecz/naprzód (zdarzenie `popstate`) — zapamiętujemy, dokąd
  *   prowadziła, i czyścimy zapis przy każdej zmianie strony, żeby `popstate`
  *   samej kotwicy (spis treści → „wstecz”) nie zatrzymał przewinięcia
@@ -21,7 +22,7 @@ import { usePathname } from "next/navigation"
  */
 export function ScrollToTop() {
   const pathname = usePathname()
-  const isFirstRender = useRef(true)
+  const previous = useRef(pathname)
   const traversedTo = useRef<string | null>(null)
 
   useEffect(() => {
@@ -33,12 +34,10 @@ export function ScrollToTop() {
   }, [])
 
   useEffect(() => {
+    if (previous.current === pathname) return
+    previous.current = pathname
     const isTraversal = traversedTo.current === pathname
     traversedTo.current = null
-    if (isFirstRender.current) {
-      isFirstRender.current = false
-      return
-    }
     if (isTraversal || window.location.hash) return
 
     window.scrollTo({ top: 0, left: 0, behavior: "instant" })

@@ -107,8 +107,8 @@ export function DebtSection() {
         <p className="mt-3 text-sm text-muted-foreground">
           Audyt z 2 listopada 2026 znalazł kolejne problemy (przełącznik języka i paginacja
           niezgodne z WCAG 2.5.3, 404 bez H1, słaby pierścień fokusu, formularz gubiący dane,
-          zepsuty wydruk) — naprawione w tej samej rundzie, opis w docs/AUDYT-2026-11.md. Otwarte
-          pozycje poniżej nadal obowiązują.
+          zepsuty wydruk) — naprawione w tej samej rundzie, opis w docs/DZIENNIK.md. Otwarte pozycje
+          poniżej nadal obowiązują.
         </p>
       </div>
 

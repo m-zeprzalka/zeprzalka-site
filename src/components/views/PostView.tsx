@@ -38,7 +38,7 @@ const PROSE = [
   "prose-h2:mt-12 prose-h2:mb-4 prose-h2:text-2xl prose-h3:mt-8 prose-h3:mb-3 prose-h3:text-xl",
   "prose-h4:mt-6 prose-h4:mb-2 prose-h4:text-lg",
   "prose-p:text-base prose-p:leading-relaxed prose-p:text-foreground prose-strong:text-foreground",
-  "prose-a:text-primary prose-a:no-underline prose-a:underline-offset-2 prose-a:transition-colors hover:prose-a:text-primary/80 hover:prose-a:underline",
+  "prose-a:text-primary prose-a:no-underline prose-a:underline-offset-2 prose-a:transition-colors prose-a:hover:text-primary/80 prose-a:hover:underline",
   "prose-blockquote:rounded-r-lg prose-blockquote:border-l-4 prose-blockquote:border-primary prose-blockquote:bg-muted/30 prose-blockquote:px-6 prose-blockquote:py-4 prose-blockquote:font-normal prose-blockquote:text-foreground/90 prose-blockquote:not-italic",
   "[&_:not(pre)>code]:rounded [&_:not(pre)>code]:border [&_:not(pre)>code]:bg-muted [&_:not(pre)>code]:px-1.5 [&_:not(pre)>code]:py-0.5 [&_:not(pre)>code]:font-mono [&_:not(pre)>code]:text-sm [&_:not(pre)>code]:text-foreground prose-code:before:content-none prose-code:after:content-none",
   "prose-pre:m-0 prose-pre:bg-transparent prose-pre:p-0",
@@ -184,7 +184,7 @@ export async function PostView({ post, locale }: { post: Post; locale: Locale })
                 />
                 <div className="flex-1">
                   <p className="mt-1 text-xl font-semibold">{AUTHOR.name}</p>
-                  <p className="mt-1 text-sm text-muted-foreground">{AUTHOR.jobTitle}</p>
+                  <p className="mt-1 text-sm text-muted-foreground">{AUTHOR.jobTitle[locale]}</p>
                   <p className="mt-2 text-base text-foreground/80">{AUTHOR.bio[locale]}</p>
                 </div>
               </div>

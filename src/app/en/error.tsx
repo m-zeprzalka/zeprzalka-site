@@ -1,12 +1,8 @@
 "use client"
 
-import dynamic from "next/dynamic"
 import type { ErrorBoundaryProps } from "@/components/system/ErrorView"
-
-// Granica błędów ładuje się z każdą trasą — sam ekran (z `Button`, czyli `cva`
-// i `tailwind-merge`) dopiero wtedy, gdy błąd naprawdę wystąpi.
-const ErrorView = dynamic(() => import("@/components/system/ErrorView").then((m) => m.ErrorView))
+import { LazyErrorView } from "@/components/system/LazyErrorView"
 
 export default function ErrorPage(props: ErrorBoundaryProps) {
-  return <ErrorView locale="en" {...props} />
+  return <LazyErrorView locale="en" {...props} />
 }

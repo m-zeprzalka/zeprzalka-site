@@ -174,7 +174,7 @@ function Layer({ work, active, video }: { work: Work; active: boolean; video: bo
         decoding="async"
         className="absolute inset-0 size-full object-cover"
       />
-      {mounted && (
+      {mounted && work.video && (
         <video
           ref={ref}
           src={work.video}

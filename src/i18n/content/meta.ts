@@ -11,24 +11,27 @@ import type { Locale } from "@/i18n/config"
 const pl = {
   root: {
     /** Domyślny tytuł i szablon dla podstron. */
-    titleDefault: "Michał Zeprzałka - Digital Solutions Architect",
+    titleDefault: "Michał Zeprzałka — projektant i programista produktów cyfrowych",
     titleTemplate: "%s | Michał Zeprzałka",
+    /** Opis serwisu: metadane układu głównego i manifest aplikacji. */
+    description:
+      "Strony internetowe, aplikacje webowe, design i integracje AI. 15 lat doświadczenia w tworzeniu rozwiązań webowych i multimedialnych dla biznesu.",
     ogDescription:
       "Strony internetowe, aplikacje webowe, design i integracje AI dla biznesu.",
     siteName: "Michał Zeprzałka",
-    feedTitle: "Blog - Michał Zeprzałka",
+    feedTitle: "Blog — Michał Zeprzałka",
   },
   services: {
     title: "Usługi i cennik",
     description:
-      "Ile kosztuje strona internetowa? Widełki cenowe dla landing page'a, strony firmowej, wdrożeń AI i opieki miesięcznej. Wycena w 24 godziny, bez zobowiązań.",
+      "Cennik: wdrożenia AI, produkty cyfrowe (MVP), strony firmowe, landing page w 10 dni, warsztaty AI i opieka techniczna. Ceny netto, wycena w 24 godziny.",
     ogDescription:
-      "Widełki cenowe dla stron, aplikacji, wdrożeń AI i opieki miesięcznej. Wycena w 24 godziny.",
+      "Ceny wdrożeń AI, aplikacji, stron i opieki technicznej — od sprintu diagnostycznego po abonament.",
   },
   about: {
     title: "O mnie",
     description:
-      "Michał Zeprzałka — Digital Solutions Architect z ponad 12 latami doświadczenia. Strony internetowe, aplikacje, design, animacja i integracje AI.",
+      "Michał Zeprzałka — projektant i programista produktów cyfrowych z 15-letnim doświadczeniem. Strony internetowe, aplikacje, design, animacja i integracje AI.",
   },
   contact: {
     title: "Kontakt",
@@ -38,19 +41,19 @@ const pl = {
   privacy: {
     title: "Polityka prywatności",
     description:
-      "Jakie dane trafiają do mnie przez formularz i serwis zeprzalka.com, w jakim celu, jak długo je przechowuję i jakie masz prawa. Bez plików cookie i bez śledzenia.",
+      "Jakie dane trafiają do mnie przez formularz i serwis zeprzalka.com, w jakim celu, jak długo je przechowuję i jakie masz prawa. Bez plików cookie, bez śledzenia.",
   },
   portfolio: {
     title: "Portfolio",
     description:
-      "Wszystkie realizacje: strony i aplikacje internetowe, projekty UX/UI oraz materiały wideo — relacje z wydarzeń, wideo produktowe i treści na social media.",
+      "Wszystkie realizacje: produkty cyfrowe, strony i aplikacje, projekty UX/UI oraz wideo — relacje z wydarzeń, wideo produktowe i treści na social media.",
     ogDescription:
-      "Strony, aplikacje i materiały wideo z ponad dekady pracy dla ponad 30 klientów.",
+      "Produkty cyfrowe, strony, aplikacje i wideo z 15 lat pracy dla ponad 30 klientów.",
   },
   blog: {
     title: "Blog",
     description:
-      "Artykuły o AI, Next.js, web developmencie i designie. Praktyczne poradniki i przemyślenia z realnych projektów.",
+      "Artykuły o AI, Next.js, web developmencie i designie. Praktyczne poradniki, lekcje kursu i przemyślenia z realnych projektów.",
     feedDescription: "Artykuły o AI, Next.js, web developmencie i designie.",
   },
   categories: {
@@ -73,24 +76,24 @@ const pl = {
      */
     cards: {
       home: {
-        eyebrow: "Digital Solutions Architect",
+        eyebrow: "Projektant i programista produktów cyfrowych",
         title: "Przekształcam ambitne projekty w produkty cyfrowe",
         footer: "Strony · Aplikacje · Design · AI",
       },
       portfolio: {
         eyebrow: "Portfolio",
         title: "Strony, aplikacje i materiały wideo",
-        footer: "{count} realizacji · ponad 30 klientów",
+        footer: "{count} · ponad 30 klientów",
       },
       services: {
         eyebrow: "Usługi i cennik",
-        title: "Strony, aplikacje i wdrożenia AI — widełki cen",
+        title: "Strony, aplikacje i wdrożenia AI — cennik",
         footer: "Wycena w 24 godziny",
       },
       about: {
         eyebrow: "O mnie",
         title: "Michał Zeprzałka",
-        footer: "Digital Solutions Architect · Warszawa",
+        footer: "Projektant i programista · Warszawa",
       },
       contact: {
         eyebrow: "Kontakt",
@@ -123,29 +126,31 @@ const pl = {
 
 const en: typeof pl = {
   root: {
-    titleDefault: "Michał Zeprzałka - Digital Solutions Architect",
+    titleDefault: "Michał Zeprzałka — Digital Product Designer & Developer",
     titleTemplate: "%s | Michał Zeprzałka",
+    description:
+      "Websites, web applications, design and AI integrations. 15 years of building web and multimedia solutions for businesses.",
     ogDescription:
       "Websites, web applications, design and AI integrations for business.",
     siteName: "Michał Zeprzałka",
-    feedTitle: "Blog - Michał Zeprzałka",
+    feedTitle: "Blog — Michał Zeprzałka",
   },
   services: {
     title: "Services and pricing",
     description:
-      "What does a website cost? Price ranges for a landing page, a company website, AI deployments and monthly care. A quote within 24 hours, with nothing to sign.",
+      "Pricing: AI implementation, digital products (MVP), company websites, a landing page in 10 days, AI workshops and technical care. Net prices, quote in 24 hours.",
     ogDescription:
-      "Price ranges for websites, applications, AI deployments and monthly care. A quote within 24 hours.",
+      "Prices for AI implementation, applications, websites and technical care — from a discovery sprint to a subscription.",
   },
   about: {
     title: "About",
     description:
-      "Michał Zeprzałka — Digital Solutions Architect with over 12 years of experience. Websites, applications, design, animation and AI integrations.",
+      "Michał Zeprzałka — digital product designer and developer with 15 years of experience. Websites, applications, design, animation and AI integrations.",
   },
   contact: {
     title: "Contact",
     description:
-      "Get in touch with Michał Zeprzałka. A free consultation for new web projects, design systems and AI solutions.",
+      "Get in touch with Michał Zeprzałka. A free, no-obligation consultation for new web projects, design systems and AI solutions.",
   },
   privacy: {
     title: "Privacy policy",
@@ -155,14 +160,14 @@ const en: typeof pl = {
   portfolio: {
     title: "Portfolio",
     description:
-      "Every project: websites and web applications, UX/UI work and video — event coverage, product films and social media content.",
+      "Every project: digital products, websites and web applications, UX/UI work and video — event coverage, product films and social media content.",
     ogDescription:
-      "Websites, applications and video from over a decade of work for more than 30 clients.",
+      "Digital products, websites, applications and video from 15 years of work for more than 30 clients.",
   },
   blog: {
     title: "Blog",
     description:
-      "Articles on AI, Next.js, web development and design. Practical guides and thoughts from real projects.",
+      "Articles on AI, Next.js, web development and design. Practical guides, course lessons and notes from real client projects.",
     feedDescription: "Articles on AI, Next.js, web development and design.",
   },
   categories: {
@@ -180,7 +185,7 @@ const en: typeof pl = {
   og: {
     cards: {
       home: {
-        eyebrow: "Digital Solutions Architect",
+        eyebrow: "Digital Product Designer & Developer",
         title: "I turn ambitious projects into digital products",
         footer: "Websites · Apps · Design · AI",
       },
@@ -191,18 +196,18 @@ const en: typeof pl = {
       },
       services: {
         eyebrow: "Services and pricing",
-        title: "Websites, applications and AI deployments — price ranges",
+        title: "Websites, applications and AI implementation — pricing",
         footer: "A quote within 24 hours",
       },
       about: {
         eyebrow: "About",
         title: "Michał Zeprzałka",
-        footer: "Digital Solutions Architect · Warsaw",
+        footer: "Product designer & developer · Warsaw",
       },
       contact: {
         eyebrow: "Contact",
         title: "Let's talk about your project",
-        footer: "A reply within 24 hours on business days",
+        footer: "A reply within 24 hours on working days",
       },
       blog: {
         eyebrow: "Blog",

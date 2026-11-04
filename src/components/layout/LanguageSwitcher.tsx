@@ -1,6 +1,5 @@
 "use client"
 
-import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { counterpart } from "@/i18n/alternates"
 import { otherLocale, type Locale, type Localized } from "@/i18n/config"
@@ -11,6 +10,10 @@ import { otherLocale, type Locale, type Localized } from "@/i18n/config"
  * miejsca w serwisie. Adres liczy `counterpart()` z bieżącej ścieżki (ta sama
  * logika co `hreflang`); liczbę stron archiwum w obu językach i klasę przycisku
  * podaje serwer (bez `cva` i `tailwind-merge` w paczce przeglądarki).
+ *
+ * Zwykłe `<a>`, nie `next/link`: wersje językowe mają osobne układy główne,
+ * więc przejście i tak jest pełnym przeładowaniem — `Link` pobierał tylko
+ * w tle ok. 40 KB drugiej wersji strony, z których nic nie korzystało.
  */
 export function LanguageSwitcher({
   locale,
@@ -32,7 +35,7 @@ export function LanguageSwitcher({
   return (
     // `hrefLang` mówi wyszukiwarce, dokąd prowadzi link — ten sam sygnał
     // co znaczniki `alternate` w nagłówku, tylko widoczny dla czytelnika.
-    <Link
+    <a
       href={counterpart(pathname, locale, target, pageCounts)}
       hrefLang={target}
       aria-label={`${label} — ${aria}`}
@@ -40,6 +43,6 @@ export function LanguageSwitcher({
       className={`${className} text-xs font-medium tabular-nums`}
     >
       {label}
-    </Link>
+    </a>
   )
 }

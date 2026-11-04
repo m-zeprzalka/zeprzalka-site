@@ -32,7 +32,8 @@ export function CardMedia({
   still,
 }: {
   poster: string
-  video: string
+  /** Brak wideo (produkt ze zrzutem) — karta pokazuje sam plakat. */
+  video?: string
   active: boolean
   sizes: string
   className?: string
@@ -100,7 +101,7 @@ export function CardMedia({
             }}
           />
         )}
-        {mounted && (
+        {mounted && video && (
           <video
             ref={videoRef}
             muted

@@ -9,7 +9,7 @@ import type { Metadata, Viewport } from "next"
 import { OG_LOCALE, ROUTES, otherLocale, type Locale } from "@/i18n/config"
 import { getMeta } from "@/i18n/content/meta"
 import { feedAlternate } from "@/i18n/page-metadata"
-import { SITE_DESCRIPTION, SITE_NAME, SITE_URL, absoluteUrl } from "@/lib/site"
+import { SITE_NAME, SITE_URL, absoluteUrl } from "@/lib/site"
 
 /**
  * Kolor paska przeglądarki i ekranu startowego — ciemny motyw jest domyślny,
@@ -28,7 +28,7 @@ export function rootMetadata(locale: Locale): Metadata {
       default: m.root.titleDefault,
       template: m.root.titleTemplate,
     },
-    description: SITE_DESCRIPTION[locale],
+    description: m.root.description,
     authors: [{ name: SITE_NAME, url: absoluteUrl(ROUTES.about[locale]) }],
     creator: SITE_NAME,
     openGraph: {

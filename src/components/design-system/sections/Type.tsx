@@ -118,7 +118,7 @@ export function TypeSection() {
             className="text-muted-foreground sm:text-xl md:text-2xl"
             usage="Lead pod nagłówkiem hero"
           >
-            Digital Solutions Architect — ponad 12+ lat doświadczenia
+            Projektant i programista produktów cyfrowych — 15 lat doświadczenia
           </Specimen>
           <Specimen
             className="text-muted-foreground lg:text-lg 2xl:text-xl"

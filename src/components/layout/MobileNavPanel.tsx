@@ -44,7 +44,6 @@ export default function MobileNavPanel({
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent
         side="top"
-        showCloseButton={false}
         onCloseAutoFocus={(event) => {
           event.preventDefault()
           returnFocusTo.current?.focus()

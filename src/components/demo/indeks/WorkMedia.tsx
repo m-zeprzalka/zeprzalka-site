@@ -70,40 +70,44 @@ export function WorkMedia({
     >
       {/* eslint-disable-next-line @next/next/no-img-element -- ten sam plik co w usePosterRatios */}
       <img src={work.poster} alt="" className="absolute inset-0 size-full object-cover" />
-      <video
-        ref={videoRef}
-        src={work.video}
-        aria-hidden="true"
-        muted
-        loop
-        playsInline
-        preload="none"
-        disablePictureInPicture
-        data-ready={ready || undefined}
-        onPlaying={() => {
-          setReady(true)
-          setPlaying(true)
-        }}
-        onPause={() => setPlaying(false)}
-        className="ix-video absolute inset-0 size-full object-cover"
-      />
-      <button
-        type="button"
-        onClick={() => setIntent(playing ? "pause" : "play")}
-        aria-label={`${playing ? labels.pause : labels.play}: ${work.title}`}
-        className="absolute end-3 bottom-3 grid size-9 fm-press place-items-center rounded-full bg-fm-surface/85 text-fm-ink shadow-fm-ring fm-focus backdrop-blur-md after:absolute after:-inset-1 after:content-['']"
-      >
-        {playing ? (
-          <Pause aria-hidden="true" className="size-3.5" fill="currentColor" strokeWidth={0} />
-        ) : (
-          <Play
-            aria-hidden="true"
-            className="size-3.5 translate-x-px"
-            fill="currentColor"
-            strokeWidth={0}
-          />
-        )}
-      </button>
+      {work.video && (
+        <video
+          ref={videoRef}
+          src={work.video}
+          aria-hidden="true"
+          muted
+          loop
+          playsInline
+          preload="none"
+          disablePictureInPicture
+          data-ready={ready || undefined}
+          onPlaying={() => {
+            setReady(true)
+            setPlaying(true)
+          }}
+          onPause={() => setPlaying(false)}
+          className="ix-video absolute inset-0 size-full object-cover"
+        />
+      )}
+      {work.video && (
+        <button
+          type="button"
+          onClick={() => setIntent(playing ? "pause" : "play")}
+          aria-label={`${playing ? labels.pause : labels.play}: ${work.title}`}
+          className="absolute end-3 bottom-3 grid size-9 fm-press place-items-center rounded-full bg-fm-surface/85 text-fm-ink shadow-fm-ring fm-focus backdrop-blur-md after:absolute after:-inset-1 after:content-['']"
+        >
+          {playing ? (
+            <Pause aria-hidden="true" className="size-3.5" fill="currentColor" strokeWidth={0} />
+          ) : (
+            <Play
+              aria-hidden="true"
+              className="size-3.5 translate-x-px"
+              fill="currentColor"
+              strokeWidth={0}
+            />
+          )}
+        </button>
+      )}
     </div>
   )
 }

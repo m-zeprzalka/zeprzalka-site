@@ -112,7 +112,9 @@ function pageCounts(locale: Locale, key: PageCardKey): Record<string, string | n
   if (key === "blog" || key === "categories") {
     return { count: articles(getAllPosts(locale).length, locale) }
   }
-  if (key === "portfolio") return { count: portfolioItems.length }
+  if (key === "portfolio") {
+    return { count: plural(portfolioItems.length, locale, getCommon(locale).plurals.projects) }
+  }
   return {}
 }
 
@@ -161,8 +163,9 @@ export function postOgImage(locale: Locale) {
 export function categoryOgImage<K extends string>(locale: Locale, key: K) {
   const template = getMeta(locale).og.cards.category
   const cardFor = (slug: string): Card => {
-    const term = getTerm(locale, "categories", slug)
-    const values = { name: term?.label ?? slug, count: articles(term?.posts.length ?? 0, locale) }
+    // Ta sama zasada co przy wpisach: nieznany adres to 404, nie karta z zerem wpisów.
+    const term = getTerm(locale, "categories", slug) ?? notFound()
+    const values = { name: term.label, count: articles(term.posts.length, locale) }
     return {
       eyebrow: template.eyebrow,
       title: fill(template.title, values),

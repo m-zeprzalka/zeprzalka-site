@@ -13,22 +13,26 @@ const pl = {
     badge: "Usługi",
     title: "Ile kosztuje strona internetowa?",
     description:
-      "Poniżej realne widełki, od których zaczynamy rozmowę. Ostateczna cena zależy od zakresu — wycenę dostajesz w 24 godziny, bez zobowiązań.",
+      "Poniżej ceny, od których zaczynamy rozmowę. Ostateczna cena zależy od zakresu — wycenę dostajesz w 24 godziny, bez zobowiązań.",
     /** Kotwice sekcji — po polsku polskie, po angielsku angielskie. */
     packagesId: "pakiety",
     packagesHeading: "Pakiety i ceny",
-    recurringBadge: "Powtarzalnie",
+    recurringBadge: "Abonament",
+    startBadge: "Na początek",
     priceFrom: "od",
+    fixedPrice: "cena stała",
     currency: "zł",
     priceNote:
-      "Ceny netto, orientacyjne. Nie znalazłeś swojego przypadku? Opisz go — większość projektów i tak wyceniam indywidualnie.",
+      "Ceny netto (bez VAT). Grafika, wideo i animacja — jako dodatek do projektu, wyceniane osobno. Współpraca B2B i white-label dla agencji — napisz, wyślę stawkę dzienną i CV.",
     processId: "proces",
     processHeading: "Jak wygląda współpraca",
+    guaranteesId: "gwarancje",
+    guaranteesHeading: "Gwarancje",
     quoteId: "wycena",
     quoteHeading: "Opisz projekt, odpowiem w 24 godziny",
     quoteBody:
-      "Wycena jest bezpłatna i nie zobowiązuje do niczego. Jeśli uznam, że Twojego problemu nie rozwiąże strona internetowa — powiem to wprost.",
-    quotePrimary: "Bezpłatna wycena",
+      "Napisz, co chcesz osiągnąć. W ciągu dnia roboczego odpowiem z pierwszą propozycją i widełkami. Jeśli uznam, że Twojego problemu nie rozwiąże strona ani aplikacja — powiem to wprost.",
+    quotePrimary: "Poproś o wycenę",
     quoteSecondary: "Kim jestem",
     quotePortfolio: "Zobacz realizacje",
     /** Nazwa katalogu ofert w danych strukturalnych. */
@@ -38,37 +42,37 @@ const pl = {
   about: {
     status: "Gotowy do współpracy",
     name: "Michał Zeprzałka",
-    role: "Digital Solutions Architect · Designer · AI Specialist",
-    location: "Polska, Warszawa",
+    role: "Projektant i programista produktów cyfrowych",
+    location: "Warszawa, Polska",
     aboutHeading: "O mnie",
     experienceHeading: "Doświadczenie",
     skillsHeading: "Umiejętności",
     educationHeading: "Edukacja",
     /** Akapit pierwszy: wyróżnienie stoi w środku zdania. */
-    bioLeadPrefix: "Ponad ",
-    bioLeadStrong: "12 lat doświadczenia",
+    bioLeadPrefix: "Mam ",
+    bioLeadStrong: "15 lat doświadczenia",
     bioLeadSuffix:
       " w projektowaniu i wdrażaniu innowacyjnych rozwiązań webowych i multimedialnych. Łączę umiejętności techniczne z wrażliwością projektową — tworzę produkty cyfrowe, które są funkcjonalne i estetyczne. ",
     bioSecondPrefix:
-      "Specjalizuję się w projektowaniu design systemów i stron internetowych, integracjach AI oraz budowie skalowalnych aplikacji. Mam duże doświadczenie w projektowaniu graficznym, animacji i tworzeniu materiałów wideo. Przez wiele lat byłem wykładowcą ",
+      "Specjalizuję się w projektowaniu design systemów i stron internetowych, integracjach AI oraz budowie skalowalnych aplikacji. Mam duże doświadczenie w projektowaniu graficznym, animacji i tworzeniu materiałów wideo. Przez wiele lat byłem wykładowcą akademickim, ",
     bioSecondStrong: "zdobywając Nagrodę Rektora",
     bioSecondSuffix:
       " za najwyższą średnią ocen w ankietach studenckich: 99,28%.",
     experience: [
       {
-        role: "Digital Solutions Architect & Graphic Designer",
+        role: "Projektant i programista produktów cyfrowych",
         company: "Freelance",
         period: "2011–obecnie",
         description:
-          "Ponad 30 klientów. Głównie tworzenie stron internetowych, aplikacji, materiałów graficznych, animacji i materiałów wideo. Prowadzenie i zarządzanie Social Media, przygotowywanie kampanii reklamowych oraz doradztwo w zakresie transformacji cyfrowej.",
+          "Ponad 30 klientów. Głównie tworzenie stron internetowych, aplikacji, materiałów graficznych, animacji i materiałów wideo. Prowadzenie social mediów i zarządzanie nimi, przygotowywanie kampanii reklamowych oraz doradztwo w zakresie transformacji cyfrowej.",
         tags: [
-          "Social Media",
+          "Social media",
           "Marketing",
           "Branding",
           "Projektowanie UX/UI",
           "Tworzenie stron i aplikacji",
           "Grafika",
-          "Montaż Wideo",
+          "Montaż wideo",
           "Animacja",
           "Integracje AI",
         ],
@@ -85,7 +89,7 @@ const pl = {
           "Figma",
           "Photoshop",
           "After Effects",
-          "Social Media Marketing",
+          "Social media marketing",
         ],
       },
     ],
@@ -106,7 +110,7 @@ const pl = {
         category: "Design",
         items: [
           "Figma",
-          "Design Systems",
+          "Design systems",
           "UI/UX",
           "Typografia",
           "Adobe CC",
@@ -133,20 +137,20 @@ const pl = {
       {
         school: "Uniwersytet Civitas",
         degree: "Studia magisterskie",
-        field: "Socjologia specjalizacja Nowe media",
+        field: "Socjologia, specjalizacja: nowe media",
         period: "2014–2017",
       },
       {
         school: "Szkoła Główna Gospodarstwa Wiejskiego",
         degree: "Studia licencjackie",
         field:
-          "Kierunek Socjologia i Pedagogika, specjalizacja animacja społeczna z edukacją kulturalną",
+          "Socjologia i pedagogika, specjalizacja: animacja społeczna z edukacją kulturalną",
         period: "2011–2014",
       },
       {
         school: "Warszawska Szkoła Reklamy",
-        degree: "Szkoła Policealna",
-        field: "Specjalizacja Strategia reklamy & PR",
+        degree: "Szkoła policealna",
+        field: "Specjalizacja: strategia reklamy i PR",
         period: "2012–2014",
       },
     ],
@@ -171,11 +175,11 @@ const pl = {
     title: "Porozmawiajmy",
     description:
       "Masz pomysł na projekt? Chętnie go omówię i zaproponuję rozwiązanie dopasowane do Twoich potrzeb.",
-    emailLabel: "Email",
+    emailLabel: "E-mail",
     locationLabel: "Lokalizacja",
     locationValue: "Polska — praca zdalna",
     responseLabel: "Czas odpowiedzi",
-    responseValue: "Do 24h w dni robocze",
+    responseValue: "Do 24 godzin w dni robocze",
     note: "Każde zlecenie zaczyna się od krótkiej rozmowy — bez zobowiązań, bez ukrytych kosztów.",
   },
 
@@ -183,7 +187,7 @@ const pl = {
     badge: "Portfolio",
     title: "Realizacje",
     description:
-      "Komplet materiałów, które mogę pokazać publicznie — strony i aplikacje obok pracy przy kamerze i montażu.",
+      "Komplet materiałów, które mogę pokazać publicznie — własne produkty, strony i aplikacje obok pracy przy kamerze i montażu.",
     ctaId: "wspolpraca",
     ctaHeading: "Twój projekt może być następny",
     ctaBody:
@@ -196,9 +200,9 @@ const pl = {
 
   blog: {
     badge: "Blog",
-    title: "Blog Technologiczny",
+    title: "Blog technologiczny",
     description:
-      "Odkryj najnowsze trendy w AI, Web Developmencie, Designie i technologii",
+      "Odkryj najnowsze trendy w AI, web developmencie, designie i technologii.",
     featuredHeading: "Wyróżnione artykuły",
     allHeading: "Wszystkie artykuły",
     /** {current} i {total} podstawia komponent paginacji. */
@@ -229,21 +233,25 @@ const en: typeof pl = {
     badge: "Services",
     title: "What does a website cost?",
     description:
-      "Below are the real ranges we start the conversation from. The final price follows the scope — you get a quote within 24 hours, with nothing to sign.",
+      "Below are the prices we start the conversation from. The final price follows the scope — you get a quote within 24 hours, with no obligation.",
     packagesId: "packages",
     packagesHeading: "Packages and prices",
-    recurringBadge: "Recurring",
+    recurringBadge: "Subscription",
+    startBadge: "Start here",
     priceFrom: "from",
+    fixedPrice: "fixed price",
     currency: "PLN",
     priceNote:
-      "Net prices, indicative. Your case is not on the list? Describe it — most projects get an individual quote anyway.",
+      "Net prices (excluding VAT). Graphics, video and motion come as add-ons to a project, priced separately. B2B contracts and white-label work for agencies — write to me and I will send my day rate and CV.",
     processId: "process",
-    processHeading: "How working together looks",
+    processHeading: "How we work together",
+    guaranteesId: "guarantees",
+    guaranteesHeading: "Guarantees",
     quoteId: "quote",
-    quoteHeading: "Describe the project, I answer within 24 hours",
+    quoteHeading: "Describe the project and I'll reply within 24 hours",
     quoteBody:
-      "The quote is free and commits you to nothing. If I conclude that a website will not solve your problem, I will say so plainly.",
-    quotePrimary: "Free quote",
+      "Tell me what you want to achieve. Within one working day I will reply with a first proposal and a price range. If I conclude that a website or an app will not solve your problem, I will say so plainly.",
+    quotePrimary: "Request a quote",
     quoteSecondary: "Who I am",
     quotePortfolio: "See my work",
     offerCatalog: "Digital services",
@@ -252,14 +260,14 @@ const en: typeof pl = {
   about: {
     status: "Available for new projects",
     name: "Michał Zeprzałka",
-    role: "Digital Solutions Architect · Designer · AI Specialist",
+    role: "Digital Product Designer & Developer",
     location: "Warsaw, Poland",
     aboutHeading: "About me",
     experienceHeading: "Experience",
     skillsHeading: "Skills",
     educationHeading: "Education",
-    bioLeadPrefix: "Over ",
-    bioLeadStrong: "12 years of experience",
+    bioLeadPrefix: "I have ",
+    bioLeadStrong: "15 years of experience",
     bioLeadSuffix:
       " designing and delivering innovative web and multimedia solutions. I pair technical skill with a designer's eye — the digital products I build are meant to work well and look right. ",
     bioSecondPrefix:
@@ -269,16 +277,16 @@ const en: typeof pl = {
       " for the highest average score in student surveys: 99.28%.",
     experience: [
       {
-        role: "Digital Solutions Architect & Graphic Designer",
+        role: "Digital Product Designer & Developer",
         company: "Freelance",
         period: "2011–present",
         description:
           "More than 30 clients. Mostly websites, applications, graphic assets, animation and video. Running and managing social media, preparing advertising campaigns and advising on digital transformation.",
         tags: [
-          "Social Media",
+          "Social media",
           "Marketing",
           "Branding",
-          "UX/UI Design",
+          "UX/UI design",
           "Websites and applications",
           "Graphic design",
           "Video editing",
@@ -298,7 +306,7 @@ const en: typeof pl = {
           "Figma",
           "Photoshop",
           "After Effects",
-          "Social Media Marketing",
+          "Social media marketing",
         ],
       },
     ],
@@ -319,7 +327,7 @@ const en: typeof pl = {
         category: "Design",
         items: [
           "Figma",
-          "Design Systems",
+          "Design systems",
           "UI/UX",
           "Typography",
           "Adobe CC",
@@ -382,24 +390,24 @@ const en: typeof pl = {
     badge: "Contact",
     title: "Let's talk",
     description:
-      "Got an idea for a project? I am glad to talk it through and propose a solution shaped around what you need.",
+      "Got an idea for a project? I'd be glad to talk it through and propose a solution shaped around what you need.",
     emailLabel: "Email",
     locationLabel: "Location",
     locationValue: "Poland — working remotely",
     responseLabel: "Response time",
-    responseValue: "Within 24h on working days",
+    responseValue: "Within 24 hours on working days",
     note: "Every engagement starts with a short conversation — no obligation, no hidden costs.",
   },
 
   portfolio: {
     badge: "Portfolio",
-    title: "Selected work",
+    title: "Work",
     description:
       "Everything I am free to show publicly — websites and applications next to work behind the camera and in the edit.",
     ctaId: "work-together",
     ctaHeading: "Your project could be next",
     ctaBody:
-      "Describe what you want to build — I answer within 24 hours. If you are looking for a reference point for the budget, start with the pricing.",
+      "Describe what you want to build — I'll reply within 24 hours. If you are looking for a reference point for the budget, start with the pricing.",
     ctaPrimary: "Free quote",
     ctaSecondary: "See the pricing",
     collectionName: "Portfolio — {name}",
@@ -407,9 +415,9 @@ const en: typeof pl = {
 
   blog: {
     badge: "Blog",
-    title: "Technology Blog",
+    title: "Technology blog",
     description:
-      "The latest in AI, web development, design and technology",
+      "The latest in AI, web development, design and technology.",
     featuredHeading: "Featured articles",
     allHeading: "All articles",
     pageOf: "page {current} of {total}",

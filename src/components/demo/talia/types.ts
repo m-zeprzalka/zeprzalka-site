@@ -6,7 +6,8 @@ export interface Project {
   title: string
   category: string
   group: PortfolioGroup
-  video: string
+  /** Brak wideo (produkt ze zrzutem) — kafel pokazuje sam plakat. */
+  video?: string
   poster: string
 }
 

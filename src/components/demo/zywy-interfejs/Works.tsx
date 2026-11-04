@@ -9,7 +9,8 @@ export interface Work {
   title: string
   category: string
   group: string
-  video: string
+  /** Brak wideo (produkt ze zrzutem) — kafel pokazuje sam plakat. */
+  video?: string
   poster: string
   /** Proporcje plakatu (szerokość / wysokość) — kafel ma wymiar, zanim wczyta się obraz. */
   ratio: number
@@ -135,7 +136,7 @@ function WorkCard({ work }: { work: Work }) {
   // Dotyk: gra karta widoczna w ≥ 60%, reszta stoi. Mysz: gra karta pod kursorem.
   useEffect(() => {
     const video = ref.current
-    if (!video || finePointer) return
+    if (!video || finePointer || !work.video) return
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (!entry) return
@@ -151,7 +152,7 @@ function WorkCard({ work }: { work: Work }) {
   }, [finePointer, work.video])
 
   const play = () => {
-    if (!finePointer) return
+    if (!finePointer || !work.video) return
     setSrc(work.video)
     ref.current?.play().catch(() => {})
   }

@@ -11,10 +11,11 @@
  * Teksty są parami `{ pl, en }` — pola techniczne (plik wideo, poster, grupa)
  * są niezależne od języka, więc występują raz.
  */
+import "server-only"
 import type { Localized } from "@/i18n/config"
 
-/** Dwie dyscypliny, które trudno oceniać tą samą miarą — stąd osobne sekcje. */
-export type PortfolioGroup = "web" | "wideo"
+/** Dyscypliny, które trudno oceniać tą samą miarą — stąd osobne sekcje. */
+export type PortfolioGroup = "produkty" | "web" | "wideo"
 
 export interface PortfolioItem {
   /** Klucz listy; równy nazwie pliku, żeby łatwo skojarzyć zasób z wpisem. */
@@ -23,8 +24,13 @@ export interface PortfolioItem {
   /** Etykieta na kaflu — węższa niż grupa, ta sama co na stronie głównej. */
   category: Localized<string>
   group: PortfolioGroup
-  video: string
+  /** Zapętlony kadr; bez niego kafel pokazuje sam plakat (zrzut serwisu). */
+  video?: string
   poster: string
+  /** Krótki opis (jedno zdanie) — na razie tylko przy produktach z działającym adresem. */
+  description?: Localized<string>
+  /** Działający serwis — kafel prowadzi do niego. */
+  url?: string
   /** Widoczne w zajawce na stronie głównej. */
   featured?: boolean
 }
@@ -34,6 +40,14 @@ export const portfolioGroups: {
   label: Localized<string>
   description: Localized<string>
 }[] = [
+  {
+    id: "produkty",
+    label: { pl: "Produkty cyfrowe", en: "Digital products" },
+    description: {
+      pl: "Serwisy i aplikacje, które projektuję i rozwijam — od pomysłu, przez interfejs, po wdrożenie.",
+      en: "Websites and applications I design and build — from the idea, through the interface, to production.",
+    },
+  },
   {
     id: "web",
     label: { pl: "Strony i aplikacje", en: "Websites and applications" },
@@ -53,10 +67,10 @@ export const portfolioGroups: {
 ]
 
 /** Etykiety kategorii — powtarzają się na kilku kaflach, stąd stałe. */
-const UX_UI: Localized<string> = { pl: "UX/UI Design", en: "UX/UI Design" }
+const UX_UI: Localized<string> = { pl: "Projekt UX/UI", en: "UX/UI design" }
 const DESIGN_DEPLOY: Localized<string> = {
-  pl: "Design & Deployment",
-  en: "Design & Deployment",
+  pl: "Projekt i wdrożenie",
+  en: "Design & deployment",
 }
 const EVENT: Localized<string> = {
   pl: "Relacja z wydarzenia",
@@ -76,6 +90,55 @@ const SOCIAL: Localized<string> = {
 }
 
 export const portfolioItems: PortfolioItem[] = [
+  // — Produkty cyfrowe (zrzuty z działających serwisów, 4.11.2026) ———————————————
+  {
+    slug: "aifeed",
+    title: { pl: "aifeed.pl", en: "aifeed.pl" },
+    category: { pl: "Produkt AI", en: "AI product" },
+    group: "produkty",
+    poster: "/portfolio/aifeed.webp",
+    url: "https://www.aifeed.pl",
+    description: {
+      pl: "Serwis, który agreguje, tworzy i udostępnia wiadomości o AI, badaniach i raportach po polsku.",
+      en: "A website that aggregates, writes and publishes AI news, research and reports in Polish.",
+    },
+  },
+  {
+    slug: "prfct",
+    title: { pl: "prfct.dev", en: "prfct.dev" },
+    category: { pl: "Design system", en: "Design system" },
+    group: "produkty",
+    poster: "/portfolio/prfct.webp",
+    url: "https://www.prfct.dev",
+    description: {
+      pl: "Otwarty design system dla Reacta: tokeny z kontrastem liczonym przy buildzie, dostępne komponenty i dokumentacja.",
+      en: "An open-source design system for React: build-time contrast-safe tokens, accessible components and documentation.",
+    },
+  },
+  {
+    slug: "brandmaker",
+    title: { pl: "BrandMaker", en: "BrandMaker" },
+    category: { pl: "SaaS z AI", en: "AI SaaS" },
+    group: "produkty",
+    poster: "/portfolio/brandmaker.webp",
+    url: "https://brandmaker-landing.vercel.app",
+    description: {
+      pl: "Cyfrowa agencja brandingowa oparta na AI: logo, brandbook i identyfikacja wizualna w kilka minut.",
+      en: "An AI-powered digital branding agency: a logo, a brand book and a visual identity in minutes.",
+    },
+  },
+  {
+    slug: "fizjorank",
+    title: { pl: "FizjoRank", en: "FizjoRank" },
+    category: { pl: "Serwis rankingowy", en: "Rankings website" },
+    group: "produkty",
+    poster: "/portfolio/fizjorank.webp",
+    url: "https://fizjorank.pl",
+    description: {
+      pl: "Ranking ośrodków rehabilitacji dziecięcej: porównanie placówek i metod terapii.",
+      en: "A ranking of children’s rehabilitation centres: compare facilities and therapy methods.",
+    },
+  },
   // — Strony i aplikacje ————————————————————————————————————————————————
   {
     slug: "orlen-min",
@@ -212,7 +275,7 @@ export const portfolioItems: PortfolioItem[] = [
   },
   {
     slug: "rolki-lifestyle",
-    title: { pl: "Rolki lifestyle", en: "Rollerblading lifestyle" },
+    title: { pl: "Rolki lifestyle", en: "Lifestyle reels" },
     category: SOCIAL,
     group: "wideo",
     video: "/rolki-lifestyle.mp4",

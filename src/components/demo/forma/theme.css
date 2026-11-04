@@ -165,6 +165,18 @@ html.dark:has(.fm) {
   background: oklch(0.145 0 0);
 }
 
+/* Domyślna krawędź i kursor wewnątrz Formy — utility je nadpisują (warstwa base). */
+@layer base {
+  :where(.fm) *,
+  :where(.fm) ::before,
+  :where(.fm) ::after {
+    border-color: var(--fm-edge);
+  }
+  :where(.fm) :where(button, [role="button"]):not(:disabled) {
+    cursor: pointer;
+  }
+}
+
 .fm ::selection {
   background: var(--fm-ink);
   color: var(--fm-inverse);

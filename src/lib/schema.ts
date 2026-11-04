@@ -12,7 +12,15 @@ import "server-only"
 import { DEFAULT_LOCALE, ROUTES, INTL_LOCALE, postPath, type Locale } from "@/i18n/config"
 import { getCommon } from "@/i18n/content/common"
 import { getPages } from "@/i18n/content/pages"
-import { AUTHOR, CONTACT_EMAIL, SAME_AS, SITE_URL, absoluteImage, absoluteUrl } from "@/lib/site"
+import {
+  AUTHOR,
+  CONTACT_EMAIL,
+  SAME_AS,
+  SITE_DOMAIN,
+  SITE_URL,
+  absoluteImage,
+  absoluteUrl,
+} from "@/lib/site"
 import type { Post } from "@/lib/posts"
 
 type Schema = Record<string, unknown>
@@ -46,7 +54,7 @@ export function personSchema(locale: Locale): Schema {
     "@type": "Person",
     "@id": PERSON_ID,
     name: AUTHOR.name,
-    jobTitle: AUTHOR.jobTitle,
+    jobTitle: AUTHOR.jobTitle[locale],
     description: AUTHOR.bio[locale],
     url: PERSON_URL,
     image: absoluteImage(AUTHOR.avatar),
@@ -71,7 +79,7 @@ export function websiteSchema(locale: Locale): Schema {
     "@id": websiteId(locale),
     // Ta sama nazwa co sufiks tytułów — Google wybiera z niej nazwę witryny w wynikach.
     name: AUTHOR.name,
-    alternateName: "zeprzalka.com",
+    alternateName: SITE_DOMAIN,
     url: absoluteUrl(ROUTES.home[locale]),
     inLanguage: INTL_LOCALE[locale],
     publisher: { "@id": PERSON_ID },

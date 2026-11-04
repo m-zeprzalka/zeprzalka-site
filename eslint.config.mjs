@@ -13,20 +13,14 @@ const eslintConfig = [
       "no-restricted-imports": [
         "error",
         {
-          // Zależności wyłącznie piaskownicy (devDependencies): biblioteki ruchu nowych
-          // koncepcji i react-intersection-observer zamrożonych wariantów z sierpnia.
-          paths: [
-            "motion",
-            "motion/react",
-            "motion/react-m",
-            "@number-flow/react",
-            "react-intersection-observer",
-          ].map((name) => ({
-            name,
-            message:
-              "Ta zależność jest tylko w piaskownicy /demo. Do serwisu trafia razem z decyzją o nowym wyglądzie.",
-          })),
           patterns: [
+            {
+              // Zależności wyłącznie piaskownicy (devDependencies) razem z podścieżkami.
+              // Wyrażenie, nie `group`: wzorce w stylu .gitignore łapały też segment „Motion” w ścieżkach serwisu.
+              regex: "^((framer-)?motion|@number-flow/[^/]+)(/.*)?$",
+              message:
+                "Ta zależność jest tylko w piaskownicy /demo. Do serwisu trafia razem z decyzją o nowym wyglądzie.",
+            },
             {
               group: ["@/components/demo/*", "@/app/demo/*", "**/demo/**"],
               message:

@@ -1,13 +1,13 @@
 "use server"
 
 import { headers } from "next/headers"
-import nodemailer from "nodemailer"
 import { z } from "zod"
 import { checkRateLimit, clientKey } from "@/lib/rate-limit"
 import { DEFAULT_LOCALE, isLocale, type Locale } from "@/i18n/config"
 import { getCommon } from "@/i18n/content/common"
 import { fill } from "@/i18n/format"
 import { escapeMarkup } from "@/lib/escape"
+import { sendMail } from "@/lib/mail"
 import { CONTACT_EMAIL } from "@/lib/site"
 
 export type ContactField = "name" | "email" | "projectType" | "message"
@@ -110,31 +110,6 @@ export async function sendContactEmail(
 
   const { name, email, projectType, message } = result.data
 
-  const { SMTP_HOST, SMTP_PORT, SMTP_SECURE, SMTP_USER, SMTP_PASS } = process.env
-
-  if (!SMTP_HOST || !SMTP_USER || !SMTP_PASS) {
-    console.error("Contact form: missing SMTP configuration (SMTP_HOST/SMTP_USER/SMTP_PASS)")
-    return {
-      success: false,
-      message: copy.unavailable,
-      fields,
-    }
-  }
-
-  const transporter = nodemailer.createTransport({
-    host: SMTP_HOST,
-    port: Number(SMTP_PORT) || 465,
-    secure: SMTP_SECURE !== "false",
-    // Na porcie 587 (bez `secure`) połączenie musi przejść na TLS.
-    requireTLS: SMTP_SECURE === "false",
-    auth: { user: SMTP_USER, pass: SMTP_PASS },
-    // Krócej niż limit czasu funkcji — zawieszony serwer pocztowy kończy się
-    // komunikatem dla użytkownika, a nie przerwanym żądaniem.
-    connectionTimeout: 8_000,
-    greetingTimeout: 5_000,
-    socketTimeout: 8_000,
-  })
-
   // Nagłówki mailowe nie mogą zawierać znaków nowej linii (header injection).
   const safeName = name.replace(/[\r\n"]/g, " ").trim()
   const safeSubject = (projectType || "Brak tematu").replace(/[\r\n]/g, " ")
@@ -142,29 +117,28 @@ export async function sendContactEmail(
   // w temacie mówi tylko tyle, że odpowiedź ma pójść po angielsku.
   const localeTag = locale === "pl" ? "" : "[EN] "
 
-  try {
-    await transporter.sendMail({
-      // Stały prefiks: nazwa wyświetlana nadawcy pochodzi z formularza, więc
-      // bez niego wiadomość mogła udawać np. „Bank — dział bezpieczeństwa".
-      from: { name: `Formularz: ${safeName}`.slice(0, 120), address: SMTP_USER },
-      // Odbiorca: zmienna środowiskowa albo publiczny adres kontaktowy serwisu.
-      to: process.env.CONTACT_RECIPIENT || CONTACT_EMAIL,
-      replyTo: email,
-      subject: `${localeTag}Wiadomość z formularza: ${safeSubject}`,
-      text: `Imię: ${name}\nEmail: ${email}\nRodzaj projektu: ${projectType || "-"}\n\n${message}`,
-      html: `
-        <p><strong>Imię:</strong> ${escapeMarkup(name)}</p>
-        <p><strong>Email:</strong> ${escapeMarkup(email)}</p>
-        <p><strong>Rodzaj projektu:</strong> ${escapeMarkup(projectType || "-")}</p>
-        <hr/>
-        <p>${escapeMarkup(message).replace(/\n/g, "<br/>")}</p>
-      `,
-    })
-  } catch (error) {
-    console.error("Contact form: sendMail failed", error)
+  const sent = await sendMail({
+    // Stały prefiks: nazwa wyświetlana nadawcy pochodzi z formularza, więc
+    // bez niego wiadomość mogła udawać np. „Bank — dział bezpieczeństwa".
+    fromName: `Formularz: ${safeName}`.slice(0, 120),
+    // Odbiorca: zmienna środowiskowa albo publiczny adres kontaktowy serwisu.
+    to: process.env.CONTACT_RECIPIENT || CONTACT_EMAIL,
+    replyTo: email,
+    subject: `${localeTag}Wiadomość z formularza: ${safeSubject}`,
+    text: `Imię: ${name}\nEmail: ${email}\nRodzaj projektu: ${projectType || "-"}\n\n${message}`,
+    html: `
+      <p><strong>Imię:</strong> ${escapeMarkup(name)}</p>
+      <p><strong>Email:</strong> ${escapeMarkup(email)}</p>
+      <p><strong>Rodzaj projektu:</strong> ${escapeMarkup(projectType || "-")}</p>
+      <hr/>
+      <p>${escapeMarkup(message).replace(/\n/g, "<br/>")}</p>
+    `,
+  })
+
+  if (sent !== "sent") {
     return {
       success: false,
-      message: copy.failed,
+      message: sent === "unconfigured" ? copy.unavailable : copy.failed,
       fields,
     }
   }

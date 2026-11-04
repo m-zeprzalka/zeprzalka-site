@@ -15,7 +15,7 @@ export interface DemoEntry {
   slug: string
   title: string
   date: string
-  status: "rekomendacja" | "propozycja" | "odrzucony"
+  status: "rekomendacja" | "propozycja"
   summary: string
   /** Koncepcje do oceny: dla kogo działa najlepiej i czego się bać. */
   pitch?: { strengths: readonly string[]; risks: readonly string[] }
@@ -86,46 +86,6 @@ export const DEMOS: readonly DemoEntry[] = [
     status: "propozycja",
     summary:
       "Wspólny fundament trzech koncepcji: kolory w obu motywach, pismo, promienie, cienie i prymitywy (pigułki, chipy, kopiowanie, przełącznik motywu, liczby).",
-  },
-  {
-    slug: "precyzja",
-    title: "Precyzja — kierunek z 3 listopada 2026",
-    date: "2026-11-03",
-    status: "odrzucony",
-    summary:
-      "Monochrom, linia włosowa, Geist + Geist Mono. Nagłówek jako zaznaczony obiekt z wymiarami na żywo, tryb „Wymiary”, cztery kompetencje z interaktywnymi próbkami.",
-  },
-  {
-    slug: "precyzja/system",
-    title: "Precyzja — specimen systemu",
-    date: "2026-11-03",
-    status: "odrzucony",
-    summary:
-      "Tokeny i prymitywy nowego języka na jednej stronie: kolor w obu motywach, skala pisma, odstępy, siatka, ruch, przyciski i pola.",
-  },
-  {
-    slug: "main-secondary",
-    title: "Wariant A — Bricolage Grotesque + Instrument Serif",
-    date: "2026-08-25",
-    status: "odrzucony",
-    summary:
-      "Display-grotesk z kursywą szeryfową jako akcentem, schodkowe wejście słów, szyna nawigacji sekcji.",
-  },
-  {
-    slug: "main-third",
-    title: "Wariant B — Archivo, siatka 12 kolumn",
-    date: "2026-08-25",
-    status: "odrzucony",
-    summary:
-      "Widoczna siatka konstrukcyjna, ramy, ruch na animation-timeline: view(), pasek realizacji.",
-  },
-  {
-    slug: "main-fourth",
-    title: "Wariant C — Fraunces, papier i tusz",
-    date: "2026-08-25",
-    status: "odrzucony",
-    summary:
-      "Ciepła paleta papier/tusz, ziarno SVG, magnetyczne przyciski, polskie spacje nierozdzielające.",
   },
 ]
 

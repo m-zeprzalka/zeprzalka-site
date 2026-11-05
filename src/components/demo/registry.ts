@@ -17,9 +17,10 @@ export interface DemoEntry {
   date: string
   /**
    * Iteracja projektu: 3 — system „Forma” i trzy koncepcje, 5 — pięć propozycji strony głównej,
-   * 6 — pięć koncepcji po uwagach do iteracji 5 (docs/prompt.md + docs/prompt-nowy.md).
+   * 6 — pięć koncepcji po uwagach do iteracji 5 (docs/prompt.md + docs/prompt-nowy.md),
+   * 7 — wersje bliskie wyboru po uwagach do iteracji 6 (docs/prompt-najnowszy.md).
    */
-  iteration: 3 | 5 | 6
+  iteration: 3 | 5 | 6 | 7
   status: "rekomendacja" | "propozycja"
   /** Iteracje 5–6: zadanie od właściciela, na które propozycja odpowiada. */
   brief?: string
@@ -29,6 +30,90 @@ export interface DemoEntry {
 }
 
 export const DEMOS: readonly DemoEntry[] = [
+  {
+    slug: "indeks-1",
+    brief: "Indeks · nowy po wszystkich uwagach",
+    title: "Indeks · I",
+    date: "2026-11-05",
+    iteration: 7,
+    status: "propozycja",
+    summary:
+      "Indeks · nowy dopracowany punkt po punkcie: jedna kolumna, nagłówek i paleta ⌘K na tej samej osi, obłe elementy, karty z wideo na najechanie, ciemny motyw na start.",
+    pitch: {
+      strengths: [
+        "Kandydat do produkcji — najbliżej uwag z briefu, zwycięzca niezależnego krytyka",
+        "Najlżejsza: wejście nie czeka na silnik znaków, bez skoków układu",
+        "Siatka trzech torów na liczbach całkowitych — kolumna, karty i paleta trzymają te same linie",
+      ],
+      risks: [
+        "Minimalizm stoi na tekście — znaki są akcentem (logo, liczby, wideo, stopka), nie bohaterem",
+        "Poniżej 1280 px karta z prawego toru otwiera się kliknięciem, nie najechaniem",
+      ],
+    },
+  },
+  {
+    slug: "indeks-2",
+    brief: "Wariacja na temat Indeksu",
+    title: "Indeks · II",
+    date: "2026-11-05",
+    iteration: 7,
+    status: "propozycja",
+    summary:
+      "Wariacja na temat wąskiego Indeksu: asymetryczna siatka, a na marginesie twarz ze znaków, która zamienia się w film wskazanej kategorii.",
+    pitch: {
+      strengths: [
+        "Najmocniejsze pierwsze wrażenie — twarz ze znaków z wyborem zestawu dla odwiedzającego",
+        "Hybryda z Twojego briefu: chipy narzędzi + jeden film na kategorię",
+        "Masonry ze szkieletem ze znaków, segmenty kompetencji z figurą, soczewka kodu w CTA",
+      ],
+      risks: [
+        "Najwięcej efektów naraz — płynność do sprawdzenia na słabszej grafice",
+        "Odchodzi od „czystej” jednej kolumny Indeksu",
+      ],
+    },
+  },
+  {
+    slug: "best-of-2",
+    brief: "The Best Of z dopracowanymi animacjami",
+    title: "The Best Of · II",
+    date: "2026-11-05",
+    iteration: 7,
+    status: "propozycja",
+    summary:
+      "Wszystko pochwalone w iteracjach 5 i 6 na jednej stronie, z jednym językiem ruchu: obraz rodzi się ze znaków, tekst wyostrza się z rozmycia albo dekoduje.",
+    pitch: {
+      strengths: [
+        "Najlepsza choreografia wejścia — nawigacja, tekst i kadr w ok. 0,8 s",
+        "Slider portfolio, masonry ze znaków, log komend i rozmowa AI, soczewka CTA, twarz przy formularzu",
+        "Zoom wideo od mniejszego kadru do kontenera",
+      ],
+      risks: [
+        "Szeroki, klasyczny układ — najdalej od kanonu Indeksu",
+        "Najwięcej powierzchni ze znaków — przewijanie do sprawdzenia na telefonie",
+      ],
+    },
+  },
+  {
+    slug: "autorska",
+    brief: "Wersja autorska (bonus)",
+    title: "Warstwy",
+    date: "2026-11-05",
+    iteration: 7,
+    status: "propozycja",
+    summary:
+      "Strona jak plik warstw projektanta: każdy rozdział to obła karta, która nasuwa się na poprzednią, a kod ze znaków jest materiałem każdej warstwy.",
+    pitch: {
+      strengths: [
+        "Własna idea, inna niż oba Indeksy i The Best Of — nawigacja jak panel warstw w Figmie (⌘K)",
+        "Ruch stosu kart w CSS sterowanym przewijaniem, bez JS przy przewijaniu",
+        "Stopka-kurtyna z „Zeprzałka” ze znaków na koniec stosu",
+      ],
+      risks: [
+        "Cofanie kart wymaga `animation-timeline` — w Firefoksie karty tylko się przyklejają",
+        "Każda kompetencja jako osobna karta wydłuża stronę",
+      ],
+    },
+  },
   {
     slug: "indeks-new",
     brief: "Nowa wersja „Indeksu”",

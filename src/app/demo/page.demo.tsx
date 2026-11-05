@@ -8,12 +8,13 @@ import { getCommon } from "@/i18n/content/common"
 export const metadata = { title: "Piaskownica" }
 
 /**
- * Spis piaskownicy jako krótka prezentacja dla właściciela: pięć koncepcji
- * z iteracji 6 (każda odpowiada na jedno zadanie z briefu), niżej propozycje
- * z iteracji 5 i koncepcje z iteracji 3 ze specimenem systemu „Forma”.
+ * Spis piaskownicy jako krótka prezentacja dla właściciela: wersje z iteracji 7
+ * (bliskie wyboru, każda odpowiada na jedno zadanie z briefu), niżej koncepcje
+ * z iteracji 6 i 5 oraz iteracji 3 ze specimenem systemu „Forma”.
  */
 export default function DemoIndexPage() {
-  const proposals = DEMOS.filter((demo) => demo.iteration === 6)
+  const proposals = DEMOS.filter((demo) => demo.iteration === 7)
+  const sixth = DEMOS.filter((demo) => demo.iteration === 6)
   const previous = DEMOS.filter((demo) => demo.iteration === 5)
   const earlier = DEMOS.filter((demo) => demo.iteration === 3)
 
@@ -26,16 +27,16 @@ export default function DemoIndexPage() {
 
       <main className="fm-container pt-12 pb-24 md:pt-20">
         <Chip className="bg-fm-surface shadow-fm-ring">
-          <LiveDot /> Iteracja 6 · 5 listopada 2026
+          <LiveDot /> Iteracja 7 · 5 listopada 2026
         </Chip>
         <h1 className="mt-6 max-w-[20ch] text-fm-h2 font-semibold text-balance md:text-[3.5rem] md:leading-[1.04]">
-          Pięć koncepcji strony głównej.
-          <span className="text-fm-ink-3"> Najlepsze z dwóch iteracji, doprowadzone dalej.</span>
+          Wersje bliskie wyboru.
+          <span className="text-fm-ink-3"> Wąski Indeks w dwóch odsłonach i The Best Of.</span>
         </h1>
         <p className="mt-6 max-w-[42rem] text-fm-lead text-pretty text-fm-ink-2">
-          Każda koncepcja odpowiada na jedno zadanie z Twojego briefu z 4 listopada i stoi na treści
-          obecnej strony głównej. Obejrzyj je na telefonie i na komputerze, w obu motywach. Przy
-          każdej sekcji wystarczy „zostaje / zmień / wyrzuć” i jedno zdanie dlaczego.
+          Każda wersja odpowiada na jedno zadanie z Twojego briefu z 5 listopada, wszystkie stoją na
+          wspólnym silniku znaków i treści obecnej strony głównej. Obejrzyj je na telefonie i na
+          komputerze, w obu motywach — ciemny jest teraz domyślny.
         </p>
 
         <ol className="mt-14 grid gap-4 md:grid-cols-2">
@@ -47,9 +48,15 @@ export default function DemoIndexPage() {
         </ol>
 
         <EarlierList
+          id="iteracja-6"
+          title="Iteracja 6 — koncepcje z 5 listopada"
+          lead="Indeks · nowy, laboratorium glifów, The Best Of, Rentgen i Kinetyka — na nich opierają się Twoje uwagi do iteracji 7."
+          demos={sixth}
+        />
+        <EarlierList
           id="iteracja-5"
           title="Iteracja 5 — propozycje z 4 listopada"
-          lead="Zostają do porównania. Na nich opierają się Twoje uwagi do iteracji 6."
+          lead="Zostają do porównania — punkt wyjścia iteracji 6."
           demos={previous}
         />
         <EarlierList

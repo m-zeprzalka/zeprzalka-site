@@ -1,0 +1,667 @@
+/*
+ * „Indeks · I” — tokeny siatki i to, czego klasy utility nie wyrażą: selektory
+ * relacyjne, oś czasu przewijania, wejścia i wyjścia Radiksa, morf przejścia
+ * widoku. Wszystko inne stoi w klasach Tailwinda w komponentach. Kolory, promienie
+ * i krzywe przychodzą z Formy (`--fm-*`, `--radius-fm-*`, `--ease-fm-*`).
+ *
+ * Siatka (PLAN): trzy symetryczne tory [m][S][g][M][g][S][m], g = m.
+ *   M — kolumna: okno − 2m (< 640), 640 px, od 1440 px 704, od 1680 px 768;
+ *   m — margines i odstęp toru: 20 → 32 (od 640) → 48 px (od 1536);
+ *   S — tor boczny (karta na marginesie, spis sekcji) = (okno − M − 4m) / 2.
+ * Nagłówek, paleta i karty pod słowem stoją na krawędziach M.
+ */
+
+.i1 {
+  --i1-m: 1.25rem;
+  --i1-max: 40rem;
+  /* Wcięcie treści w kartach i wierszach; wylew tła poza kolumnę (tekst zostaje na jej linii). */
+  --i1-inset: 1rem;
+  --i1-bleed: 0rem;
+  --i1-header: 4rem;
+  --i1-lane: 8.5rem;
+  /* Papier pod glifami: szkielet mediów jest czarny w obu motywach (jak we wspólnym silniku). */
+  --i1-paper: #0b0b0b;
+  --i1-dots: radial-gradient(circle at center, #3a3a3a 0.9px, transparent 1.3px);
+  /* Krzywa tekstu: wyostrzenie z rozmycia bez szarpnięcia. */
+  --i1-ease-text: cubic-bezier(0.25, 0.1, 0.25, 1);
+  /* Cień kart: pierścień i jeden płytki cień — bez szerokich rozmyć (pasy na słabych GPU). */
+  --i1-shadow:
+    0 0 0 1px var(--fm-edge), 0 1px 2px oklch(0 0 0 / 0.05), 0 6px 14px -6px oklch(0 0 0 / 0.1);
+  /* Warstwy nad stroną (paleta, popovery, pigułka): pierścień i JEDEN cień o krótkim zasięgu. */
+  --i1-shadow-pop: 0 0 0 1px var(--fm-edge), 0 12px 24px -12px oklch(0 0 0 / 0.16);
+}
+.dark .i1 {
+  --i1-shadow: 0 0 0 1px var(--fm-edge-strong), inset 0 1px 0 oklch(1 0 0 / 0.05);
+  --i1-shadow-pop: 0 0 0 1px var(--fm-edge-strong), 0 12px 24px -12px oklch(0 0 0 / 0.5);
+}
+@media (min-width: 40rem) {
+  .i1 {
+    --i1-m: 2rem;
+    --i1-inset: 1.25rem;
+    --i1-bleed: 1.25rem;
+  }
+}
+@media (min-width: 90rem) {
+  .i1 {
+    --i1-max: 44rem;
+    --i1-lane: 9.5rem;
+  }
+}
+@media (min-width: 96rem) {
+  .i1 {
+    --i1-m: 3rem;
+  }
+}
+@media (min-width: 105rem) {
+  .i1 {
+    --i1-max: 48rem;
+    --i1-lane: 10rem;
+  }
+}
+
+/* Lepki nagłówek nie zasłania fokusu ani celu kotwicy (WCAG 2.4.11). Kotwiczenie
+   przewijania robimy sami (wiersz pod kursorem), więc przeglądarka nie pomaga. */
+:root:has(.i1) {
+  scroll-padding-top: calc(var(--i1-header) + 1rem);
+  overflow-anchor: none;
+}
+@media (max-width: 79.99rem) {
+  :root:has(.i1) {
+    scroll-padding-bottom: 5rem;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  :root:has(.i1) {
+    scroll-behavior: smooth;
+  }
+}
+
+/* Kolumna M i stały kontener trzech torów (karta i spis — bez pomiarów w JS). */
+.i1-col {
+  width: min(100% - 2 * var(--i1-m), var(--i1-max));
+  margin-inline: auto;
+}
+.i1-tracks {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) min(100%, var(--i1-max)) minmax(0, 1fr);
+  column-gap: var(--i1-m);
+  padding-inline: var(--i1-m);
+}
+/* Wiersz z tłem wylewanym poza kolumnę: tekst na linii kolumny, tło o wcięcie dalej. */
+.i1-bleed {
+  box-sizing: border-box;
+  width: calc(100% + 2 * var(--i1-bleed));
+  margin-inline: calc(-1 * var(--i1-bleed));
+  padding-inline: var(--i1-bleed);
+}
+/* Karta dokładnie na krawędziach kolumny, treść wcięta o `--i1-inset` (w obu stanach — nic nie skacze). */
+.i1-pad {
+  padding-inline: var(--i1-inset);
+}
+
+/* ——— Nagłówek: pasek na całą szerokość, treść na krawędziach kolumny ———
+   Tło i linia dochodzą wraz z przewinięciem (0 → 64 px), bez JS. */
+.i1-bar {
+  border-bottom: 1px solid var(--fm-edge);
+  background: color-mix(in oklab, var(--fm-canvas) 86%, transparent);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+@supports (animation-timeline: scroll()) {
+  .i1-bar {
+    animation: i1-fade-in linear both;
+    animation-timeline: scroll(root block);
+    animation-range: 0 4rem;
+  }
+}
+@media (prefers-reduced-transparency: reduce) {
+  .i1-bar {
+    background: var(--fm-canvas);
+    backdrop-filter: none;
+  }
+}
+
+/* Logo: litera domeny na jedną klatkę zamienia się w znak (najechanie). */
+.i1-logo [data-l] {
+  position: relative;
+}
+.i1-logo [data-l][data-g] {
+  color: transparent;
+}
+.i1-logo [data-l][data-g]::after {
+  content: attr(data-g);
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-family: var(--i1-font-glyph), monospace;
+  font-weight: 400;
+  color: var(--fm-ink-3);
+}
+
+/* Platforma znana przed pierwszym malowaniem (skrypt w IndeksOneHome): ⌘ albo Ctrl bez podmiany. */
+.i1-os-other,
+:root[data-i1-os="other"] .i1-os-apple {
+  display: none;
+}
+:root[data-i1-os="other"] .i1-os-other {
+  display: inline;
+}
+
+/* ——— Wejście „harmonijka”: nagłówek → tekst → wideo ——— */
+@keyframes i1-sharpen {
+  from {
+    opacity: 0;
+    filter: blur(6px);
+  }
+}
+@keyframes i1-rise {
+  from {
+    opacity: 0;
+    filter: blur(4px);
+    translate: 0 0.5rem;
+  }
+}
+@keyframes i1-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+/* Duże wideo rośnie z mniejszego kadru do szerokości kolumny (przycięcie, nie skala —
+   kadr ma od początku prawdziwy rozmiar, więc silnik glifów mierzy go poprawnie). */
+@keyframes i1-grow {
+  from {
+    opacity: 0;
+    clip-path: inset(0 8% 14% round var(--radius-fm-2xl));
+  }
+  30% {
+    opacity: 1;
+  }
+  to {
+    clip-path: inset(0 0 0 round var(--radius-fm-2xl));
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .i1-title {
+    animation: i1-sharpen 360ms var(--i1-ease-text) backwards;
+    animation-delay: var(--d, 0ms);
+  }
+  .i1-sharpen {
+    animation: i1-sharpen 560ms var(--i1-ease-text) backwards;
+    animation-delay: var(--d, 0ms);
+  }
+  .i1-enter {
+    animation: i1-rise 520ms var(--ease-fm-snap) backwards;
+    animation-delay: var(--d, 0ms);
+  }
+  .i1-grow {
+    animation: i1-grow 1100ms var(--ease-fm-drawer) backwards;
+    animation-delay: var(--d, 0ms);
+  }
+}
+
+/* ——— Fraza w tekście (chip): obła pigułka pod słowem, łamie się razem ze zdaniem ———
+   Padding z ujemnym marginesem — tło przy wskazaniu nie przesuwa ani litery.
+   Pole trafienia powiększa pseudo-element, nie przezroczysta ramka (ta ścinała narożniki). */
+.i1-chip {
+  position: relative;
+  z-index: 1;
+  cursor: pointer;
+  color: var(--fm-ink);
+  border-radius: 0.32em;
+  padding: 0.04em 0.2em;
+  margin-inline: -0.2em;
+  text-decoration-line: underline;
+  text-decoration-style: dashed;
+  text-decoration-thickness: max(1px, 0.05em);
+  text-decoration-color: var(--fm-edge-strong);
+  text-underline-offset: 0.2em;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  transition:
+    background-color 150ms ease,
+    text-decoration-color 150ms ease;
+}
+.i1-chip::after {
+  content: "";
+  position: absolute;
+  inset: -0.3em -0.05em;
+}
+.i1-chip--quiet {
+  color: inherit;
+}
+.i1-chip[data-state="open"] {
+  background-color: var(--fm-fill-strong);
+  text-decoration-color: transparent;
+}
+@media (hover: hover) {
+  .i1-chip:hover {
+    background-color: var(--fm-fill);
+    text-decoration-color: transparent;
+    transition-duration: 0ms;
+  }
+}
+.i1-chip__icon {
+  display: inline-block;
+  width: 0.68em;
+  height: 0.68em;
+  margin-inline-end: 0.2em;
+  vertical-align: -0.02em;
+  color: var(--fm-ink-3);
+}
+
+/* ——— O mnie: biogram wypełniany przewijaniem, słowo po słowie (scrub — wyjątek reguły ruchu) ——— */
+.i1-fill {
+  view-timeline: --i1-fill block;
+}
+@keyframes i1-fill {
+  from {
+    color: color-mix(in oklab, var(--fm-ink) 26%, transparent);
+  }
+}
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .i1-fw {
+      animation: i1-fill linear both;
+      animation-timeline: --i1-fill;
+      animation-range: cover calc(12% + var(--i) * 38% / var(--n)) cover
+        calc(12% + (var(--i) + 3) * 38% / var(--n));
+    }
+  }
+}
+
+/* ——— Paleta od 640 px w osi kolumny; pasek przewijania zdjęty przez Radiksa nie przesuwa jej ——— */
+@media (min-width: 40rem) {
+  .i1-palette {
+    right: var(--removed-body-scroll-bar-size, 0px);
+    width: min(100% - 2 * var(--i1-m), var(--i1-max));
+  }
+}
+
+/* ——— Kompetencje: otwarty wiersz staje się kartą (tło jako pseudo-element — przenikanie) ——— */
+.i1-skill::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius-fm-2xl);
+  background: var(--fm-surface);
+  box-shadow: var(--i1-shadow);
+  opacity: 0;
+  transition: opacity 200ms var(--ease-fm-snap);
+  pointer-events: none;
+}
+.i1-skill[data-state="open"]::before {
+  opacity: 1;
+}
+/* Otwarta kompetencja w centrum uwagi — jak rozwinięta realizacja: reszta cofa się do szarości. */
+.i1-skills:has(.i1-skill[data-state="open"]) .i1-skill:not([data-state="open"]) .i1-row {
+  color: var(--fm-ink-3);
+}
+.i1-skills:has(.i1-skill[data-state="open"]) .i1-skill:not([data-state="open"]) .i1-icon {
+  opacity: 0.55;
+}
+
+/* ——— Wiersze list: podświetlenie wchodzi od razu, schodzi w 150 ms ——— */
+.i1-row {
+  transition:
+    background-color 150ms ease,
+    color 150ms ease,
+    scale 160ms var(--ease-fm-snap);
+}
+.i1-row:active {
+  scale: 0.99;
+}
+.i1-row[data-state="open"] {
+  background-color: transparent !important;
+}
+.i1-icon {
+  transition: opacity 150ms ease;
+}
+@media (hover: hover) and (pointer: fine) {
+  .i1-row:hover {
+    background-color: var(--fm-fill);
+    transition-duration: 0ms, 0ms, 160ms;
+  }
+  .i1-dim:has(.i1-row:hover) .i1-row:not(:hover) {
+    color: var(--fm-ink-3);
+  }
+  .i1-dim:has(.i1-row:hover) .i1-row:not(:hover) .i1-row__meta {
+    color: color-mix(in oklab, var(--fm-ink-3) 70%, transparent);
+  }
+}
+
+/* Strzałka linku: pojawia się (skala 0,75 → 1, 2 px po skosie) w 200 ms. */
+.i1-arrow {
+  opacity: 0;
+  scale: 0.75;
+  translate: -2px 2px;
+  transition:
+    opacity 200ms var(--ease-fm-snap),
+    scale 200ms var(--ease-fm-snap),
+    translate 200ms var(--ease-fm-snap);
+}
+@media (hover: hover) and (pointer: fine) {
+  :is(a, button):hover .i1-arrow {
+    opacity: 1;
+    scale: 1;
+    translate: 0 0;
+  }
+}
+:is(a, button):focus-visible .i1-arrow {
+  opacity: 1;
+  scale: 1;
+  translate: 0 0;
+}
+
+/* Plus → minus: pionowa kreska obraca się i kładzie na poziomej. */
+.i1-plus {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  width: 1rem;
+  height: 1rem;
+  flex: none;
+}
+.i1-plus::before,
+.i1-plus::after {
+  content: "";
+  grid-area: 1 / 1;
+  width: 0.75rem;
+  height: 1.5px;
+  border-radius: 1px;
+  background: currentColor;
+  transition: rotate 300ms var(--ease-fm-snap);
+}
+.i1-plus::after {
+  rotate: 90deg;
+}
+[data-state="open"] > .i1-plus::after,
+[aria-expanded="true"] > .i1-plus::after {
+  rotate: 180deg;
+}
+
+/* ——— Morf: karta z marginesu → kadr w panelu; wiersze i sąsiednie sekcje płyną ——— */
+::view-transition {
+  pointer-events: none;
+}
+::view-transition-group(i1-work),
+::view-transition-group(.i1-item),
+::view-transition-group(.i1-block) {
+  animation-duration: 460ms;
+  animation-timing-function: var(--ease-fm-drawer);
+}
+::view-transition-group(.i1-item) {
+  overflow: clip;
+}
+::view-transition-old(.i1-item),
+::view-transition-new(.i1-item) {
+  animation-duration: 240ms;
+}
+::view-transition-old(i1-work),
+::view-transition-new(i1-work) {
+  height: 100%;
+  object-fit: cover;
+  animation-duration: 300ms;
+}
+::view-transition-group(i1-head) {
+  animation: none;
+}
+
+/* ——— Karta na marginesie (≥ 1280 px, mysz): w prawym torze siatki ——— */
+.i1-card {
+  border-radius: var(--radius-fm-xl);
+  background-color: var(--i1-paper);
+  box-shadow: var(--i1-shadow);
+  transform-origin: 0 50%;
+  opacity: 0;
+  scale: 0.97;
+  filter: blur(4px);
+  interpolate-size: allow-keywords;
+  transition:
+    opacity 150ms var(--ease-fm-snap),
+    scale 150ms var(--ease-fm-snap),
+    filter 150ms var(--ease-fm-snap),
+    height 240ms var(--ease-fm-snap),
+    background-color 200ms ease;
+}
+.i1-card[data-visible] {
+  opacity: 1;
+  scale: 1;
+  filter: none;
+  transition-duration: 220ms, 220ms, 220ms, 240ms, 200ms;
+}
+.i1-card[data-kind="info"] {
+  background: var(--fm-surface);
+}
+.i1-card__canvas,
+.i1-media__canvas {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+.i1-card__media {
+  opacity: 0;
+}
+.i1-card__media[data-active] {
+  opacity: 1;
+}
+.i1-card__info {
+  position: absolute;
+  inset: 0 0 auto;
+  opacity: 0;
+  filter: blur(4px);
+  transition:
+    opacity 140ms var(--ease-fm-snap),
+    filter 140ms var(--ease-fm-snap);
+}
+.i1-card__info[data-active] {
+  position: relative;
+  opacity: 1;
+  filter: none;
+  transition-duration: 220ms;
+}
+/* Pierścień nad mediami: obraz przykrywa tło, więc krawędź rysujemy na wierzchu. */
+.i1-card[data-kind="media"]::after,
+.i1-ring::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 1px var(--fm-edge);
+  pointer-events: none;
+}
+
+/* ——— Kadr z odkodowaniem: zanim dojdą bajty, drobny raster zamiast pustej plamy ——— */
+/* Zanim dojdą bajty i fala ruszy, kadr to szkielet: kropki na czerni (nigdy pusta plama). */
+.i1-media {
+  isolation: isolate;
+  background-color: var(--i1-paper);
+  background-image: var(--i1-dots);
+  background-size: 8px 12.8px;
+  background-position: center;
+}
+/* Karta na marginesie: szkielet w kaflach (`.i1-media`), szczeliny i narożniki w kolorze karty. */
+.i1-card[data-kind="media"] {
+  background-color: var(--fm-surface);
+}
+
+/* Plakat startu wyłania się ze szkieletu miękką falą od góry (maska — sam kompozytor).
+   Bez czekania na skrypt: fala rusza o swojej porze (`--d`), a plakat, który dojdzie
+   później, po prostu pojawia się na szkielecie. */
+@media (prefers-reduced-motion: no-preference) {
+  .i1-reveal {
+    -webkit-mask-image: linear-gradient(to bottom, #000 40%, transparent 60%);
+    mask-image: linear-gradient(to bottom, #000 40%, transparent 60%);
+    -webkit-mask-size: 100% 250%;
+    mask-size: 100% 250%;
+    -webkit-mask-position: 0 0;
+    mask-position: 0 0;
+    animation: i1-reveal 900ms var(--ease-fm-snap) backwards;
+    animation-delay: var(--d, 0ms);
+  }
+}
+@keyframes i1-reveal {
+  from {
+    -webkit-mask-position: 0 100%;
+    mask-position: 0 100%;
+  }
+}
+.i1-video {
+  opacity: 0;
+  transition: opacity 240ms ease;
+}
+.i1-video[data-ready] {
+  opacity: 1;
+}
+.i1-media__control {
+  transition:
+    opacity 200ms var(--ease-fm-snap),
+    background-color 150ms ease,
+    scale 160ms var(--ease-fm-snap);
+}
+.i1-media:not([data-state="done"]) .i1-media__control {
+  opacity: 0;
+  pointer-events: none;
+}
+/* Do startu fali obraz czeka pod szkieletem; gdyby skrypt nie ruszył, pojawia się po 3 s. */
+@media (scripting: enabled) and (prefers-reduced-motion: no-preference) {
+  .i1-media[data-state="pending"] .i1-media__layer {
+    opacity: 0;
+    animation: i1-unlatent 400ms var(--ease-fm-snap) 3s forwards;
+  }
+  .i1-card[data-pending] .i1-card__media[data-active] img {
+    opacity: 0;
+  }
+}
+@keyframes i1-unlatent {
+  to {
+    opacity: 1;
+  }
+}
+
+/* ——— Blog: odręczna elipsa wokół „Nowy” — dwa pociągnięcia, rysowane raz ——— */
+.i1-new path {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+}
+.i1-new[data-armed] path {
+  stroke-dashoffset: 1;
+}
+.i1-new[data-armed][data-drawn] path {
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset 440ms cubic-bezier(0.65, 0, 0.35, 1) 150ms;
+}
+.i1-new[data-armed][data-drawn] path + path {
+  transition-duration: 300ms;
+  transition-delay: 560ms;
+}
+
+/* ——— Spis sekcji w lewym torze (≥ 1280 px) i pigułka na telefonie ——— */
+.i1-side {
+  opacity: 0;
+  filter: blur(6px);
+  translate: -0.5rem 0;
+  pointer-events: none;
+  transition:
+    opacity 260ms var(--ease-fm-snap),
+    filter 260ms var(--ease-fm-snap),
+    translate 360ms var(--ease-fm-snap);
+}
+.i1-side[data-shown],
+.i1-side:focus-within {
+  opacity: 1;
+  filter: none;
+  translate: 0 0;
+  pointer-events: auto;
+  transition-duration: 360ms;
+}
+.i1-side__dot {
+  translate: 0 var(--y);
+}
+.i1-side__link {
+  opacity: 0;
+  filter: blur(4px);
+  transition:
+    opacity 180ms var(--ease-fm-snap),
+    filter 180ms var(--ease-fm-snap),
+    color 150ms ease;
+}
+.i1-side__link[aria-current] {
+  opacity: 1;
+  filter: none;
+}
+.i1-side[data-open] .i1-side__link,
+.i1-side:focus-within .i1-side__link,
+.i1-side:hover .i1-side__link {
+  opacity: 1;
+  filter: none;
+  transition-duration: 320ms, 320ms, 150ms;
+  transition-delay: calc(var(--k) * 28ms), calc(var(--k) * 28ms), 0ms;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .i1-side__dot {
+    transition: translate 320ms var(--ease-fm-move);
+  }
+}
+.i1-pill__button {
+  opacity: 0;
+  filter: blur(6px);
+  translate: 0 0.75rem;
+  visibility: hidden;
+  transition:
+    opacity 220ms var(--ease-fm-snap),
+    filter 220ms var(--ease-fm-snap),
+    translate 320ms var(--ease-fm-snap),
+    visibility 0s 320ms,
+    scale 160ms var(--ease-fm-snap);
+}
+.i1-pill[data-shown] .i1-pill__button {
+  opacity: 1;
+  filter: none;
+  translate: 0 0;
+  visibility: visible;
+  transition-delay: 0s;
+}
+.i1-pill[data-open] .i1-pill__button {
+  opacity: 0;
+  scale: 0.96;
+}
+.i1-pill__label {
+  animation: i1-sharpen 260ms var(--ease-fm-snap);
+}
+.i1-pill__panel {
+  transform-origin: 50% 100%;
+  opacity: 0;
+  scale: 0.5 0.18;
+  filter: blur(4px);
+  pointer-events: none;
+  transition:
+    opacity 160ms var(--ease-fm-snap),
+    scale 200ms var(--ease-fm-drawer),
+    filter 160ms var(--ease-fm-snap);
+}
+.i1-pill[data-open] .i1-pill__panel {
+  opacity: 1;
+  scale: 1;
+  filter: none;
+  pointer-events: auto;
+  transition-duration: 220ms, 320ms, 220ms;
+}
+
+/* „Ogranicz ruch”: zostaje samo przenikanie — bez rozmycia, skali i przesunięć. */
+@media (prefers-reduced-motion: reduce) {
+  .i1-card,
+  .i1-card__info,
+  .i1-side,
+  .i1-side__link,
+  .i1-pill__button,
+  .i1-pill__panel {
+    filter: none !important;
+    scale: 1 !important;
+    translate: none !important;
+  }
+}

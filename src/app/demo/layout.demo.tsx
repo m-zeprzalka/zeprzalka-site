@@ -22,12 +22,7 @@ export default function DemoRootLayout({ children }: { children: React.ReactNode
   return (
     <html lang="pl" className={fontVariables} suppressHydrationWarning>
       <body className="antialiased">
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
+        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
           {children}
         </ThemeProvider>
       </body>

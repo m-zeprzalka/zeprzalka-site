@@ -1,6 +1,6 @@
 # Kierunek wizualny — system „Forma” i propozycje strony głównej
 
-Stan na 5 listopada 2026 (iteracja 6). Wszystko poniżej żyje w piaskownicy `/demo`. Na czas
+Stan na 5 listopada 2026 (iteracja 7). Wszystko poniżej żyje w piaskownicy `/demo`. Na czas
 prac nad wyglądem jest też na produkcji: **https://www.zeprzalka.com/demo** (zmienna
 `DEMO_PUBLIC=1` w Vercelu, `noindex`, poza mapą strony); lokalnie `pnpm dev` → http://localhost:3000/demo.
 Oglądaj na telefonie i komputerze, w obu motywach. Historia odrzuconych kierunków: `docs/DZIENNIK.md`, kod: tag `piaskownica-archiwum-2026-11`.
@@ -22,33 +22,31 @@ Specimen: `/demo/forma`. Źródło prawdy: `src/components/demo/forma/theme.css`
 | Układ | kontener 1200 px, marginesy 16 → 32 px, rytm sekcji 80 → 128 px, cele dotyku ≥ 44 px |
 | Prymitywy | Button, Chip + LiveDot + Kbd, CopyButton, ThemeSwitch (View Transitions), Count (Number Flow), Reveal |
 
-## 2. Pięć koncepcji strony głównej (iteracja 6)
+## 2. Wersje bliskie wyboru (iteracja 7)
 
-Ta sama treść (`src/components/demo/shared/content.ts`) i nowy portret ze zdjęcia
-(`shared/portrait/`). Koncepcje zbierają to, co właściciel pochwalił w iteracjach 3 i 5:
-wejścia z rozmycia, zoom wideo, jeden slider, manifest wypełniany przewijaniem, efekt glifów,
-wielki znak w stopce. Każda przeszła trzy rundy: dwie uwag art directora i jedną z niezależnej krytyki.
+Wygrał wąski Indeks. Wszystkie wersje stoją na tej samej treści (`shared/content.ts`) i na
+wspólnym silniku znaków (`src/components/demo/shared/glyph/`, ustawienia właściciela w
+`settings.ts`), z decyzjami z briefu z 5 listopada: ciemny start, obłości, siatka trzymana
+przez nagłówek i paletę, bez liczników, zestaw znaków „Sygnet”, twarz tylko ze znaków.
+Każda przeszła trzy rundy: dwie uwag art directora i jedną po niezależnej krytyce.
 
 | | Zadanie z briefu | Idea | Mocne strony | Ryzyka | JS na start* |
 | --- | --- | --- | --- | --- | --- |
-| [Indeks · nowy](https://www.zeprzalka.com/demo/indeks-new) | nowy „Indeks” | wąziutka kolumna; spis i media pojawiają się tylko na żądanie, obraz odkodowuje się z glifów na marginesie | najczystszy minimalizm; przełączanie realizacji naprawione | stoi na dobrym tekście; na tablecie bez marginesu | 242 KB |
-| [Glif · laboratorium](https://www.zeprzalka.com/demo/glif-lab) | nowy glif — pole minowe | sekcje A–H z podpisanymi wariantami, panel znaków, temp, animacji, kolorów i wyzwalaczy | wybór efektu na żywo, portret czytelny w każdym zestawie | narzędzie, nie gotowa strona; WebGL2 wszędzie | 256 KB |
-| [The Best Of](https://www.zeprzalka.com/demo/best-of) | najlepsze z obu briefów | Framer w czerni i bieli z ulubionymi efektami, każdy raz, w jednym systemie ruchu | najbliżej gustu; najstabilniejsza | najmniej zaskakuje | 240 KB |
-| [Rentgen](https://www.zeprzalka.com/demo/rentgen) | inwencja 1 | soczewka pod kursorem odsłania prawdziwy kod strony; przełącznik Projekt/Kod | najbardziej oryginalna | mechanizm trzeba odkryć; WebGL do sprawdzenia na telefonie | 224 KB |
-| [Kinetyka](https://www.zeprzalka.com/demo/kinetyka) | inwencja 2 | plakatowa typografia sterowana przewijaniem, wideo w literach, taśma realizacji | najmocniejsze pierwsze wrażenie | najwięcej JS (GSAP); najdłuższa | 258 KB |
+| [Indeks · I](https://www.zeprzalka.com/demo/indeks-1) | pkt 1 — Indeks · nowy po uwagach | jedna kolumna; spis, karty z wideo i paleta pojawiają się na żądanie | kandydat do produkcji; najlżejszy; siatka trzech torów | stoi na tekście; karta z toru od 1280 px | 229 KB |
+| [Indeks · II](https://www.zeprzalka.com/demo/indeks-2) | pkt 2 — wariacja | asymetryczna siatka; twarz ze znaków na marginesie staje się filmem wskazanej kategorii | najmocniejsze pierwsze wrażenie; hybryda chipy + film | najwięcej efektów naraz | 236 KB |
+| [The Best Of · II](https://www.zeprzalka.com/demo/best-of-2) | pkt 3 — najlepsze z animacjami | szeroki układ z jednym językiem ruchu: obraz ze znaków, tekst z rozmycia | najlepsza choreografia wejścia; wszystkie pochwalone komponenty | najdalej od kanonu Indeksu | 236 KB |
 
-\* gzip, build produkcyjny; dla porównania spis `/demo` 189 KB, obecna strona główna 208 KB.
-Propozycje z iteracji 5 (Tryptyk, Esencja, Glif, Reedycja, Transformacja) i koncepcje
-z iteracji 3 zostają w `/demo` do porównania.
+\* gzip, build produkcyjny; dla porównania obecna strona główna 208 KB, Indeks · nowy 242 KB.
+Iteracje 6, 5 i 3 zostają w `/demo` do porównania.
 
-**Ranking niezależnej krytyki** (przed trzecią rundą): The Best Of, Indeks · nowy, Kinetyka,
-Rentgen, Glif · laboratorium.
+**Ranking niezależnej krytyki** (przed trzecią rundą): Indeks · I (8 / 7,5 / 9), Indeks · II
+(8,5 / 6,5 / 7,5), The Best Of · II (8 / 7 / 6,5) — oceny: pierwsze wrażenie / wykonanie /
+zgodność z gustem. Trzecia runda usunęła wszystkie zgłoszone blokery.
 
-**Rekomendacja:** The Best Of jako szkielet finalnej strony. Do tego dobrać:
-- z Indeksu: kartę na marginesie odkodowującą się z glifów;
-- z Kinetyki: „Portfolio” jako okno z wideo w literach;
-- z Rentgenu: przełącznik Projekt/Kod jako ukrytą niespodziankę;
-- z laboratorium: wybrane parametry glifów (znaki, tempo, wyzwalacz).
+**Rekomendacja:** Indeks · I jako baza produkcyjna (ewentualnie test A/B z Indeksem · II). Do
+rozważenia z pozostałych: twarz ze znaków z wyborem zestawu i dolny arkusz na telefonie
+(Indeks · II), log komend i rozmowa AI w kompetencjach, soczewka kodu w CTA i zoom wideo od
+mniejszego kadru (The Best Of · II).
 
 **Reguła ruchu na finał:** przewijanie najwyżej uruchamia animację, a stan spoczynkowy jest
 zawsze kompletny (bez półrozmytych nagłówków, fałszywych liczb i bełkotu znaków). Wyjątek:

@@ -21,25 +21,29 @@ Odrzucone kierunki (Precyzja, warianty z sierpnia): tag `piaskownica-archiwum-20
 
 ```
 src/app/demo/
-├── layout.demo.tsx       # układ główny piaskownicy (html lang=pl, noindex, motyw systemowy)
+├── layout.demo.tsx       # układ główny piaskownicy (html lang=pl, noindex, ciemny motyw na start)
 ├── demo.css              # Tailwind + system „Forma”
-├── page.demo.tsx         # spis dem jako prezentacja: koncepcje z iteracji 6, niżej iteracje 5 i 3
+├── page.demo.tsx         # spis dem jako prezentacja: wersje z iteracji 7, niżej iteracje 6, 5 i 3
 └── <slug>/page.demo.tsx  # jedna trasa na propozycję
 src/components/demo/
 ├── registry.ts           # lista dem: zadanie z briefu, opis, mocne strony i ryzyka
 ├── shared/content.ts     # WSPÓLNA TREŚĆ propozycji: wszystko z obecnej strony głównej
 │                         # i „O mnie” (+ wymiary plakatów) — serwerowe, do klientów przez propsy
-├── shared/portrait/      # portret ze zdjęcia (kolor, jasność, wygładzony, kontur; alfa = maska)
+├── shared/portrait/      # portrety ze zdjęcia; iteracja 7: tylko klatki twarzy ze znaków (face-glyphs-*)
+├── shared/glyph/         # WSPÓLNY SILNIK ZNAKÓW (iteracja 7): portret, media, tekst, liczby, soczewka,
+│                         # napis w stopce, figury, sygnet, przejście motywu — opis w README.md obok
 ├── forma/                # SYSTEM „Forma”: theme.css (tokeny → utility Tailwinda), cn.ts,
 │                         # Button, Chip/LiveDot/Kbd, CopyButton, ThemeSwitch, Count, Reveal,
 │                         # use-in-view, typo, Specimen, demo-action
+├── indeks-1/ indeks-2/ best-of-2/ autorska/           # iteracja 7 — wersje bliskie wyboru
 ├── indeks-new/ glif-lab/ best-of/ rentgen/ kinetyka/  # iteracja 6 — pięć koncepcji
 ├── tryptyk/ esencja/ glif/ reedycja/ transformacja/   # iteracja 5 — pięć propozycji
 └── zywy-interfejs/ indeks/ talia/                     # iteracja 3 — do porównania
 ```
 
 Każda propozycja ma własny prefiks klas, animacji i `view-transition-name` (iteracja 5: `tk-`,
-`es-`, `gl-`, `re-`, `tf-`; iteracja 6: `ixn-`, `gll-`, `bo-`, `rg-`, `kn-`) — arkusze dem są
+`es-`, `gl-`, `re-`, `tf-`; iteracja 6: `ixn-`, `gll-`, `bo-`, `rg-`, `kn-`; iteracja 7: `i1-`, `i2-`,
+`b2-`, `au-`, silnik `gx-`) — arkusze dem są
 globalne po przejściu między nimi.
 
 Kroje z glifami to podzbiory OFL/wolnych krojów pod zmienioną nazwą, z licencją obok pliku:

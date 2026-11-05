@@ -1,0 +1,35 @@
+/*
+ * Wspólny silnik glifów — arkusz (prefiks `gx-`). Tylko to, czego klasy
+ * utility nie wyrażą: glif nad zakodowaną literą (`::after` z `attr()`).
+ */
+
+/* Litera znika przez wypełnienie (nie `color`) — glif nad nią dziedziczy kolor tekstu. */
+.gx-code [data-s] {
+  position: relative;
+  -webkit-text-fill-color: transparent;
+}
+
+.gx-code [data-s]::after {
+  content: attr(data-g);
+  position: absolute;
+  inset-inline: -0.3em;
+  top: 50%;
+  translate: 0 -46%;
+  font-family:
+    var(--gx-glyph-font, var(--gx-font-mono)), var(--gx-font-symbols), var(--gx-font-math),
+    monospace;
+  font-size: 0.6em;
+  font-weight: 400;
+  font-style: normal;
+  letter-spacing: 0;
+  line-height: 1;
+  text-align: center;
+  -webkit-text-fill-color: color-mix(in oklch, currentColor 40%, transparent);
+  font-variant-ligatures: none;
+}
+
+/* Pasmo dekodowania: glif pełny i nieco większy — widać front. */
+.gx-code [data-s="1"]::after {
+  -webkit-text-fill-color: currentColor;
+  font-size: 0.68em;
+}

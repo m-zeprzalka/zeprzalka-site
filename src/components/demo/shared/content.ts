@@ -18,6 +18,9 @@ import { CONTACT_EMAIL, SITE_DOMAIN, SOCIAL_PROFILES } from "@/lib/site"
 
 const LOCALE = "pl"
 
+/** Pierwsze zdanie akapitu (do kropki zakończonej spacją albo końcem tekstu). */
+const firstSentence = (text: string) => text.split(/(?<=\.)\s+/)[0] ?? text
+
 /**
  * Wymiary plakatów (px) — znane z góry, więc siatki typu masonry rezerwują
  * miejsce bez skoku układu i bez mierzenia w przeglądarce. Czytanie plików
@@ -138,6 +141,8 @@ export function getDemoHomeContent() {
   const years = need(about.bioLeadStrong.match(/^(\d+)/)?.[1], "lata doświadczenia")
   const clients = need(freelance.description.match(/(\d+)\s+klient/)?.[1], "liczba klientów")
   const lectures = need(teaching.period.match(/(\d{4})\D+(\d{4})/), "okres wykładów")
+  /** Okres wykładów do wyświetlenia: trwają nadal (zob. fakty niżej). */
+  const teachingPeriod = `${lectures[1]}–obecnie`
   const score = need(about.bioSecondSuffix.match(/(\d+,\d+)%/)?.[1], "wynik ankiet")
   const aiGroup = need(
     about.skillGroups.find((group) => group.category.startsWith("AI")),
@@ -152,7 +157,8 @@ export function getDemoHomeContent() {
       locality: about.addressLocality,
       domain: SITE_DOMAIN,
       email: CONTACT_EMAIL,
-      socials: SOCIAL_PROFILES,
+      /** X pierwszy (prośba właściciela, 5.11) — w serwisie go jeszcze nie ma. */
+      socials: [{ label: "X", url: "https://x.com/zeprzalka_com" }, ...SOCIAL_PROFILES],
       /** Portret w stylu ASCII (300×300 PNG) i miniatura 160×160 WebP. */
       avatar: "/avatar.png",
       avatarSmall: "/avatar-160.webp",
@@ -204,14 +210,18 @@ export function getDemoHomeContent() {
       facts: [
         { value: Number(years), suffix: "+", label: "lat doświadczenia" },
         { value: Number(clients), suffix: "+", label: "klientów" },
-        { value: `${lectures[1]}–${lectures[2]}`, label: teaching.role },
+        /* Wykłady trwają (od semestru 2026/27 na kolejnej uczelni) — zakres „2016–2026”
+           z serwisu sugerowałby koniec. Liczba = rok początku, `since` = „od … do dziś”. */
+        { value: Number(lectures[1]), since: true, label: teaching.role },
         { value: `${score}%`, label: "Nagroda Rektora — ankiety studentów" },
       ],
-      experience: about.experience.map(({ role, company, period, description }) => ({
-        role,
-        company,
-        period,
-        description,
+      experience: about.experience.map((entry) => ({
+        role: entry.role,
+        company: entry.company,
+        period: entry === teaching ? teachingPeriod : entry.period,
+        /* Przy wykładach tylko pierwsze zdanie: kolejne wymieniają uczelnie, a przy
+           „2016–obecnie” czytałyby się jak obecne miejsca pracy (prośba właściciela, 5.11). */
+        description: entry === teaching ? firstSentence(entry.description) : entry.description,
       })),
     },
 

@@ -1,0 +1,935 @@
+/*
+ * The Best Of (iteracja 6) — arkusz koncepcji. Jeden system ruchu: „wyostrzenie”
+ * (rozmycie → ostrość) dla wszystkiego, co wchodzi, i „kod” (glify) dla tego,
+ * co jest obrazem albo zaproszeniem. Klasy, keyframes, osie czasu i nazwy
+ * przejść widoku mają prefiks `b2-` (arkusze dem są globalne po przejściu
+ * między demami). Ruch sterowany przewijaniem żyje wyłącznie w `@supports`
+ * + `prefers-reduced-motion: no-preference` — bez wsparcia albo przy „ogranicz
+ * ruch” strona stoi w stanie końcowym.
+ */
+
+.b2 {
+  /*
+   * System (iteracja 7). Siatka: 4 / 8 / 12 kolumn (telefon / ≥ 640 / ≥ 1024) w kontenerze
+   * Formy; odstęp kolumn `--b2-gap`. Paleta ⌘K liczy z tego swoją szerokość: od 1024 px
+   * dokładnie kolumny 4–9 (6 kolumn + 5 odstępów = połowa kontenera − pół odstępu).
+   * Procenty w `--b2-palette-w` liczą się od okna (element `fixed`) — bez paska przewijania,
+   * więc krawędzie palety leżą w tych samych liniach co treść.
+   */
+  --b2-gap: 1rem;
+  --b2-content: min(100% - 2 * var(--fm-gutter), var(--fm-max));
+  --b2-palette-w: var(--b2-content);
+  --b2-preview-w: var(--b2-content);
+  /* Wcięcia: treść kart i kontrolki w mediach (ikony, pauzy) nigdy przy samej krawędzi. */
+  --b2-inset: 1.25rem;
+  --b2-inset-ui: 0.75rem;
+  /* Promienie — jedna skala, bez kantów: karta, panel, media w karcie (= karta − odstęp). */
+  --b2-r-card: 1.25rem;
+  --b2-r-panel: 1.75rem;
+  --b2-r-media: calc(var(--b2-r-card) - 0.375rem);
+  /* Scena w panelu (panel − 8 px) i okno w scenie (scena − 8 px): promienie koncentryczne. */
+  --b2-r-scene: calc(var(--b2-r-panel) - 0.5rem);
+  --b2-r-scene-in: calc(var(--b2-r-scene) - 0.5rem);
+
+  /* Długi ease-out „framerowy” — teksty i bloki wchodzące raz. */
+  --b2-ease-text: cubic-bezier(0.22, 1, 0.36, 1);
+  /* Ruch sterowany przewijaniem: łagodny start i miękkie lądowanie. */
+  --b2-ease-scroll: cubic-bezier(0.6, 0, 0.3, 1);
+  /* Pigułka nagłówka: wysokość i odstęp od góry (z bezpiecznym obszarem). */
+  --b2-header: 3.5rem;
+  --b2-header-top: calc(0.75rem + env(safe-area-inset-top, 0px));
+
+  -webkit-tap-highlight-color: transparent;
+  overflow-x: clip;
+}
+
+/* Marginesy siatki w pełnych stopniach (16 / 24 / 32 / 48 px) zamiast płynnego clamp z vw. */
+.fm.b2 {
+  --fm-gutter: 1rem;
+}
+
+@media (min-width: 40rem) {
+  .fm.b2 {
+    --fm-gutter: 1.5rem;
+  }
+}
+
+@media (min-width: 64rem) {
+  .fm.b2 {
+    --fm-gutter: 2rem;
+  }
+}
+
+@media (min-width: 40rem) {
+  .b2 {
+    --b2-gap: 1.25rem;
+    --b2-inset: 1.5rem;
+    --b2-inset-ui: 1rem;
+    --b2-r-card: 1.5rem;
+  }
+}
+
+@media (min-width: 64rem) {
+  .b2 {
+    --b2-gap: 1.5rem;
+    --b2-inset: 2rem;
+    --b2-r-panel: 2rem;
+    /* n kolumn = n · (kontener + odstęp) / 12 − odstęp. */
+    --b2-palette-w: calc(6 * (var(--b2-content) + var(--b2-gap)) / 12 - var(--b2-gap));
+    --b2-preview-w: calc(10 * (var(--b2-content) + var(--b2-gap)) / 12 - var(--b2-gap));
+  }
+}
+
+/* Skrót palety: oba znaki są w HTML, atrybut `data-b2-os` ustawia skrypt przed malowaniem. */
+html[data-b2-os="apple"] .b2-k-other,
+html:not([data-b2-os="apple"]) .b2-k-apple {
+  display: none;
+}
+
+/* Od 1680 px szerszy kontener i margines — na 1920 strona nie jest „wyspą” na środku. */
+@media (min-width: 105rem) {
+  .fm.b2 {
+    --fm-max: 84rem;
+    --fm-gutter: 3rem;
+  }
+}
+
+.b2 :where(a, button, [role="button"], summary, label) {
+  touch-action: manipulation;
+}
+
+.b2 :where(button, [role="button"], [role="radio"], [role="switch"]) {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Kotwice nie chowają się pod pływającą pigułką. */
+html:has(.b2) {
+  scroll-padding-top: calc(var(--b2-header, 3.5rem) + 2rem);
+}
+
+/* Na desktopie bez „gumki” przy krawędziach (telefon zostawia pull-to-refresh). */
+@media (pointer: fine) {
+  html:has(.b2) {
+    overscroll-behavior: none;
+  }
+}
+
+/* ——— Typografia ——— */
+
+.b2-display {
+  /*
+   * Telefon: rozmiar liczony z szerokości ekranu — najdłuższa linia („w produkty
+   * cyfrowe.”, ≈ 8,8 em) mieści się w kontenerze; trzy linie bez sieroty od 360
+   * do 430 px. Szerzej płynnie do 84 px.
+   */
+  font-size: min(calc(10.55vw - 0.125rem), 3.25rem);
+  line-height: 0.98;
+  letter-spacing: -0.045em;
+  font-weight: 550;
+}
+
+@media (min-width: 40rem) {
+  .b2-display {
+    font-size: clamp(2.625rem, 1.25rem + 4.6vw, 5.25rem);
+  }
+}
+
+/* 1680+: nagłówek rośnie razem z kontenerem (84 → 96 px) — prawa połowa nie zostaje pusta. */
+@media (min-width: 105rem) {
+  .b2-display {
+    font-size: clamp(5.25rem, 1.25rem + 4.6vw, 6rem);
+  }
+}
+
+/* Tytuł sekcji w skali display; dalszy ciąg zdania obok jest wyraźnie mniejszy (SectionHeader). */
+.b2-h2 {
+  font-size: clamp(2.125rem, 1.55rem + 2.4vw, 3.75rem);
+  line-height: 1;
+  letter-spacing: -0.045em;
+  font-weight: 550;
+}
+
+.b2-manifest {
+  font-size: clamp(1.75rem, 1.05rem + 2.75vw, 3.25rem);
+  line-height: 1.12;
+  letter-spacing: -0.035em;
+  font-weight: 500;
+}
+
+/* ——— Wejście hero: wyostrzają się wyłącznie słowa H1 ——— */
+
+@keyframes b2-word-in {
+  from {
+    opacity: 0;
+    filter: blur(8px);
+    translate: 0 0.18em;
+  }
+}
+
+@keyframes b2-rise {
+  from {
+    opacity: 0;
+    translate: 0 0.5rem;
+  }
+}
+
+.b2-word {
+  display: inline-block;
+  animation: b2-word-in 560ms var(--b2-ease-text) both;
+  animation-delay: calc(var(--b2-t0, 0ms) + var(--w, 0) * 35ms);
+}
+
+.b2-rise {
+  animation: b2-rise 420ms var(--b2-ease-text) both;
+  animation-delay: var(--b2-d, 0ms);
+}
+
+/* Harmonijka: nawigacja schodzi pierwsza (0 ms), zanim cokolwiek innego się ruszy. */
+@keyframes b2-drop {
+  from {
+    opacity: 0;
+    translate: 0 -0.5rem;
+  }
+}
+
+.b2-drop {
+  animation: b2-drop 380ms var(--b2-ease-text) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .b2-word,
+  .b2-rise,
+  .b2-drop {
+    animation: none;
+  }
+}
+
+/* ——— Wejścia przy przewijaniu (`Appear.tsx` dopisuje `data-in`) ——— */
+
+.b2-w {
+  display: inline-block;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .b2[data-b2-js] [data-b2-in]:not([data-in]) {
+    opacity: 0;
+    filter: blur(6px);
+    translate: 0 1rem;
+  }
+
+  .b2[data-b2-js] [data-b2-words]:not([data-in]) .b2-w {
+    opacity: 0;
+    filter: blur(10px);
+    translate: 0 0.3em;
+  }
+
+  .b2 [data-b2-in] {
+    transition:
+      opacity 800ms var(--b2-ease-text),
+      filter 800ms var(--b2-ease-text),
+      translate 800ms var(--b2-ease-text);
+    transition-delay: calc(var(--i, 0) * 70ms);
+  }
+
+  .b2 [data-b2-words] .b2-w {
+    transition:
+      opacity 900ms var(--b2-ease-text),
+      filter 900ms var(--b2-ease-text),
+      translate 1000ms var(--b2-ease-text);
+    transition-delay: calc(var(--i, 0) * 55ms);
+  }
+
+  /* Widoczne już przy hydratacji — bez animacji i bez mignięcia. */
+  .b2 [data-instant],
+  .b2 [data-instant] .b2-w {
+    transition: none !important;
+  }
+}
+
+/* ——— Nagłówek-pigułka ——— */
+
+/*
+ * Pigułka na szerokość kontenera. Tło prawie kryjące i bez `backdrop-filter`
+ * (rozmycie dużej powierzchni dławi słabe zintegrowane karty — poszarpane cienie);
+ * po zjechaniu z góry pigułka dostaje cień uniesienia (oś czasu przewijania).
+ */
+.b2-pill {
+  background: color-mix(in oklch, var(--fm-surface) 94%, transparent);
+  box-shadow: var(--fm-shadow-ring);
+}
+
+@supports (animation-timeline: scroll()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .b2-pill {
+      animation: b2-pill-lift linear both;
+      animation-timeline: scroll(root);
+      animation-range: 0 5rem;
+    }
+  }
+}
+
+@keyframes b2-pill-lift {
+  to {
+    background: color-mix(in oklch, var(--fm-surface) 96%, transparent);
+    box-shadow: var(--fm-shadow-pop);
+  }
+}
+
+/* Przy przewijaniu w dół pigułka wyjeżdża nad krawędź, wraca przy ruchu w górę. */
+.b2-header {
+  transition: translate 320ms var(--ease-fm-snap);
+}
+
+.b2-header[data-hidden] {
+  translate: 0 calc(-100% - 0.5rem);
+}
+
+/* ——— Reel: zoom IN — kadr startuje mniejszy i dochodzi do kontenera ——— */
+
+.b2-reel {
+  /* Skala startowa: telefon prawie pełny, desktop ≈ 62% kontenera (wystaje spod hero). */
+  --b2-z0: 0.86;
+}
+
+@media (min-width: 40rem) {
+  .b2-reel {
+    --b2-z0: 0.64;
+  }
+}
+
+.b2-reel__frame {
+  /* Telefon: kadr 4:5 (pion jak ekran) — pasek 16:9 na wysokim ekranie byłby skrawkiem. */
+  aspect-ratio: 4 / 5;
+  transform-origin: 50% 0;
+}
+
+@media (min-width: 40rem) {
+  .b2-reel__frame {
+    aspect-ratio: 1080 / 606;
+  }
+}
+
+.b2-reel__pause {
+  transform-origin: 100% 100%;
+}
+
+/* Szkielet kadru: siatka kropek na czerni (jak `GlyphMedia` przed startem silnika), od pierwszego malowania. */
+.b2-dots {
+  background-color: #0b0b0b;
+  background-image: radial-gradient(circle at center, #3a3a3a 0.9px, transparent 1.3px);
+  background-size: 8px 12.8px;
+}
+
+/*
+ * „Kropki rosną w obraz”: plakat i wideo widać przez maskę z tej samej siatki
+ * kropek, której promień rośnie od zera do pełnej komórki (8 × 12,8 px — pełne
+ * krycie od ~7,6 px). Czysty CSS: rusza bez JavaScriptu i bez silnika WebGL.
+ */
+@property --b2-dot {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 10px;
+}
+
+@media (scripting: enabled) and (prefers-reduced-motion: no-preference) {
+  /* `backwards`: maska trzyma się tylko w trakcie wejścia — potem zwykły obraz (bez kosztu maski przy wideo). */
+  .b2-bloom {
+    animation: b2-bloom 900ms cubic-bezier(0.55, 0, 0.25, 1) 200ms backwards;
+  }
+}
+
+@keyframes b2-bloom {
+  from {
+    --b2-dot: 0px;
+    -webkit-mask-image: radial-gradient(
+      circle at center,
+      #000 var(--b2-dot),
+      transparent calc(var(--b2-dot) + 0.75px)
+    );
+    mask-image: radial-gradient(
+      circle at center,
+      #000 var(--b2-dot),
+      transparent calc(var(--b2-dot) + 0.75px)
+    );
+    -webkit-mask-size: 8px 12.8px;
+    mask-size: 8px 12.8px;
+  }
+  to {
+    --b2-dot: 10px;
+    -webkit-mask-image: radial-gradient(
+      circle at center,
+      #000 var(--b2-dot),
+      transparent calc(var(--b2-dot) + 0.75px)
+    );
+    mask-image: radial-gradient(
+      circle at center,
+      #000 var(--b2-dot),
+      transparent calc(var(--b2-dot) + 0.75px)
+    );
+    -webkit-mask-size: 8px 12.8px;
+    mask-size: 8px 12.8px;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /* Harmonijka wejścia: nawigacja → tekst → kadr (po słowach nagłówka). */
+  .b2-reel__in {
+    animation: b2-frame-in 720ms var(--b2-ease-text) 320ms both;
+  }
+
+  @supports (animation-timeline: view()) {
+    .b2-reel {
+      view-timeline: --b2-reel block;
+    }
+
+    .b2-reel__frame,
+    .b2-reel__pause {
+      animation-timing-function: var(--b2-ease-scroll);
+      animation-fill-mode: both;
+      animation-timeline: --b2-reel;
+      /*
+       * Od chwili, gdy kadr wystaje spod hero, do pełnego wejścia w ekran. Skala rośnie
+       * szybciej niż kadr wjeżdża (s ≥ postęp), więc pod pomniejszonym kadrem nigdy nie
+       * widać pustego pasa — gdy pas mógłby wejść w ekran, kadr ma już pełny rozmiar.
+       */
+      animation-range: entry 0% entry 100%;
+    }
+
+    .b2-reel__frame {
+      animation-name: b2-zoom-in;
+    }
+
+    .b2-reel__pause {
+      animation-name: b2-zoom-counter;
+    }
+  }
+}
+
+@keyframes b2-frame-in {
+  from {
+    opacity: 0;
+    translate: 0 1.5rem;
+  }
+}
+
+@keyframes b2-zoom-in {
+  from {
+    scale: var(--b2-z0);
+  }
+  to {
+    scale: 1;
+  }
+}
+
+/* Odwrotność skali kadru (≈ 1 / z) — pauza ma stały rozmiar dotyku przez cały zoom. */
+@keyframes b2-zoom-counter {
+  from {
+    scale: calc(1 / var(--b2-z0));
+  }
+  to {
+    scale: 1;
+  }
+}
+
+/* ——— Slider realizacji ——— */
+
+.b2-slider {
+  /* Telefon: sąsiednie karty zaglądają zza krawędzi — widać, że tor jedzie dalej. */
+  --b2-card: 74vw;
+  --b2-slide-gap: 0.75rem;
+  --b2-fade: 1rem;
+}
+
+@media (min-width: 40rem) {
+  .b2-slider {
+    --b2-card: 21rem;
+    --b2-slide-gap: 1rem;
+    --b2-fade: 3rem;
+  }
+}
+
+@media (min-width: 64rem) {
+  .b2-slider {
+    --b2-card: 24rem;
+    --b2-slide-gap: 1.25rem;
+    --b2-fade: 5rem;
+  }
+}
+
+@media (min-width: 105rem) {
+  .b2-slider {
+    --b2-card: 26rem;
+  }
+}
+
+.b2-slider {
+  /*
+   * Tor ma pełną szerokość okna, ale ostra jest tylko kolumna kontenera — poza nią
+   * karty gasną ku krawędziom ekranu (na 1440 pas 120 px, na 1920 — 288 px).
+   */
+  --b2-side: max(var(--b2-fade), (100% - min(100% - 2 * var(--fm-gutter), var(--fm-max))) / 2);
+}
+
+.b2-slider__viewport {
+  position: relative;
+  /* Bez JS — zwykłe przewijanie w poziomie ze snapem. */
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: var(--b2-side);
+  scrollbar-width: none;
+  /* Pionowe przewijanie strony zostaje przeglądarce; poziomy gest należy do toru. */
+  touch-action: pan-y;
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    #000 var(--b2-side),
+    #000 calc(100% - var(--b2-side)),
+    transparent
+  );
+  /* Miejsce na cień karty i soczewkę bez przycinania. */
+  padding-block: 0.75rem 1rem;
+}
+
+.b2-slider__viewport::-webkit-scrollbar {
+  display: none;
+}
+
+.b2-slider__track {
+  position: relative;
+  display: flex;
+  width: max-content;
+}
+
+.b2-slider__copy {
+  display: flex;
+  gap: var(--b2-slide-gap);
+  padding-inline-end: var(--b2-slide-gap);
+}
+
+/* Kopie domykające pętlę istnieją tylko z silnikiem (JS). */
+.b2-slider:not([data-engine]) .b2-slider__copy[aria-hidden] {
+  display: none;
+}
+
+.b2-slider:not([data-engine]) .b2-slider__copy {
+  padding-inline: var(--b2-side);
+}
+
+.b2-slider[data-engine] .b2-slider__viewport {
+  /* `clip`, nie `hidden`: fokus karty nie może przewinąć okna toru — ruchem rządzi silnik. */
+  overflow: clip;
+  scroll-snap-type: none;
+  cursor: grab;
+}
+
+.b2-slider[data-dragging] .b2-slider__viewport {
+  cursor: grabbing;
+}
+
+.b2-slider[data-dragging] .b2-slide * {
+  pointer-events: none;
+}
+
+.b2-slide {
+  width: var(--b2-card);
+  flex-shrink: 0;
+  scroll-snap-align: center;
+}
+
+.b2-card {
+  transform-origin: 50% 60%;
+  will-change: scale;
+}
+
+/* Szkielet pod plakatem: siatka kropek jak w `GlyphMedia` przed startem silnika (komórka 8 × 12,8). */
+.b2-skel {
+  background-color: var(--fm-fill);
+  background-image: radial-gradient(
+    circle at center,
+    color-mix(in oklch, var(--fm-ink-3) 45%, transparent) 0.9px,
+    transparent 1.3px
+  );
+  background-size: 8px 12.8px;
+}
+
+/*
+ * Strzałka karty rośnie w pigułkę „Podgląd”: kolumna napisu 0fr → 1fr (siatka
+ * animuje szerokość bez mierzenia), tło z wypełnienia w atrament. Mysz — przy
+ * najechaniu i fokusie; dotyk — na karcie, która stoi na środku toru.
+ */
+.b2-cta {
+  display: grid;
+  grid-template-columns: 0fr auto;
+  align-items: center;
+  flex-shrink: 0;
+  height: 2.25rem;
+  border-radius: 9999px;
+  background: var(--fm-fill);
+  color: var(--fm-ink-2);
+  transition:
+    grid-template-columns 420ms var(--ease-fm-snap),
+    background-color 240ms var(--ease-fm-snap),
+    color 240ms var(--ease-fm-snap);
+}
+
+.b2-cta__arrow {
+  transition: translate 420ms var(--ease-fm-snap);
+}
+
+/* Rozwinięta: karta na środku toru (talia „podaje” kartę), fokus i — na myszy — najechanie. */
+.b2-card:is([data-active], :focus-visible) .b2-cta {
+  grid-template-columns: 1fr auto;
+  background: var(--fm-ink);
+  color: var(--fm-inverse);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .b2-card:hover .b2-cta {
+    grid-template-columns: 1fr auto;
+    background: var(--fm-ink);
+    color: var(--fm-inverse);
+  }
+
+  .b2-card:hover .b2-cta__arrow {
+    translate: 2px 0;
+  }
+
+  /* Pod kursorem rozwinięta jest tylko wskazana karta — środkowa oddaje pierwszeństwo. */
+  .b2-slider__track:has(.b2-card:hover) .b2-card[data-active]:not(:hover, :focus-visible) .b2-cta {
+    grid-template-columns: 0fr auto;
+    background: var(--fm-fill);
+    color: var(--fm-ink-2);
+  }
+}
+
+/* ——— Manifest: atrament wypełnia akapit słowo po słowie (oś czasu widoku) ——— */
+
+.b2-fill {
+  view-timeline: --b2-fill block;
+}
+
+@keyframes b2-fill {
+  to {
+    color: var(--fm-ink);
+  }
+}
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .b2-fw {
+      color: color-mix(in oklch, var(--fm-ink) 26%, transparent);
+      animation: b2-fill linear both;
+      animation-timeline: --b2-fill;
+      animation-range: cover calc(10% + var(--i) * 39% / var(--n)) cover
+        calc(10% + (var(--i) + 3) * 39% / var(--n));
+    }
+  }
+}
+
+/* ——— Kafel „Development”: terminal otwiera się od góry (bez przenikania czerni) ——— */
+
+.b2-term {
+  clip-path: inset(0 0 0 0 round 1.125rem);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .b2-term {
+    transition: clip-path 560ms var(--ease-fm-drawer) 320ms;
+  }
+
+  .b2-term--closed {
+    clip-path: inset(0 0 100% 0 round 1.125rem);
+  }
+}
+
+/* ——— Kafel „AI”: dymek polecenia, połysk „myślenia”, podpowiedzi ——— */
+
+@keyframes b2-bubble-in {
+  from {
+    opacity: 0;
+    scale: 0.94;
+    translate: 0 0.5rem;
+    filter: blur(4px);
+  }
+}
+
+.b2-bubble {
+  transform-origin: 100% 100%;
+  animation: b2-bubble-in 380ms var(--ease-fm-snap) both;
+}
+
+.b2-shimmer {
+  background: linear-gradient(90deg, var(--fm-ink-3) 20%, var(--fm-ink) 50%, var(--fm-ink-3) 80%) 0
+    0 / 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: fm-shimmer 1.4s linear infinite;
+}
+
+.b2-chips {
+  mask-image: linear-gradient(to right, #000 calc(100% - 1.5rem), transparent);
+}
+
+/* Wątek czatu: starsze wymiany gasną ku górze (pod przyciskiem powtórki). */
+.b2-thread {
+  mask-image: linear-gradient(to bottom, transparent 0.5rem, #000 4.5rem);
+}
+
+/* ——— CTA: pole soczewki z miękkimi krawędziami (plama nigdy nie jest ucięta prostą linią) ——— */
+
+.b2-lens {
+  --b2-feather: 3.5rem;
+  -webkit-mask-image:
+    linear-gradient(
+      to bottom,
+      transparent,
+      #000 var(--b2-feather),
+      #000 calc(100% - var(--b2-feather)),
+      transparent
+    ),
+    linear-gradient(
+      to right,
+      transparent,
+      #000 var(--b2-feather),
+      #000 calc(100% - var(--b2-feather)),
+      transparent
+    );
+  -webkit-mask-composite: source-in;
+  mask-image:
+    linear-gradient(
+      to bottom,
+      transparent,
+      #000 var(--b2-feather),
+      #000 calc(100% - var(--b2-feather)),
+      transparent
+    ),
+    linear-gradient(
+      to right,
+      transparent,
+      #000 var(--b2-feather),
+      #000 calc(100% - var(--b2-feather)),
+      transparent
+    );
+  mask-composite: intersect;
+}
+
+/* ——— Masonry: kolumny jadą każda swoim tempem (świadomy wyjątek reguły ruchu) ——— */
+
+@supports (animation-timeline: view()) {
+  @media (min-width: 64rem) and (prefers-reduced-motion: no-preference) {
+    .b2-par {
+      view-timeline: --b2-par block;
+      /* Zapas na przesunięcie kolumn — nic nie wjeżdża na nagłówek ani na następną sekcję. */
+      padding-block: 3rem;
+    }
+
+    .b2-par__col {
+      animation: b2-par linear both;
+      animation-timeline: --b2-par;
+      animation-range: cover 0% cover 100%;
+    }
+
+    .b2-par__col[data-b2-col="0"] {
+      --b2-shift: 1.5rem;
+    }
+
+    .b2-par__col[data-b2-col="1"] {
+      --b2-shift: 4.5rem;
+    }
+
+    .b2-par__col[data-b2-col="2"] {
+      --b2-shift: 2.5rem;
+    }
+  }
+}
+
+/* W połowie przejazdu (siatka na środku ekranu) kolumny stoją w jednej linii. */
+@keyframes b2-par {
+  from {
+    translate: 0 var(--b2-shift, 0);
+  }
+  to {
+    translate: 0 calc(-1 * var(--b2-shift, 0));
+  }
+}
+
+/* ——— Panele: menu (z pigułki), paleta ⌘K, podgląd realizacji ——— */
+
+@keyframes b2-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes b2-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes b2-sheet-in {
+  from {
+    opacity: 0;
+    scale: 0.96;
+    translate: 0 -0.5rem;
+  }
+}
+
+@keyframes b2-sheet-out {
+  to {
+    opacity: 0;
+    scale: 0.97;
+    translate: 0 -0.25rem;
+  }
+}
+
+@keyframes b2-up-in {
+  from {
+    translate: 0 100%;
+  }
+}
+
+@keyframes b2-up-out {
+  to {
+    translate: 0 100%;
+  }
+}
+
+@keyframes b2-pop-in {
+  from {
+    opacity: 0;
+    scale: 0.97;
+    filter: blur(4px);
+  }
+}
+
+@keyframes b2-pop-out {
+  to {
+    opacity: 0;
+    scale: 0.98;
+  }
+}
+
+@keyframes b2-swap {
+  from {
+    opacity: 0.4;
+    filter: blur(6px);
+  }
+}
+
+.b2-sheet {
+  transform-origin: 50% 0;
+}
+
+.b2-sheet[data-state="open"] {
+  animation: b2-sheet-in 280ms var(--ease-fm-snap);
+}
+
+.b2-sheet[data-state="closed"] {
+  animation: b2-sheet-out 160ms var(--ease-fm-snap) forwards;
+}
+
+.b2-overlay[data-state="open"],
+.b2-veil[data-state="open"] {
+  animation: b2-fade-in 240ms var(--ease-fm-snap);
+}
+
+.b2-overlay[data-state="closed"],
+.b2-veil[data-state="closed"] {
+  animation: b2-fade-out 160ms var(--ease-fm-snap) forwards;
+}
+
+.b2-palette[data-state="open"],
+.b2-preview[data-state="open"] {
+  animation: b2-up-in 420ms var(--ease-fm-drawer);
+}
+
+.b2-palette[data-state="closed"],
+.b2-preview[data-state="closed"] {
+  animation: b2-up-out 240ms var(--ease-fm-drawer) forwards;
+}
+
+@media (min-width: 40rem) {
+  .b2-palette {
+    transform-origin: 50% 0;
+  }
+
+  .b2-palette[data-state="open"] {
+    animation: b2-pop-in 200ms var(--ease-fm-snap);
+  }
+
+  .b2-palette[data-state="closed"] {
+    animation: b2-pop-out 120ms var(--ease-fm-snap) forwards;
+  }
+}
+
+@media (min-width: 48rem) {
+  .b2-preview[data-state="open"] {
+    animation: b2-pop-in 320ms var(--ease-fm-snap);
+  }
+
+  .b2-preview[data-state="closed"] {
+    animation: b2-pop-out 160ms var(--ease-fm-snap) forwards;
+  }
+}
+
+/* Otwarta skrótem klawiszowym: bez animacji (akcja wykonywana dziesiątki razy dziennie). */
+.b2-palette[data-instant],
+.b2-overlay[data-instant] {
+  animation: none !important;
+}
+
+/* Podczas morfu kadru ruch prowadzą View Transitions — Radix nie dokłada swojego. */
+.b2-veil[data-morph][data-state],
+.b2-preview[data-morph][data-state] {
+  animation: none;
+}
+
+.b2-preview__media[data-swap] {
+  animation: b2-swap 260ms var(--ease-fm-snap);
+}
+
+.b2-swap {
+  animation: b2-swap 300ms var(--ease-fm-snap) both;
+}
+
+/*
+ * Morf kadru karta ↔ okno: ruch po ekranie (nie wejście). Kolejność warstw
+ * jawnie — grupy istniejące tylko w nowym stanie (okno, zasłona) przeglądarka
+ * kładzie domyślnie nad kadrem, który leci z karty, i zakrywa go bielą okna.
+ */
+::view-transition-group(b2-veil) {
+  z-index: 1;
+}
+
+::view-transition-group(b2-sheet) {
+  z-index: 2;
+}
+
+::view-transition-group(b2-work) {
+  z-index: 3;
+  animation-duration: 440ms;
+  animation-timing-function: var(--ease-fm-move);
+}
+
+::view-transition-old(b2-work),
+::view-transition-new(b2-work) {
+  height: 100%;
+  object-fit: cover;
+  animation-duration: 440ms;
+}
+
+::view-transition-group(b2-sheet),
+::view-transition-group(b2-veil) {
+  animation-duration: 320ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}

@@ -12,9 +12,12 @@ publiczne (bezpieczeństwo, marketing), są w `docs/prywatne/` — tutaj tylko o
 
 Plan i budżet jakości: [KIERUNEK-WIZUALNY.md](KIERUNEK-WIZUALNY.md) §3.
 
-- [ ] **[Ty]** Wybór z pięciu koncepcji iteracji 6 (https://www.zeprzalka.com/demo — Indeks · nowy,
-      Glif · laboratorium, The Best Of, Rentgen, Kinetyka): szkielet + zapożyczenia, uwagi do sekcji,
-      parametry glifów z laboratorium („Kopiuj ustawienia”) — KIERUNEK §2–4.
+- [ ] **[Ty]** Wybór z wersji iteracji 7 (https://www.zeprzalka.com/demo — Indeks · I, Indeks · II,
+      The Best Of · II, wersja autorska), ewentualnie test A/B dwóch Indeksów; ustawienia znaków
+      do wyboru w `src/components/demo/shared/glyph/settings.ts` — KIERUNEK §2–4.
+- [ ] **[Ty]** Tekst w serwisie: „Wykładowca akademicki 2016–2026” w `/o-mnie` i CV → „2016–obecnie”
+      (wykłady trwają), a zdania o WSR i Civitas w czasie przeszłym; X (`x.com/zeprzalka_com`)
+      w profilach serwisu — w demach już jest, w serwisie dopiero na Twoją prośbę.
 - [ ] **[Kod]** System „Forma” w serwisie: tokeny w `globals.css`, prymitywy w `src/components/ui/`,
       `/design-system` na nowym systemie.
 - [ ] **[Kod]** Strona główna w wybranej koncepcji; potem podstrony (wpis, `/uslugi`, `/o-mnie`,
@@ -23,7 +26,8 @@ Plan i budżet jakości: [KIERUNEK-WIZUALNY.md](KIERUNEK-WIZUALNY.md) §3.
 - [ ] **[Kod]** Wideo: przekodowanie klipów do ~600 kb/s i lżejsze hero na telefon (po decyzji).
 - [ ] **[Kod]** Po wdrożeniu: usunięcie piaskownicy `/demo`, zmiennej `DEMO_PUBLIC` z Vercela
       (dziś dema są na zeprzalka.com/demo do testów na telefonie) i zależności `motion`,
-      `@number-flow/react`, jeśli nowy serwis ich nie używa (archiwum: tag `piaskownica-archiwum-2026-11`).
+      `@number-flow/react`, `gsap`, jeśli nowy serwis ich nie używa (archiwum: tag
+      `piaskownica-archiwum-2026-11`); silnik znaków `shared/glyph` (z `ogl`) przenosimy do serwisu.
 
 ## 2. Bezpieczeństwo — Twoje konta (ok. 30 min)
 

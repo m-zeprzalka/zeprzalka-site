@@ -1,0 +1,231 @@
+/*
+ * „Warstwy” — wersja autorska iteracji 7. Tu są tylko tokeny i to, czego utility Tailwinda
+ * nie wyrażą (przyklejanie kart, ruch sterowany przewijaniem, wypełnianie tekstu, kurtyna
+ * stopki). Cały układ i wygląd komponentów — klasami w TSX. Prefiks `au-`.
+ */
+
+/* ——— Blat pod kartami: o stopień ciemniejszy od karty w obu motywach ——— */
+html:has(.au) {
+  --au-desk: oklch(0.928 0 0);
+  background: var(--au-desk);
+}
+html.dark:has(.au) {
+  --au-desk: oklch(0.1 0 0);
+}
+
+/* ——— Tokeny: margines strony m, wcięcie karty p, odstęp siatki, promienie, nagłówek ——— */
+.au {
+  --au-m: 0.5rem;
+  --au-p: 1.25rem;
+  --au-gap: 1rem;
+  --au-head: 3.5rem;
+  /* Karta przykleja się 12 px pod nagłówkiem — w tej szczelinie zostaje krawędź poprzedniej. */
+  --au-t: calc(var(--au-head) + 0.75rem);
+  --au-r-sheet: 1.5rem;
+  --au-r-card: 1.25rem;
+  --au-r-media: 1rem;
+  --au-sheet: oklch(0.997 0 0);
+  --au-ring: oklch(0 0 0 / 0.07);
+  --au-dim: oklch(0.2 0 0 / 0.14);
+  background: var(--au-desk);
+}
+.dark .au {
+  --au-sheet: oklch(0.168 0 0);
+  --au-ring: oklch(1 0 0 / 0.075);
+  --au-dim: oklch(0 0 0 / 0.6);
+}
+@media (min-width: 40rem) {
+  .au {
+    --au-m: 0.75rem;
+    --au-p: 2rem;
+    --au-gap: 1.5rem;
+    --au-r-sheet: 1.75rem;
+  }
+}
+@media (min-width: 64rem) {
+  .au {
+    --au-m: 1rem;
+    --au-p: 3rem;
+  }
+}
+@media (min-width: 90rem) {
+  .au {
+    --au-p: 4rem;
+  }
+}
+
+/* Rama: szerokość karty i nagłówka (bez paska przewijania — procent, nie vw). */
+.au-frame {
+  width: min(100% - 2 * var(--au-m), 90rem);
+  margin-inline: auto;
+}
+
+/* ——— Stos: każda karta przykleja się pod nagłówkiem (wysoka — dolną krawędzią do dołu okna,
+   `--au-stick` liczy `StackProvider`). Następna nasuwa się i cofa poprzednią w głąb. ——— */
+.au-stack {
+  timeline-scope:
+    --au-v0, --au-v1, --au-v2, --au-v3, --au-v4, --au-v5, --au-v6, --au-v7, --au-v8, --au-v9;
+}
+.au-sheet {
+  position: sticky;
+  top: var(--au-stick, var(--au-t));
+  view-timeline-name: var(--au-self);
+  view-timeline-axis: block;
+  transform-origin: 50% 0;
+}
+.au-sheet::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--au-dim);
+  opacity: 0;
+  pointer-events: none;
+}
+@keyframes au-recede {
+  to {
+    transform: translateY(-0.75rem) scale(0.94);
+  }
+}
+@keyframes au-dim {
+  to {
+    opacity: 1;
+  }
+}
+@keyframes au-hide {
+  to {
+    opacity: 0;
+  }
+}
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    /* Zakres: od wejścia następnej karty w okno do chwili, gdy dojedzie pod nagłówek. */
+    .au-sheet[data-next] {
+      animation: au-recede linear both;
+      animation-timeline: var(--au-next);
+      animation-range: entry 0% entry calc(100svh - var(--au-t));
+    }
+    .au-sheet[data-next]::after {
+      animation: au-dim linear both;
+      animation-timeline: var(--au-next);
+      animation-range: entry 0% entry calc(100svh - var(--au-t));
+    }
+    /* Pod koniec nasuwania treść przykrywanej karty gaśnie — w szczelinie pod nagłówkiem zostaje
+       czysta krawędź arkusza, a nie ucięte fragmenty tekstu wysokiej karty. */
+    .au-sheet[data-next] > * {
+      animation: au-hide linear both;
+      animation-timeline: var(--au-next);
+      animation-range: entry calc(55svh - var(--au-t)) entry calc(100svh - var(--au-t));
+    }
+  }
+}
+
+/* ——— Wejście „harmonijka”: nagłówek → tekst → kadr; `backwards`, więc po animacji nie zostaje
+   żaden filtr ani transform (warstwy GPU na słabej grafice). ——— */
+@keyframes au-in {
+  from {
+    opacity: 0;
+    filter: blur(8px);
+    transform: translateY(0.5rem);
+  }
+}
+@keyframes au-fade {
+  from {
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .au-in {
+    animation: au-in 560ms cubic-bezier(0.22, 1, 0.36, 1) backwards;
+    animation-delay: var(--d, 0ms);
+  }
+  .au-fade {
+    animation: au-fade 480ms cubic-bezier(0.22, 1, 0.36, 1) backwards;
+    animation-delay: var(--d, 0ms);
+  }
+}
+
+/* ——— „Mam 15 lat…”: słowa wypełniane przewijaniem (ulubiony efekt właściciela — zostaje scrub) ——— */
+.au-fill {
+  view-timeline: --au-fill block;
+}
+@keyframes au-fill {
+  from {
+    color: color-mix(in oklab, var(--fm-ink) 24%, transparent);
+  }
+}
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .au-fw {
+      animation: au-fill linear both;
+      animation-timeline: --au-fill;
+      /* Zakres liczony od wejścia akapitu w okno (długością, nie `cover`): akapit leży na
+         przyklejanej karcie, więc „cover” trwałby aż do końca stosu. Wypełnienie kończy się,
+         zanim karta się przyklei. */
+      animation-range: entry calc(20svh + var(--i) * 40svh / var(--n)) entry
+        calc(20svh + (var(--i) + 3) * 40svh / var(--n));
+    }
+  }
+}
+
+/* ——— Karuzela portfolio: tor bez paska, pasek postępu z przewijania toru ——— */
+.au-track {
+  scroll-timeline: --au-track inline;
+  scrollbar-width: none;
+}
+.au-track::-webkit-scrollbar {
+  display: none;
+}
+.au-rail {
+  timeline-scope: --au-track;
+}
+@keyframes au-progress {
+  from {
+    transform: scaleX(0.12);
+  }
+}
+.au-progress {
+  display: none;
+}
+.au-progress-bar {
+  transform-origin: 0 50%;
+}
+@supports (animation-timeline: scroll()) {
+  .au-progress {
+    display: block;
+  }
+  .au-progress-bar {
+    animation: au-progress linear both;
+    animation-timeline: --au-track;
+  }
+}
+
+/* Blok startu czeka na krój (skrypt inline w `AutorskaHome`, najwyżej 900 ms). */
+[data-au-font="wait"] .au-hold {
+  visibility: hidden;
+}
+
+/* ——— Skrót palety: właściwy znak od pierwszego malowania (atrybut ustawia skrypt inline) ——— */
+.au-k-mac {
+  display: none;
+}
+[data-au-os="mac"] .au-k-mac {
+  display: inline;
+}
+[data-au-os="mac"] .au-k-ctrl {
+  display: none;
+}
+
+/* ——— Kurtyna: ostatnia karta odjeżdża i odsłania stopkę (od tabletu, gdy stopka mieści się w oknie) ——— */
+@media (min-width: 48rem) and (min-height: 40rem) {
+  .au-main {
+    position: relative;
+    z-index: 1;
+    background: var(--au-desk);
+  }
+  .au-curtain {
+    position: sticky;
+    bottom: 0;
+    z-index: 0;
+  }
+}

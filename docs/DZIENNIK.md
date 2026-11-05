@@ -6,6 +6,84 @@ w `docs/prywatne/` (poza repozytorium). Iteracja bez wpisu tutaj nie jest skońc
 
 ---
 
+## Iteracja 7 — 5 listopada 2026: wersje bliskie wyboru i wspólny silnik znaków
+
+Zakres od właściciela: ostatnia pętla przed wdrożeniem. Wygrywa wąski Indeks — powstają dwie
+jego wersje (dopracowanie po uwagach i wariacja), The Best Of z dopracowanymi animacjami, a na
+końcu wersja autorska. Rentgen i Kinetyka odrzucone.
+
+**Wspólne decyzje właściciela** (obowiązują wszystkie wersje):
+- ciemny motyw na start;
+- obłości jako zasada systemu i jednolite wcięcia;
+- siatka trzymana przez nagłówek i paletę ⌘K;
+- bez liczników realizacji i wpisów;
+- nagłówki sekcji „Tytuł — dalej małą literą”;
+- X pierwszy w profilach, chip klikalny w całości;
+- wykłady „2016–obecnie” bez nazw uczelni;
+- logo = obecny komponent (glif co sekundę + domena);
+- znaki: zestaw „Sygnet” (z logo), bez katakany i skanera, 6–24 kl./s, małe komórki, portret
+  tonalny, kursor jako nieregularny szum;
+- prawdziwe zdjęcie twarzy nigdy nie jest widoczne.
+
+**Wspólny silnik znaków** — `src/components/demo/shared/glyph/` (opis i ustawienia w README),
+następca silników z Glifu, laboratorium, Indeksu · nowego i The Best Of:
+- jeden kontekst WebGL2 (OGL), ładowany leniwie (ok. 16 KB gzip) po wejściu strony
+  (`deferGlyphEngine`); powierzchnie powstają kolejno w bezczynności i tylko blisko ekranu;
+- twarz to sama głowa (bez szyi i ubrania); tony siedzą w module danych, nie w obrazie — przeglądarka
+  pobiera tylko statyczną klatkę ze znaków;
+- komponenty:
+  - portret z wyborem znaków dla odwiedzającego;
+  - wideo wyłaniające się ze szkieletu znaków (najechany kafel gra, z zwłoką na przewijanie);
+  - dekodowanie napisów i liczb;
+  - „Zeprzałka” w stopce reagujące na mysz i dotyk;
+  - organiczna soczewka kodu w CTA;
+  - cztery figury;
+  - sygnet logo;
+  - przejście motywu jako rozpad kafli od góry (nie koło od przycisku);
+- kroje znaków: podzbiory DejaVu i STIX Two Math (licencje obok); zestaw logo kompletny (165 znaków).
+
+**Wersje** (`/demo/<slug>`)
+- **Indeks · I** (`indeks-1`, kandydat do produkcji):
+  - indeks-new punkt po punkcie;
+  - siatka trzech torów na liczbach całkowitych;
+  - paleta ⌘K na osi kolumny, ⌘/Ctrl ustawiane przed malowaniem;
+  - obłe pigułki pod frazami, karty z wideo w prawym torze (na telefonie na szerokość siatki);
+  - akordeon na krawędziach kolumny, zawsze w kadrze na telefonie;
+  - liczby i nagłówek „O mnie” dekodowane ze znaków;
+  - wejście „harmonijka” bez czekania na silnik (H1 ostry ok. 0,85 s na telefonie przy CPU ×4, CLS 0);
+  - CSS z 1029 do 658 linii.
+- **Indeks · II** (`indeks-2`):
+  - asymetryczna siatka 12 kolumn;
+  - na marginesie twarz ze znaków, która przy wskazaniu frazy zamienia się w kartę z chipami
+    i filmem kategorii;
+  - segmenty kompetencji z figurą;
+  - masonry ze szkieletem i dryfem kolumn;
+  - soczewka kodu w CTA.
+- **The Best Of · II** (`best-of-2`):
+  - zoom wideo od 64% do kontenera;
+  - slider portfolio bez pustych okien na telefonie;
+  - segmenty kompetencji (log komend, rozmowa AI, figury);
+  - masonry ze znaków z paralaksą kolumn;
+  - CTA z soczewką, twarz przy formularzu, napis w stopce ze znaków.
+- **Warstwy** (`autorska`, bonus po skończeniu trzech wersji): rozdziały jako obłe karty
+  nasuwające się na siebie (sticky + CSS sterowany przewijaniem), nawigacja jak panel warstw
+  w Figmie pod ⌘K, stopka-kurtyna z „Zeprzałka” ze znaków.
+
+**Proces:**
+- agent na wersję plus agent silnika (kamienie M1–M4);
+- dwie rundy odbiorów art directora;
+- niezależny krytyk na buildzie produkcyjnym: ranking Indeks · I > Indeks · II > The Best Of · II;
+- trzecia runda po krytyku: długie zadania przy wejściu, fokus po palecie, ucięte pigułki,
+  CLS, kopiowanie klatek silnika, napis „demo” w kaflu AI.
+
+**Sprawdzone:**
+- build z demami w czystej kopii;
+- JS na start (gzip): 229 / 236 / 236 KB (Warstwy 234 KB);
+- 0 poziomego przewijania i 0 błędów konsoli na produkcji;
+- jedyne pobierane pliki twarzy to klatki ze znaków.
+
+---
+
 ## Iteracja 6 — 5 listopada 2026: pięć koncepcji, najlepsze z dwóch iteracji
 
 Zakres od właściciela: znowu pięć koncepcji strony głównej w piaskownicy, poprzednie zostają.

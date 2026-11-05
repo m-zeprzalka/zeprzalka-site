@@ -1,6 +1,6 @@
 # Plan — jedyna lista otwartych zadań
 
-Stan na 4 listopada 2026. Tu są **tylko rzeczy do zrobienia**: zrobione punkty
+Stan na 5 listopada 2026. Tu są **tylko rzeczy do zrobienia**: zrobione punkty
 przenosimy do [DZIENNIK.md](DZIENNIK.md) i usuwamy stąd. Szczegóły, które nie mogą być
 publiczne (bezpieczeństwo, marketing), są w `docs/prywatne/` — tutaj tylko odnośnik.
 
@@ -12,8 +12,9 @@ publiczne (bezpieczeństwo, marketing), są w `docs/prywatne/` — tutaj tylko o
 
 Plan i budżet jakości: [KIERUNEK-WIZUALNY.md](KIERUNEK-WIZUALNY.md) §3.
 
-- [ ] **[Ty]** Wybór jednej z pięciu propozycji z iteracji 5 (https://www.zeprzalka.com/demo — Tryptyk,
-      Esencja, Glif, Reedycja, Transformacja) albo szkielet + zapożyczenia; uwagi do sekcji (KIERUNEK §2–4).
+- [ ] **[Ty]** Wybór z pięciu koncepcji iteracji 6 (https://www.zeprzalka.com/demo — Indeks · nowy,
+      Glif · laboratorium, The Best Of, Rentgen, Kinetyka): szkielet + zapożyczenia, uwagi do sekcji,
+      parametry glifów z laboratorium („Kopiuj ustawienia”) — KIERUNEK §2–4.
 - [ ] **[Kod]** System „Forma” w serwisie: tokeny w `globals.css`, prymitywy w `src/components/ui/`,
       `/design-system` na nowym systemie.
 - [ ] **[Kod]** Strona główna w wybranej koncepcji; potem podstrony (wpis, `/uslugi`, `/o-mnie`,

@@ -6,6 +6,58 @@ w `docs/prywatne/` (poza repozytorium). Iteracja bez wpisu tutaj nie jest skońc
 
 ---
 
+## Iteracja 6 — 5 listopada 2026: pięć koncepcji, najlepsze z dwóch iteracji
+
+Zakres od właściciela: znowu pięć koncepcji strony głównej w piaskownicy, poprzednie zostają.
+Opinia o iteracji 5:
+- Tryptyk „położony” — trzy stałe kolumny to nieporozumienie;
+- z Esencji chwalone: wejścia z rozmycia, zoom wideo, manifest „Mam 15 lat…” i wielki znak w stopce;
+- Glif „kosmos”, ale twarz z ciemnymi oczodołami, za szybkie napisy i dziury po kliknięciu;
+- Reedycja „solidny test”, Transformacja zawiodła.
+
+Zadania:
+- nowy „Indeks”;
+- laboratorium glifów („pole minowe” wariantów);
+- „The Best Of”;
+- dwie własne inwencje po analizie Awwwards.
+
+**Proces:** jak w iteracji 5 — agent na koncepcję z planem i pętlą zrzutów, dwie rundy uwag
+art directora, niezależny krytyk na buildzie produkcyjnym (oceny, usterki z dowodami, ranking),
+trzecia runda z filtrem gustu właściciela (np. H1 Indeksu zostaje dwutonowym zdaniem, choć
+krytyk chciał skali display).
+
+**Wspólne przygotowanie**
+- Nowy portret ze zdjęcia właściciela: wycięte tło, podniesione cienie (oczy jasne), cztery
+  warianty w `src/components/demo/shared/portrait/`. Surowe zdjęcie nie trafia do repozytorium.
+- GSAP 3.15 i OGL 1.0 jako zależności piaskownicy (ESLint blokuje je w serwisie).
+- Spis `/demo` pokazuje trzy iteracje od najnowszej.
+
+**Koncepcje** (`/demo/<slug>`, porównanie: KIERUNEK §2)
+- **Indeks · nowy:** wąziutka kolumna; spis sekcji i media pojawiają się tylko, gdy są potrzebne;
+  karta na marginesie i wideo odkodowują się z glifów; pauza zamienia kadr w kod; morf przy
+  przełączaniu realizacji z wierszem pod kursorem; ⌘K.
+- **Glif · laboratorium:** strona jako pole wyboru efektu — sekcje A–H z podpisanym wariantem,
+  panel z 7 zestawami znaków (m.in. binarny, katakana OFL, Braille), animacjami, tempem,
+  kolorem i wyzwalaczem; portret czytelny w każdym zestawie; ustawienia kopiowane jako JSON.
+  Jeden kontekst WebGL2 (OGL) na stronę.
+- **The Best Of:** hero z rozmycia, zoom wideo „na zewnątrz” do siatki, jeden nieskończony
+  slider kart przeciągany kciukiem, manifest, prosty log deployu, czat AI, masonry z dekodowaniem
+  glifów, portret z koła 0/1 za kursorem w kontakcie, ⌘K, „Zeprzałka” na 100vw.
+- **Rentgen:** kursor (na telefonie palec) jest soczewką, pod którą strona pokazuje prawdziwy kod:
+  reguły CSS, dane realizacji, frontmatter, pola formularza; przełącznik Projekt/Kod zamienia
+  całą stronę w inspektor.
+- **Kinetyka:** typografia Geist w skali plakatu (GSAP ScrollTrigger + SplitText), „Portfolio”
+  jako okno na reel w literach, taśma realizacji z tytułami wypełnianymi klipem, projekcja FLIP,
+  wielki znak w stopce.
+
+**Krytyka i trzecia runda:** ranking krytyka — The Best Of, Indeks · nowy, Kinetyka, Rentgen,
+Glif · laboratorium. Główny wzorzec usterek: efekty scrubowane przewijaniem zostawiały po
+zatrzymaniu stan pośredni (bełkot znaków, fałszywe liczby, czarna belka). Reguła na finał:
+przewijanie najwyżej uruchamia animację, a stan spoczynkowy jest zawsze kompletny (wyjątek:
+tekst wypełniany przewijaniem, ulubiony efekt właściciela).
+
+---
+
 ## Iteracja 5 — 4 listopada 2026: pięć propozycji strony głównej
 
 Zakres od właściciela: tylko strona główna, tylko piaskownica. Pięć propozycji:

@@ -23,23 +23,29 @@ Odrzucone kierunki (Precyzja, warianty z sierpnia): tag `piaskownica-archiwum-20
 src/app/demo/
 ├── layout.demo.tsx       # układ główny piaskownicy (html lang=pl, noindex, motyw systemowy)
 ├── demo.css              # Tailwind + system „Forma”
-├── page.demo.tsx         # spis dem jako prezentacja: propozycje z iteracji 5, niżej iteracja 3
+├── page.demo.tsx         # spis dem jako prezentacja: koncepcje z iteracji 6, niżej iteracje 5 i 3
 └── <slug>/page.demo.tsx  # jedna trasa na propozycję
 src/components/demo/
 ├── registry.ts           # lista dem: zadanie z briefu, opis, mocne strony i ryzyka
 ├── shared/content.ts     # WSPÓLNA TREŚĆ propozycji: wszystko z obecnej strony głównej
 │                         # i „O mnie” (+ wymiary plakatów) — serwerowe, do klientów przez propsy
+├── shared/portrait/      # portret ze zdjęcia (kolor, jasność, wygładzony, kontur; alfa = maska)
 ├── forma/                # SYSTEM „Forma”: theme.css (tokeny → utility Tailwinda), cn.ts,
 │                         # Button, Chip/LiveDot/Kbd, CopyButton, ThemeSwitch, Count, Reveal,
 │                         # use-in-view, typo, Specimen, demo-action
+├── indeks-new/ glif-lab/ best-of/ rentgen/ kinetyka/  # iteracja 6 — pięć koncepcji
 ├── tryptyk/ esencja/ glif/ reedycja/ transformacja/   # iteracja 5 — pięć propozycji
 └── zywy-interfejs/ indeks/ talia/                     # iteracja 3 — do porównania
 ```
 
-Każda propozycja ma własny prefiks klas, animacji i `view-transition-name` (`tk-`, `es-`,
-`gl-`, `re-`, `tf-`) — arkusze dem są globalne po przejściu między nimi. „Glif” ma własny
-krój z symbolami (`glif/glif-symbols.woff2`, podzbiór DejaVu Sans Mono pod zmienioną nazwą,
-licencja w `glif/glif-symbols.LICENSE.md`).
+Każda propozycja ma własny prefiks klas, animacji i `view-transition-name` (iteracja 5: `tk-`,
+`es-`, `gl-`, `re-`, `tf-`; iteracja 6: `ixn-`, `gll-`, `bo-`, `rg-`, `kn-`) — arkusze dem są
+globalne po przejściu między nimi.
+
+Kroje z glifami to podzbiory OFL/wolnych krojów pod zmienioną nazwą, z licencją obok pliku:
+`glif/glif-symbols.woff2`, `best-of/glyphs/`, `indeks-new/glyph/`, `kinetyka/kn-glyphs.woff2`
+(podzbiory DejaVu Sans Mono) i `glif-lab/fonts/` (DejaVu Sans Mono, DejaVu Sans dla Braille'a,
+M PLUS 1 Code dla katakany).
 
 ## System „Forma”
 
@@ -49,8 +55,9 @@ Tokeny w `forma/theme.css` (`.fm` na korzeniu koncepcji) zamieniają się w util
 tokenów i gubi np. `text-fm-micro` obok `text-fm-ink-2`). Opis, rekomendacja i plan:
 `docs/KIERUNEK-WIZUALNY.md`.
 
-Zależności tylko dla piaskownicy (`devDependencies`): `motion` (gesty, animacje układu)
-i `@number-flow/react` (liczby).
+Zależności tylko dla piaskownicy (`devDependencies`): `motion` (gesty, animacje układu),
+`@number-flow/react` (liczby), `gsap` (choreografia przewijania, podział tekstu, Flip) i `ogl`
+(lekki WebGL — shadery glifów na obrazie i wideo). Serwis ich nie importuje (ESLint).
 
 ## Jak dodać nowe demo
 

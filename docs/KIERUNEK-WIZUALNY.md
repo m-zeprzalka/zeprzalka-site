@@ -1,6 +1,6 @@
 # Kierunek wizualny — system „Forma” i propozycje strony głównej
 
-Stan na 4 listopada 2026 (iteracja 5). Wszystko poniżej żyje w piaskownicy `/demo`. Na czas
+Stan na 5 listopada 2026 (iteracja 6). Wszystko poniżej żyje w piaskownicy `/demo`. Na czas
 prac nad wyglądem jest też na produkcji: **https://www.zeprzalka.com/demo** (zmienna
 `DEMO_PUBLIC=1` w Vercelu, `noindex`, poza mapą strony); lokalnie `pnpm dev` → http://localhost:3000/demo.
 Oglądaj na telefonie i komputerze, w obu motywach. Historia odrzuconych kierunków: `docs/DZIENNIK.md`, kod: tag `piaskownica-archiwum-2026-11`.
@@ -22,33 +22,41 @@ Specimen: `/demo/forma`. Źródło prawdy: `src/components/demo/forma/theme.css`
 | Układ | kontener 1200 px, marginesy 16 → 32 px, rytm sekcji 80 → 128 px, cele dotyku ≥ 44 px |
 | Prymitywy | Button, Chip + LiveDot + Kbd, CopyButton, ThemeSwitch (View Transitions), Count (Number Flow), Reveal |
 
-## 2. Pięć propozycji strony głównej (iteracja 5)
+## 2. Pięć koncepcji strony głównej (iteracja 6)
 
-Ta sama treść (obecna strona główna + fakty z „O mnie”, `src/components/demo/shared/content.ts`),
-pięć charakterów. Każda przeszła trzy rundy: dwie uwag art directora i jedną z niezależnej krytyki.
+Ta sama treść (`src/components/demo/shared/content.ts`) i nowy portret ze zdjęcia
+(`shared/portrait/`). Koncepcje zbierają to, co właściciel pochwalił w iteracjach 3 i 5:
+wejścia z rozmycia, zoom wideo, jeden slider, manifest wypełniany przewijaniem, efekt glifów,
+wielki znak w stopce. Każda przeszła trzy rundy: dwie uwag art directora i jedną z niezależnej krytyki.
 
 | | Zadanie z briefu | Idea | Mocne strony | Ryzyka | JS na start* |
 | --- | --- | --- | --- | --- | --- |
-| [Tryptyk](https://www.zeprzalka.com/demo/tryptyk) | ulepszony „Indeks” | od 1280 px trzy kolumny: spis z ⌘K, dokument, scena multimediów; portfolio jako galeria albo lista | najwięcej rzemiosła i treści na ekranie, przełączanie realizacji bez przelewania tekstu, paleta ⌘K | najcichsza; stoi na dobrym tekście | 244 KB |
-| [Esencja](https://www.zeprzalka.com/demo/esencja) | wolna interpretacja | Framer w czerni i bieli: H1 z rozmycia, reel rosnący przy przewijaniu, nieskończony pokaz prac cyfrowych, manifest wypełniany przewijaniem, cztery żywe kompetencje, masonry wideo | najbliżej opisanego gustu; kompetencje „się dzieją” | najwięcej ruchu do utrzymania | 224 KB |
-| [Glif](https://www.zeprzalka.com/demo/glif) | zaskocz mnie | tożsamość z migającego znaku: portret ASCII jako pole glifów, realizacje jako wydruki z glifów odkodowywane w kolor | najbardziej zapamiętywalna; kolor ma uzasadnienie (kolor mają tylko realizacje) | canvas — płynność do potwierdzenia na telefonie | 218 KB |
-| [Reedycja](https://www.zeprzalka.com/demo/reedycja) | wariacja obecnej | obecny układ i treść w drugim wydaniu: ciemny motyw, „Forma”, reel rosnący przy przewijaniu, zakładki z 19 realizacjami, dialog z morfem | najbezpieczniejsza i najlżejsza; spłaca dług z §5 w piaskownicy | najmniej zaskakuje | 205 KB |
-| [Transformacja](https://www.zeprzalka.com/demo/transformacja) | Projekt X | hero od razu, a rama obok przy przewijaniu zamienia ten sam nagłówek: szkic → projekt → kod → produkt | jedyna, która pokazuje projekt i kod jednym gestem; scena na samym CSS | scena musi zostać krótka (dziś 250 vh) | 231 KB |
+| [Indeks · nowy](https://www.zeprzalka.com/demo/indeks-new) | nowy „Indeks” | wąziutka kolumna; spis i media pojawiają się tylko na żądanie, obraz odkodowuje się z glifów na marginesie | najczystszy minimalizm; przełączanie realizacji naprawione | stoi na dobrym tekście; na tablecie bez marginesu | 242 KB |
+| [Glif · laboratorium](https://www.zeprzalka.com/demo/glif-lab) | nowy glif — pole minowe | sekcje A–H z podpisanymi wariantami, panel znaków, temp, animacji, kolorów i wyzwalaczy | wybór efektu na żywo, portret czytelny w każdym zestawie | narzędzie, nie gotowa strona; WebGL2 wszędzie | 256 KB |
+| [The Best Of](https://www.zeprzalka.com/demo/best-of) | najlepsze z obu briefów | Framer w czerni i bieli z ulubionymi efektami, każdy raz, w jednym systemie ruchu | najbliżej gustu; najstabilniejsza | najmniej zaskakuje | 240 KB |
+| [Rentgen](https://www.zeprzalka.com/demo/rentgen) | inwencja 1 | soczewka pod kursorem odsłania prawdziwy kod strony; przełącznik Projekt/Kod | najbardziej oryginalna | mechanizm trzeba odkryć; WebGL do sprawdzenia na telefonie | 224 KB |
+| [Kinetyka](https://www.zeprzalka.com/demo/kinetyka) | inwencja 2 | plakatowa typografia sterowana przewijaniem, wideo w literach, taśma realizacji | najmocniejsze pierwsze wrażenie | najwięcej JS (GSAP); najdłuższa | 258 KB |
 
 \* gzip, build produkcyjny; dla porównania spis `/demo` 189 KB, obecna strona główna 208 KB.
-Koncepcje z iteracji 3 (Żywy interfejs, Indeks, Talia) zostają w `/demo` do porównania.
+Propozycje z iteracji 5 (Tryptyk, Esencja, Glif, Reedycja, Transformacja) i koncepcje
+z iteracji 3 zostają w `/demo` do porównania.
 
-**Rekomendacja:** decyzja zależy od roli tej domeny.
-- **zeprzalka.com jako spokojny dokument eksperta:** wtedy Tryptyk, bo efektowne strony
-  powstaną na innych domenach (startupper.pl, identi.design).
-- **zeprzalka.com jako główna wizytówka:** wtedy Esencja.
+**Ranking niezależnej krytyki** (przed trzecią rundą): The Best Of, Indeks · nowy, Kinetyka,
+Rentgen, Glif · laboratorium.
 
-W obu wariantach sygnet z migającym glifem i portret ASCII z „Glifu” mogą zostać podpisem marki.
-Niezależna krytyka (przed trzecią rundą) uszeregowała: Esencja, Tryptyk, Glif, Reedycja, Transformacja.
+**Rekomendacja:** The Best Of jako szkielet finalnej strony. Do tego dobrać:
+- z Indeksu: kartę na marginesie odkodowującą się z glifów;
+- z Kinetyki: „Portfolio” jako okno z wideo w literach;
+- z Rentgenu: przełącznik Projekt/Kod jako ukrytą niespodziankę;
+- z laboratorium: wybrane parametry glifów (znaki, tempo, wyzwalacz).
+
+**Reguła ruchu na finał:** przewijanie najwyżej uruchamia animację, a stan spoczynkowy jest
+zawsze kompletny (bez półrozmytych nagłówków, fałszywych liczb i bełkotu znaków). Wyjątek:
+tekst wypełniany przewijaniem — niewypełnione słowa są częścią wzorca.
 
 ## 3. Plan (praca na `main`, bez gałęzi i podglądów)
 
-1. **[Ty] Wybór:** jedna z pięciu propozycji albo szkielet + zapożyczenia; przy każdej sekcji
+1. **[Ty] Wybór:** jedna z pięciu koncepcji iteracji 6 albo szkielet + zapożyczenia; przy każdej sekcji
    „zostaje / zmień / wyrzuć” + jedno zdanie dlaczego (zrzut z zaznaczeniem jest wart więcej niż opis).
 2. **[Kod] System w serwisie:** tokeny „Formy” do `globals.css`, prymitywy przepisane do
    `src/components/ui/` (nie kopiowane z piaskownicy), `/design-system` na nowym systemie.

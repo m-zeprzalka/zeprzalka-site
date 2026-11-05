@@ -1,0 +1,1029 @@
+/*
+ * „Indeks · nowy” — arkusz koncepcji. Tokeny przychodzą z Formy (`--fm-*`,
+ * `--ease-fm-*`, `--radius-fm-*`); tutaj tylko to, czego nie da się czysto
+ * zapisać utility: selektory relacyjne, animacje sterowane przewijaniem,
+ * wejścia i wyjścia Radiksa, karta na marginesie i morf przejścia widoku.
+ * Dwa materiały ruchu: tekst wyostrza się z rozmycia, obraz odkodowuje z glifów
+ * (canvas). Wszystko, co się przesuwa, stoi w `prefers-reduced-motion: no-preference`.
+ */
+
+.ixn {
+  /* Kolumna: 640 px, od 1440 px o stopień szersza (704). Wylew tła wierszy 8–12 px. */
+  --ixn-col: 40rem;
+  --ixn-bleed: 0.5rem;
+  --ixn-header: 4rem;
+  --ixn-lane: 8.5rem;
+  /* Papier pod glifami = wypełnienie Formy (szesnastkowo — canvas nie musi znać oklch). */
+  --ixn-paper: #f4f4f4;
+  /* Krzywa tekstu (Linear: wejście nagłówka 1000 ms) — „elegancko”, bez szarpnięcia. */
+  --ixn-ease-text: cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+.dark .ixn {
+  --ixn-paper: #191919;
+}
+@media (min-width: 40rem) {
+  .ixn {
+    --ixn-bleed: 0.75rem;
+  }
+}
+@media (min-width: 90rem) {
+  .ixn {
+    --ixn-col: 44rem;
+    --ixn-lane: 9.5rem;
+  }
+}
+/* Od 1680 px jeszcze jeden stopień (768) — kolumna dalej wąziutka, ale nie ginie w pustce. */
+@media (min-width: 105rem) {
+  .ixn {
+    --ixn-col: 48rem;
+    --ixn-lane: 10rem;
+  }
+}
+
+/* Lepki nagłówek nie zasłania fokusu ani celu kotwicy (WCAG 2.4.11). Kotwiczenie
+   przewijania robimy sami (wiersz realizacji pod kursorem), więc przeglądarka nie pomaga. */
+:root:has(.ixn) {
+  scroll-padding-top: calc(var(--ixn-header) + 1rem);
+  overflow-anchor: none;
+}
+/* Poniżej 1280 px u dołu pływa pigułka spisu — fokus i cel kotwicy stają nad nią. */
+@media (max-width: 79.99rem) {
+  :root:has(.ixn) {
+    scroll-padding-bottom: 5rem;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  :root:has(.ixn) {
+    scroll-behavior: smooth;
+  }
+}
+
+.ixn-col {
+  width: min(100% - 2 * var(--fm-gutter), var(--ixn-col));
+  margin-inline: auto;
+}
+
+/* Jawna szerokość: <button> nie rozciąga się jak blok, więc samo `width: 100%`
+   z ujemnymi marginesami wylewałoby tło tylko w lewo. */
+.ixn-bleed {
+  box-sizing: border-box;
+  width: calc(100% + 2 * var(--ixn-bleed));
+  margin-inline: calc(-1 * var(--ixn-bleed));
+  padding-inline: var(--ixn-bleed);
+}
+
+/* ——— Nagłówek: kapsuła pojawia się wraz z przewinięciem (0 → 64 px) ——— */
+.ixn-capsule {
+  position: absolute;
+  inset: 0.5rem calc(-1 * var(--ixn-bleed) - 0.25rem);
+  border-radius: var(--radius-fm-2xl);
+  background: color-mix(in oklab, var(--fm-surface) 82%, transparent);
+  box-shadow:
+    0 0 0 1px var(--fm-edge),
+    0 8px 24px -12px oklch(0 0 0 / 0.12);
+  -webkit-backdrop-filter: blur(12px) saturate(1.5);
+  backdrop-filter: blur(12px) saturate(1.5);
+  pointer-events: none;
+}
+@supports (animation-timeline: scroll()) {
+  .ixn-capsule {
+    animation: ixn-capsule linear both;
+    animation-timeline: scroll(root block);
+    animation-range: 0 4rem;
+  }
+}
+@keyframes ixn-capsule {
+  from {
+    opacity: 0;
+    scale: 0.985;
+  }
+}
+@media (prefers-reduced-transparency: reduce) {
+  .ixn-capsule {
+    background: var(--fm-surface);
+    backdrop-filter: none;
+  }
+}
+/* Rola w nagłówku tylko tam, gdzie mieści się w jednej linii obok wyszukiwarki. */
+.ixn-role {
+  display: none;
+}
+@media (min-width: 48rem) {
+  .ixn-role {
+    display: block;
+  }
+}
+/* Sygnet: glif o wysokości wersalików nazwiska, na wspólnej linii z tekstem. */
+.ixn-glyph {
+  font-size: 1.14em;
+  line-height: 1;
+  height: 1em;
+  translate: 0 0.06em;
+  /* Zmiana znaku nie przelicza układu reszty nagłówka. */
+  contain: strict;
+}
+
+/* ——— Spis sekcji w lewym marginesie (≥ 1280 px) ———
+   Ukryty: przezroczysty, ale osiągalny Tabem (fokus go pokazuje). W spoczynku
+   widać tylko bieżącą sekcję; zbliżenie kursora albo fokus rozwija resztę. */
+.ixn-side {
+  right: calc(50% + var(--ixn-col) / 2 + 4rem);
+  opacity: 0;
+  filter: blur(6px);
+  translate: -0.5rem -50%;
+  pointer-events: none;
+  transition:
+    opacity 260ms var(--ease-fm-snap),
+    filter 260ms var(--ease-fm-snap),
+    translate 360ms var(--ease-fm-snap);
+}
+.ixn-side[data-shown],
+.ixn-side:focus-within {
+  opacity: 1;
+  filter: none;
+  translate: 0 -50%;
+  pointer-events: auto;
+  transition-duration: 360ms;
+}
+.ixn-side__dot {
+  translate: 0 var(--y);
+}
+.ixn-side__link {
+  opacity: 0;
+  filter: blur(4px);
+  transition:
+    opacity 180ms var(--ease-fm-snap),
+    filter 180ms var(--ease-fm-snap),
+    color 150ms ease;
+}
+.ixn-side__link[aria-current] {
+  opacity: 1;
+  filter: none;
+}
+.ixn-side__count {
+  opacity: 0;
+  transition: opacity 180ms var(--ease-fm-snap);
+}
+.ixn-side[data-open] .ixn-side__link,
+.ixn-side:focus-within .ixn-side__link,
+.ixn-side:hover .ixn-side__link {
+  opacity: 1;
+  filter: none;
+  transition-duration: 320ms, 320ms, 150ms;
+  transition-delay: calc(var(--k) * 28ms), calc(var(--k) * 28ms), 0ms;
+}
+.ixn-side[data-open] .ixn-side__count,
+.ixn-side:focus-within .ixn-side__count,
+.ixn-side:hover .ixn-side__count {
+  opacity: 1;
+  transition-delay: calc(var(--k) * 28ms + 120ms);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .ixn-side__dot {
+    transition: translate 320ms var(--ease-fm-move);
+  }
+}
+
+/* ——— Pigułka sekcji (< 1280 px): wchodzi z rozmycia, rozwija się w kartę ——— */
+.ixn-pill {
+  pointer-events: none;
+}
+.ixn-pill__button {
+  pointer-events: auto;
+  opacity: 0;
+  filter: blur(6px);
+  translate: 0 0.75rem;
+  visibility: hidden;
+  transition:
+    opacity 220ms var(--ease-fm-snap),
+    filter 220ms var(--ease-fm-snap),
+    translate 320ms var(--ease-fm-snap),
+    visibility 0s 320ms,
+    scale 160ms var(--ease-fm-snap);
+}
+.ixn-pill[data-shown] .ixn-pill__button {
+  opacity: 1;
+  filter: none;
+  translate: 0 0;
+  visibility: visible;
+  transition-delay: 0s;
+}
+.ixn-pill[data-open] .ixn-pill__button {
+  opacity: 0;
+  scale: 0.96;
+}
+.ixn-pill__label {
+  animation: ixn-sharpen 260ms var(--ease-fm-snap);
+}
+.ixn-pill__panel {
+  position: absolute;
+  bottom: 0;
+  width: min(20rem, calc(100% - 2rem));
+  border-radius: 1.5rem;
+  background: var(--fm-surface);
+  box-shadow: var(--fm-shadow-float);
+  transform-origin: 50% 100%;
+  opacity: 0;
+  scale: 0.5 0.18;
+  filter: blur(4px);
+  pointer-events: none;
+  transition:
+    opacity 160ms var(--ease-fm-snap),
+    scale 200ms var(--ease-fm-drawer),
+    filter 160ms var(--ease-fm-snap);
+}
+.ixn-pill[data-open] .ixn-pill__panel {
+  opacity: 1;
+  scale: 1;
+  filter: none;
+  pointer-events: auto;
+  transition-duration: 220ms, 320ms, 220ms;
+}
+
+/* ——— Start: zdanie w skali prozy, wejście słowo po słowie ——— */
+.ixn-hero {
+  font-size: 1.4375rem;
+  line-height: 1.32;
+  font-weight: 500;
+  letter-spacing: -0.022em;
+}
+@media (min-width: 40rem) {
+  .ixn-hero {
+    font-size: 1.875rem;
+    line-height: 1.27;
+    letter-spacing: -0.026em;
+  }
+}
+@media (min-width: 90rem) {
+  .ixn-hero {
+    font-size: 2.0625rem;
+    line-height: 1.26;
+  }
+}
+@media (min-width: 105rem) {
+  .ixn-hero {
+    font-size: 2.25rem;
+    line-height: 1.25;
+  }
+}
+
+@keyframes ixn-word {
+  from {
+    opacity: 0;
+    filter: blur(10px);
+    translate: 0 0.26em;
+  }
+}
+@keyframes ixn-sharpen {
+  from {
+    opacity: 0;
+    filter: blur(6px);
+  }
+}
+@keyframes ixn-rise {
+  from {
+    opacity: 0;
+    filter: blur(4px);
+    translate: 0 0.5rem;
+  }
+}
+@keyframes ixn-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes ixn-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+.ixn-word {
+  display: inline-block;
+}
+.ixn-appear {
+  animation: ixn-fade-in 600ms var(--ease-fm-snap) both;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .ixn-word {
+    animation: ixn-word 900ms var(--ixn-ease-text) both;
+    animation-delay: var(--d, 0ms);
+  }
+  .ixn-sharpen {
+    animation: ixn-sharpen 800ms var(--ixn-ease-text) both;
+    animation-delay: var(--d, 0ms);
+  }
+  .ixn-enter {
+    animation: ixn-rise 700ms var(--ease-fm-snap) both;
+    animation-delay: var(--d, 0ms);
+  }
+}
+
+/* ——— Chip w tekście: element liniowy, łamie się razem ze zdaniem ———
+   Padding z ujemnym marginesem: tło przy wskazaniu nie przesuwa ani litery. */
+.ixn-chip {
+  /* Nad sąsiednimi słowami (te mają własne warstwy po animacji wejścia) — inaczej
+     powiększony obszar trafienia chowałby się pod linią obok. */
+  position: relative;
+  z-index: 1;
+  cursor: pointer;
+  color: var(--fm-ink);
+  border-radius: 0.28em;
+  padding-inline: 0.14em;
+  margin-inline: -0.14em;
+  text-decoration-line: underline;
+  text-decoration-style: dashed;
+  text-decoration-thickness: max(1px, 0.05em);
+  text-decoration-color: var(--fm-edge-strong);
+  text-underline-offset: 0.2em;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  transition:
+    background-color 150ms ease,
+    text-decoration-color 150ms ease;
+}
+/* Obszar trafienia ≥ 44 px (słowo w zdaniu ma ok. 30 px): przezroczyste obramowanie
+   w pionie — w linii tekstu nie zmienia układu, a przy łamaniu (`clone`) każdy
+   fragment chipa dostaje swoje. Tło i fokus zostają przy samym słowie. */
+.ixn-chip {
+  border-block: 0.42em solid transparent;
+  background-clip: padding-box;
+}
+.ixn-chip:focus-visible {
+  outline-offset: calc(2px - 0.42em);
+}
+/* W wypełnianym biogramie chip nie odstaje kolorem — kolor robi fala wypełnienia. */
+.ixn-chip--quiet {
+  color: inherit;
+}
+.ixn-chip[data-state="open"] {
+  background-color: var(--fm-fill-strong);
+  text-decoration-color: transparent;
+}
+@media (hover: hover) {
+  .ixn-chip:hover {
+    background-color: var(--fm-fill);
+    text-decoration-color: transparent;
+    transition-duration: 0ms;
+  }
+}
+.ixn-chip__icon {
+  display: inline-block;
+  width: 0.68em;
+  height: 0.68em;
+  margin-inline-end: 0.2em;
+  vertical-align: -0.02em;
+  color: var(--fm-ink-3);
+}
+
+/* ——— O mnie: biogram wypełniany przewijaniem, słowo po słowie ——— */
+.ixn-fill {
+  font-size: 1.3125rem;
+  line-height: 1.42;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  color: var(--fm-ink);
+  view-timeline: --ixn-fill block;
+}
+@media (min-width: 40rem) {
+  .ixn-fill {
+    font-size: 1.625rem;
+    line-height: 1.36;
+    letter-spacing: -0.024em;
+  }
+}
+@media (min-width: 90rem) {
+  .ixn-fill {
+    font-size: 1.75rem;
+  }
+}
+@media (min-width: 105rem) {
+  .ixn-fill {
+    font-size: 1.875rem;
+  }
+}
+@keyframes ixn-fill {
+  from {
+    color: color-mix(in oklab, var(--fm-ink) 26%, transparent);
+  }
+}
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    /* Zakres: start, gdy akapit wchodzi od dołu; koniec, gdy jego środek mija ~45%
+       wysokości ekranu. Każde słowo ma wycinek z zakładką na trzy słowa — fala
+       płynie w tempie przewijania (scrub). */
+    .ixn-fw {
+      animation: ixn-fill linear both;
+      animation-timeline: --ixn-fill;
+      animation-range: cover calc(12% + var(--i) * 38% / var(--n)) cover
+        calc(12% + (var(--i) + 3) * 38% / var(--n));
+    }
+  }
+}
+
+/* ——— Fakty: liczba + podpis jako jeden cel wskazania ——— */
+.ixn-fact {
+  transition:
+    background-color 150ms ease,
+    scale 160ms var(--ease-fm-snap);
+}
+.ixn-fact:active {
+  scale: 0.98;
+}
+@media (hover: hover) and (pointer: fine) {
+  .ixn-fact:hover {
+    background-color: var(--fm-fill);
+    transition-duration: 0ms, 160ms;
+  }
+}
+.ixn-fact[data-state="open"] {
+  background-color: var(--fm-fill-strong);
+}
+
+/* ——— Popover i paleta: wejście od wyzwalacza, wyjście szybsze ——— */
+@keyframes ixn-pop-in {
+  from {
+    opacity: 0;
+    scale: 0.96;
+    filter: blur(2px);
+  }
+}
+@keyframes ixn-pop-out {
+  to {
+    opacity: 0;
+    scale: 0.98;
+  }
+}
+@keyframes ixn-sheet-in {
+  from {
+    translate: 0 100%;
+  }
+}
+@keyframes ixn-sheet-out {
+  to {
+    translate: 0 100%;
+  }
+}
+.ixn-popover {
+  transform-origin: var(--radix-popover-content-transform-origin);
+}
+.ixn-popover[data-state="open"] {
+  animation: ixn-pop-in 200ms var(--ease-fm-snap);
+}
+.ixn-popover[data-state="closed"] {
+  animation: ixn-pop-out 120ms var(--ease-fm-snap) forwards;
+}
+.ixn-overlay[data-state="open"] {
+  animation: ixn-fade-in 200ms var(--ease-fm-snap);
+}
+.ixn-overlay[data-state="closed"] {
+  animation: ixn-fade-out 150ms var(--ease-fm-snap) forwards;
+}
+.ixn-palette[data-state="open"] {
+  animation: ixn-sheet-in 420ms var(--ease-fm-drawer);
+}
+.ixn-palette[data-state="closed"] {
+  animation: ixn-sheet-out 240ms var(--ease-fm-drawer) forwards;
+}
+@media (min-width: 40rem) {
+  .ixn-palette {
+    transform-origin: 50% 0;
+  }
+  .ixn-palette[data-state="open"] {
+    animation: ixn-pop-in 200ms var(--ease-fm-snap);
+  }
+  .ixn-palette[data-state="closed"] {
+    animation: ixn-pop-out 120ms var(--ease-fm-snap) forwards;
+  }
+}
+/* Otwarta skrótem klawiszowym: bez animacji (akcja wykonywana dziesiątki razy dziennie). */
+.ixn-palette[data-instant],
+.ixn-overlay[data-instant] {
+  animation: none !important;
+}
+
+/* ——— Akordeon kompetencji ——— */
+@keyframes ixn-acc-open {
+  from {
+    height: 0;
+  }
+  to {
+    height: var(--radix-accordion-content-height);
+  }
+}
+@keyframes ixn-acc-close {
+  from {
+    height: var(--radix-accordion-content-height);
+  }
+  to {
+    height: 0;
+  }
+}
+.ixn-acc {
+  overflow: hidden;
+}
+.ixn-acc[data-state="open"] {
+  animation: ixn-acc-open 280ms var(--ease-fm-snap);
+}
+.ixn-acc[data-state="closed"] {
+  animation: ixn-acc-close 200ms var(--ease-fm-snap);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .ixn-acc[data-state="open"] > * {
+    animation: ixn-rise 360ms var(--ease-fm-snap) 60ms both;
+  }
+}
+/* Kompetencja otwarta = wiersz staje się kartą (tło jako pseudo-element — przenikanie opacity). */
+.ixn-skill::before {
+  content: "";
+  position: absolute;
+  inset: 0 calc(-1 * var(--ixn-bleed));
+  border-radius: var(--radius-fm-2xl);
+  background: var(--fm-surface);
+  box-shadow: var(--fm-shadow-card);
+  opacity: 0;
+  transition: opacity 200ms var(--ease-fm-snap);
+  pointer-events: none;
+}
+.ixn-skill[data-state="open"]::before {
+  opacity: 1;
+}
+
+/* ——— Wiersze list: podświetlenie wchodzi od razu, schodzi w 150 ms ——— */
+.ixn-row {
+  transition:
+    background-color 150ms ease,
+    color 150ms ease,
+    scale 160ms var(--ease-fm-snap);
+}
+.ixn-row:active {
+  scale: 0.99;
+}
+.ixn-row[data-state="open"] {
+  background-color: transparent !important;
+}
+@media (hover: hover) and (pointer: fine) {
+  .ixn-row:hover {
+    background-color: var(--fm-fill);
+    transition-duration: 0ms, 0ms, 160ms;
+  }
+  /* Wskazany wiersz zostaje w atramencie, reszta listy cofa się do szarości. */
+  .ixn-dim:has(.ixn-row:hover) .ixn-row:not(:hover) {
+    color: var(--fm-ink-3);
+  }
+  .ixn-dim:has(.ixn-row:hover) .ixn-row:not(:hover) .ixn-row__meta {
+    color: color-mix(in oklab, var(--fm-ink-3) 70%, transparent);
+  }
+}
+
+/* Ikona linku: pojawia się (skala 0,75 → 1, 2 px po skosie) w 200 ms. */
+.ixn-arrow {
+  opacity: 0;
+  scale: 0.75;
+  translate: -2px 2px;
+  transition:
+    opacity 200ms var(--ease-fm-snap),
+    scale 200ms var(--ease-fm-snap),
+    translate 200ms var(--ease-fm-snap);
+}
+@media (hover: hover) and (pointer: fine) {
+  :is(a, button):hover > .ixn-arrow,
+  :is(a, button):hover .ixn-arrow {
+    opacity: 1;
+    scale: 1;
+    translate: 0 0;
+  }
+}
+:is(a, button):focus-visible .ixn-arrow {
+  opacity: 1;
+  scale: 1;
+  translate: 0 0;
+}
+
+/* Plus → minus: pionowa kreska obraca się i kładzie na poziomej. */
+.ixn-plus {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  width: 1rem;
+  height: 1rem;
+  flex: none;
+}
+.ixn-plus::before,
+.ixn-plus::after {
+  content: "";
+  grid-area: 1 / 1;
+  width: 0.75rem;
+  height: 1.5px;
+  border-radius: 1px;
+  background: currentColor;
+  transition: rotate 300ms var(--ease-fm-snap);
+}
+.ixn-plus::after {
+  rotate: 90deg;
+}
+[data-state="open"] > .ixn-plus::after,
+[aria-expanded="true"] > .ixn-plus::after {
+  rotate: 180deg;
+}
+
+/* ——— Panel realizacji: wysokość przez siatkę 0fr → 1fr ———
+   `data-instant`: panel otwierany morfem (View Transition) staje od razu
+   w stanie końcowym — ruch robi przejście widoku, nie przejścia CSS. */
+.ixn-panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 320ms var(--ease-fm-snap);
+}
+.ixn-panel[data-open] {
+  grid-template-rows: 1fr;
+}
+.ixn-panel > * {
+  min-height: 0;
+  overflow: hidden;
+}
+.ixn-panel__inner {
+  opacity: 0;
+  translate: 0 -0.25rem;
+  transition:
+    opacity 200ms var(--ease-fm-snap),
+    translate 320ms var(--ease-fm-snap);
+}
+/* Otwarcie: treść panelu kryje od pierwszej klatki (utajony wydruk kadru widać od razu,
+   nigdy pusta dziura) — rośnie tylko wysokość i lekki zjazd; zamknięcie gaśnie w 200 ms. */
+.ixn-panel[data-open] .ixn-panel__inner {
+  opacity: 1;
+  translate: 0 0;
+  transition-duration: 0ms, 320ms;
+}
+.ixn-panel[data-instant],
+.ixn-panel[data-instant] .ixn-panel__inner {
+  transition: none;
+}
+.ixn-panel[data-instant][data-open] .ixn-caption {
+  animation: ixn-fade-in 200ms var(--ease-fm-snap) 300ms both;
+}
+
+/* ——— Morf: karta z marginesu → kadr w panelu; wiersze i sąsiednie sekcje płyną ——— */
+::view-transition {
+  pointer-events: none;
+}
+::view-transition-group(ixn-work),
+::view-transition-group(.ixn-item),
+::view-transition-group(.ixn-block) {
+  animation-duration: 460ms;
+  animation-timing-function: var(--ease-fm-drawer);
+}
+/* Wiersz rośnie i maleje jak szuflada: obraz panelu jest przycinany, nie ściskany. */
+::view-transition-group(.ixn-item) {
+  overflow: clip;
+}
+::view-transition-old(.ixn-item),
+::view-transition-new(.ixn-item) {
+  animation-duration: 240ms;
+}
+::view-transition-old(ixn-work),
+::view-transition-new(ixn-work) {
+  height: 100%;
+  object-fit: cover;
+  animation-duration: 300ms;
+}
+::view-transition-group(ixn-head) {
+  animation: none;
+}
+
+/* ——— Karta na marginesie ——— */
+.ixn-card {
+  border-radius: var(--radius-fm-xl);
+  background: var(--ixn-paper);
+  box-shadow: var(--fm-shadow-float);
+  transform-origin: 0 50%;
+  opacity: 0;
+  scale: 0.96;
+  filter: blur(4px);
+  interpolate-size: allow-keywords;
+  transition:
+    opacity 150ms var(--ease-fm-snap),
+    scale 150ms var(--ease-fm-snap),
+    filter 150ms var(--ease-fm-snap),
+    width 240ms var(--ease-fm-snap),
+    height 240ms var(--ease-fm-snap),
+    background-color 200ms ease;
+}
+.ixn-card[data-visible] {
+  opacity: 1;
+  scale: 1;
+  filter: none;
+  transition-duration: 240ms, 240ms, 240ms, 240ms, 240ms, 200ms;
+}
+.ixn-card[data-kind="info"] {
+  background: var(--fm-surface);
+}
+.ixn-card[data-morphing] {
+  box-shadow: var(--fm-shadow-card);
+}
+.ixn-card__canvas {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+.ixn-card__media {
+  opacity: 0;
+}
+.ixn-card__media[data-active] {
+  opacity: 1;
+}
+.ixn-card__info {
+  position: absolute;
+  inset: 0 0 auto;
+  opacity: 0;
+  filter: blur(4px);
+  transition:
+    opacity 140ms var(--ease-fm-snap),
+    filter 140ms var(--ease-fm-snap);
+}
+.ixn-card__info[data-active] {
+  position: relative;
+  opacity: 1;
+  filter: none;
+  transition-duration: 220ms;
+}
+/* Pierścień nad mediami: obraz przykrywa tło, więc krawędź rysujemy na wierzchu. */
+.ixn-card[data-kind="media"]::after,
+.ixn-media-ring::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 1px var(--fm-edge);
+  pointer-events: none;
+}
+
+/* ——— Kadr z odkodowaniem (start, panele, okładka na telefonie) ——— */
+.ixn-media {
+  isolation: isolate;
+  /* Zanim dojdą bajty plakatu, kadr to papier w drobną kropkę (raster), nie pusta plama. */
+  background-image: radial-gradient(
+    circle,
+    color-mix(in oklab, var(--fm-ink) 14%, transparent) 0.8px,
+    transparent 1.1px
+  );
+  background-size: 7px 10px;
+  background-position: center;
+}
+.ixn-media__canvas {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+.ixn-video {
+  opacity: 0;
+  transition: opacity 240ms ease;
+}
+.ixn-video[data-ready] {
+  opacity: 1;
+}
+/* Przycisk pauzy dochodzi, gdy obraz jest już odczytany. */
+.ixn-media__control {
+  transition:
+    opacity 200ms var(--ease-fm-snap),
+    background-color 150ms ease,
+    scale 160ms var(--ease-fm-snap);
+}
+.ixn-media:not([data-state="done"]) .ixn-media__control {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Zanim ruszy fala, kadr pokazuje „utajony wydruk” w CSS: ten sam obraz mocno
+   rozmyty i przygaszony na papierze — nigdy pusta dziura, także w ciemnym motywie.
+   Canvas startuje od tego samego wyglądu (rozmyty obraz + blady raster). Obraz jest
+   namalowany od razu (liczy się do LCP); gdyby skrypt nie ruszył, wyostrza się po 3 s. */
+@media (scripting: enabled) and (prefers-reduced-motion: no-preference) {
+  .ixn-media[data-state="pending"] .ixn-media__layer {
+    opacity: 0.34;
+    filter: blur(18px) saturate(0.85);
+    scale: 1.08;
+    animation: ixn-unlatent 400ms var(--ease-fm-snap) 3s forwards;
+  }
+  .ixn-card[data-pending] .ixn-card__media[data-active] img {
+    opacity: 0.34;
+    filter: blur(14px) saturate(0.85);
+    scale: 1.08;
+  }
+}
+@keyframes ixn-unlatent {
+  to {
+    opacity: 1;
+    filter: none;
+    scale: 1;
+  }
+}
+
+/* ——— Blog: odręczna elipsa wokół „Nowy” — dwa pociągnięcia, rysowane raz ——— */
+.ixn-new path {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+}
+.ixn-new[data-armed] path {
+  stroke-dashoffset: 1;
+}
+.ixn-new[data-armed][data-drawn] path {
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset 440ms cubic-bezier(0.65, 0, 0.35, 1) 150ms;
+}
+.ixn-new[data-armed][data-drawn] path + path {
+  transition-duration: 300ms;
+  transition-delay: 560ms;
+}
+
+/* Lista zwinięta: dolne wiersze gasną pod gradientem w kolorze płótna. */
+.ixn-fade {
+  position: relative;
+}
+.ixn-fade::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0;
+  height: 7rem;
+  background: linear-gradient(to bottom, transparent, var(--fm-canvas) 92%);
+  opacity: 0;
+  transition: opacity 300ms var(--ease-fm-snap);
+  pointer-events: none;
+}
+.ixn-fade[data-collapsed]::after {
+  opacity: 1;
+}
+
+/* ——— Formularz: wypełnione pola, fokus jako miękki pierścień ——— */
+.ixn-field {
+  width: 100%;
+  border-radius: var(--radius-fm-lg);
+  background: var(--fm-fill);
+  color: var(--fm-ink);
+  font-size: 1rem;
+  outline: none;
+  box-shadow: 0 0 0 1px transparent;
+  transition:
+    background-color 150ms ease,
+    box-shadow 150ms ease;
+}
+@media (min-width: 40rem) and (pointer: fine) {
+  .ixn-field {
+    font-size: 0.9375rem;
+  }
+}
+.ixn-field::placeholder {
+  color: var(--fm-ink-3);
+}
+@media (hover: hover) {
+  .ixn-field:hover {
+    background: var(--fm-fill-strong);
+  }
+}
+.ixn-field:focus {
+  background: var(--fm-surface);
+  box-shadow:
+    0 0 0 1px var(--fm-ink-3),
+    0 0 0 4px var(--fm-edge);
+}
+.ixn-field[aria-invalid="true"] {
+  background: var(--fm-surface);
+  box-shadow: 0 0 0 1px var(--fm-ink);
+}
+textarea.ixn-field {
+  field-sizing: content;
+  resize: none;
+}
+.ixn-submit__layer {
+  grid-area: 1 / 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition:
+    opacity 200ms var(--ease-fm-snap),
+    filter 200ms var(--ease-fm-snap),
+    translate 400ms var(--ease-fm-spring);
+}
+.ixn-submit:not([data-pending]) [data-layer="pending"],
+.ixn-submit[data-pending] [data-layer="idle"] {
+  opacity: 0;
+  filter: blur(2px);
+  translate: 0 0.6em;
+}
+.ixn-submit[data-pending] [data-layer="idle"] {
+  translate: 0 -0.6em;
+}
+@keyframes ixn-spin {
+  to {
+    rotate: 1turn;
+  }
+}
+.ixn-spin {
+  animation: ixn-spin 0.8s linear infinite;
+}
+
+/* ——— Stopka: nazwisko na całą szerokość, litery z rozmycia ——— */
+.ixn-wordmark {
+  display: flex;
+  justify-content: center;
+  /* Szerokość słowa „Zeprzałka” w Geist 600 przy −0,055 em = 4,355 em (zmierzone) —
+     znak sięga od marginesu do marginesu. */
+  font-size: calc((100vw - 2 * var(--fm-gutter)) / 4.355);
+  line-height: 0.86;
+  font-weight: 600;
+  letter-spacing: -0.055em;
+  color: var(--fm-ink);
+  padding-block: 0.02em calc(0.16em + env(safe-area-inset-bottom, 0px));
+  user-select: none;
+}
+.ixn-wordmark__letter {
+  display: inline-block;
+}
+/* Uzbrojony skryptem: litery czekają rozmyte; po wejściu w kadr wyostrzają się falą
+   (1000 ms każda, co 45 ms — razem ok. 1,4 s, bez względu na tempo przewijania). */
+@media (prefers-reduced-motion: no-preference) {
+  .ixn-wordmark[data-armed] .ixn-wordmark__letter {
+    transition:
+      opacity 1000ms var(--ixn-ease-text),
+      filter 1000ms var(--ixn-ease-text),
+      translate 1000ms var(--ixn-ease-text);
+    transition-delay: calc(var(--i) * 45ms);
+  }
+  .ixn-wordmark[data-armed]:not([data-in]) .ixn-wordmark__letter {
+    opacity: 0;
+    filter: blur(0.12em);
+    translate: 0 0.08em;
+  }
+}
+
+/* ——— Tytuł sekcji odkodowany z cyfr binarnych ———
+   Litera zostaje w układzie (przezroczysta i rozmyta), cyfra leży nad nią —
+   szerokość i łamanie wiersza nie drgną. Każda litera ma jedną cyfrę: bez migotania. */
+.ixn-decode [data-c] {
+  position: relative;
+}
+.ixn-decode__l {
+  transition:
+    color 320ms var(--ixn-ease-text),
+    filter 320ms var(--ixn-ease-text);
+}
+.ixn-decode [data-c]::after {
+  content: attr(data-g);
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 0.86em;
+  font-weight: 400;
+  color: var(--fm-ink-3);
+  opacity: 0;
+  transition: opacity 220ms ease;
+  pointer-events: none;
+}
+.ixn-decode [data-c][data-g] .ixn-decode__l {
+  color: transparent;
+  filter: blur(3px);
+}
+.ixn-decode [data-c][data-g]::after {
+  opacity: 1;
+}
+/* Lead i licznik dopływają z rozmycia, gdy tytuł się odczyta. */
+.ixn-shead__lead {
+  transition:
+    opacity 600ms var(--ixn-ease-text),
+    filter 600ms var(--ixn-ease-text);
+}
+.ixn-shead[data-armed]:not([data-decoded]) .ixn-shead__lead {
+  opacity: 0;
+  filter: blur(6px);
+}
+
+/* „Ogranicz ruch”: zostaje samo przenikanie — bez rozmycia, skali i przesunięć. */
+@media (prefers-reduced-motion: reduce) {
+  .ixn-card,
+  .ixn-card__info,
+  .ixn-side,
+  .ixn-side__link,
+  .ixn-pill__button,
+  .ixn-pill__panel {
+    filter: none !important;
+    scale: 1 !important;
+  }
+  .ixn-side {
+    translate: 0 -50% !important;
+  }
+  .ixn-panel__inner,
+  .ixn-submit__layer,
+  .ixn-pill__button {
+    filter: none !important;
+    translate: none !important;
+  }
+}

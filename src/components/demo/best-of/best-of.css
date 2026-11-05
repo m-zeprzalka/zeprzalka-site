@@ -1,0 +1,978 @@
+/*
+ * The Best Of (iteracja 6) — arkusz koncepcji. Jeden system ruchu: „wyostrzenie”
+ * (rozmycie → ostrość) dla wszystkiego, co wchodzi, i „kod” (glify) dla tego,
+ * co jest obrazem albo zaproszeniem. Klasy, keyframes, osie czasu i nazwy
+ * przejść widoku mają prefiks `bo-` (arkusze dem są globalne po przejściu
+ * między demami). Ruch sterowany przewijaniem żyje wyłącznie w `@supports`
+ * + `prefers-reduced-motion: no-preference` — bez wsparcia albo przy „ogranicz
+ * ruch” strona stoi w stanie końcowym.
+ */
+
+.bo {
+  /* Długi ease-out „framerowy” — teksty i bloki wchodzące raz. */
+  --bo-ease-text: cubic-bezier(0.22, 1, 0.36, 1);
+  /* Ruch sterowany przewijaniem: łagodny start i miękkie lądowanie. */
+  --bo-ease-scroll: cubic-bezier(0.6, 0, 0.3, 1);
+  /* Pigułka nagłówka: wysokość i odstęp od góry (z bezpiecznym obszarem). */
+  --bo-header: 3.5rem;
+  --bo-header-top: calc(0.75rem + env(safe-area-inset-top, 0px));
+  /* Wydruk z glifów (kafle wideo) — szesnastkowo, canvas nie zna oklch. */
+  --bo-print-ink: #525252;
+  --bo-print-paper: #f4f4f4;
+
+  -webkit-tap-highlight-color: transparent;
+  overflow-x: clip;
+}
+
+.dark .bo {
+  --bo-print-ink: #b4b4b4;
+  --bo-print-paper: #191919;
+}
+
+/* Od 1680 px szerszy kontener i margines — na 1920 strona nie jest „wyspą” na środku. */
+@media (min-width: 105rem) {
+  .fm.bo {
+    --fm-max: 84rem;
+    --fm-gutter: 3rem;
+  }
+}
+
+.bo :where(a, button, [role="button"], summary, label) {
+  touch-action: manipulation;
+}
+
+.bo :where(button, [role="button"], [role="radio"], [role="switch"]) {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Kotwice nie chowają się pod pływającą pigułką. */
+html:has(.bo) {
+  scroll-padding-top: calc(var(--bo-header, 3.5rem) + 2rem);
+}
+
+/* Na desktopie bez „gumki” przy krawędziach (telefon zostawia pull-to-refresh). */
+@media (pointer: fine) {
+  html:has(.bo) {
+    overscroll-behavior: none;
+  }
+}
+
+/* ——— Typografia ——— */
+
+.bo-display {
+  /*
+   * Telefon: rozmiar liczony z szerokości ekranu — najdłuższa linia („w produkty
+   * cyfrowe.”, ≈ 8,8 em) mieści się w kontenerze; trzy linie bez sieroty od 360
+   * do 430 px. Szerzej płynnie do 84 px.
+   */
+  font-size: min(calc(10.55vw - 0.125rem), 3.25rem);
+  line-height: 0.98;
+  letter-spacing: -0.045em;
+  font-weight: 550;
+}
+
+@media (min-width: 40rem) {
+  .bo-display {
+    font-size: clamp(2.625rem, 1.25rem + 4.6vw, 5.25rem);
+  }
+}
+
+/* 1680+: nagłówek rośnie razem z kontenerem (84 → 96 px) — prawa połowa nie zostaje pusta. */
+@media (min-width: 105rem) {
+  .bo-display {
+    font-size: clamp(5.25rem, 1.25rem + 4.6vw, 6rem);
+  }
+}
+
+.bo-h2 {
+  font-size: clamp(2rem, 1.35rem + 2.5vw, 3.5rem);
+  line-height: 1.02;
+  letter-spacing: -0.045em;
+  font-weight: 550;
+}
+
+.bo-manifest {
+  font-size: clamp(1.75rem, 1.05rem + 2.75vw, 3.25rem);
+  line-height: 1.12;
+  letter-spacing: -0.035em;
+  font-weight: 500;
+}
+
+.bo-glyph {
+  font-family: var(--bo-font-glyph), monospace;
+  font-variant-ligatures: none;
+}
+
+/* ——— Wejście hero: wyostrzają się wyłącznie słowa H1 ——— */
+
+@keyframes bo-word-in {
+  from {
+    opacity: 0;
+    filter: blur(8px);
+    translate: 0 0.18em;
+  }
+}
+
+@keyframes bo-rise {
+  from {
+    opacity: 0;
+    translate: 0 0.5rem;
+  }
+}
+
+.bo-word {
+  display: inline-block;
+  animation: bo-word-in 560ms var(--bo-ease-text) both;
+  animation-delay: calc(var(--bo-t0, 0ms) + var(--w, 0) * 40ms);
+}
+
+.bo-rise {
+  animation: bo-rise 320ms var(--ease-fm-snap) both;
+  animation-delay: var(--bo-d, 0ms);
+}
+
+/* ——— Wejścia przy przewijaniu (`Appear.tsx` dopisuje `data-in`) ——— */
+
+.bo-w {
+  display: inline-block;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .bo[data-bo-js] [data-bo-in]:not([data-in]) {
+    opacity: 0;
+    filter: blur(6px);
+    translate: 0 1rem;
+  }
+
+  .bo[data-bo-js] [data-bo-words]:not([data-in]) .bo-w {
+    opacity: 0;
+    filter: blur(10px);
+    translate: 0 0.3em;
+  }
+
+  .bo [data-bo-in] {
+    transition:
+      opacity 800ms var(--bo-ease-text),
+      filter 800ms var(--bo-ease-text),
+      translate 800ms var(--bo-ease-text);
+    transition-delay: calc(var(--i, 0) * 70ms);
+  }
+
+  .bo [data-bo-words] .bo-w {
+    transition:
+      opacity 900ms var(--bo-ease-text),
+      filter 900ms var(--bo-ease-text),
+      translate 1000ms var(--bo-ease-text);
+    transition-delay: calc(var(--i, 0) * 55ms);
+  }
+
+  /* Widoczne już przy hydratacji — bez animacji i bez mignięcia. */
+  .bo [data-instant],
+  .bo [data-instant] .bo-w {
+    transition: none !important;
+  }
+}
+
+/* ——— Nagłówek-pigułka ——— */
+
+.bo-pill {
+  background: color-mix(in oklch, var(--fm-surface) 72%, transparent);
+  box-shadow: var(--fm-shadow-ring);
+  -webkit-backdrop-filter: blur(14px) saturate(1.4);
+  backdrop-filter: blur(14px) saturate(1.4);
+}
+
+@supports (animation-timeline: scroll()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .bo-pill {
+      animation: bo-pill-lift linear both;
+      animation-timeline: scroll(root);
+      animation-range: 0 5rem;
+    }
+  }
+}
+
+@keyframes bo-pill-lift {
+  to {
+    background: color-mix(in oklch, var(--fm-surface) 84%, transparent);
+    box-shadow: var(--fm-shadow-pop);
+  }
+}
+
+/* Przy przewijaniu w dół pigułka wyjeżdża nad krawędź, wraca przy ruchu w górę. */
+.bo-header {
+  transition: translate 320ms var(--ease-fm-snap);
+}
+
+.bo-header[data-hidden] {
+  translate: 0 calc(-100% - 0.5rem);
+}
+
+/* Sygnet: komórka stałej szerokości — podmiana glifu nie przesuwa nazwiska. */
+.bo-mark {
+  display: inline-grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  font-size: 1.0625rem;
+  line-height: 1;
+}
+
+/* ——— Reel: zoom OUT od pełnego ekranu do kadru w siatce ——— */
+
+.bo-reel {
+  /* Kadr końcowy = szerokość kontenera, proporcja wideo. Liczba w `--bo-shrink` czyta też JS (svh). */
+  --bo-slot-w: min(100% - 2 * var(--fm-gutter), var(--fm-max));
+  --bo-shrink: 46svh;
+  position: relative;
+}
+
+@media (min-width: 40rem) {
+  .bo-reel {
+    --bo-shrink: 62svh;
+  }
+}
+
+.bo-reel__stage {
+  display: grid;
+  place-items: center;
+}
+
+.bo-reel__frame,
+.bo-reel__overlay {
+  grid-area: 1 / 1;
+  width: var(--bo-slot-w);
+  /* Telefon: kadr 4:5 (pion jak ekran) — pasek 16:9 na wysokim ekranie byłby skrawkiem. */
+  aspect-ratio: 4 / 5;
+}
+
+@media (min-width: 40rem) {
+  .bo-reel__frame,
+  .bo-reel__overlay {
+    aspect-ratio: 1080 / 606;
+  }
+}
+
+.bo-reel__frame {
+  border-radius: 1.5rem;
+  transform-origin: 50% 50%;
+}
+
+@media (max-width: 39.99rem) {
+  .bo-reel__frame {
+    border-radius: 1.25rem;
+  }
+}
+
+.bo-reel__overlay {
+  position: relative;
+  pointer-events: none;
+}
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .bo-reel[data-ready] {
+      height: calc(100svh + var(--bo-shrink) + var(--bo-hold, 0px));
+      view-timeline: --bo-reel block;
+    }
+
+    .bo-reel[data-ready] .bo-reel__stage {
+      position: sticky;
+      top: 0;
+      height: 100svh;
+      overflow: clip;
+    }
+
+    /* Telefon: kadr 4:5 ląduje pod pigułką nagłówka, pod nim od razu nagłówek Portfolio. */
+    @media (max-width: 39.99rem) {
+      .bo-reel[data-ready] .bo-reel__stage {
+        place-items: start center;
+        padding-top: calc(var(--bo-header-top) + var(--bo-header) + 1rem);
+      }
+    }
+
+    .bo-reel[data-ready] .bo-reel__frame {
+      animation: bo-zoom-out linear both;
+      animation-timing-function: var(--bo-ease-scroll);
+      animation-timeline: --bo-reel;
+      animation-range: contain 0% contain calc(100% - var(--bo-hold, 0px));
+    }
+
+    .bo-reel[data-ready] .bo-reel__pause {
+      animation: bo-pause-travel linear both;
+      animation-timing-function: var(--bo-ease-scroll);
+      animation-timeline: --bo-reel;
+      animation-range: contain 0% contain calc(100% - var(--bo-hold, 0px));
+    }
+
+    /* Następna sekcja „dokuje” pod kadrem w ostatniej fazie przypięcia. */
+    .bo-reel[data-ready] + .bo-dock {
+      margin-top: calc(-1 * var(--bo-dock, 0px));
+    }
+  }
+}
+
+@keyframes bo-zoom-out {
+  from {
+    scale: var(--bo-s, 1);
+  }
+  to {
+    scale: 1;
+  }
+}
+
+@keyframes bo-pause-travel {
+  from {
+    translate: var(--bo-dx, 0) var(--bo-dy, 0);
+  }
+  to {
+    translate: 0 0;
+  }
+}
+
+.bo-dock {
+  position: relative;
+  z-index: 1;
+}
+
+/* ——— Slider realizacji ——— */
+
+.bo-slider {
+  /* Telefon: sąsiednie karty zaglądają zza krawędzi — widać, że tor jedzie dalej. */
+  --bo-card: 74vw;
+  --bo-gap: 0.75rem;
+  --bo-fade: 1rem;
+}
+
+@media (min-width: 40rem) {
+  .bo-slider {
+    --bo-card: 21rem;
+    --bo-gap: 1rem;
+    --bo-fade: 3rem;
+  }
+}
+
+@media (min-width: 64rem) {
+  .bo-slider {
+    --bo-card: 24rem;
+    --bo-gap: 1.25rem;
+    --bo-fade: 5rem;
+  }
+}
+
+@media (min-width: 105rem) {
+  .bo-slider {
+    --bo-card: 26rem;
+  }
+}
+
+.bo-slider {
+  /*
+   * Tor ma pełną szerokość okna, ale ostra jest tylko kolumna kontenera — poza nią
+   * karty gasną ku krawędziom ekranu (na 1440 pas 120 px, na 1920 — 288 px).
+   */
+  --bo-side: max(var(--bo-fade), (100% - min(100% - 2 * var(--fm-gutter), var(--fm-max))) / 2);
+}
+
+.bo-slider__viewport {
+  position: relative;
+  /* Bez JS — zwykłe przewijanie w poziomie ze snapem. */
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: var(--bo-side);
+  scrollbar-width: none;
+  /* Pionowe przewijanie strony zostaje przeglądarce; poziomy gest należy do toru. */
+  touch-action: pan-y;
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    #000 var(--bo-side),
+    #000 calc(100% - var(--bo-side)),
+    transparent
+  );
+  /* Miejsce na cień karty i soczewkę bez przycinania. */
+  padding-block: 0.75rem 1rem;
+}
+
+.bo-slider__viewport::-webkit-scrollbar {
+  display: none;
+}
+
+.bo-slider__track {
+  position: relative;
+  display: flex;
+  width: max-content;
+}
+
+.bo-slider__copy {
+  display: flex;
+  gap: var(--bo-gap);
+  padding-inline-end: var(--bo-gap);
+}
+
+/* Kopie domykające pętlę istnieją tylko z silnikiem (JS). */
+.bo-slider:not([data-engine]) .bo-slider__copy[aria-hidden] {
+  display: none;
+}
+
+.bo-slider:not([data-engine]) .bo-slider__copy {
+  padding-inline: var(--bo-side);
+}
+
+.bo-slider[data-engine] .bo-slider__viewport {
+  /* `clip`, nie `hidden`: fokus karty nie może przewinąć okna toru — ruchem rządzi silnik. */
+  overflow: clip;
+  scroll-snap-type: none;
+  cursor: grab;
+}
+
+.bo-slider[data-dragging] .bo-slider__viewport {
+  cursor: grabbing;
+}
+
+.bo-slider[data-dragging] .bo-slide * {
+  pointer-events: none;
+}
+
+.bo-slide {
+  width: var(--bo-card);
+  flex-shrink: 0;
+  scroll-snap-align: center;
+}
+
+.bo-card {
+  transform-origin: 50% 60%;
+  will-change: scale;
+}
+
+/* Numer karty: szary w spoczynku, atrament na środku toru i pod kursorem. */
+.bo-card__num {
+  color: var(--fm-ink-3);
+  transition: color 300ms var(--ease-fm-snap);
+}
+
+/*
+ * Strzałka karty rośnie w pigułkę „Podgląd”: kolumna napisu 0fr → 1fr (siatka
+ * animuje szerokość bez mierzenia), tło z wypełnienia w atrament. Mysz — przy
+ * najechaniu i fokusie; dotyk — na karcie, która stoi na środku toru.
+ */
+.bo-cta {
+  display: grid;
+  grid-template-columns: 0fr auto;
+  align-items: center;
+  flex-shrink: 0;
+  height: 2.25rem;
+  border-radius: 9999px;
+  background: var(--fm-fill);
+  color: var(--fm-ink-2);
+  transition:
+    grid-template-columns 420ms var(--ease-fm-snap),
+    background-color 240ms var(--ease-fm-snap),
+    color 240ms var(--ease-fm-snap);
+}
+
+.bo-cta__arrow {
+  transition: translate 420ms var(--ease-fm-snap);
+}
+
+.bo-card[data-active] .bo-card__num {
+  color: var(--fm-ink);
+}
+
+/* Rozwinięta: karta na środku toru (talia „podaje” kartę), fokus i — na myszy — najechanie. */
+.bo-card:is([data-active], :focus-visible) .bo-cta {
+  grid-template-columns: 1fr auto;
+  background: var(--fm-ink);
+  color: var(--fm-inverse);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .bo-card:hover .bo-cta {
+    grid-template-columns: 1fr auto;
+    background: var(--fm-ink);
+    color: var(--fm-inverse);
+  }
+
+  .bo-card:hover .bo-cta__arrow {
+    translate: 2px 0;
+  }
+
+  .bo-card:hover .bo-card__num {
+    color: var(--fm-ink);
+  }
+
+  /* Pod kursorem rozwinięta jest tylko wskazana karta — środkowa oddaje pierwszeństwo. */
+  .bo-slider__track:has(.bo-card:hover) .bo-card[data-active]:not(:hover, :focus-visible) .bo-cta {
+    grid-template-columns: 0fr auto;
+    background: var(--fm-fill);
+    color: var(--fm-ink-2);
+  }
+}
+
+/* ——— Manifest: atrament wypełnia akapit słowo po słowie (oś czasu widoku) ——— */
+
+.bo-fill {
+  view-timeline: --bo-fill block;
+}
+
+@keyframes bo-fill {
+  to {
+    color: var(--fm-ink);
+  }
+}
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .bo-fw {
+      color: color-mix(in oklch, var(--fm-ink) 26%, transparent);
+      animation: bo-fill linear both;
+      animation-timeline: --bo-fill;
+      animation-range: cover calc(10% + var(--i) * 39% / var(--n)) cover
+        calc(10% + (var(--i) + 3) * 39% / var(--n));
+    }
+  }
+}
+
+/* ——— Kafel „Projektowanie”: karta w edycji, suwaki, przełącznik ——— */
+
+.bo-design-card {
+  border-radius: var(--bo-r);
+  padding: var(--bo-p);
+  transition:
+    border-radius 140ms var(--ease-fm-snap),
+    padding 140ms var(--ease-fm-snap),
+    box-shadow 300ms var(--ease-fm-snap);
+}
+
+.bo-design-media {
+  border-radius: var(--bo-ri);
+  transition: border-radius 140ms var(--ease-fm-snap);
+}
+
+.bo-switch[aria-checked="true"] .bo-switch__thumb {
+  translate: 1rem 0;
+}
+
+/* Suwak: pole trafienia 44 px, ale w układzie zajmuje dawne 24 px (ujemne marginesy). */
+.bo-range {
+  appearance: none;
+  height: 2.75rem;
+  margin-block: -0.125rem -0.625rem;
+  background: transparent;
+  cursor: pointer;
+  touch-action: pan-y;
+}
+
+.bo-range::-webkit-slider-runnable-track {
+  height: 4px;
+  border-radius: 9999px;
+  background: linear-gradient(
+    to right,
+    var(--fm-ink) var(--bo-fill-pct),
+    var(--fm-fill-strong) var(--bo-fill-pct)
+  );
+}
+
+.bo-range::-moz-range-track {
+  height: 4px;
+  border-radius: 9999px;
+  background: linear-gradient(
+    to right,
+    var(--fm-ink) var(--bo-fill-pct),
+    var(--fm-fill-strong) var(--bo-fill-pct)
+  );
+}
+
+.bo-range::-webkit-slider-thumb {
+  appearance: none;
+  width: 1rem;
+  height: 1rem;
+  margin-top: -6px;
+  border-radius: 9999px;
+  background: var(--fm-surface);
+  box-shadow:
+    0 0 0 1px var(--fm-edge-strong),
+    0 1px 3px oklch(0 0 0 / 0.2);
+  transition: scale 150ms var(--ease-fm-snap);
+}
+
+.bo-range::-moz-range-thumb {
+  width: 1rem;
+  height: 1rem;
+  border: 0;
+  border-radius: 9999px;
+  background: var(--fm-surface);
+  box-shadow:
+    0 0 0 1px var(--fm-edge-strong),
+    0 1px 3px oklch(0 0 0 / 0.2);
+}
+
+.bo-range:active::-webkit-slider-thumb {
+  scale: 1.15;
+}
+
+.bo-range:focus-visible {
+  outline: 2px solid var(--fm-ink);
+  outline-offset: 2px;
+  border-radius: 9999px;
+}
+
+/* ——— Kafel „Development”: terminal otwiera się od góry (bez przenikania czerni) ——— */
+
+.bo-term {
+  clip-path: inset(0 0 0 0 round 1.125rem);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .bo-term {
+    transition: clip-path 560ms var(--ease-fm-drawer) 320ms;
+  }
+
+  .bo-term--closed {
+    clip-path: inset(0 0 100% 0 round 1.125rem);
+  }
+}
+
+/* ——— Kafel „AI”: dymek polecenia, połysk „myślenia”, podpowiedzi ——— */
+
+@keyframes bo-bubble-in {
+  from {
+    opacity: 0;
+    scale: 0.94;
+    translate: 0 0.5rem;
+    filter: blur(4px);
+  }
+}
+
+.bo-bubble {
+  transform-origin: 100% 100%;
+  animation: bo-bubble-in 380ms var(--ease-fm-snap) both;
+}
+
+.bo-shimmer {
+  background: linear-gradient(90deg, var(--fm-ink-3) 20%, var(--fm-ink) 50%, var(--fm-ink-3) 80%) 0
+    0 / 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: fm-shimmer 1.4s linear infinite;
+}
+
+.bo-chips {
+  mask-image: linear-gradient(to right, #000 calc(100% - 1.5rem), transparent);
+}
+
+/* Wątek czatu: starsze wymiany gasną ku górze (pod przyciskiem powtórki). */
+.bo-thread {
+  mask-image: linear-gradient(to bottom, transparent 0.5rem, #000 4.5rem);
+}
+
+/* ——— Masonry: kadr zakodowany w glifach ——— */
+
+.bo-coded {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  background: var(--fm-fill);
+}
+
+.bo-coded::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 1px var(--fm-edge);
+  pointer-events: none;
+}
+
+.bo-coded__image,
+.bo-coded__video,
+.bo-coded__canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.bo-coded__image,
+.bo-coded__video {
+  object-fit: cover;
+  transition: scale 700ms var(--ease-fm-snap);
+}
+
+.bo-coded__video {
+  opacity: 0;
+  transition:
+    opacity 240ms var(--ease-fm-snap),
+    scale 700ms var(--ease-fm-snap);
+}
+
+.bo-coded__video[data-playing] {
+  opacity: 1;
+}
+
+.bo-coded__canvas {
+  z-index: 2;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .group:hover .bo-coded__image,
+  .group:hover .bo-coded__video {
+    scale: 1.03;
+  }
+}
+
+/* ——— Kontakt: lokalny ciemny zakres tokenów (panel ciemny w obu motywach) ——— */
+
+.bo-ink {
+  --fm-canvas: oklch(0.16 0 0);
+  --fm-surface: oklch(0.23 0 0);
+  --fm-fill: oklch(0.26 0 0);
+  --fm-fill-strong: oklch(0.3 0 0);
+  --fm-ink: oklch(0.975 0 0);
+  --fm-ink-2: oklch(0.8 0 0);
+  --fm-ink-3: oklch(0.68 0 0);
+  --fm-edge: oklch(1 0 0 / 0.1);
+  --fm-edge-strong: oklch(1 0 0 / 0.18);
+  --fm-inverse: oklch(0.145 0 0);
+  --fm-shadow-ring: 0 0 0 1px var(--fm-edge);
+  color-scheme: dark;
+}
+
+.dark .bo-ink {
+  --fm-canvas: oklch(0.12 0 0);
+  box-shadow: inset 0 0 0 1px oklch(1 0 0 / 0.07);
+}
+
+.bo-stage {
+  /* Pionowe przewijanie palcem zostaje stronie; ruch palcem po panelu prowadzi koło. */
+  touch-action: pan-y;
+}
+
+.bo-stage__canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 600ms var(--ease-fm-snap);
+}
+
+.bo-stage[data-ready] .bo-stage__canvas {
+  opacity: 1;
+}
+
+/* ——— Stopka: znak na całą szerokość, liczony z metryki słowa ——— */
+
+.bo-footer {
+  container-type: inline-size;
+}
+
+.bo-wordmark {
+  /* Tusz „Zeprzałka” (Geist 600, −0,06 em) ma 4,18 em — tyle, ile strona bez marginesów siatki. */
+  font-size: calc((100cqw - 2 * var(--fm-gutter)) / 4.18);
+  font-weight: 600;
+  letter-spacing: -0.06em;
+  line-height: 1;
+  white-space: nowrap;
+  text-box: trim-both cap alphabetic;
+  /* Optyczne wyrównanie: tusz „Z” zaczyna się 0,02 em za początkiem pola. */
+  margin-inline-start: calc(var(--fm-gutter) - 0.02em);
+  margin-block: clamp(3rem, 2rem + 4vw, 6rem) calc(0.16em + var(--fm-gutter));
+  color: var(--fm-ink);
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .bo[data-bo-js] .bo-wordmark:not([data-in]) {
+    translate: 0 24%;
+    filter: blur(16px);
+  }
+
+  .bo .bo-wordmark {
+    transition-duration: 1300ms;
+  }
+}
+
+/* ——— Panele: menu (z pigułki), paleta ⌘K, podgląd realizacji ——— */
+
+@keyframes bo-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes bo-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes bo-sheet-in {
+  from {
+    opacity: 0;
+    scale: 0.96;
+    translate: 0 -0.5rem;
+  }
+}
+
+@keyframes bo-sheet-out {
+  to {
+    opacity: 0;
+    scale: 0.97;
+    translate: 0 -0.25rem;
+  }
+}
+
+@keyframes bo-up-in {
+  from {
+    translate: 0 100%;
+  }
+}
+
+@keyframes bo-up-out {
+  to {
+    translate: 0 100%;
+  }
+}
+
+@keyframes bo-pop-in {
+  from {
+    opacity: 0;
+    scale: 0.97;
+    filter: blur(4px);
+  }
+}
+
+@keyframes bo-pop-out {
+  to {
+    opacity: 0;
+    scale: 0.98;
+  }
+}
+
+@keyframes bo-swap {
+  from {
+    opacity: 0.4;
+    filter: blur(6px);
+  }
+}
+
+.bo-sheet {
+  transform-origin: 50% 0;
+}
+
+.bo-sheet[data-state="open"] {
+  animation: bo-sheet-in 280ms var(--ease-fm-snap);
+}
+
+.bo-sheet[data-state="closed"] {
+  animation: bo-sheet-out 160ms var(--ease-fm-snap) forwards;
+}
+
+.bo-overlay[data-state="open"],
+.bo-veil[data-state="open"] {
+  animation: bo-fade-in 240ms var(--ease-fm-snap);
+}
+
+.bo-overlay[data-state="closed"],
+.bo-veil[data-state="closed"] {
+  animation: bo-fade-out 160ms var(--ease-fm-snap) forwards;
+}
+
+.bo-palette[data-state="open"],
+.bo-preview[data-state="open"] {
+  animation: bo-up-in 420ms var(--ease-fm-drawer);
+}
+
+.bo-palette[data-state="closed"],
+.bo-preview[data-state="closed"] {
+  animation: bo-up-out 240ms var(--ease-fm-drawer) forwards;
+}
+
+@media (min-width: 40rem) {
+  .bo-palette {
+    transform-origin: 50% 0;
+  }
+
+  .bo-palette[data-state="open"] {
+    animation: bo-pop-in 200ms var(--ease-fm-snap);
+  }
+
+  .bo-palette[data-state="closed"] {
+    animation: bo-pop-out 120ms var(--ease-fm-snap) forwards;
+  }
+}
+
+@media (min-width: 48rem) {
+  .bo-preview[data-state="open"] {
+    animation: bo-pop-in 320ms var(--ease-fm-snap);
+  }
+
+  .bo-preview[data-state="closed"] {
+    animation: bo-pop-out 160ms var(--ease-fm-snap) forwards;
+  }
+}
+
+/* Otwarta skrótem klawiszowym: bez animacji (akcja wykonywana dziesiątki razy dziennie). */
+.bo-palette[data-instant],
+.bo-overlay[data-instant] {
+  animation: none !important;
+}
+
+/* Podczas morfu kadru ruch prowadzą View Transitions — Radix nie dokłada swojego. */
+.bo-veil[data-morph][data-state],
+.bo-preview[data-morph][data-state] {
+  animation: none;
+}
+
+.bo-preview__media[data-swap] {
+  animation: bo-swap 260ms var(--ease-fm-snap);
+}
+
+.bo-swap {
+  animation: bo-swap 300ms var(--ease-fm-snap) both;
+}
+
+/*
+ * Morf kadru karta ↔ okno: ruch po ekranie (nie wejście). Kolejność warstw
+ * jawnie — grupy istniejące tylko w nowym stanie (okno, zasłona) przeglądarka
+ * kładzie domyślnie nad kadrem, który leci z karty, i zakrywa go bielą okna.
+ */
+::view-transition-group(bo-veil) {
+  z-index: 1;
+}
+
+::view-transition-group(bo-sheet) {
+  z-index: 2;
+}
+
+::view-transition-group(bo-work) {
+  z-index: 3;
+  animation-duration: 440ms;
+  animation-timing-function: var(--ease-fm-move);
+}
+
+::view-transition-old(bo-work),
+::view-transition-new(bo-work) {
+  height: 100%;
+  object-fit: cover;
+  animation-duration: 440ms;
+}
+
+::view-transition-group(bo-sheet),
+::view-transition-group(bo-veil) {
+  animation-duration: 320ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}

@@ -17,7 +17,7 @@ const eslintConfig = [
             {
               // Zależności wyłącznie piaskownicy (devDependencies) razem z podścieżkami.
               // Wyrażenie, nie `group`: wzorce w stylu .gitignore łapały też segment „Motion” w ścieżkach serwisu.
-              regex: "^((framer-)?motion|@number-flow/[^/]+)(/.*)?$",
+              regex: "^((framer-)?motion|@number-flow/[^/]+|gsap|ogl)(/.*)?$",
               message:
                 "Ta zależność jest tylko w piaskownicy /demo. Do serwisu trafia razem z decyzją o nowym wyglądzie.",
             },

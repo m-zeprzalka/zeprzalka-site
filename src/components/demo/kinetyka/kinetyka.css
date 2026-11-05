@@ -1,0 +1,1066 @@
+/*
+ * Kinetyka (iteracja 6) — arkusz koncepcji. Typografia w skali plakatu jest
+ * głównym materiałem: litery składają się z rozmycia, słowa są oknami na
+ * wideo, przewijanie montuje kolejne ujęcia. Wszystkie klasy, keyframes,
+ * zmienne i nazwy osi mają prefiks `kn-` (arkusze dem są globalne po
+ * przejściu między demami).
+ *
+ * Ruch sterowany przewijaniem włącza dopiero JavaScript (`data-kn-js` na
+ * korzeniu) i tylko przy `prefers-reduced-motion: no-preference` — bez JS
+ * i przy „ogranicz ruch” każda scena stoi w stanie końcowym.
+ */
+
+/* ——— Tokeny: czysta biel i czysta czerń (warunek maski wideo w literach) ——— */
+
+.kn {
+  --fm-canvas: oklch(1 0 0);
+  --fm-surface: oklch(0.975 0 0);
+  --fm-fill: oklch(0.962 0 0);
+  --fm-fill-strong: oklch(0.925 0 0);
+  --fm-ink: oklch(0 0 0);
+  --fm-ink-2: oklch(0.42 0 0);
+  --fm-ink-3: oklch(0.52 0 0);
+  --fm-edge: oklch(0 0 0 / 0.1);
+  --fm-edge-strong: oklch(0 0 0 / 0.18);
+  --fm-inverse: oklch(1 0 0);
+
+  /* Niewypełniony atrament (biogram, ślad liter). */
+  --kn-ghost: oklch(0 0 0 / 0.14);
+  /* Kolor warstwy-szablonu i liter w niej: tło szablonu = płótno. */
+  --kn-stencil-bg: #fff;
+  --kn-stencil-ink: #000;
+  --kn-stencil-blend: screen;
+  /* Jasność reelu w literach: w jasnym przyciemniony (nie zlewa się z bielą), w ciemnym rozjaśniony. */
+  --kn-reel-dim: 0.8;
+  --kn-veil: oklch(0 0 0 / 0.12);
+
+  --kn-gutter: clamp(1rem, 0.4rem + 2.6vw, 2.5rem);
+  --kn-max: 105rem;
+  --kn-header: 4rem;
+  --kn-section: clamp(5rem, 3.5rem + 5vw, 9rem);
+
+  /* Krzywe: litery (expo.out), wejścia i ruch z Formy. */
+  --kn-ease-type: cubic-bezier(0.16, 1, 0.3, 1);
+  --kn-ease-out: var(--ease-fm-snap);
+  --kn-ease-move: var(--ease-fm-move);
+
+  -webkit-tap-highlight-color: transparent;
+  overflow-x: clip;
+  font-feature-settings:
+    "ss01" 0,
+    "calt" 1;
+}
+
+.dark .kn {
+  --fm-canvas: oklch(0 0 0);
+  --fm-surface: oklch(0.14 0 0);
+  --fm-fill: oklch(0.17 0 0);
+  --fm-fill-strong: oklch(0.23 0 0);
+  --fm-ink: oklch(0.98 0 0);
+  --fm-ink-2: oklch(0.77 0 0);
+  --fm-ink-3: oklch(0.64 0 0);
+  --fm-edge: oklch(1 0 0 / 0.12);
+  --fm-edge-strong: oklch(1 0 0 / 0.2);
+  --fm-inverse: oklch(0 0 0);
+
+  --kn-ghost: oklch(1 0 0 / 0.18);
+  --kn-stencil-bg: #000;
+  --kn-stencil-ink: #fff;
+  --kn-stencil-blend: multiply;
+  --kn-reel-dim: 1.65;
+  --kn-veil: oklch(1 0 0 / 0.14);
+}
+
+html:has(.kn) {
+  background: #fff;
+}
+html.dark:has(.kn) {
+  background: #000;
+}
+
+.kn :where(a, button, [role="button"], summary, label) {
+  touch-action: manipulation;
+}
+
+.kn :where(button, [role="button"]) {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* ——— Układ ——— */
+
+.kn-wrap {
+  width: min(100% - 2 * var(--kn-gutter), var(--kn-max));
+  margin-inline: auto;
+}
+
+/* ——— Typografia ——— */
+
+.kn-poster {
+  font-size: min(13.4vw, 4.25rem);
+  line-height: 0.9;
+  letter-spacing: -0.06em;
+  font-weight: 600;
+}
+
+@media (min-width: 48rem) {
+  .kn-poster {
+    font-size: min(10vw, 11.5rem);
+  }
+}
+
+.kn-title {
+  font-size: clamp(3.5rem, 1rem + 10vw, 9rem);
+  line-height: 0.88;
+  letter-spacing: -0.06em;
+  font-weight: 600;
+}
+
+.kn-statement {
+  font-size: clamp(1.875rem, 0.9rem + 4.1vw, 5.25rem);
+  line-height: 1.04;
+  letter-spacing: -0.045em;
+  font-weight: 500;
+}
+
+.kn-lead {
+  font-size: clamp(1.125rem, 1rem + 0.45vw, 1.375rem);
+  line-height: 1.45;
+  letter-spacing: -0.015em;
+}
+
+.kn-word,
+.kn-ch {
+  display: inline-block;
+}
+
+.kn-word {
+  white-space: nowrap;
+}
+
+/*
+ * Składanie liter H1: znak „wywołuje się” z rozmycia i podnosi o 0,35 em.
+ * Opóźnienie `--d` liczy serwer (krzywa na opóźnieniach — pierwsze znaki
+ * rzadziej, kolejne gęściej), więc sekwencja nie czeka na JavaScript.
+ */
+@keyframes kn-develop {
+  from {
+    opacity: 0;
+    filter: blur(12px);
+    translate: 0 0.35em;
+  }
+}
+
+@keyframes kn-rise {
+  from {
+    opacity: 0;
+    filter: blur(8px);
+    translate: 0 0.75rem;
+  }
+}
+
+.kn-develop .kn-ch {
+  animation: kn-develop 850ms var(--kn-ease-type) both;
+  animation-delay: var(--d, 0ms);
+}
+
+.kn-rise {
+  animation: kn-rise 900ms var(--kn-ease-type) both;
+  animation-delay: var(--d, 0ms);
+}
+
+/* ——— Okno: wideo widoczne wyłącznie przez litery ——— */
+
+.kn-okno {
+  position: relative;
+}
+
+.kn-okno-stage {
+  position: relative;
+  isolation: isolate;
+  overflow: clip;
+  background: var(--fm-canvas);
+}
+
+/* Kadr końcowy: kino 2,39:1 na szerokim ekranie, 4:5 na telefonie. */
+.kn-okno-frame {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  border-radius: 0.875rem;
+  background: var(--fm-fill);
+  transform-origin: 50% 50%;
+}
+
+@media (min-width: 48rem) and (min-aspect-ratio: 1/1) {
+  .kn-okno-frame {
+    aspect-ratio: 2.39 / 1;
+  }
+}
+
+@media (min-width: 48rem) and (max-aspect-ratio: 1/1) {
+  .kn-okno-frame {
+    aspect-ratio: 16 / 10;
+  }
+}
+
+.kn-okno-frame {
+  z-index: 1;
+}
+
+/* W literach szablonu: jasność z motywu i lekki kontrast; poza literami (`--kn-dim: 0`) wideo bez zmian. */
+.kn-okno-frame video {
+  filter: brightness(calc(1 + (var(--kn-reel-dim) - 1) * var(--kn-dim, 0)))
+    contrast(calc(1 + 0.12 * var(--kn-dim, 0)));
+}
+
+.kn-stencil {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  grid-template: minmax(0, 1fr) / minmax(0, 1fr);
+  place-items: center;
+  background: var(--kn-stencil-bg);
+  color: var(--kn-stencil-ink);
+  mix-blend-mode: var(--kn-stencil-blend);
+  pointer-events: none;
+  /* Szablon istnieje tylko w scenie ruchu (JS + bez „ogranicz ruch”). */
+  display: none;
+}
+
+.kn-stencil-word {
+  display: block;
+  font-weight: 650;
+  line-height: 0.8;
+  letter-spacing: -0.065em;
+  white-space: nowrap;
+  /*
+   * Szerokość słowa „Portfolio” = 3,694 em (Geist 650, −0,065 em, zmierzone) → 94% szerokości ekranu.
+   * Słowo jest składane 1,5× większe i startuje ze skali 2/3: warstwa (will-change) rasteryzuje się
+   * raz, w rozmiarze, przy którym przy największym powiększeniu sceny nadal jest ostra — przewijanie
+   * tylko skaluje gotową bitmapę na kompozytorze (bez ponownego rysowania liter co klatkę).
+   */
+  font-size: calc(94vw / 3.694 * 1.5);
+  padding-inline-end: 0.065em;
+  transform: translateX(0.03em) scale(0.6667);
+  will-change: transform;
+}
+
+.kn-okno-control {
+  position: absolute;
+  right: calc(var(--kn-gutter) + 0.75rem);
+  bottom: 0.75rem;
+  z-index: 4;
+}
+
+.kn-stencil-rim {
+  z-index: 3;
+  background: none;
+  mix-blend-mode: normal;
+  /*
+   * Welon zamiast konturu: litery wypełnione 12–14% tuszu nad szablonem. Wypełnienie (reguła
+   * nonzero) nie rysuje wewnętrznych nakładek konturów kroju zmiennego, a daje literom
+   * minimalny kontrast przy kadrach białych (jasny motyw) i czarnych (ciemny).
+   */
+  color: var(--kn-veil);
+}
+
+/* Telefon w pionie: słowo stoi pionowo i wypełnia wysokość ekranu. */
+@media (max-aspect-ratio: 4/5) {
+  .kn-stencil-word {
+    font-size: min(calc(90svh / 3.694 * 1.5), 72vw);
+    transform: rotate(-90deg) scale(0.6667);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .kn[data-kn-js] .kn-okno {
+    height: 195svh;
+  }
+
+  .kn[data-kn-js] .kn-okno-stage {
+    position: sticky;
+    top: 0;
+    height: 100svh;
+    display: grid;
+    place-items: center;
+  }
+
+  .kn[data-kn-js] .kn-stencil {
+    display: grid;
+  }
+
+  .kn[data-kn-js] .kn-okno-control {
+    right: var(--kn-gutter);
+    bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
+  }
+
+  /* W scenie nagłówek sekcji niesie szablon — prawdziwy H2 zostaje dla czytników. */
+  .kn[data-kn-js] .kn-okno-title {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+}
+
+/* ——— Przewijane litery (RollText) ——— */
+
+.kn-roll {
+  display: inline-flex;
+}
+
+.kn-roll-ch {
+  display: inline-block;
+  overflow: hidden;
+  line-height: 1.25;
+  vertical-align: top;
+}
+
+.kn-roll-ch > span {
+  display: inline-block;
+  text-shadow: 0 1.25em currentColor;
+  transition: translate 420ms var(--kn-ease-type);
+  transition-delay: calc(var(--i, 0) * 12ms);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .kn-roll-host:hover .kn-roll-ch > span {
+    translate: 0 -1.25em;
+  }
+}
+
+/* ——— Sygnet: glif w bębnie licznika ——— */
+
+.kn-sygnet {
+  position: relative;
+  display: inline-grid;
+  width: 1.3em;
+  height: 1.3em;
+  overflow: hidden;
+  font-family: var(--kn-font-glyph), monospace;
+  line-height: 1;
+}
+
+.kn-sygnet > span {
+  grid-area: 1 / 1;
+  display: grid;
+  place-items: center;
+  /* Symbole DejaVu są optycznie mniejsze od liter Geist — wyrównanie do wysokości wersalików. */
+  font-size: 1.32em;
+}
+
+.kn-sygnet > span:last-child {
+  translate: 0 100%;
+}
+
+/* ——— Nagłówek ——— */
+
+html:has(.kn) {
+  scroll-padding-top: 5rem;
+}
+
+.kn-header {
+  padding-top: env(safe-area-inset-top, 0px);
+  transition: translate 360ms var(--kn-ease-out);
+}
+
+.kn-header[data-hidden] {
+  translate: 0 -110%;
+}
+
+/* Po zjechaniu z góry: tło płótna i włosowa linia (oś czasu przewijania strony). */
+@supports (animation-timeline: scroll()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .kn-header {
+      animation: kn-header-solid linear both;
+      animation-timeline: scroll(root);
+      animation-range: 0 6rem;
+    }
+  }
+}
+
+@keyframes kn-header-solid {
+  to {
+    background: var(--fm-canvas);
+    box-shadow: 0 1px 0 var(--fm-edge);
+  }
+}
+
+@supports not (animation-timeline: scroll()) {
+  .kn-header {
+    background: var(--fm-canvas);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .kn-header {
+    background: var(--fm-canvas);
+    box-shadow: 0 1px 0 var(--fm-edge);
+  }
+}
+
+/* ——— Menu (telefon): pełny ekran, wielkie linki wychodzą z maski wiersz po wierszu ——— */
+
+@keyframes kn-menu-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes kn-menu-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes kn-line-up {
+  from {
+    translate: 0 105%;
+  }
+}
+
+.kn-menu[data-state="open"] {
+  animation: kn-menu-in 220ms var(--kn-ease-out);
+}
+
+.kn-menu[data-state="closed"] {
+  animation: kn-menu-out 140ms var(--kn-ease-out);
+}
+
+.kn-menu[data-state="open"] .kn-menu-link {
+  animation: kn-line-up 640ms var(--kn-ease-type) both;
+  animation-delay: calc(60ms + var(--i, 0) * 45ms);
+}
+
+/* ——— Taśma: jedno nieskończone zdanie z kadrami ——— */
+
+.kn-strip {
+  --kn-strip-fs: 12vw;
+  overflow-x: auto;
+  scrollbar-width: none;
+  scroll-snap-type: x proximity;
+  padding-block: 1.5rem 3rem;
+  padding-inline: var(--kn-gutter);
+  scroll-padding-inline: var(--kn-gutter);
+}
+
+@media (min-width: 48rem) {
+  .kn-strip {
+    --kn-strip-fs: min(6.2vw, 7.5rem);
+  }
+}
+
+.kn-strip::-webkit-scrollbar {
+  display: none;
+}
+
+.kn-strip[data-live] {
+  overflow: clip;
+  padding-inline: 0;
+  touch-action: pan-y;
+  cursor: grab;
+}
+
+.kn-strip[data-dragging] {
+  cursor: grabbing;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.kn-strip-track {
+  display: flex;
+  width: max-content;
+}
+
+.kn-strip[data-live] .kn-strip-track {
+  will-change: transform;
+}
+
+/* Odstęp po ostatnim elemencie = odstęp między elementami, więc szerokość zestawu to okres pętli. */
+.kn-strip-set {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--kn-strip-fs) * 0.42);
+  padding-inline-end: calc(var(--kn-strip-fs) * 0.42);
+}
+
+.kn-strip-item {
+  scroll-snap-align: start;
+}
+
+.kn-strip-button {
+  display: flex;
+  align-items: center;
+  gap: 0.24em;
+  text-align: start;
+  border-radius: 0.12em;
+  font-size: var(--kn-strip-fs);
+  line-height: 1;
+  font-weight: 600;
+  letter-spacing: -0.055em;
+  white-space: nowrap;
+  transition: opacity 320ms var(--kn-ease-out);
+  -webkit-user-drag: none;
+}
+
+.kn-strip-media {
+  position: relative;
+  display: block;
+}
+
+/* Tytuł-szablon: klip za literami, tytuł z tłem płótna i mieszaniem — film tylko w literach. */
+.kn-strip-word {
+  position: relative;
+  display: block;
+  isolation: isolate;
+}
+
+.kn-strip-word video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 260ms var(--kn-ease-out);
+}
+
+.kn-strip-word[data-live] video {
+  opacity: 1;
+}
+
+/* Jasny motyw: klipy stron są w większości białe — przyciemnione, żeby litery nie znikały w płótnie. */
+.kn-strip-word video {
+  filter: brightness(0.62) contrast(1.1);
+}
+
+.dark .kn-strip-word video {
+  filter: brightness(1.12);
+}
+
+.kn-strip-title {
+  position: relative;
+  display: block;
+  padding-block: 0.04em 0.12em;
+  background: var(--kn-stencil-bg);
+  color: var(--kn-stencil-ink);
+  mix-blend-mode: var(--kn-stencil-blend);
+}
+
+.kn-strip-frame {
+  position: relative;
+  display: block;
+  height: 1.85em;
+  aspect-ratio: var(--kn-ratio);
+  overflow: hidden;
+  border-radius: max(6px, 0.06em);
+  background: var(--fm-fill);
+  transition: scale 600ms var(--kn-ease-type);
+}
+
+.kn-strip-frame :where(img, video) {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+}
+
+.kn-strip-cat {
+  position: absolute;
+  top: calc(100% + 0.625rem);
+  left: 0;
+  font-size: 0.75rem;
+  line-height: 1.35;
+  font-weight: 450;
+  letter-spacing: 0;
+  color: var(--fm-ink-3);
+  white-space: nowrap;
+}
+
+/*
+ * Telefon: taśma kart — kadr nad tytułem (kadr ~58vw wysokości, nigdy szerszy niż 86vw),
+ * tytuł łamie się w szerokości kadru, kategoria leży na kadrze. Ten sam jeden rząd, kciukiem.
+ */
+@media (max-width: 47.99rem) {
+  .kn-strip {
+    --kn-strip-fs: 7.4vw;
+    --kn-card-h: min(58vw, calc(86vw / var(--kn-ratio, 1)));
+    padding-block: 0.5rem 0;
+  }
+
+  .kn-strip-set {
+    align-items: flex-start;
+    gap: 0.875rem;
+    padding-inline-end: 0.875rem;
+  }
+
+  .kn-strip-button {
+    --kn-card-h: min(58vw, calc(86vw / var(--kn-ratio, 1)));
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.875rem;
+    width: calc(var(--kn-card-h) * var(--kn-ratio, 1));
+    white-space: normal;
+    border-radius: 0.875rem;
+  }
+
+  .kn-strip-frame {
+    width: 100%;
+    height: var(--kn-card-h);
+    border-radius: 0.875rem;
+  }
+
+  .kn-strip-title {
+    line-height: 1;
+    text-wrap: balance;
+  }
+
+  .kn-strip-cat {
+    top: auto;
+    bottom: 0.625rem;
+    left: 0.625rem;
+    padding: 0.25rem 0.625rem;
+    border-radius: 9999px;
+    background: oklch(0 0 0 / 0.5);
+    color: #fff;
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .kn-strip[data-hovering] .kn-strip-button:not(.is-hot) {
+    opacity: 0.26;
+  }
+
+  .kn-strip-button.is-hot .kn-strip-frame {
+    scale: 1.06;
+  }
+}
+
+/* ——— Projekcja ——— */
+
+@keyframes kn-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes kn-swap {
+  from {
+    opacity: 0;
+    filter: blur(8px);
+  }
+}
+
+.kn-projection[data-state="open"] {
+  animation: kn-fade-in 240ms var(--kn-ease-out);
+}
+
+.kn-projection-media {
+  aspect-ratio: var(--kn-ratio);
+  width: min(100%, calc((100svh - 15rem) * var(--kn-ratio)));
+  transform-origin: 0 0;
+}
+
+.kn-swap {
+  animation: kn-swap 380ms var(--kn-ease-out) both;
+}
+
+/* ——— Biogram: światło przechodzi przez wiersze ——— */
+
+@media (prefers-reduced-motion: no-preference) {
+  .kn-sweep {
+    background-image: linear-gradient(90deg, var(--fm-ink) 0 46%, var(--kn-ghost) 54% 100%);
+    background-size: 200% 100%;
+    background-position-x: 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+}
+
+.kn-portrait img {
+  filter: grayscale(1) contrast(1.04);
+}
+
+/* ——— Licznik taśmy ——— */
+
+.kn-odo {
+  display: inline-flex;
+  font-variant-numeric: tabular-nums;
+}
+
+.kn-odo-window {
+  display: inline-block;
+  height: 1em;
+  overflow: hidden;
+}
+
+.kn-odo-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.kn-odo-col > span,
+.kn-odo-static {
+  display: block;
+  height: 1em;
+  line-height: 1;
+}
+
+.kn-number {
+  font-size: 16.5vw;
+  line-height: 1;
+  letter-spacing: -0.06em;
+  font-weight: 600;
+}
+
+@media (min-width: 48rem) {
+  .kn-number {
+    font-size: clamp(4rem, 13vw, 15rem);
+  }
+}
+
+/* ——— Wejścia z rozmycia przy przewijaniu (Reveal.tsx) ——— */
+
+@media (prefers-reduced-motion: no-preference) {
+  .kn[data-kn-js] [data-kn-in="chars"]:not([data-in]) .kn-ch,
+  .kn[data-kn-js] [data-kn-in=""]:not([data-in]) {
+    opacity: 0;
+  }
+
+  /* Nagłówki sekcji: całość ≤ 1,2 s (rozrzut ≤ 400 ms + 800 ms) — po zatrzymaniu zawsze ostre. */
+  .kn [data-kn-in="chars"][data-in] .kn-ch {
+    animation: kn-develop 800ms var(--kn-ease-type) both;
+    animation-delay: var(--d, 0ms);
+  }
+
+  .kn [data-kn-in=""][data-in] {
+    animation: kn-rise 800ms var(--kn-ease-type) both;
+    animation-delay: var(--d, 0ms);
+  }
+}
+
+/* ——— Kompetencje: plansze ——— */
+
+.kn-skill {
+  position: relative;
+  padding-block: clamp(3.5rem, 2rem + 6vw, 6rem);
+  background: var(--fm-canvas);
+}
+
+.kn-skill + .kn-skill {
+  box-shadow: 0 -1px 0 var(--fm-edge);
+}
+
+.kn-skill-title {
+  font-size: clamp(3rem, 0.6rem + 11vw, 8.25rem);
+  line-height: 0.9;
+  letter-spacing: -0.06em;
+  font-weight: 600;
+}
+
+@media (min-width: 64rem) {
+  .kn-skill-title {
+    font-size: min(7.4vw, 8.25rem);
+  }
+}
+
+@media (min-width: 64rem) and (min-height: 43.75rem) and (prefers-reduced-motion: no-preference) {
+  .kn-skill {
+    position: sticky;
+    top: 0;
+    display: flex;
+    align-items: center;
+    /* Plansza krótsza niż ekran (72%) — następna wjeżdża od razu, scena jest o ~30% krótsza. */
+    min-height: 72svh;
+    padding-block: 4.5rem 3rem;
+  }
+
+  .kn-skill-inner {
+    will-change: transform, opacity;
+  }
+}
+
+/* ——— Suwak (specimen, oś czasu) ——— */
+
+.kn-range {
+  appearance: none;
+  height: 2.75rem;
+  background: transparent;
+  cursor: pointer;
+  touch-action: pan-y;
+}
+
+.kn-range::-webkit-slider-runnable-track {
+  height: 4px;
+  border-radius: 9999px;
+  background: linear-gradient(
+    to right,
+    var(--fm-ink) var(--kn-fill, 0%),
+    var(--fm-fill-strong) var(--kn-fill, 0%)
+  );
+}
+
+.kn-range::-moz-range-track {
+  height: 4px;
+  border-radius: 9999px;
+  background: linear-gradient(
+    to right,
+    var(--fm-ink) var(--kn-fill, 0%),
+    var(--fm-fill-strong) var(--kn-fill, 0%)
+  );
+}
+
+.kn-range::-webkit-slider-thumb {
+  appearance: none;
+  width: 1.25rem;
+  height: 1.25rem;
+  margin-top: -8px;
+  border-radius: 9999px;
+  background: var(--fm-ink);
+  box-shadow: 0 0 0 4px var(--fm-fill);
+  transition: scale 150ms var(--kn-ease-out);
+}
+
+.kn-range::-moz-range-thumb {
+  width: 1.25rem;
+  height: 1.25rem;
+  border: 0;
+  border-radius: 9999px;
+  background: var(--fm-ink);
+  box-shadow: 0 0 0 4px var(--fm-fill);
+}
+
+.kn-range:active::-webkit-slider-thumb {
+  scale: 1.12;
+}
+
+.kn-range:focus-visible {
+  outline: 2px solid var(--fm-ink);
+  outline-offset: 2px;
+  border-radius: 9999px;
+}
+
+/* ——— Produkty: indeks wielkich tytułów ——— */
+
+.kn-index-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.75rem 1.5rem;
+  padding-block: 1.25rem 1.5rem;
+  border-radius: 0.5rem;
+  transition: opacity 320ms var(--kn-ease-out);
+}
+
+.kn-index-title {
+  font-size: clamp(2.75rem, 13vw, 5rem);
+  line-height: 0.92;
+  letter-spacing: -0.06em;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.kn-index-meta {
+  grid-column: 1 / -1;
+  display: grid;
+  gap: 0.25rem;
+  max-width: 38ch;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  color: var(--fm-ink-2);
+}
+
+.kn-index-arrow {
+  grid-row: 1;
+  grid-column: 2;
+}
+
+.kn-index-thumb {
+  grid-column: 1 / -1;
+  position: relative;
+  aspect-ratio: var(--kn-ratio);
+  overflow: hidden;
+  border-radius: 0.75rem;
+  background: var(--fm-fill);
+  box-shadow: 0 0 0 1px var(--fm-edge);
+}
+
+.kn-index-thumb img,
+.kn-index-preview img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.kn-index-preview {
+  display: none;
+}
+
+@media (min-width: 48rem) {
+  .kn-index-row {
+    grid-template-columns: minmax(0, 7fr) minmax(0, 4fr) auto;
+    gap: 2rem;
+    padding-block: 1.75rem 2rem;
+  }
+
+  .kn-index-title {
+    font-size: min(8.4vw, 9.5rem);
+  }
+
+  .kn-index-meta {
+    grid-column: 2;
+  }
+
+  .kn-index-arrow {
+    grid-column: 3;
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .kn-index-thumb {
+    display: none;
+  }
+
+  .kn-index[data-active] .kn-index-row:not(.is-hot) {
+    opacity: 0.28;
+  }
+
+  .kn-index-preview {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 5;
+    display: block;
+    width: clamp(16rem, 22vw, 24rem);
+    aspect-ratio: 16 / 10;
+    overflow: hidden;
+    border-radius: 0.875rem;
+    pointer-events: none;
+    box-shadow: var(--fm-shadow-float);
+    opacity: 0;
+    scale: 0.9;
+    filter: blur(14px);
+    transition:
+      opacity 260ms var(--kn-ease-out),
+      scale 520ms var(--kn-ease-type),
+      filter 420ms var(--kn-ease-out);
+  }
+
+  .kn-index-preview[data-on] {
+    opacity: 1;
+    scale: 1;
+    filter: blur(0);
+  }
+
+  .kn-index-preview img {
+    opacity: 0;
+    filter: blur(6px);
+    transition:
+      opacity 300ms var(--kn-ease-out),
+      filter 300ms var(--kn-ease-out);
+  }
+
+  .kn-index-preview img[data-on] {
+    opacity: 1;
+    filter: blur(0);
+  }
+}
+
+/* ——— Wideo: masonry w trzech tempach ——— */
+
+.kn-masonry {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 2.25rem 0.75rem;
+  padding-bottom: 18vw;
+}
+
+.kn-masonry-item:nth-child(2n) {
+  translate: 0 36%;
+}
+
+@media (min-width: 64rem) {
+  .kn-masonry {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 3rem 1.5rem;
+    padding-bottom: 12vw;
+  }
+
+  .kn-masonry-item:nth-child(2n) {
+    translate: none;
+  }
+
+  .kn-masonry-item:nth-child(3n + 2) {
+    translate: 0 38%;
+  }
+
+  .kn-masonry-item:nth-child(3n) {
+    translate: 0 12%;
+  }
+}
+
+/* ——— Kontakt ——— */
+
+.kn-email {
+  font-size: clamp(2rem, 9.4vw, 5.75rem);
+  line-height: 1;
+  letter-spacing: -0.055em;
+}
+
+@media (min-width: 64rem) {
+  .kn-email {
+    font-size: min(5.2vw, 5.75rem);
+  }
+}
+
+/* ——— Napisy końcowe: nazwisko na 100vw ——— */
+
+.kn-wordmark {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  margin-top: 3.5rem;
+  /* Pod słowem: ogonek „p” (0,15 em pod linią pisma) i oddech 3vw nad dolną krawędzią. */
+  padding-bottom: calc(0.16em + 3vw);
+  /* Szerokość sygnetu + „Zeprzałka” = 5,376 em (zmierzone w przeglądarce) → 94% szerokości ekranu. */
+  font-size: calc(94vw / 5.376);
+  line-height: 0.8;
+  letter-spacing: -0.065em;
+  font-weight: 650;
+  white-space: nowrap;
+}
+
+.kn-mark-ch {
+  display: inline-block;
+}
+
+.kn-mark-l {
+  margin-inline-start: 0.04em;
+}
+
+/*
+ * Sygnet w stopce: ten sam bęben co w nagłówku, w skali słowa. Glif (1,32 em) ma
+ * wysokość wersalików Geist, pudełko 0,9 em szerokości; przesunięcie w górę
+ * kładzie jego dół na linii pisma nazwiska.
+ */
+.kn-mark-glyph {
+  width: 0.9em;
+  height: 1.3em;
+  margin-top: -0.31em;
+  /* Pudełko bębna jest wyższe od wiersza — nie może wydłużać stopki pod nazwiskiem. */
+  margin-bottom: -0.2em;
+  margin-inline-end: 0.1em;
+  letter-spacing: 0;
+  font-weight: 400;
+}

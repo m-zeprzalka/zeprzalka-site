@@ -15,10 +15,13 @@ export interface DemoEntry {
   slug: string
   title: string
   date: string
-  /** Iteracja projektu: 3 — system „Forma” i trzy koncepcje, 5 — pięć propozycji strony głównej. */
-  iteration: 3 | 5
+  /**
+   * Iteracja projektu: 3 — system „Forma” i trzy koncepcje, 5 — pięć propozycji strony głównej,
+   * 6 — pięć koncepcji po uwagach do iteracji 5 (docs/prompt.md + docs/prompt-nowy.md).
+   */
+  iteration: 3 | 5 | 6
   status: "rekomendacja" | "propozycja"
-  /** Iteracja 5: zadanie od właściciela, na które propozycja odpowiada. */
+  /** Iteracje 5–6: zadanie od właściciela, na które propozycja odpowiada. */
   brief?: string
   summary: string
   /** Koncepcje do oceny: dla kogo działa najlepiej i czego się bać. */
@@ -26,6 +29,111 @@ export interface DemoEntry {
 }
 
 export const DEMOS: readonly DemoEntry[] = [
+  {
+    slug: "indeks-new",
+    brief: "Nowa wersja „Indeksu”",
+    title: "Indeks · nowy",
+    date: "2026-11-05",
+    iteration: 6,
+    status: "propozycja",
+    summary:
+      "Wąziutka kolumna jak w „Indeksie”: menu pojawia się dopiero wtedy, gdy jest potrzebne, a wideo, obrazy i informacje wychodzą po prawej na najechanie.",
+    pitch: {
+      strengths: [
+        "Najczystszy minimalizm z pięciu — jedna kolumna, reszta pojawia się tylko na żądanie",
+        "Obraz wyłania się z kodu: na marginesie, w wideo na starcie i przy pauzie",
+        "Przełączanie realizacji naprawione: wiersz stoi pod kursorem, panel zawsze w kadrze",
+      ],
+      risks: [
+        "Długie listy (19 realizacji, 29 wpisów) — strona stoi na dobrym tekście",
+        "Na laptopach 1024–1279 px margines mieści tylko miniaturę",
+      ],
+    },
+  },
+  {
+    slug: "glif-lab",
+    brief: "Nowy glif — pole minowe animacji",
+    title: "Glif · laboratorium",
+    date: "2026-11-05",
+    iteration: 6,
+    status: "propozycja",
+    summary:
+      "Strona główna jako laboratorium efektu z glifów: nowy portret ze zdjęcia, warianty znaków, temp i rodzajów animacji — ciągłe, przy przewijaniu i pod kursorem — do wyboru.",
+    pitch: {
+      strengths: [
+        "Pole minowe do wyboru: 7 zestawów znaków, 6 animacji, tempa, kolory i wyzwalacze",
+        "Twarz czytelna w każdym zestawie — oczy jasne, bez czarnych dziur",
+        "Wybór kopiuje się jednym przyciskiem jako ustawienia do wdrożenia",
+      ],
+      risks: [
+        "To narzędzie wyboru, nie gotowa strona — efekt jest wszędzie naraz",
+        "WebGL2 w każdej sekcji; bez niego zostaje sama treść",
+      ],
+    },
+  },
+  {
+    slug: "best-of",
+    brief: "Najlepsze z obu briefów w jednej stronie",
+    title: "The Best Of",
+    date: "2026-11-05",
+    iteration: 6,
+    status: "propozycja",
+    summary:
+      "Wszystko, co zachwyciło w iteracjach 3 i 5, w jednej stronie głównej: wejścia z rozmycia, zoom wideo, jeden nieskończony slider, manifest wypełniany przewijaniem, żywe kompetencje, glify i wielki znak w stopce.",
+    pitch: {
+      strengths: [
+        "Każdy pochwalony efekt występuje raz, w jednym systemie ruchu",
+        "Portret z kodu ze zdjęcia, z kołem 0/1 za kursorem w kontakcie",
+        "Jeden slider kart przewijany kciukiem, z bezwładnością",
+      ],
+      risks: [
+        "Najbardziej „kompletna”, przez to najmniej zaskakująca",
+        "Przypięty zoom wideo wydłuża przewijanie o ok. 1,5 ekranu",
+      ],
+    },
+  },
+  {
+    slug: "rentgen",
+    brief: "Inwencja 1",
+    title: "Rentgen",
+    date: "2026-11-05",
+    iteration: 6,
+    status: "propozycja",
+    summary:
+      "Projektant i programista w jednym geście: kursor (na telefonie palec) jest soczewką, pod którą zaprojektowana strona odsłania swoją warstwę kodu.",
+    pitch: {
+      strengths: [
+        "Najbardziej oryginalny pomysł iteracji — nikt nie ma takiej strony",
+        "Pod soczewką prawdziwy kod: reguły CSS, dane realizacji, frontmatter wpisów",
+        "Przełącznik Projekt/Kod zamienia całą stronę w inspektor jednym gestem",
+      ],
+      risks: [
+        "Mechanizm trzeba odkryć — bez kursora to spokojna strona w stylu Formy",
+        "Płynność WebGL do sprawdzenia na prawdziwym telefonie",
+      ],
+    },
+  },
+  {
+    slug: "kinetyka",
+    brief: "Inwencja 2",
+    title: "Kinetyka",
+    date: "2026-11-05",
+    iteration: 6,
+    status: "propozycja",
+    summary:
+      "Kinowa typografia w skali plakatu: słowa w ruchu sterowanym przewijaniem, wideo prześwitujące przez litery, realizacje jako sekwencja kadrów.",
+    pitch: {
+      strengths: [
+        "Najmocniejsze pierwsze wrażenie — Geist w skali plakatu",
+        "Słowo „Portfolio” jako okno na reel, na telefonie pionowo",
+        "Każda sekcja ma własne „cięcie” montażowe",
+      ],
+      risks: [
+        "Najwięcej JavaScriptu (GSAP, ok. 258 KB gzip)",
+        "Najdłuższa strona; mieszanie warstw nad wideo do sprawdzenia na iPhonie",
+      ],
+    },
+  },
   {
     slug: "tryptyk",
     brief: "Ulepszony „Indeks”",

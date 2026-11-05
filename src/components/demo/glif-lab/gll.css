@@ -1,0 +1,798 @@
+/*
+ * Glif · laboratorium (iteracja 6) — arkusz koncepcji. Wszystko w zakresie `.gll`,
+ * nazwy z prefiksem `gll-` (arkusze dem są globalne po przejściu między koncepcjami).
+ * Tokeny bazowe z Formy; tutaj tylko to, czego Forma nie ma.
+ */
+
+.gll {
+  /* Szerszy kontener (1200 → 1312 px): obok tekstu stoi duże pole glifów. */
+  --fm-max: 82rem;
+  --gll-header: 4rem;
+  --gll-matrix-bg: #030a06;
+  --gll-matrix-ink: #5cf29a;
+
+  -webkit-tap-highlight-color: transparent;
+}
+
+.gll-glyph {
+  font-family: var(--gll-font-mono), var(--gll-font-braille), var(--gll-font-kana), monospace;
+  font-variant-ligatures: none;
+}
+
+/* ——— Panele w trybie odwróconym / Matrix: tło maluje CSS (stoi od pierwszej klatki) ——— */
+
+.gll [data-tone="inverse"] {
+  background: var(--fm-ink);
+  color: var(--fm-inverse);
+}
+
+.gll [data-tone="matrix"] {
+  background: var(--gll-matrix-bg);
+  color: #e9ffef;
+}
+
+/* ——— Portret (A) ——— */
+
+.gll-portrait {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  border-radius: var(--radius-fm-3xl);
+  overflow: hidden;
+  touch-action: pan-y;
+  user-select: none;
+  -webkit-user-select: none;
+  transition: background-color 300ms var(--ease-fm-snap);
+}
+
+/*
+ * Zdjęcie zastępcze w IDENTYCZNYM kadrze co canvas: źródło 404 × 505 przycięte do
+ * uv 0,10–0,92 × 0,02–0,84 (`CROP` w PortraitField) — proporcja 4:5 jak ramka, więc
+ * obraz ma 1 / 0,82 = 121,95% szerokości, przesunięty o −0,10 / 0,82 i −0,02 / 0,82.
+ * Maska powtarza wygaszenie z shadera (dół od 78%, boki 14,6%).
+ */
+.gll-portrait__photo,
+.gll-portrait__canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.gll-portrait__photo {
+  overflow: hidden;
+  -webkit-mask-image:
+    linear-gradient(to bottom, #000 76%, transparent 99%),
+    linear-gradient(to right, transparent, #000 14.6%, #000 85.4%, transparent);
+  -webkit-mask-composite: source-in;
+  mask-image:
+    linear-gradient(to bottom, #000 76%, transparent 99%),
+    linear-gradient(to right, transparent, #000 14.6%, #000 85.4%, transparent);
+  mask-composite: intersect;
+  transition: opacity 300ms var(--ease-fm-snap);
+}
+
+.gll-portrait__photo img {
+  position: absolute;
+  left: -12.195%;
+  top: -2.439%;
+  width: 121.95%;
+  max-width: none;
+  height: auto;
+  filter: grayscale(1) contrast(1.05);
+}
+
+.dark .gll-portrait__photo img {
+  filter: grayscale(1) brightness(0.9);
+}
+
+.gll-portrait__canvas {
+  opacity: 0;
+  transition: opacity 300ms var(--ease-fm-snap);
+}
+
+/* Przenikanie 300 ms: zdjęcie gaśnie, glify wchodzą — bez skoku kadru i skali. */
+.gll-portrait[data-ready] .gll-portrait__photo {
+  opacity: 0;
+}
+
+.gll-portrait[data-ready] .gll-portrait__canvas {
+  opacity: 1;
+}
+
+/* ——— Pismo ——— */
+
+.gll-display {
+  font-size: clamp(2.5rem, 1.6rem + 3.9vw, 4.75rem);
+  line-height: 1.02;
+  letter-spacing: -0.045em;
+  font-weight: 500;
+}
+
+.gll-h2 {
+  font-size: clamp(2.25rem, 1.5rem + 3.2vw, 4rem);
+  line-height: 1.02;
+  letter-spacing: -0.042em;
+  font-weight: 500;
+}
+
+.gll-section {
+  padding-block: clamp(5rem, 3.5rem + 4.5vw, 8rem);
+  scroll-margin-top: var(--gll-header);
+}
+
+/* ——— Nagłówek ——— */
+
+.gll-header {
+  height: var(--gll-header);
+  background: var(--fm-canvas);
+  box-shadow: 0 1px 0 transparent;
+}
+
+@supports (animation-timeline: scroll()) {
+  .gll-header {
+    animation: gll-header-edge linear both;
+    animation-timeline: scroll(root);
+    animation-range: 0 8px;
+  }
+}
+
+@keyframes gll-header-edge {
+  to {
+    box-shadow: 0 1px 0 var(--fm-edge);
+  }
+}
+
+/* ——— Dekodowanie liter: litera zostaje w układzie, glif rysuje się nad nią ——— */
+
+.gll-code [data-s] {
+  position: relative;
+  color: transparent;
+}
+
+.gll-code [data-s]::after {
+  content: attr(data-g);
+  position: absolute;
+  inset-inline: -0.3em;
+  top: 50%;
+  translate: 0 -46%;
+  font-family: var(--gll-glyph-font, var(--gll-font-mono)), monospace;
+  font-size: 0.6em;
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: 1;
+  text-align: center;
+  color: color-mix(in oklch, var(--fm-ink-3) 62%, transparent);
+  font-variant-ligatures: none;
+}
+
+/* Pasmo dekodowania: glif jaśniejszy i pełny — widać front. */
+.gll-code [data-s="1"]::after {
+  color: var(--fm-ink);
+  font-size: 0.68em;
+}
+
+.gll-statement {
+  font-size: clamp(1.75rem, 1.1rem + 2.7vw, 3.25rem);
+  line-height: 1.12;
+  letter-spacing: -0.032em;
+  font-weight: 500;
+  text-wrap: pretty;
+}
+
+.gll-fact {
+  font-size: clamp(2rem, 1.5rem + 1.8vw, 3rem);
+  line-height: 1;
+  letter-spacing: -0.04em;
+  font-weight: 500;
+}
+
+/* ——— Media zakodowane w glifach (D, F) ——— */
+
+.gll-media {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  background: var(--fm-fill);
+}
+
+.gll-media::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 1px var(--fm-edge);
+  pointer-events: none;
+}
+
+.gll-media__image,
+.gll-media__video,
+.gll-media__canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.gll-media__image,
+.gll-media__video {
+  object-fit: cover;
+}
+
+.gll-media__video {
+  opacity: 0;
+  transition: opacity 240ms var(--ease-fm-snap);
+}
+
+.gll-media__video[data-playing] {
+  opacity: 1;
+}
+
+.gll-media__canvas {
+  z-index: 2;
+  opacity: 0;
+  transition: opacity 300ms var(--ease-fm-snap);
+}
+
+.gll-media[data-ready] .gll-media__canvas {
+  opacity: 1;
+}
+
+/* ——— Bryły (C) ——— */
+
+.gll-emblem {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  border-radius: var(--radius-fm-3xl);
+  overflow: hidden;
+  background: var(--fm-surface);
+  box-shadow: var(--fm-shadow-card);
+}
+
+.gll-emblem[data-tone] {
+  box-shadow: none;
+}
+
+.gll-emblem__canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* ——— CTA z soczewką (E) ——— */
+
+.gll-cta {
+  background: var(--fm-surface);
+  box-shadow: var(--fm-shadow-card);
+  touch-action: pan-y;
+}
+
+.gll-cta[data-tone="inverse"],
+.gll-cta[data-tone="matrix"] {
+  box-shadow: none;
+}
+
+.gll-lens {
+  position: relative;
+  min-height: 17rem;
+  touch-action: pan-y;
+  cursor: crosshair;
+}
+
+@media (min-width: 64rem) {
+  .gll-lens {
+    grid-column: span 6 / span 6;
+    min-height: 0;
+  }
+}
+
+/* Pole soczewki wygasa ku tekstowi — jedna płaszczyzna, bez twardej krawędzi. */
+.gll-lens__canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 18%);
+  mask-image: linear-gradient(to bottom, transparent, #000 18%);
+}
+
+@media (min-width: 64rem) {
+  .gll-lens__canvas {
+    -webkit-mask-image: linear-gradient(to right, transparent, #000 16%);
+    mask-image: linear-gradient(to right, transparent, #000 16%);
+  }
+}
+
+/* Przyciski na ciemnym panelu: główny w kolorze płótna, wtórny — przezroczysty pierścień. */
+.gll-cta[data-tone="inverse"] .gll-cta-primary {
+  background: var(--fm-inverse);
+  color: var(--fm-ink);
+}
+
+.gll-cta[data-tone="matrix"] .gll-cta-primary {
+  background: var(--gll-matrix-ink);
+  color: var(--gll-matrix-bg);
+}
+
+.gll-cta[data-tone] button:not(.gll-cta-primary) {
+  background: color-mix(in oklch, currentColor 8%, transparent);
+  color: inherit;
+  box-shadow: inset 0 0 0 1px color-mix(in oklch, currentColor 22%, transparent);
+}
+
+.gll-cta[data-tone="ink"] button:not(.gll-cta-primary) {
+  background: var(--fm-surface);
+  box-shadow: var(--fm-shadow-ring);
+}
+
+@media (hover: hover) {
+  .gll-cta[data-tone="inverse"] .gll-cta-primary:hover {
+    background: color-mix(in oklch, var(--fm-inverse) 86%, transparent);
+  }
+}
+
+/* ——— Znak w stopce (H): 100vw ——— */
+
+.gll-wordmark {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4.6 / 1;
+  font-weight: 600;
+  user-select: none;
+}
+
+.gll-wordmark__text {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: 20.5vw;
+  line-height: 1;
+  letter-spacing: -0.05em;
+  color: var(--fm-ink);
+  transition: opacity 400ms var(--ease-fm-snap);
+}
+
+.gll-wordmark[data-ready] .gll-wordmark__text {
+  opacity: 0;
+}
+
+.gll-wordmark__canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* ——— Okno podglądu i menu (na telefonie arkusz od dołu) ——— */
+
+.gll-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+  background: color-mix(in oklch, var(--fm-canvas) 70%, transparent);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.gll-overlay[data-state="open"] {
+  animation: fm-fade 220ms var(--ease-fm-snap);
+}
+
+.gll-overlay[data-state="closed"] {
+  animation: gll-fade-out 160ms ease-out forwards;
+}
+
+.gll-dialog {
+  position: fixed;
+  z-index: 71;
+  inset-inline: 0;
+  bottom: 0;
+  max-height: calc(100dvh - 1.5rem);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 0.5rem 0.5rem calc(1.5rem + env(safe-area-inset-bottom, 0px));
+  border-radius: 1.75rem 1.75rem 0 0;
+  background: var(--fm-surface);
+  box-shadow: var(--fm-shadow-float);
+  outline: none;
+}
+
+.gll-dialog[data-state="open"] {
+  animation: gll-sheet-in 420ms var(--ease-fm-drawer);
+}
+
+.gll-dialog[data-state="closed"] {
+  animation: gll-sheet-out 220ms var(--ease-fm-snap) forwards;
+}
+
+.gll-dialog__media {
+  width: min(100%, calc(58dvh * var(--gll-ratio, 1.5)));
+  margin-inline: auto;
+}
+
+@media (min-width: 40rem) {
+  .gll-dialog:not(.gll-menu) {
+    inset: 50% auto auto 50%;
+    translate: -50% -50%;
+    width: min(100% - 2 * var(--fm-gutter), 56rem);
+    max-height: calc(100dvh - 2 * var(--fm-gutter));
+    padding: 0.625rem 0.625rem 1.75rem;
+    border-radius: 2rem;
+  }
+
+  .gll-dialog:not(.gll-menu)[data-state="open"] {
+    animation: gll-dialog-in 280ms var(--ease-fm-snap);
+  }
+
+  .gll-dialog:not(.gll-menu)[data-state="closed"] {
+    animation: gll-dialog-out 160ms ease-out forwards;
+  }
+
+  .gll-dialog__media {
+    width: min(100%, calc(64dvh * var(--gll-ratio, 1.5)));
+  }
+
+  .gll-dialog.gll-menu {
+    max-width: 32rem;
+    margin-inline: auto;
+  }
+}
+
+@keyframes gll-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes gll-sheet-in {
+  from {
+    transform: translateY(100%);
+  }
+}
+
+@keyframes gll-sheet-out {
+  to {
+    transform: translateY(100%);
+  }
+}
+
+@keyframes gll-dialog-in {
+  from {
+    opacity: 0;
+    scale: 0.96;
+  }
+}
+
+@keyframes gll-dialog-out {
+  to {
+    opacity: 0;
+    scale: 0.97;
+  }
+}
+
+/* ——— Pola formularza: wypełnione, 16 px (bez powiększania na iOS) ——— */
+
+.gll-input {
+  width: 100%;
+  border-radius: var(--radius-fm-xl);
+  background: var(--fm-fill);
+  color: var(--fm-ink);
+  font-size: 1rem;
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+  transition:
+    background-color 150ms var(--ease-fm-snap),
+    box-shadow 150ms var(--ease-fm-snap);
+}
+
+textarea.gll-input {
+  field-sizing: content;
+}
+
+.gll-input::placeholder {
+  color: var(--fm-ink-3);
+}
+
+.gll-input:hover {
+  background: var(--fm-fill-strong);
+}
+
+.gll-input:focus-visible {
+  background: var(--fm-surface);
+  box-shadow: 0 0 0 1px var(--fm-edge-strong);
+  outline-color: var(--fm-ink);
+}
+
+.gll-input[aria-invalid="true"] {
+  box-shadow: inset 0 0 0 1px var(--fm-ink);
+}
+
+.gll-mark {
+  display: inline-grid;
+  place-items: center;
+  width: 1.15em;
+  height: 1.15em;
+  font-size: 1.05em;
+  line-height: 1;
+}
+
+.gll-email {
+  font-size: clamp(1.75rem, 1rem + 3vw, 3rem);
+  line-height: 1.1;
+  letter-spacing: -0.035em;
+  font-weight: 500;
+  color: var(--fm-ink);
+}
+
+/* ——— Laboratorium: pigułka i inspektor ——— */
+
+.gll-lab-root {
+  position: fixed;
+  z-index: 60;
+  inset: 0;
+  pointer-events: none;
+}
+
+.gll-lab-pill {
+  pointer-events: auto;
+  position: absolute;
+  inset-inline-end: max(1rem, env(safe-area-inset-right, 0px));
+  bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  height: 2.75rem;
+  padding-inline: 1rem 0.75rem;
+  border-radius: 9999px;
+  background: color-mix(in oklch, var(--fm-surface) 88%, transparent);
+  color: var(--fm-ink-2);
+  font-size: 0.8125rem;
+  box-shadow: var(--fm-shadow-float);
+  backdrop-filter: blur(14px) saturate(1.4);
+  -webkit-backdrop-filter: blur(14px) saturate(1.4);
+  transition:
+    opacity 160ms var(--ease-fm-snap),
+    scale 160ms var(--ease-fm-snap),
+    translate 240ms var(--ease-fm-drawer),
+    background-color 150ms ease;
+  touch-action: manipulation;
+  user-select: none;
+}
+
+.gll-lab-pill:active {
+  scale: 0.97;
+}
+
+@media (max-width: 39.99rem) {
+  .gll-lab-pill[data-tucked]:not(:focus-visible) {
+    opacity: 0;
+    translate: 0 calc(100% + 1.5rem);
+    pointer-events: none;
+  }
+}
+
+.gll-lab-pill[data-hidden] {
+  opacity: 0;
+  scale: 0.96;
+  pointer-events: none;
+}
+
+.gll-lab {
+  pointer-events: auto;
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  max-height: min(62dvh, 40rem);
+  border-radius: 1.5rem 1.5rem 0 0;
+  /* Pełny papier — nic spod spodu nie prześwituje; krawędź i cień oddzielają arkusz od strony. */
+  background: var(--fm-surface);
+  box-shadow:
+    0 0 0 1px var(--fm-edge-strong),
+    0 -12px 40px -12px oklch(0 0 0 / 0.28);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  transform-origin: 50% 100%;
+  opacity: 0;
+  translate: 0 1.5rem;
+  visibility: hidden;
+  transition:
+    opacity 150ms ease-out,
+    translate 150ms ease-out,
+    visibility 0s linear 150ms;
+}
+
+.gll-lab[data-open] {
+  opacity: 1;
+  translate: 0 0;
+  visibility: visible;
+  transition:
+    opacity 220ms var(--ease-fm-drawer),
+    translate 320ms var(--ease-fm-drawer),
+    visibility 0s;
+}
+
+/* Telefon: strona za arkuszem przygaszona (dotknięcie zwija arkusz). */
+.gll-lab-scrim {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  background: oklch(0 0 0 / 0.36);
+  opacity: 0;
+  transition: opacity 150ms ease-out;
+}
+
+.dark .gll-lab-scrim {
+  background: oklch(0 0 0 / 0.55);
+}
+
+.gll-lab-scrim[data-open] {
+  pointer-events: auto;
+  opacity: 1;
+  transition-duration: 220ms;
+}
+
+@media (min-width: 40rem) {
+  .gll-lab-scrim {
+    display: none;
+  }
+
+  .gll-lab {
+    box-shadow: var(--fm-shadow-float);
+  }
+}
+
+@media (min-width: 40rem) {
+  .gll-lab {
+    inset-inline: auto max(1rem, env(safe-area-inset-right, 0px));
+    bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
+    width: 21.5rem;
+    max-height: calc(100dvh - var(--gll-header) - 2rem);
+    border-radius: var(--radius-fm-3xl);
+    transform-origin: 100% 100%;
+    translate: none;
+    scale: 0.96;
+    transition:
+      opacity 150ms ease-out,
+      scale 150ms ease-out,
+      visibility 0s linear 150ms;
+  }
+
+  .gll-lab[data-open] {
+    scale: 1;
+    translate: none;
+    transition:
+      opacity 200ms var(--ease-fm-snap),
+      scale 260ms var(--ease-fm-drawer),
+      visibility 0s;
+  }
+}
+
+.gll-lab__body {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+}
+
+.gll-chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2rem;
+  padding-inline: 0.75rem;
+  border-radius: 9999px;
+  background: var(--fm-fill);
+  color: var(--fm-ink-2);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  transition:
+    background-color 150ms ease,
+    color 150ms ease,
+    scale 160ms var(--ease-fm-snap);
+}
+
+.gll-chip:active {
+  scale: 0.97;
+}
+
+.gll-chip[aria-pressed="true"] {
+  background: var(--fm-ink);
+  color: var(--fm-inverse);
+}
+
+@media (hover: hover) {
+  .gll-chip:not([aria-pressed="true"]):hover {
+    background: var(--fm-fill-strong);
+    color: var(--fm-ink);
+  }
+}
+
+.gll-select {
+  width: 100%;
+  height: 2.75rem;
+  padding-inline: 0.875rem 2.25rem;
+  border-radius: var(--radius-fm-lg);
+  background: var(--fm-fill);
+  color: var(--fm-ink);
+  font-size: 1rem;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+@media (min-width: 40rem) {
+  .gll-select {
+    height: 2.25rem;
+    font-size: 0.875rem;
+  }
+}
+
+/* Segmenty: siatka równych kafli, zaznaczony — atrament (jak przełącznik w inspektorze). */
+.gll-seg {
+  display: grid;
+  grid-template-columns: repeat(var(--gll-cols, 4), minmax(0, 1fr));
+  gap: 0.25rem;
+  padding: 0.25rem;
+  border-radius: var(--radius-fm-lg);
+  background: var(--fm-fill);
+}
+
+.gll-seg__item {
+  display: grid;
+  place-items: center;
+  gap: 0.125rem;
+  min-height: 2.25rem;
+  padding: 0.375rem 0.25rem;
+  border-radius: var(--radius-fm-sm);
+  color: var(--fm-ink-2);
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1.15;
+  text-align: center;
+  transition:
+    background-color 150ms ease,
+    color 150ms ease,
+    box-shadow 150ms ease;
+}
+
+@media (pointer: coarse) {
+  .gll-seg__item {
+    min-height: 2.75rem;
+  }
+}
+
+.gll-seg__item[data-state="checked"] {
+  background: var(--fm-surface);
+  color: var(--fm-ink);
+  box-shadow: var(--fm-shadow-pop);
+}
+
+@media (hover: hover) {
+  .gll-seg__item[data-state="unchecked"]:hover {
+    color: var(--fm-ink);
+  }
+}
+
+.gll-seg__sample {
+  font-size: 1rem;
+  line-height: 1.1;
+  letter-spacing: 0.04em;
+  color: var(--fm-ink);
+  font-variant-ligatures: none;
+}
+
+/*
+ * Szeroki ekran: otwarte laboratorium dokuje się jak inspektor w narzędziu
+ * projektowym — strona robi mu miejsce, więc nic nie leży pod panelem.
+ */
+@media (min-width: 80rem) {
+  .gll:has(.gll-lab[data-open]) {
+    padding-inline-end: 23.5rem;
+  }
+
+  .gll-lab {
+    top: calc(var(--gll-header) + 0.75rem);
+    bottom: 1rem;
+    max-height: none;
+  }
+}

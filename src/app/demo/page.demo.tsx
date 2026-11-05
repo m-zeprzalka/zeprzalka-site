@@ -8,12 +8,13 @@ import { getCommon } from "@/i18n/content/common"
 export const metadata = { title: "Piaskownica" }
 
 /**
- * Spis piaskownicy jako krótka prezentacja dla właściciela: pięć propozycji
- * strony głównej z iteracji 5 (każda odpowiada na jedno zadanie z briefu),
- * niżej koncepcje z iteracji 3 i specimen systemu „Forma”.
+ * Spis piaskownicy jako krótka prezentacja dla właściciela: pięć koncepcji
+ * z iteracji 6 (każda odpowiada na jedno zadanie z briefu), niżej propozycje
+ * z iteracji 5 i koncepcje z iteracji 3 ze specimenem systemu „Forma”.
  */
 export default function DemoIndexPage() {
-  const proposals = DEMOS.filter((demo) => demo.iteration === 5)
+  const proposals = DEMOS.filter((demo) => demo.iteration === 6)
+  const previous = DEMOS.filter((demo) => demo.iteration === 5)
   const earlier = DEMOS.filter((demo) => demo.iteration === 3)
 
   return (
@@ -25,16 +26,16 @@ export default function DemoIndexPage() {
 
       <main className="fm-container pt-12 pb-24 md:pt-20">
         <Chip className="bg-fm-surface shadow-fm-ring">
-          <LiveDot /> Iteracja 5 · 4 listopada 2026
+          <LiveDot /> Iteracja 6 · 5 listopada 2026
         </Chip>
         <h1 className="mt-6 max-w-[20ch] text-fm-h2 font-semibold text-balance md:text-[3.5rem] md:leading-[1.04]">
-          Pięć propozycji strony głównej.
-          <span className="text-fm-ink-3"> Ta sama treść, pięć charakterów.</span>
+          Pięć koncepcji strony głównej.
+          <span className="text-fm-ink-3"> Najlepsze z dwóch iteracji, doprowadzone dalej.</span>
         </h1>
         <p className="mt-6 max-w-[42rem] text-fm-lead text-pretty text-fm-ink-2">
-          Każda propozycja odpowiada na jedno zadanie z Twojego briefu i stoi na treści obecnej
-          strony głównej. Obejrzyj je na telefonie i na komputerze, w obu motywach. Przy każdej
-          sekcji wystarczy „zostaje / zmień / wyrzuć” i jedno zdanie dlaczego.
+          Każda koncepcja odpowiada na jedno zadanie z Twojego briefu z 4 listopada i stoi na treści
+          obecnej strony głównej. Obejrzyj je na telefonie i na komputerze, w obu motywach. Przy
+          każdej sekcji wystarczy „zostaje / zmień / wyrzuć” i jedno zdanie dlaczego.
         </p>
 
         <ol className="mt-14 grid gap-4 md:grid-cols-2">
@@ -45,35 +46,18 @@ export default function DemoIndexPage() {
           ))}
         </ol>
 
-        <section aria-labelledby="wczesniej" className="mt-24">
-          <h2 id="wczesniej" className="text-fm-h3 font-semibold">
-            Iteracja 3 — wcześniejsze koncepcje
-          </h2>
-          <p className="mt-2 max-w-[42rem] text-fm-small text-pretty text-fm-ink-2">
-            Zostają do porównania. Na nich opierają się Twoje uwagi z 4 listopada.
-          </p>
-          <ul className="mt-6 divide-y divide-fm-edge rounded-fm-3xl bg-fm-surface shadow-fm-card">
-            {earlier.map((demo) => (
-              <li key={demo.slug}>
-                <Link
-                  href={`/demo/${demo.slug}`}
-                  className="group flex items-start justify-between gap-6 rounded-fm-3xl px-6 py-5 fm-focus md:px-8"
-                >
-                  <span>
-                    <span className="block font-medium">{demo.title.replace("Forma · ", "")}</span>
-                    <span className="mt-1 block max-w-[70ch] text-fm-small text-pretty text-fm-ink-2">
-                      {demo.summary}
-                    </span>
-                  </span>
-                  <ArrowUpRight
-                    aria-hidden="true"
-                    className="mt-0.5 size-5 shrink-0 text-fm-ink-3 transition-[translate,color] duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-fm-ink"
-                  />
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </section>
+        <EarlierList
+          id="iteracja-5"
+          title="Iteracja 5 — propozycje z 4 listopada"
+          lead="Zostają do porównania. Na nich opierają się Twoje uwagi do iteracji 6."
+          demos={previous}
+        />
+        <EarlierList
+          id="iteracja-3"
+          title="Iteracja 3 — pierwsze koncepcje i system „Forma”"
+          lead="Indeks, Żywy interfejs i Talia — punkt wyjścia całej serii."
+          demos={earlier}
+        />
 
         <p className="mt-12 text-fm-small text-pretty text-fm-ink-3">
           Piaskownica nie jest indeksowana ani mierzona i nie ma jej w mapie strony. Na produkcji
@@ -141,5 +125,50 @@ function ProposalCard({ demo, number, wide }: { demo: DemoEntry; number: number;
         </Link>
       </div>
     </article>
+  )
+}
+
+function EarlierList({
+  id,
+  title,
+  lead,
+  demos,
+}: {
+  id: string
+  title: string
+  lead: string
+  demos: readonly DemoEntry[]
+}) {
+  return (
+    <section aria-labelledby={id} className="mt-24">
+      <h2 id={id} className="text-fm-h3 font-semibold">
+        {title}
+      </h2>
+      <p className="mt-2 max-w-[42rem] text-fm-small text-pretty text-fm-ink-2">{lead}</p>
+      <ul className="mt-6 divide-y divide-fm-edge rounded-fm-3xl bg-fm-surface shadow-fm-card">
+        {demos.map((demo) => (
+          <li key={demo.slug}>
+            <Link
+              href={`/demo/${demo.slug}`}
+              className="group flex items-start justify-between gap-6 rounded-fm-3xl px-6 py-5 fm-focus md:px-8"
+            >
+              <span>
+                <span className="block font-medium">
+                  {demo.title.replace("Forma · ", "")}
+                  {demo.brief && <span className="font-normal text-fm-ink-3"> · {demo.brief}</span>}
+                </span>
+                <span className="mt-1 block max-w-[70ch] text-fm-small text-pretty text-fm-ink-2">
+                  {demo.summary}
+                </span>
+              </span>
+              <ArrowUpRight
+                aria-hidden="true"
+                className="mt-0.5 size-5 shrink-0 text-fm-ink-3 transition-[translate,color] duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-fm-ink"
+              />
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </section>
   )
 }

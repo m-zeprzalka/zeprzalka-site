@@ -29,7 +29,7 @@ Next.js 16 (App Router) + MDX, wersja polska i angielska, deploy na Vercel.
 | Analityka | Vercel Analytics + Speed Insights (bez ciasteczek) |
 | Wersje językowe | polska (`/`) i angielska (`/en`), bez bibliotek i18n — pary tekstów wymuszane typami |
 | Menedżer pakietów | pnpm 10 (`packageManager` w `package.json`, build na Vercelu przez `vercel.json`) |
-| Piaskownica `/demo` | Motion 14 i Number Flow — tylko `devDependencies`, import poza `/demo` blokuje ESLint |
+| Piaskownica `/demo` | Motion 14, Number Flow, GSAP 3.15 i OGL — tylko `devDependencies`, import poza `/demo` blokuje ESLint |
 
 ## Polecenia
 

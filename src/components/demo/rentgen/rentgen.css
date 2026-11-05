@@ -1,0 +1,1624 @@
+/*
+ * Rentgen (iteracja 6) — arkusz koncepcji. Dwie warstwy tej samej treści:
+ * projekt (Forma) i klisza (kod). Wszystkie klasy, keyframes, @property
+ * i nazwy osi czasu mają prefiks `rg-` (arkusze dem są globalne po przejściu
+ * między demami). Ruch sterowany przewijaniem żyje w `@supports` +
+ * `prefers-reduced-motion: no-preference`.
+ */
+
+/* ——— Tokeny ——— */
+
+.rg {
+  /* Klisza: negatyw strony. Jasny motyw — ciemna klisza z jasnym kodem. */
+  --rg-film: oklch(0.17 0 0);
+  --rg-film-raise: oklch(0.215 0 0);
+  --rg-line: oklch(1 0 0 / 0.07);
+  --rg-line-2: oklch(1 0 0 / 0.16);
+  --rg-line-3: oklch(1 0 0 / 0.32);
+  --rg-c-base: oklch(0.8 0 0);
+  --rg-c-tag: oklch(0.985 0 0);
+  --rg-c-text: oklch(0.93 0 0);
+  --rg-c-attr: oklch(0.66 0 0);
+  --rg-c-str: oklch(0.82 0 0);
+  --rg-c-punct: oklch(0.52 0 0);
+  --rg-c-com: oklch(0.58 0 0);
+  --rg-c-num: oklch(0.9 0 0);
+  /* Znak shadera (hex — canvas nie zna oklch) i polaryzacja (1 = jasna klisza). */
+  --rg-glyph: #ececec;
+  --rg-glyph-invert: 0;
+  /* Klisza nad obrazami (canvas: rgba) — obraz widać pod cyframi. */
+  --rg-veil: rgba(22, 22, 22, 0.5);
+  /* Pierścień soczewki: ciemna krawędź na jasnym papierze + cień uniesienia. */
+  --rg-ring:
+    0 0 0 1px oklch(0 0 0 / 0.72), inset 0 0 0 1px oklch(1 0 0 / 0.1),
+    0 22px 48px -18px oklch(0 0 0 / 0.5), 0 2px 6px -2px oklch(0 0 0 / 0.25);
+  --rg-beam: oklch(1 0 0 / 0.9);
+  --rg-mono: var(--font-geist-mono), ui-monospace, "SFMono-Regular", monospace;
+  --rg-ease-text: cubic-bezier(0.22, 1, 0.36, 1);
+  --rg-header: 4rem;
+
+  position: relative;
+  overflow-x: clip;
+  -webkit-tap-highlight-color: transparent;
+}
+
+@media (min-width: 105rem) {
+  .fm.rg {
+    --fm-max: 82.5rem;
+  }
+}
+
+/* Ciemny motyw: klisza głębsza niż płótno, kod jaśniejszy — rentgen zawsze jest ciemny. */
+.dark .rg {
+  --rg-film: oklch(0.085 0 0);
+  --rg-film-raise: oklch(0.13 0 0);
+  --rg-line: oklch(1 0 0 / 0.075);
+  --rg-line-2: oklch(1 0 0 / 0.17);
+  --rg-line-3: oklch(1 0 0 / 0.34);
+  --rg-c-base: oklch(0.82 0 0);
+  --rg-glyph: #f2f2f2;
+  --rg-veil: rgba(8, 8, 8, 0.55);
+  --rg-ring:
+    0 0 0 1px oklch(1 0 0 / 0.42), inset 0 0 0 1px oklch(1 0 0 / 0.08),
+    0 0 0 6px oklch(0 0 0 / 0.35), 0 24px 56px -18px oklch(0 0 0 / 0.9);
+}
+
+.rg :where(a, button, [role="button"], summary, label) {
+  touch-action: manipulation;
+}
+
+.rg :where(button, [role="button"]) {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+html:has(.rg) {
+  scroll-padding-top: calc(var(--rg-header, 4rem) + 1.5rem);
+}
+
+.rg-skip {
+  position: fixed;
+  top: 0.75rem;
+  left: 0.75rem;
+  z-index: 90;
+  translate: 0 -6rem;
+  border-radius: 9999px;
+  background: var(--fm-ink);
+  color: var(--fm-inverse);
+  padding: 0.625rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: translate 200ms var(--ease-fm-snap);
+}
+
+.rg-skip:focus-visible {
+  translate: 0 0;
+}
+
+/* ——— Typografia projektu ——— */
+
+.rg {
+  /* Telefon: z szerokości ekranu — trzy linie bez sieroty od 360 do 430 px. */
+  --rg-display-fs: min(calc(10.4vw - 0.1rem), 3.4rem);
+}
+
+@media (min-width: 40rem) {
+  .rg {
+    --rg-display-fs: clamp(3rem, 1.2rem + 5vw, 5.75rem);
+  }
+}
+
+.rg-display {
+  font-size: var(--rg-display-fs);
+  line-height: 0.98;
+  letter-spacing: -0.05em;
+  font-weight: 560;
+}
+
+.rg-h2 {
+  font-size: clamp(2rem, 1.3rem + 2.6vw, 3.5rem);
+  line-height: 1.02;
+  letter-spacing: -0.045em;
+  font-weight: 550;
+}
+
+.rg-manifest {
+  font-size: clamp(1.625rem, 0.95rem + 2.8vw, 3.25rem);
+  line-height: 1.12;
+  letter-spacing: -0.035em;
+  font-weight: 500;
+}
+
+/* ——— Wejścia (CSS, bez JS) ——— */
+
+@keyframes rg-word-in {
+  from {
+    opacity: 0;
+    filter: blur(10px);
+    translate: 0 0.2em;
+  }
+}
+
+@keyframes rg-rise {
+  from {
+    opacity: 0;
+    filter: blur(4px);
+    translate: 0 0.5rem;
+  }
+}
+
+.rg-word {
+  display: inline-block;
+  animation: rg-word-in 650ms var(--rg-ease-text) both;
+  animation-delay: calc(60ms + var(--w, 0) * 45ms);
+}
+
+.rg-rise {
+  animation: rg-rise 480ms var(--ease-fm-snap) both;
+  animation-delay: var(--rg-d, 0ms);
+}
+
+/* Kropka „dostępny”: jedyny kolor poza realizacjami; puls trzy razy i stop (WCAG 2.2.2). */
+.rg-live {
+  position: relative;
+  display: inline-block;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 9999px;
+  background: var(--fm-live);
+}
+
+.rg-live::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--fm-live);
+  animation: fm-pulse 1600ms var(--ease-fm-snap) 900ms 3 both;
+}
+
+/* Podpowiedź soczewki: mysz albo dotyk — każdy widzi swoją. */
+.rg-hint--touch {
+  display: none;
+}
+
+@media (pointer: coarse) {
+  .rg-hint--pointer {
+    display: none;
+  }
+  .rg-hint--touch {
+    display: inline;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rg-hint--pointer,
+  .rg-hint--touch,
+  .rg-hint-lens {
+    display: none;
+  }
+}
+
+/* Miniatura soczewki przy podpowiedzi: klisza + pierścień jak prawdziwa soczewka. */
+.rg-hint-lens {
+  width: 1.125rem;
+  height: 1.125rem;
+  flex-shrink: 0;
+  border-radius: 9999px;
+  background: var(--rg-film);
+  box-shadow:
+    0 0 0 1px oklch(0 0 0 / 0.72),
+    inset 0 0 0 1px oklch(1 0 0 / 0.16),
+    0 3px 8px -2px oklch(0 0 0 / 0.35);
+}
+
+.dark .rg-hint-lens {
+  box-shadow:
+    0 0 0 1px oklch(1 0 0 / 0.42),
+    inset 0 0 0 1px oklch(1 0 0 / 0.08);
+}
+
+/* ——— Nagłówek ——— */
+
+.rg-header {
+  position: fixed;
+  inset-inline: 0;
+  top: 0;
+  z-index: 50;
+  height: var(--rg-header);
+}
+
+.rg-header::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  opacity: 0;
+  background: color-mix(in oklch, var(--fm-canvas) 78%, transparent);
+  box-shadow: 0 1px 0 var(--fm-edge);
+  -webkit-backdrop-filter: blur(16px) saturate(1.4);
+  backdrop-filter: blur(16px) saturate(1.4);
+}
+
+@supports (animation-timeline: scroll()) {
+  .rg-header::before {
+    animation: rg-header-bg linear both;
+    animation-timeline: scroll(root);
+    animation-range: 0 6rem;
+  }
+}
+
+@supports not (animation-timeline: scroll()) {
+  .rg-header::before {
+    opacity: 1;
+  }
+}
+
+/* Tryb „Kod”: nagłówek zostaje projektem na pełnym tle — sygnet i przełącznik zawsze czytelne. */
+.rg[data-mode="code"] .rg-header::before {
+  opacity: 1;
+  animation: none;
+  background: var(--fm-canvas);
+}
+
+@keyframes rg-header-bg {
+  to {
+    opacity: 1;
+  }
+}
+
+/* Sygnet: soczewka z glifem + nazwisko; po najechaniu soczewka jedzie przez nazwisko. */
+@property --rg-logo-p {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+
+.rg-logo {
+  --rg-logo-p: 0;
+  position: relative;
+  display: inline-flex;
+  height: 2.75rem;
+  align-items: center;
+  gap: 0.625rem;
+  border-radius: 9999px;
+  padding-inline-end: 0.25rem;
+  font-size: 0.9375rem;
+  font-weight: 560;
+  letter-spacing: -0.025em;
+  white-space: nowrap;
+  transition: --rg-logo-p 700ms var(--ease-fm-move);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .rg-logo:hover {
+    --rg-logo-p: 1;
+  }
+}
+
+.rg-logo:focus-visible {
+  --rg-logo-p: 1;
+}
+
+.rg-logo__lens {
+  display: grid;
+  width: 1.75rem;
+  height: 1.75rem;
+  flex-shrink: 0;
+  place-items: center;
+  border-radius: 9999px;
+  background: var(--fm-ink);
+  color: var(--fm-inverse);
+  box-shadow: 0 0 0 1px var(--fm-edge);
+}
+
+.rg-logo__glyph {
+  font-family: var(--rg-mono);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  font-feature-settings:
+    "liga" 0,
+    "calt" 0;
+}
+
+.rg-logo__word {
+  position: relative;
+  display: inline-block;
+}
+
+/* Negatyw nazwiska pod jadącym kółkiem (to samo pismo, odwrócone kolory). */
+.rg-logo__negative {
+  position: absolute;
+  inset: -0.4rem -0.5rem;
+  display: flex;
+  align-items: center;
+  padding-inline: 0.5rem;
+  color: var(--fm-inverse);
+  background: var(--fm-ink);
+  clip-path: circle(0.875rem at calc(-0.875rem + var(--rg-logo-p) * (100% + 1.75rem)) 50%);
+  pointer-events: none;
+}
+
+@media (max-width: 23.99rem) {
+  .rg-logo__name,
+  .rg-logo__negative {
+    font-size: 0.875rem;
+  }
+}
+
+/* Przełącznik „Projekt / Kod” — pigułka segmentowa, drugie słowo w mono. */
+.rg-switch {
+  position: relative;
+  z-index: 3;
+  display: inline-grid;
+  grid-auto-columns: 1fr;
+  grid-auto-flow: column;
+  padding: 0.1875rem;
+  border-radius: 9999px;
+  background: var(--fm-fill);
+  box-shadow: inset 0 0 0 1px var(--fm-edge);
+}
+
+.rg-switch__thumb {
+  position: absolute;
+  top: 0.1875rem;
+  bottom: 0.1875rem;
+  left: 0.1875rem;
+  width: calc(50% - 0.1875rem);
+  border-radius: 9999px;
+  background: var(--fm-surface);
+  box-shadow: var(--fm-shadow-card);
+  transition:
+    translate 280ms var(--ease-fm-snap),
+    background-color 280ms var(--ease-fm-snap);
+}
+
+.rg-switch[data-mode="code"] .rg-switch__thumb {
+  translate: 100% 0;
+  background: var(--fm-ink);
+}
+
+.rg-switch__option {
+  position: relative;
+  z-index: 1;
+  height: 2.25rem;
+  padding-inline: 0.875rem;
+  border-radius: 9999px;
+  font-size: 0.8125rem;
+  font-weight: 550;
+  letter-spacing: -0.01em;
+  color: var(--fm-ink-3);
+  transition: color 200ms ease;
+}
+
+/* Dotyk: segment ma pełne 44 px wysokości. */
+@media (pointer: coarse) {
+  .rg-switch__option {
+    height: 2.75rem;
+    padding-inline: 1rem;
+  }
+}
+
+.rg-switch__option[aria-pressed="true"] {
+  color: var(--fm-ink);
+}
+
+.rg-switch__option--code {
+  font-family: var(--rg-mono);
+  font-weight: 500;
+  letter-spacing: 0;
+}
+
+.rg-switch__option--code[aria-pressed="true"] {
+  color: var(--fm-inverse);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .rg-switch__option[aria-pressed="false"]:hover {
+    color: var(--fm-ink);
+  }
+}
+
+/* ——— Wideo hero: okno otwiera się przy przewijaniu ——— */
+
+.rg-reel {
+  /* Przycięcie startowe: do szerokości kontenera; koniec: 12 px od krawędzi okna. */
+  --rg-reel-start: max(0.75rem, (100% - var(--fm-max)) / 2, var(--fm-gutter));
+  width: min(100%, calc((100svh - 2rem) * 1080 / 606));
+  margin-inline: auto;
+  clip-path: inset(0 var(--rg-reel-start) round 1.5rem);
+}
+
+@supports (animation-timeline: scroll()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .rg-reel {
+      animation: rg-reel linear both;
+      animation-timeline: scroll(root);
+      animation-range: 0 75vh;
+    }
+  }
+}
+
+@keyframes rg-reel {
+  to {
+    clip-path: inset(0 0.75rem round 1.25rem);
+  }
+}
+
+.rg-reel__control {
+  position: absolute;
+  left: calc(var(--rg-reel-start) + 0.75rem);
+  bottom: 0.75rem;
+  z-index: 1;
+  display: grid;
+  width: 2.75rem;
+  height: 2.75rem;
+  place-items: center;
+  border-radius: 9999px;
+  color: #fff;
+  background: oklch(0 0 0 / 0.45);
+  box-shadow: inset 0 0 0 1px oklch(1 0 0 / 0.14);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  transition: background-color 150ms ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .rg-reel__control:hover {
+    background: oklch(0 0 0 / 0.6);
+  }
+}
+
+/* ——— Klisza ——— */
+
+.rg-face {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  overflow: hidden;
+  visibility: hidden;
+  pointer-events: none;
+  background: var(--rg-film);
+  color: var(--rg-c-base);
+  font-family: var(--rg-mono);
+  font-size: 0.75rem;
+  line-height: 1.125rem;
+  font-variant-ligatures: none;
+  font-feature-settings:
+    "liga" 0,
+    "calt" 0;
+  -webkit-font-smoothing: antialiased;
+}
+
+.rg-face[data-on],
+.rg[data-mode="code"] .rg-face {
+  visibility: visible;
+}
+
+/* Klisza nagłówka tylko pod soczewką — w trybie „Kod” sygnet i przełącznik zostają sobą. */
+.rg[data-mode="code"] .rg-face[data-rg-lens-only]:not([data-on]) {
+  visibility: hidden;
+}
+
+/* Siatka pod kodem: krawędzie kontenera i 12 kolumn (telefon: 4). */
+.rg-guides {
+  position: absolute;
+  inset-block: 0;
+  inset-inline: 0;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem;
+  box-shadow:
+    -1px 0 0 var(--rg-line-2),
+    1px 0 0 var(--rg-line-2);
+}
+
+.rg-guides > span {
+  background: oklch(1 0 0 / 0.022);
+  box-shadow:
+    inset 1px 0 0 var(--rg-line),
+    inset -1px 0 0 var(--rg-line);
+}
+
+.rg-guides > span:nth-child(n + 5) {
+  display: none;
+}
+
+@media (min-width: 64rem) {
+  .rg-guides {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: 1.5rem;
+  }
+  .rg-guides > span:nth-child(n + 5) {
+    display: block;
+  }
+}
+
+.rg-twin {
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+.rg-code {
+  margin: 0;
+  font: inherit;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  tab-size: 2;
+}
+
+/* Tokeny składni: monochrom — rola to ton, nie kolor. */
+.rg-t-g {
+  color: var(--rg-c-tag);
+  font-weight: 550;
+}
+.rg-t-a {
+  color: var(--rg-c-attr);
+}
+.rg-t-s {
+  color: var(--rg-c-str);
+}
+.rg-t-x {
+  color: var(--rg-c-text);
+}
+.rg-t-p {
+  color: var(--rg-c-punct);
+}
+.rg-t-n {
+  color: var(--rg-c-num);
+}
+.rg-t-c {
+  color: var(--rg-c-com);
+}
+
+/* Bliźniak tekstu: kod akapitu mniejszy niż oryginał — mieści się w jego pudełku. */
+.rg-code--lead {
+  font-size: 0.75rem;
+  line-height: 1.45;
+}
+
+@media (min-width: 64rem) {
+  .rg-code--lead {
+    font-size: 0.8125rem;
+  }
+}
+
+/* Bliźniak „inspect”: ramka, kreskowanie dopełnienia, etykieta nad elementem. */
+.rg-twin--inspect {
+  display: flex;
+  align-items: center;
+  background: repeating-linear-gradient(135deg, oklch(1 0 0 / 0.045) 0 1px, transparent 1px 7px);
+  box-shadow: inset 0 0 0 1px var(--rg-line-3);
+}
+
+.rg-twin--inspect > .rg-code {
+  overflow: hidden;
+  padding-inline: 0.75rem;
+  font-size: 0.6875rem;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.rg-tag {
+  position: absolute;
+  bottom: calc(100% + 0.375rem);
+  left: 0;
+  display: inline-flex;
+  height: 1.375rem;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: 0.375rem;
+  padding-inline: 0.4375rem;
+  background: var(--rg-film-raise);
+  box-shadow: inset 0 0 0 1px var(--rg-line-2);
+  font-size: 0.6875rem;
+  white-space: nowrap;
+}
+
+/* W nagłówku etykieta pod elementem (nad nim jest krawędź okna). */
+.rg-header .rg-tag {
+  top: calc(100% + 0.5rem);
+  bottom: auto;
+}
+
+.rg-header .rg-twin--inspect > .rg-code {
+  padding-inline: 0.5rem;
+  font-size: 0.625rem;
+}
+
+/* Etykiety wymiarów: jedna warstwa naraz — tylko element pod kursorem, w trybie „Kod”
+ * (w trybie projektu nazwę i wymiar pokazuje etykieta soczewki). */
+.rg-tag,
+.rg-outline__tag {
+  opacity: 0;
+  transition: opacity 140ms ease;
+}
+
+.rg[data-mode="code"] .rg-twin[data-hot] .rg-tag,
+.rg[data-mode="code"] .rg-twin[data-hot] .rg-outline__tag {
+  opacity: 1;
+}
+
+.rg-tag__size {
+  color: var(--rg-c-attr);
+  font-variant-numeric: tabular-nums;
+}
+
+.rg-tag--inside {
+  top: 0.75rem;
+  bottom: auto;
+  left: calc(var(--rg-reel-start, 0.75rem) + 0.75rem);
+}
+
+/* Klasy przycisku — pod przyciskiem, pełnym zdaniem (prawdziwy wynik `buttonVariants`). */
+.rg-twin.rg-twin--classes {
+  background: none;
+  opacity: 0;
+  transition: opacity 140ms ease;
+}
+
+.rg-twin.rg-twin--classes[data-hot] {
+  opacity: 1;
+}
+
+.rg-twin--classes > .rg-code {
+  position: absolute;
+  top: calc(100% + 0.625rem);
+  left: 0;
+  width: min(34rem, calc(100vw - 2 * var(--fm-gutter)));
+  border-radius: 0.625rem;
+  padding: 0.5rem 0.75rem;
+  background: var(--rg-film-raise);
+  box-shadow: inset 0 0 0 1px var(--rg-line-2);
+  font-size: 0.6875rem;
+  line-height: 1.5;
+  color: var(--rg-c-attr);
+}
+
+/* Bliźniak „block”: znacznik sekcji u góry i u dołu. */
+.rg-twin--block {
+  box-shadow: inset 0 0 0 1px var(--rg-line);
+}
+
+.rg-block__open,
+.rg-block__close {
+  position: absolute;
+  left: max(var(--fm-gutter), (100% - var(--fm-max)) / 2);
+  white-space: nowrap;
+  color: var(--rg-c-attr);
+}
+
+.rg-block__open {
+  top: 5.25rem;
+}
+
+.rg-block__close {
+  bottom: 0.75rem;
+}
+
+/* Obraz w kliszy: stopklatka 2D pod spodem, żywy WebGL nad nią. */
+.rg-twin--media {
+  box-shadow: inset 0 0 0 1px var(--rg-line-2);
+}
+
+.rg-media {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: inherit;
+}
+
+.rg-media__photo,
+.rg-media__veil,
+.rg-media__base,
+.rg-media__gl {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* Obraz w kolorze pod kodem i klisza ok. 50% — soczewka nad obrazem nigdy nie jest czarną plamą. */
+.rg-media__photo {
+  background: var(--rg-src, none) center / cover no-repeat;
+}
+
+.rg-media__veil {
+  background: var(--rg-veil);
+}
+
+/*
+ * Podkład: ten sam obraz w szarości, widziany przez maskę z cyfr — od pierwszego
+ * malowania, w trybie „Kod” i przy „ogranicz ruch”. Zrzuty interfejsów odwrócone
+ * (tekst i linie jasne na kliszy). Żywy widok WebGL go zastępuje.
+ */
+.rg-media__base {
+  background-image: var(--rg-src, none);
+  background-position: center;
+  background-size: cover;
+  filter: grayscale(1) contrast(1.4) brightness(1.3);
+  -webkit-mask-image: url("./code/digits.svg");
+  mask-image: url("./code/digits.svg");
+  -webkit-mask-size: calc(var(--rg-cell, 6px) * 16) calc(var(--rg-cell, 6px) * 16.67);
+  mask-size: calc(var(--rg-cell, 6px) * 16) calc(var(--rg-cell, 6px) * 16.67);
+}
+
+.rg-media[data-negative] .rg-media__base {
+  filter: grayscale(1) invert(1) contrast(1.7) brightness(0.85);
+}
+
+.rg-media__gl {
+  opacity: 0;
+}
+
+.rg-media[data-live] .rg-media__gl {
+  opacity: 1;
+}
+
+.rg-media[data-live] .rg-media__base,
+.rg-media[data-live] .rg-media__photo,
+.rg-media[data-live] .rg-media__veil {
+  opacity: 0;
+}
+
+/* Portret z liter: wydruk liczony raz, po nim powoli przesuwa się światło. */
+.rg-portrait-photo,
+.rg-portrait-veil,
+.rg-portrait-code,
+.rg-portrait-glint {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+}
+
+/* Pod literami — sam portret (półprzezroczysta klisza), żeby twarz była zawsze czytelna. */
+.rg-portrait-photo {
+  background: url("../shared/portrait/portrait-luma.webp") center / cover no-repeat;
+}
+
+.rg-portrait-veil {
+  background: var(--rg-veil);
+}
+
+.rg-portrait-code {
+  background: url("./code/portrait-code.webp") center / cover no-repeat;
+}
+
+.rg-portrait-glint {
+  background: linear-gradient(to bottom, transparent, oklch(1 0 0 / 0.75) 50%, transparent) 0 -60% /
+    100% 34% no-repeat;
+  -webkit-mask: url("./code/portrait-code.webp") center / cover no-repeat;
+  mask: url("./code/portrait-code.webp") center / cover no-repeat;
+  mix-blend-mode: plus-lighter;
+  animation: rg-glint 7s cubic-bezier(0.45, 0, 0.55, 1) 1s 2 both;
+}
+
+@keyframes rg-glint {
+  from {
+    background-position: 0 -60%;
+  }
+  to {
+    background-position: 0 160%;
+  }
+}
+
+.rg-media-code {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 1rem;
+}
+
+.rg-media-code .rg-code {
+  display: inline-block;
+  max-width: 100%;
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.625rem;
+  background: oklch(from var(--rg-film) l c h / 0.82);
+  box-shadow: inset 0 0 0 1px var(--rg-line-2);
+}
+
+/* ——— Soczewka ——— */
+
+.rg-ring {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 60;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+  opacity: 0;
+  box-shadow: var(--rg-ring);
+  contain: layout style;
+  will-change: transform;
+  transition: opacity 180ms ease;
+}
+
+.rg-ring[data-on] {
+  opacity: 1;
+}
+
+/* Połysk szkła: miękkie światło w lewym górnym rogu soczewki. */
+.rg-ring::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(120% 90% at 28% 12%, oklch(1 0 0 / 0.09), transparent 46%);
+  pointer-events: none;
+}
+
+.rg-ring[data-variant="band"]::before {
+  display: none;
+}
+
+.rg-ring[data-variant="hidden"] {
+  opacity: 0;
+  transition-duration: 0ms;
+}
+
+/* Pas skanera: jasna linia na dolnej krawędzi pasa i miękki blask pod nią. */
+.rg-ring[data-variant="band"] {
+  box-shadow:
+    0 1px 0 0 var(--rg-beam),
+    0 10px 28px -6px oklch(1 0 0 / 0.35);
+}
+
+.rg-ring[data-coarse] {
+  pointer-events: auto;
+  touch-action: none;
+  cursor: grab;
+}
+
+.rg-ring__label {
+  position: absolute;
+  top: calc(100% + 0.625rem);
+  left: 50%;
+  display: inline-flex;
+  height: 1.5rem;
+  align-items: center;
+  gap: 0.5rem;
+  translate: -50% 0;
+  border-radius: 9999px;
+  padding-inline: 0.625rem;
+  background: var(--rg-film);
+  box-shadow:
+    inset 0 0 0 1px var(--rg-line-2),
+    0 6px 16px -6px oklch(0 0 0 / 0.4);
+  color: var(--rg-c-text);
+  font-family: var(--rg-mono);
+  font-size: 0.6875rem;
+  white-space: nowrap;
+  transition: opacity 140ms ease;
+}
+
+.rg-ring[data-small] .rg-ring__label,
+.rg-ring__label[data-empty="true"],
+.rg-ring[data-variant="band"] .rg-ring__label,
+.rg-ring[data-coarse] .rg-ring__label {
+  opacity: 0;
+}
+
+.rg-ring__size {
+  color: var(--rg-c-attr);
+  font-variant-numeric: tabular-nums;
+}
+
+@keyframes rg-swap {
+  from {
+    opacity: 0.3;
+    filter: blur(2px);
+  }
+}
+
+.rg-swap {
+  animation: rg-swap 160ms var(--ease-fm-snap);
+}
+
+/* Podpowiedź w środku soczewki (u dołu) — nie nachodzi na tekst strony. */
+.rg-ring__hint {
+  position: absolute;
+  bottom: 0.875rem;
+  left: 50%;
+  translate: -50% 0;
+  border-radius: 9999px;
+  padding: 0.3125rem 0.6875rem;
+  background: oklch(0.985 0 0);
+  color: oklch(0.205 0 0);
+  font-size: 0.75rem;
+  font-weight: 500;
+  white-space: nowrap;
+  transition:
+    opacity 200ms ease,
+    translate 200ms var(--ease-fm-snap);
+}
+
+.rg[data-rg-dragged] .rg-ring__hint {
+  opacity: 0;
+  translate: -50% -0.25rem;
+}
+
+.rg-summon {
+  position: fixed;
+  right: max(1rem, env(safe-area-inset-right, 0px));
+  bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
+  z-index: 70;
+  display: grid;
+  width: 3.25rem;
+  height: 3.25rem;
+  place-items: center;
+  border-radius: 9999px;
+  background: var(--fm-ink);
+  color: var(--fm-inverse);
+  box-shadow: var(--fm-shadow-float);
+  transition:
+    opacity 200ms ease,
+    translate 260ms var(--ease-fm-snap),
+    scale 160ms var(--ease-fm-snap);
+}
+
+.rg-summon[data-scrolling] {
+  opacity: 0;
+  translate: 0 0.5rem;
+  pointer-events: none;
+}
+
+.rg-summon[data-hidden] {
+  opacity: 0;
+  translate: 0 1rem;
+  pointer-events: none;
+}
+
+/* ——— Menu telefonu ——— */
+
+@keyframes rg-sheet-in {
+  from {
+    opacity: 0;
+    scale: 0.97;
+    translate: 0 -0.5rem;
+  }
+}
+
+@keyframes rg-sheet-out {
+  to {
+    opacity: 0;
+    scale: 0.98;
+  }
+}
+
+@keyframes rg-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes rg-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
+.rg-sheet {
+  transform-origin: 50% 0;
+}
+
+.rg-sheet[data-state="open"] {
+  animation: rg-sheet-in 280ms var(--ease-fm-snap);
+}
+
+.rg-sheet[data-state="closed"] {
+  animation: rg-sheet-out 160ms var(--ease-fm-snap);
+}
+
+.rg-overlay[data-state="open"] {
+  animation: rg-fade-in 220ms var(--ease-fm-snap);
+}
+
+.rg-overlay[data-state="closed"] {
+  animation: rg-fade-out 160ms var(--ease-fm-snap);
+}
+
+/* ——— Tło kliszy: prawdziwy plik sekcji w kolumnach ——— */
+
+.rg-listing {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  padding: 4.5rem max(var(--fm-gutter), (100% - var(--fm-max)) / 2) 1rem;
+  /* Tło ma szeptać: ok. 13% krycia — bliźniaki i ich kod są pierwszym planem. */
+  color: oklch(1 0 0 / 0.13);
+  font-size: 0.6875rem;
+  line-height: 1.0625rem;
+}
+
+/* Poza pierwszą kolumną — „minimapa” kodu (paski długości prawdziwych linii silnika soczewki). */
+.rg-listing::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-image: url("./code/minimap.svg");
+  background-size: 21.25rem auto;
+  background-position: max(var(--fm-gutter), (100% - var(--fm-max)) / 2) 4.5rem;
+  opacity: 0.12;
+}
+
+.rg-listing {
+  isolation: isolate;
+}
+
+/* Na wąskim ekranie bez tekstu źródła w tle — tylko minimapa (spokojniej, bez kolizji). */
+@media (max-width: 47.99rem) {
+  .rg-listing__pre {
+    display: none;
+  }
+}
+
+.rg-listing__pre {
+  position: relative;
+  width: fit-content;
+  max-width: 100%;
+  height: 100%;
+  margin: 0;
+  background: var(--rg-film);
+  box-shadow: 1.5rem 0 0 var(--rg-film);
+  font: inherit;
+  white-space: pre;
+}
+
+/* Bliźniaki zasłaniają tło kliszy — leżą na kodzie jak jasne „narządy”. */
+.rg-twin--text,
+.rg-twin--inspect,
+.rg-twin--media {
+  background-color: var(--rg-film);
+}
+
+/* ——— Bliźniak „outline”: kontur pisma z linią bazową ——— */
+
+.rg-twin--outline {
+  --rg-baseline: 0.79lh;
+  box-shadow: inset 0 0 0 1px var(--rg-line-2);
+}
+
+.rg-outline {
+  color: transparent;
+  -webkit-text-stroke: 1px var(--rg-c-text);
+  background-image: linear-gradient(
+    to bottom,
+    transparent calc(var(--rg-baseline) - 1px),
+    var(--rg-line-3) calc(var(--rg-baseline) - 1px) var(--rg-baseline),
+    transparent var(--rg-baseline)
+  );
+  background-size: 100% 1lh;
+  font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+}
+
+.rg-outline__tag {
+  position: absolute;
+  bottom: calc(100% + 0.5rem);
+  left: 0;
+  width: max-content;
+  border-radius: 0.375rem;
+  padding: 0.125rem 0.4375rem;
+  background: var(--rg-film-raise);
+  box-shadow: inset 0 0 0 1px var(--rg-line-2);
+  font-size: 0.6875rem;
+  white-space: nowrap;
+}
+
+.rg-outline__css {
+  position: absolute;
+  top: 0;
+  left: calc(100% + 2.5rem);
+  width: 21rem;
+  border-radius: 0.75rem;
+  padding: 0.875rem 1rem;
+  background: var(--rg-film-raise);
+  box-shadow: inset 0 0 0 1px var(--rg-line-2);
+  font-size: 0.75rem;
+  line-height: 1.25rem;
+}
+
+@media (max-width: 79.99rem) {
+  .rg-outline__css {
+    display: none;
+  }
+}
+
+/* ——— Wejścia przy przewijaniu (Reveal.tsx dopisuje `data-in`) ——— */
+
+@media (prefers-reduced-motion: no-preference) {
+  .rg[data-rg-js] [data-rg-in]:not([data-in]) {
+    opacity: 0;
+    filter: blur(8px);
+    translate: 0 0.75rem;
+  }
+
+  .rg [data-rg-in] {
+    transition:
+      opacity 900ms var(--rg-ease-text),
+      filter 900ms var(--rg-ease-text),
+      translate 900ms var(--rg-ease-text);
+    transition-delay: calc(var(--i, 0) * 70ms);
+  }
+
+  .rg [data-instant] {
+    transition: none !important;
+  }
+}
+
+/* ——— Skan „O mnie”: linia przejeżdża raz po wejściu w kadr (Scan.tsx, WAAPI) ——— */
+
+.rg-scan {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* Pas kodu za linią: 112 px, u góry wygaszony — „ogon” kompilacji. Poza animacją go nie ma. */
+.rg-scan__move {
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+  height: 7rem;
+  visibility: hidden;
+}
+
+.rg-scan[data-playing] .rg-scan__move {
+  visibility: visible;
+}
+
+.rg-scan__window {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 55%);
+  mask-image: linear-gradient(to bottom, transparent, #000 55%);
+}
+
+.rg-scan__inner {
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+  height: 100%;
+}
+
+/* Klisza skanu jest widoczna tylko w trakcie przejazdu linii i w trybie „Kod”. */
+.rg-scan[data-playing] .rg-face--scan,
+.rg[data-mode="code"] .rg-face--scan {
+  visibility: visible;
+}
+
+/* Tryb „Kod”: cała sekcja w kliszy, bez linii. */
+.rg[data-mode="code"] .rg-scan__move {
+  visibility: visible;
+  height: 100%;
+  translate: none;
+}
+
+.rg[data-mode="code"] .rg-scan__window {
+  -webkit-mask-image: none;
+  mask-image: none;
+}
+
+.rg[data-mode="code"] .rg-scan__inner {
+  translate: none;
+}
+
+.rg[data-mode="code"] .rg-scan__beam {
+  display: none;
+}
+
+.rg-scan__beam {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  height: 1px;
+  background: var(--rg-beam);
+}
+
+/* Blask tylko w stronę kodu (w górę, w pas) — nad tekstem nic się nie dubluje. */
+.rg-scan__beam::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  bottom: 1px;
+  height: 2rem;
+  background: linear-gradient(to top, oklch(1 0 0 / 0.1), transparent);
+}
+
+.rg-scan__label {
+  position: absolute;
+  right: max(var(--fm-gutter), (100% - var(--fm-max)) / 2);
+  bottom: 0.5rem;
+  font-family: var(--rg-mono);
+  font-size: 0.6875rem;
+  color: var(--rg-c-text);
+}
+
+.rg-scan__label::before {
+  content: "> ";
+  color: var(--rg-c-attr);
+}
+
+.rg-code--manifest {
+  font-size: clamp(0.875rem, 0.55rem + 0.9vw, 1.375rem);
+  line-height: 1.55;
+}
+
+.rg-code--manifest .rg-t-s {
+  color: var(--rg-c-text);
+}
+
+.rg-code--facts {
+  font-size: 0.75rem;
+  line-height: 1.5;
+}
+
+@media (min-width: 64rem) {
+  .rg-code--facts {
+    font-size: 0.875rem;
+    columns: 2;
+  }
+}
+
+/* ——— Bliźniaki: drobne warianty ——— */
+
+.rg-code--body {
+  font-size: 0.6875rem;
+  line-height: 1.5;
+}
+
+@media (min-width: 64rem) {
+  .rg-code--body {
+    font-size: 0.75rem;
+  }
+}
+
+.rg-skill__open {
+  position: absolute;
+  top: 0.625rem;
+  left: 0;
+  border-radius: 0.375rem;
+  padding: 0.0625rem 0.4375rem;
+  background: var(--rg-film-raise);
+  box-shadow: inset 0 0 0 1px var(--rg-line-2);
+  color: var(--rg-c-attr);
+  white-space: nowrap;
+}
+
+.rg-code--terminal {
+  padding: 1rem 1.25rem;
+  font-size: 0.6875rem;
+  line-height: 1.6;
+}
+
+@media (min-width: 64rem) {
+  .rg-code--terminal {
+    font-size: 0.75rem;
+  }
+}
+
+.rg-media-caption {
+  position: absolute;
+  left: 0.625rem;
+  bottom: 0.625rem;
+  max-width: calc(100% - 1.25rem);
+  border-radius: 0.375rem;
+  padding: 0.1875rem 0.4375rem;
+  background: var(--rg-film-raise);
+  box-shadow: inset 0 0 0 1px var(--rg-line-2);
+  font-size: 0.625rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.rg-twin--post .rg-code--frontmatter {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  padding: 0.875rem 1rem;
+  background: var(--rg-film);
+  box-shadow: inset 0 0 0 1px var(--rg-line-2);
+  border-radius: 1rem;
+}
+
+.rg-code--frontmatter {
+  font-size: 0.6875rem;
+  line-height: 1.55;
+}
+
+.rg-twin--row {
+  display: flex;
+  align-items: center;
+  box-shadow: inset 0 -1px 0 var(--rg-line-2);
+}
+
+.rg-twin--row .rg-code {
+  font-size: 0.625rem;
+  line-height: 1.45;
+}
+
+.rg-code--form {
+  font-size: 0.6875rem;
+  line-height: 1.65;
+}
+
+@media (min-width: 64rem) {
+  .rg-code--form {
+    font-size: 0.8125rem;
+    line-height: 1.8;
+  }
+}
+
+.rg-works-note {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 1rem;
+  margin-inline: auto;
+}
+
+/* ——— Realizacje: jeden nieskończony rząd kart ——— */
+
+/* Pas kart nad kliszą sekcji (maska toru tworzy kontekst warstw) — z własną kliszą pod kartami. */
+.rg-track-wrap {
+  position: relative;
+  z-index: 3;
+}
+
+.rg-track-code {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0.25rem;
+  margin-inline: auto;
+  color: var(--rg-c-attr);
+}
+
+.rg-track {
+  --rg-card-h: 11.5rem;
+  --rg-gap: 0.75rem;
+  --rg-fade: 1.25rem;
+  position: relative;
+  z-index: 3;
+  display: flex;
+  gap: var(--rg-gap);
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+  padding-block: 0.75rem 1.5rem;
+  cursor: grab;
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent,
+    #000 var(--rg-fade),
+    #000 calc(100% - var(--rg-fade)),
+    transparent
+  );
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    #000 var(--rg-fade),
+    #000 calc(100% - var(--rg-fade)),
+    transparent
+  );
+}
+
+.rg-track::-webkit-scrollbar {
+  display: none;
+}
+
+.rg-track[data-dragging] {
+  cursor: grabbing;
+}
+
+.rg-track[data-dragging] .rg-card {
+  pointer-events: none;
+}
+
+@media (min-width: 40rem) {
+  .rg-track {
+    --rg-card-h: 15rem;
+    --rg-gap: 1rem;
+    --rg-fade: 4rem;
+  }
+}
+
+@media (min-width: 64rem) {
+  .rg-track {
+    --rg-card-h: 17rem;
+    --rg-fade: 7rem;
+  }
+}
+
+.rg-track__set {
+  display: flex;
+  flex-shrink: 0;
+  gap: var(--rg-gap);
+}
+
+.rg-card-slot {
+  flex-shrink: 0;
+}
+
+/* Karta w karcie: powierzchnia z pierścieniem, kadr 6 px od krawędzi (promień 22 = 16 + 6). */
+.rg-card {
+  position: relative;
+  z-index: 3;
+  display: block;
+  border-radius: 1.375rem;
+  padding: 0.375rem;
+  background: var(--fm-surface);
+  box-shadow: var(--fm-shadow-card);
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  transition:
+    box-shadow 200ms ease,
+    translate 300ms var(--ease-fm-snap),
+    scale 160ms var(--ease-fm-snap);
+}
+
+.rg-card:active {
+  scale: 0.985;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .rg-card:hover {
+    box-shadow: var(--fm-shadow-pop);
+    translate: 0 -2px;
+  }
+}
+
+.rg-card__media {
+  position: relative;
+  display: block;
+  height: var(--rg-card-h);
+  width: calc(var(--rg-card-h) * var(--rg-ratio, 1.5));
+  max-width: 78vw;
+  overflow: hidden;
+  border-radius: 1rem;
+  background: var(--fm-fill);
+}
+
+.rg-card__video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 300ms ease;
+}
+
+.rg-card__video[data-playing] {
+  opacity: 1;
+}
+
+.rg-face--card {
+  border-radius: inherit;
+}
+
+.rg-card__twin-media {
+  border-radius: 1rem;
+}
+
+.rg-card__code {
+  position: absolute;
+  inset-inline: 0.625rem;
+  bottom: 0.375rem;
+  font-size: 0.5625rem;
+  line-height: 1.4;
+  color: var(--rg-c-base);
+}
+
+/* ——— Wideo: masonry ——— */
+
+.rg-masonry {
+  --rg-row: 0.5rem;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-auto-rows: var(--rg-row);
+  grid-auto-flow: row dense;
+  column-gap: 0.75rem;
+}
+
+.rg-masonry > li {
+  grid-row: span var(--rg-span, 26);
+  padding-bottom: 1.5rem;
+}
+
+@media (min-width: 40rem) {
+  .rg-masonry {
+    --rg-row: 0.625rem;
+    column-gap: 1rem;
+  }
+}
+
+@media (min-width: 64rem) {
+  .rg-masonry {
+    --rg-row: 0.75rem;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    column-gap: 1.5rem;
+  }
+  .rg-masonry > li {
+    padding-bottom: 2rem;
+  }
+}
+
+/* ——— Stopka: znak na 100vw ——— */
+
+/*
+ * Znak „Zeprzałka” od marginesu do marginesu: rozmiar z szerokości stopki (cqw)
+ * podzielonej przez zmierzoną szerokość tuszu słowa w em (Geist 600, światło
+ * −0,065 em: 4,137 em; tusz zaczyna się 0,025 em za punktem startu). Pod ogonkiem
+ * „p” zostaje oddech (0,17 em) — także przy maksymalnym przewinięciu.
+ */
+.rg-wordmark {
+  font-size: calc((100cqw - 2 * var(--fm-gutter)) / 4.15);
+  line-height: 0.9;
+  letter-spacing: -0.065em;
+  font-weight: 600;
+  text-align: left;
+  white-space: nowrap;
+  padding-inline-start: calc(var(--fm-gutter) - 0.025em);
+  padding-bottom: 0.17em;
+}
+
+.rg-footer {
+  container-type: inline-size;
+}
+
+/* Litery z cyfr: wzór 0/1 przycięty do kształtu liter; pod cyframi przesuwa się słabe światło. */
+.rg-wordmark--code {
+  margin: 0;
+  color: transparent;
+  background-image:
+    url("./code/digits.svg"),
+    linear-gradient(to bottom, transparent, oklch(1 0 0 / 0.22) 50%, transparent);
+  background-size:
+    8px 13.4px,
+    100% 40%;
+  background-repeat: repeat, no-repeat;
+  background-position:
+    0 0,
+    0 -80%;
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+.rg-face[data-on] .rg-wordmark--code,
+.rg[data-mode="code"] .rg-wordmark--code {
+  animation: rg-word-light 5s linear 2;
+}
+
+@keyframes rg-word-light {
+  to {
+    background-position:
+      0 0,
+      0 180%;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .rg[data-rg-js] .rg-wordmark[data-rg-in]:not([data-in]) {
+    opacity: 0;
+    filter: blur(18px);
+    translate: 0 6%;
+  }
+
+  .rg .rg-wordmark[data-rg-in] {
+    transition:
+      opacity 1200ms var(--rg-ease-text),
+      filter 1200ms var(--rg-ease-text),
+      translate 1200ms var(--rg-ease-text);
+  }
+}
+
+.rg-twin--wordmark {
+  box-shadow: none;
+}

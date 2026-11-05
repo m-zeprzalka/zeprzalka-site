@@ -17,7 +17,7 @@ React 19, TypeScript strict, Tailwind 4, shadcn/ui, pnpm, Vercel. Opis architekt
 4. **Wszystkie strony są statyczne.** Trasy z segmentem: `generateStaticParams` +
    `dynamicParams = false` (literał w pliku trasy). Nie czytamy `searchParams`.
 5. **Piaskownica `/demo` jest odizolowana.** Serwis nie importuje z `src/components/demo`
-   ani `src/app/demo` ani zależności piaskownicy (`motion`, `@number-flow/react`) —
+   ani `src/app/demo` ani zależności piaskownicy (`motion`, `@number-flow/react`, `gsap`, `ogl`) —
    ESLint to blokuje. Pliki tras dem mają końcówkę `.demo.tsx` (na produkcji tylko przy
    `DEMO_PUBLIC=1` — ustawione w Vercelu na czas prac nad wyglądem). Build z demami trzeba
    sprawdzić osobno (`VERCEL_ENV=production DEMO_PUBLIC=1 pnpm build`) — CI buduje bez nich.

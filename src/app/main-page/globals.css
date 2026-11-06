@@ -1,0 +1,206 @@
+/*
+ * Arkusz nowej wersji strony (src/app/main-page). Tylko tokeny systemu, kilka
+ * animacji i to, czego nie wyrażą klasy Tailwinda. Wygląd komponentów żyje
+ * w klasach — tutaj są wyłącznie wartości, z których te klasy korzystają.
+ *
+ * Skanujemy wyłącznie własny folder: klasy starej strony i piaskownicy nie
+ * trafiają do tego arkusza (i odwrotnie — patrz `@source not` w ich arkuszach).
+ */
+@import "tailwindcss" source(none);
+@import "tw-animate-css";
+
+@source "./";
+
+@custom-variant dark (&:is(.dark *));
+
+/* Tokeny shadcn (paleta neutral) — nazwy semantyczne, wartości w oklch. */
+:root {
+  --radius: 0.75rem;
+  --background: oklch(0.985 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.955 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.955 0 0);
+  --muted-foreground: oklch(0.5 0 0);
+  --accent: oklch(0.94 0 0);
+  --accent-foreground: oklch(0.205 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(0.91 0 0);
+  --input: oklch(0.91 0 0);
+  --ring: oklch(0.708 0 0);
+  --success: oklch(0.72 0.17 150);
+}
+
+.dark {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.19 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.19 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.985 0 0);
+  --primary-foreground: oklch(0.145 0 0);
+  --secondary: oklch(0.24 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.24 0 0);
+  --muted-foreground: oklch(0.65 0 0);
+  --accent: oklch(0.26 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 14%);
+  --ring: oklch(0.556 0 0);
+}
+
+@theme inline {
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --font-logo: var(--font-logo-symbols), var(--font-logo-math);
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-success: var(--success);
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+}
+
+/*
+ * Siatka: jedna wąska kolumna treści (`max-w-column`) na środku, a po bokach
+ * dwa tory — lewy na spis sekcji, prawy na kartę podglądu (od 1280 px).
+ * Margines strony jest równy odstępowi kolumny od toru.
+ */
+@theme {
+  --container-column: 40rem;
+  --spacing-page: 1.25rem;
+  --spacing-track: 2rem;
+
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+
+  --animate-enter: enter 560ms var(--ease-out) both;
+  --animate-fill: fill linear both;
+  --animate-peek-in: peek-in 240ms var(--ease-out) both;
+  --animate-peek-out: peek-out 200ms var(--ease-out) both;
+}
+
+@media (min-width: 48rem) {
+  :root {
+    --spacing-page: 2rem;
+  }
+}
+
+@media (min-width: 90rem) {
+  :root {
+    --container-column: 44rem;
+    --spacing-track: 3rem;
+  }
+}
+
+@media (min-width: 105rem) {
+  :root {
+    --container-column: 48rem;
+  }
+}
+
+/* Kolumna treści z marginesem strony — jedna oś dla nagłówka, sekcji i stopki. */
+@utility column {
+  margin-inline: auto;
+  width: 100%;
+  max-width: calc(var(--container-column) + 2 * var(--spacing-page));
+  padding-inline: var(--spacing-page);
+}
+
+/*
+ * Tekst wypełniany przewijaniem: każde dziecko akapitu (słowo albo fraza)
+ * przechodzi z szarości do koloru tekstu, gdy przejeżdża przez środek okna.
+ * Jedyny efekt sterowany przewijaniem — niewypełnione słowa są częścią wzoru.
+ */
+@utility scroll-fill {
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      & > * {
+        animation: var(--animate-fill);
+        animation-timeline: view();
+        animation-range: entry 70% cover 55%;
+      }
+    }
+  }
+}
+
+/* Wejście z rozmycia — nagłówek, tytuł, wideo i znak w stopce. */
+@keyframes enter {
+  from {
+    opacity: 0;
+    filter: blur(10px);
+    translate: 0 0.25em;
+  }
+}
+
+/* Karta podglądu: kolejna treść wyostrza się z lekkiego rozmycia, poprzednia gaśnie. */
+@keyframes peek-in {
+  from {
+    opacity: 0;
+    filter: blur(6px);
+  }
+}
+
+@keyframes peek-out {
+  to {
+    opacity: 0;
+    filter: blur(6px);
+  }
+}
+
+/* Tekst „O mnie” wypełnia się przy przewijaniu (każde słowo osobno). */
+@keyframes fill {
+  from {
+    color: var(--muted-foreground);
+    opacity: 0.45;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  html {
+    scroll-padding-top: 5rem;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
+  }
+}

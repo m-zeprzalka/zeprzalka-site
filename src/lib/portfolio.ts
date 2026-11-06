@@ -27,6 +27,8 @@ export interface PortfolioItem {
   /** Zapętlony kadr; bez niego kafel pokazuje sam plakat (zrzut serwisu). */
   video?: string
   poster: string
+  /** Wymiary plakatu (px) — kadr rezerwuje miejsce bez mierzenia w przeglądarce. */
+  posterSize: readonly [width: number, height: number]
   /** Krótki opis (jedno zdanie) — na razie tylko przy produktach z działającym adresem. */
   description?: Localized<string>
   /** Działający serwis — kafel prowadzi do niego. */
@@ -97,6 +99,7 @@ export const portfolioItems: PortfolioItem[] = [
     category: { pl: "Produkt AI", en: "AI product" },
     group: "produkty",
     poster: "/portfolio/aifeed.webp",
+    posterSize: [1200, 750],
     url: "https://www.aifeed.pl",
     description: {
       pl: "Serwis, który agreguje, tworzy i udostępnia wiadomości o AI, badaniach i raportach po polsku.",
@@ -109,6 +112,7 @@ export const portfolioItems: PortfolioItem[] = [
     category: { pl: "Design system", en: "Design system" },
     group: "produkty",
     poster: "/portfolio/prfct.webp",
+    posterSize: [1200, 750],
     url: "https://www.prfct.dev",
     description: {
       pl: "Otwarty design system dla Reacta: tokeny z kontrastem liczonym przy buildzie, dostępne komponenty i dokumentacja.",
@@ -121,6 +125,7 @@ export const portfolioItems: PortfolioItem[] = [
     category: { pl: "SaaS z AI", en: "AI SaaS" },
     group: "produkty",
     poster: "/portfolio/brandmaker.webp",
+    posterSize: [1200, 750],
     url: "https://brandmaker-landing.vercel.app",
     description: {
       pl: "Cyfrowa agencja brandingowa oparta na AI: logo, brandbook i identyfikacja wizualna w kilka minut.",
@@ -133,6 +138,7 @@ export const portfolioItems: PortfolioItem[] = [
     category: { pl: "Serwis rankingowy", en: "Rankings website" },
     group: "produkty",
     poster: "/portfolio/fizjorank.webp",
+    posterSize: [1200, 750],
     url: "https://fizjorank.pl",
     description: {
       pl: "Ranking ośrodków rehabilitacji dziecięcej: porównanie placówek i metod terapii.",
@@ -150,6 +156,7 @@ export const portfolioItems: PortfolioItem[] = [
     group: "web",
     video: "/orlen-min.mp4",
     poster: "/portfolio/orlen-min.webp",
+    posterSize: [720, 466],
     featured: true,
   },
   {
@@ -159,6 +166,7 @@ export const portfolioItems: PortfolioItem[] = [
     group: "web",
     video: "/vinci-facilities.mp4",
     poster: "/portfolio/vinci-facilities.webp",
+    posterSize: [720, 566],
     featured: true,
   },
   {
@@ -168,6 +176,7 @@ export const portfolioItems: PortfolioItem[] = [
     group: "web",
     video: "/spartanie-dzieciom.mp4",
     poster: "/portfolio/spartanie-dzieciom.webp",
+    posterSize: [720, 566],
     featured: true,
   },
   {
@@ -177,6 +186,7 @@ export const portfolioItems: PortfolioItem[] = [
     group: "web",
     video: "/orlen-paczka.mp4",
     poster: "/portfolio/orlen-paczka.webp",
+    posterSize: [720, 850],
     featured: true,
   },
   {
@@ -186,6 +196,7 @@ export const portfolioItems: PortfolioItem[] = [
     group: "web",
     video: "/ip.mp4",
     poster: "/portfolio/ip.webp",
+    posterSize: [720, 850],
     featured: true,
   },
   {
@@ -195,6 +206,7 @@ export const portfolioItems: PortfolioItem[] = [
     group: "web",
     video: "/innowator-mazowsza.mp4",
     poster: "/portfolio/innowator-mazowsza.webp",
+    posterSize: [720, 566],
     featured: true,
   },
   {
@@ -204,6 +216,7 @@ export const portfolioItems: PortfolioItem[] = [
     group: "web",
     video: "/berbecki-min.mp4",
     poster: "/portfolio/berbecki-min.webp",
+    posterSize: [720, 466],
     featured: true,
   },
   {
@@ -213,6 +226,7 @@ export const portfolioItems: PortfolioItem[] = [
     group: "web",
     video: "/onelook-min.mp4",
     poster: "/portfolio/onelook-min.webp",
+    posterSize: [720, 406],
     featured: true,
   },
 
@@ -229,6 +243,7 @@ export const portfolioItems: PortfolioItem[] = [
     group: "wideo",
     video: "/Polish-Ukrainian-Israeli-Tech-Summit.mp4",
     poster: "/portfolio/Polish-Ukrainian-Israeli-Tech-Summit.webp",
+    posterSize: [720, 850],
   },
   {
     slug: "white-paintings-black-paintings",
@@ -240,6 +255,7 @@ export const portfolioItems: PortfolioItem[] = [
     group: "wideo",
     video: "/White-Paintings-Black-Paintings.mp4",
     poster: "/portfolio/White-Paintings-Black-Paintings.webp",
+    posterSize: [720, 850],
   },
   {
     slug: "cellove",
@@ -248,6 +264,7 @@ export const portfolioItems: PortfolioItem[] = [
     group: "wideo",
     video: "/cellove.mp4",
     poster: "/portfolio/cellove.webp",
+    posterSize: [720, 850],
   },
   {
     slug: "banana-socks",
@@ -256,6 +273,7 @@ export const portfolioItems: PortfolioItem[] = [
     group: "wideo",
     video: "/banana-socks-min.mp4",
     poster: "/portfolio/banana-socks-min.webp",
+    posterSize: [720, 850],
   },
   {
     slug: "realizacje-motoryzacyjne",
@@ -264,6 +282,7 @@ export const portfolioItems: PortfolioItem[] = [
     group: "wideo",
     video: "/Realizacje-motoryzacyjne.mp4",
     poster: "/portfolio/Realizacje-motoryzacyjne.webp",
+    posterSize: [720, 850],
   },
   {
     slug: "content-sport",
@@ -272,6 +291,7 @@ export const portfolioItems: PortfolioItem[] = [
     group: "wideo",
     video: "/content-sport.mp4",
     poster: "/portfolio/content-sport.webp",
+    posterSize: [720, 850],
   },
   {
     slug: "rolki-lifestyle",
@@ -280,6 +300,7 @@ export const portfolioItems: PortfolioItem[] = [
     group: "wideo",
     video: "/rolki-lifestyle.mp4",
     poster: "/portfolio/rolki-lifestyle.webp",
+    posterSize: [720, 850],
   },
 ]
 

@@ -26,6 +26,38 @@ const eslintConfig = [
               message:
                 "Piaskownica /demo nie może być importowana przez serwis (src/components/demo/README.md).",
             },
+            {
+              group: ["@/app/main-page/*"],
+              message:
+                "Nowa wersja (src/app/main-page) nie jest jeszcze częścią serwisu — przepięcie opisuje jej README.",
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
+    // Nowa wersja strony (src/app/main-page/README.md): własne `ui/` z shadcn, bez starych
+    // komponentów i bez piaskownicy. Z serwisu wolno brać treść (`@/i18n`), logikę (`@/lib`) i hooki.
+    files: ["src/app/main-page/**"],
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          patterns: [
+            {
+              regex: "^(@number-flow/[^/]+|gsap|ogl)(/.*)?$",
+              message: "Ta zależność jest tylko w piaskownicy /demo.",
+            },
+            {
+              group: ["@/components/*"],
+              message:
+                "Nowa wersja ma własne komponenty w src/app/main-page/_components (shadcn w _components/ui).",
+            },
+            {
+              group: ["@/components/demo/*", "@/app/demo/*", "**/demo/**"],
+              message: "Nowa wersja nie importuje piaskownicy /demo.",
+            },
           ],
         },
       ],

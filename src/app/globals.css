@@ -8,6 +8,8 @@
  */
 @source not "./demo";
 @source not "../components/demo";
+/* Nowa wersja strony ma własny arkusz (src/app/main-page/globals.css). */
+@source not "./main-page";
 
 /*
  * Ciemny motyw jest pojęciem ekranowym: na wydruku nie działa ani paleta

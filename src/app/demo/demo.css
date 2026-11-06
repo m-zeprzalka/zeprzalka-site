@@ -7,6 +7,9 @@
 @import "tw-animate-css";
 @import "../../components/demo/forma/theme.css";
 
+/* Nowa wersja strony (src/app/main-page) ma własny arkusz. */
+@source not "../main-page";
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {

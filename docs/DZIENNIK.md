@@ -6,6 +6,62 @@ w `docs/prywatne/` (poza repozytorium). Iteracja bez wpisu tutaj nie jest skońc
 
 ---
 
+## Iteracja 8 — 6 listopada 2026: nowa strona główna na shadcn (`src/app/main-page`)
+
+Zakres od właściciela: koniec nowych koncepcji. Strona główna w kanonie Indeksu (`/demo/indeks-1`)
+przepisana od zera jako kod produkcyjny — shadcn i Tailwind nadrzędnie, semantyka i SEO, tylko
+polska wersja. Decyzje i plan przepięcia: `src/app/main-page/README.md`.
+
+**Architektura:**
+- `src/app/main-page/` to lustro `src/app` (trasy `.demo.tsx`, własne układy główne, `globals.css`
+  z tokenami shadcn);
+- prywatne foldery `_components`, `_lib`, `_variants` (wariant 1);
+- komponenty shadcn instalowane CLI do `_components/ui` (`components.json` wskazuje tam), zmiany
+  systemowe oznaczone `// zeprzalka:`: pigułki, pola 44 px, „+/−” w akordeonie, okna bez krzyżyka,
+  wyraźny stan zaznaczenia przełączników;
+- treść tylko z `src/i18n` i `src/lib` — nowy moduł `content/main-page.ts` (pl + en) z napisami
+  interfejsu, frazami otwierającymi karty i liczbami;
+- frazy w tekście są weryfikowane przy buildzie;
+- `posterSize` w danych portfolio;
+- ESLint pilnuje izolacji w obie strony;
+- `motion` przeniesione do zależności (na razie nieużywane);
+- doszły `cmdk` i `vaul` (z komponentami shadcn).
+
+**Poprawki właściciela wdrożone:**
+- Nagłówek:
+  - logo minimalnie większe, glif w stałym pudełku z własnym krojem;
+  - tło nagłówka to samo rozmycie z maską gradientu, bez kreski.
+- Wyszukiwarka ⌘K:
+  - na telefonie nie włącza klawiatury;
+  - od tabletu ma szerokość kolumny;
+  - ⌘/Ctrl ustawiane przed malowaniem;
+  - fokus wraca do przycisku.
+- Motyw i język:
+  - zmiana motywu bez animacji (shadcn);
+  - przełącznik PL/EN.
+- Karty podglądu:
+  - ten sam wygląd na najechanie i po kliknięciu, bez krzyżyka;
+  - na telefonie popover na szerokość kolumny;
+  - morf między frazami (płynięcie, wysokość, przenikanie z rozmyciem);
+  - bez fal znaków w tekście.
+- Wideo startu wyłania się z druku ze znaków (wzór kart z `/demo/glif`), jedyny efekt znaków w MVP.
+- Kompetencje: treść otwartej karty od ikony do „+”.
+- Stopka:
+  - X pierwszy, chipy klikalne w całości;
+  - „Zeprzałka” na 100% szerokości okna z rozmycia.
+
+**Sprawdzone:**
+- 360–1920 px w obu motywach, 0 poziomego przewijania;
+- krawędzie elementów na liniach kolumny;
+- „ogranicz ruch”, klawiatura i fokus;
+- `pnpm check` i build z podglądem w czystej kopii;
+- JS na start 222 KB gzip (obecna strona 209 KB, sama baza frameworka ok. 168 KB); wyszukiwarka
+  (`cmdk`, `vaul`) i popover kart ładują się dopiero przy użyciu;
+- treść zamkniętych akordeonów (kompetencje, realizacje) jest w HTML (`forceMount`), ale poza
+  kolejnością Tab.
+
+---
+
 ## Iteracja 7 — 5 listopada 2026: wersje bliskie wyboru i wspólny silnik znaków
 
 Zakres od właściciela: ostatnia pętla przed wdrożeniem. Wygrywa wąski Indeks — powstają dwie

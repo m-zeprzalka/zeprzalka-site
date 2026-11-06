@@ -12,9 +12,11 @@ publiczne (bezpieczeństwo, marketing), są w `docs/prywatne/` — tutaj tylko o
 
 Plan i budżet jakości: [KIERUNEK-WIZUALNY.md](KIERUNEK-WIZUALNY.md) §3.
 
-- [ ] **[Ty]** Wybór z wersji iteracji 7 (https://www.zeprzalka.com/demo — Indeks · I, Indeks · II,
-      The Best Of · II, wersja autorska), ewentualnie test A/B dwóch Indeksów; ustawienia znaków
-      do wyboru w `src/components/demo/shared/glyph/settings.ts` — KIERUNEK §2–4.
+- [ ] **[Ty]** Testy ręczne i na telefonie nowej strony głównej `/main-page` (wariant 1, kanon
+      Indeksu na shadcn) — uwagi do kolejnej iteracji; decyzje i przepięcie w
+      `src/app/main-page/README.md`.
+- [ ] **[Kod]** Po akceptacji wariantu 1: ewentualnie warianty 2–3 do testów A/B, wersja
+      angielska, potem podstrony na nowym systemie (etapy w README `main-page`).
 - [ ] **[Ty]** Tekst w serwisie: „Wykładowca akademicki 2016–2026” w `/o-mnie` i CV → „2016–obecnie”
       (wykłady trwają), a zdania o WSR i Civitas w czasie przeszłym; X (`x.com/zeprzalka_com`)
       w profilach serwisu — w demach już jest, w serwisie dopiero na Twoją prośbę.

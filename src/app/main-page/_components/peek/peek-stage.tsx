@@ -1,107 +1,146 @@
 "use client"
 
 import { useEffect, useLayoutEffect, useRef, useState } from "react"
+import { HEADER_OFFSET } from "@/app/main-page/_lib/anchors"
 import { cn } from "@/lib/utils"
 import { PeekCard } from "./peek-card"
-import { usePeek } from "./peek-context"
+import { usePeekActions, usePeekState } from "./peek-context"
 
 export const STAGE_ID = "podglad"
 
 /** Karta trzyma się pod nagłówkiem i nad dolną krawędzią okna. */
-const TOP = 88
+const TOP = HEADER_OFFSET + 8
 const BOTTOM = 24
-/** Wierzch karty stoi odrobinę nad linią frazy — oko czyta je jako parę. */
-const LIFT = 12
+/** Tyle gaśnie karta (`duration-500` ramki). Schowana dłużej — pojawia się od razu przy kursorze. */
+const FADE_MS = 500
 
 /**
- * Karta podglądu w prawym torze (desktop z myszą od 1280 px). Płynie za
- * wskazaną frazą (przejście CSS na `translate`, bez przerysowań Reacta przy
- * przewijaniu), dopasowuje wysokość do kolejnej treści, a poprzednia treść
- * gaśnie w rozmyciu, gdy nowa się wyostrza — morf zamiast przeskoku.
+ * Karta podglądu w prawym torze (desktop z myszą od 1280 px), widoczna tylko
+ * na czas najechania albo fokusu.
+ * - Pionowo stoi środkiem przy kursorze i płynie za nim (przejście CSS na
+ *   `translate`, przerywane przy każdym ruchu — zero pętli JS); przy fokusie
+ *   z klawiatury stoi przy elemencie.
+ * - Wysokość płynnie dopasowuje się do kolejnej treści (kadry w naturalnych
+ *   proporcjach), a poprzednia treść gaśnie w rozmyciu, gdy nowa się wyostrza.
+ * Wizualne uzupełnienie treści strony: `inert` — poza drzewem dostępności
+ * i kolejnością Tab. Klawiatura i czytnik dostają tę samą kartę jako popover
+ * (`PeekTrigger`).
  */
 export function PeekStage() {
-  const { peeks, stage, state } = usePeek()
+  const { peeks, stage } = usePeekActions()
+  const state = usePeekState()
   const frame = useRef<HTMLDivElement>(null)
   const body = useRef<HTMLDivElement>(null)
+  /** Ostatnia pozycja kursora w pionie — karta pojawia się od razu tam, gdzie on jest. */
+  const pointerY = useRef(0)
+  /** Od kiedy karta jest schowana (`null` — widoczna). */
+  const hiddenAt = useRef<number | null>(-Infinity)
   const [height, setHeight] = useState(0)
-  const [shown, setShown] = useState<{ id: string | null; leaving: string | null }>({
+  const [layers, setLayers] = useState<{ id: string | null; leaving: string | null }>({
     id: null,
     leaving: null,
   })
 
   // Zmiana treści: poprzednia zostaje na chwilę jako warstwa gasnąca.
-  if (shown.id !== state.id) setShown({ id: state.id, leaving: shown.id })
+  if (layers.id !== state.id) setLayers({ id: state.id, leaving: layers.id })
 
-  // Wysokość karty = wysokość bieżącej treści (płynna zmiana przez `transition-[height]`).
   useLayoutEffect(() => {
     const node = body.current
     if (!node) return
     const observer = new ResizeObserver(() => setHeight(node.offsetHeight))
     observer.observe(node)
     return () => observer.disconnect()
-  }, [shown.id])
+  }, [layers.id])
 
-  // Położenie: za kotwicą przy przewijaniu i zmianie rozmiaru okna.
   useEffect(() => {
-    const element = frame.current
-    const anchor = state.anchor
-    if (!element || !anchor) return
-    const place = () => {
-      const top = anchor.getBoundingClientRect().top - LIFT
-      const max = window.innerHeight - element.offsetHeight - BOTTOM
-      element.style.translate = `0 ${Math.round(Math.max(TOP, Math.min(top, max)))}px`
+    if (!stage) return
+    const track = (event: PointerEvent) => {
+      pointerY.current = event.clientY
     }
-    // Pierwsze pojawienie się bez dojazdu — karta staje od razu przy frazie.
-    if (element.dataset.visible !== "true") {
-      element.style.transition = "none"
-      place()
-      void element.offsetHeight
-      element.style.transition = ""
-    } else place()
+    window.addEventListener("pointermove", track, { passive: true })
+    return () => window.removeEventListener("pointermove", track)
+  }, [stage])
+
+  // Pojawienie się po przerwie: karta staje od razu przy kursorze (gaśnie tylko
+  // przezroczystość) i od razu w swojej wysokości — bez dojazdu z poprzedniego
+  // miejsca i bez zmiany rozmiaru po drodze. Przejścia wracają po dwóch klatkach.
+  const visible = layers.id !== null
+  useLayoutEffect(() => {
+    const element = frame.current
+    if (!element) return
+    if (!visible) {
+      hiddenAt.current = performance.now()
+      return
+    }
+    const since = hiddenAt.current
+    hiddenAt.current = null
+    if (since === null || performance.now() - since < FADE_MS) return
+    element.dataset.appearing = ""
+    let next = requestAnimationFrame(() => {
+      next = requestAnimationFrame(() => delete element.dataset.appearing)
+    })
+    return () => cancelAnimationFrame(next)
+  }, [visible, stage])
+
+  useLayoutEffect(() => {
+    const element = frame.current
+    const { anchor, via, id } = state
+    if (!element || !id || !anchor) return
+    const place = () => {
+      const box = anchor.getBoundingClientRect()
+      const center = via === "focus" ? box.top + box.height / 2 : pointerY.current
+      const max = window.innerHeight - BOTTOM - element.offsetHeight
+      const top = Math.max(TOP, Math.min(center - element.offsetHeight / 2, max))
+      element.style.translate = `0 ${Math.round(top)}px`
+    }
+    place()
+    const onMove = (event: PointerEvent) => event.pointerType === "mouse" && place()
+    window.addEventListener("pointermove", onMove, { passive: true })
     window.addEventListener("scroll", place, { passive: true })
     window.addEventListener("resize", place)
     return () => {
+      window.removeEventListener("pointermove", onMove)
       window.removeEventListener("scroll", place)
       window.removeEventListener("resize", place)
     }
-  }, [state.anchor, height])
+  }, [state, height])
 
   if (!stage) return null
 
-  const current = shown.id ? peeks[shown.id] : undefined
-  const leaving = shown.leaving ? peeks[shown.leaving] : undefined
-  const visible = Boolean(current)
+  const current = layers.id ? peeks[layers.id] : undefined
+  const leaving = layers.leaving ? peeks[layers.leaving] : undefined
 
   return (
     <div
       ref={frame}
       id={STAGE_ID}
-      data-peek-stage=""
-      data-visible={visible}
-      aria-live={state.pinned ? "polite" : "off"}
+      inert
       className={cn(
-        "fixed top-0 z-30 transition-[translate,opacity] duration-500 ease-(--ease-out)",
+        "pointer-events-none fixed top-0 z-30 transition-[translate,opacity] duration-500 ease-out data-appearing:transition-opacity data-instant:transition-none",
         "left-[calc(50%+var(--container-column)/2+var(--spacing-track))] w-[min(24rem,calc(50%-var(--container-column)/2-2*var(--spacing-track)))]",
-        visible ? "opacity-100" : "pointer-events-none opacity-0",
-        !state.pinned && "pointer-events-none"
+        current ? "opacity-100" : "opacity-0"
       )}
     >
       <div
         style={{ height: height || undefined }}
-        className="relative overflow-hidden rounded-2xl border bg-popover text-popover-foreground shadow-lg transition-[height] duration-300 ease-(--ease-out)"
+        className="relative overflow-hidden rounded-2xl border bg-popover text-popover-foreground shadow-lg transition-[height] duration-300 ease-out in-data-appearing:transition-none"
       >
         {leaving && (
           <div
-            key={`out-${shown.leaving}`}
-            aria-hidden="true"
-            className="animate-peek-out absolute inset-x-0 top-0"
-            onAnimationEnd={() => setShown((value) => ({ ...value, leaving: null }))}
+            key={`out-${layers.leaving}`}
+            className="absolute inset-x-0 top-0 animate-peek-out"
+            onAnimationEnd={() => setLayers((value) => ({ ...value, leaving: null }))}
           >
             <PeekCard peek={leaving} play={false} />
           </div>
         )}
         {current && (
-          <div key={`in-${shown.id}`} ref={body} className="animate-peek-in">
+          <div
+            key={`in-${layers.id}`}
+            ref={body}
+            data-peek-layer={layers.id ?? undefined}
+            className="animate-peek-in"
+          >
             <PeekCard peek={current} play />
           </div>
         )}

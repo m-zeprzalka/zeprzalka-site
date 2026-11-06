@@ -8,7 +8,15 @@
   "overrides": [
     {
       "files": ["src/components/demo/**", "src/app/demo/**"],
-      "options": { "tailwindStylesheet": "./src/app/demo/demo.css" }
+      "options": {
+        "tailwindStylesheet": "./src/app/demo/demo.css"
+      }
+    },
+    {
+      "files": ["src/app/main-page/**"],
+      "options": {
+        "tailwindStylesheet": "./src/app/main-page/globals.css"
+      }
     }
   ]
 }

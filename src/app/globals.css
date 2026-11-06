@@ -26,7 +26,7 @@
 
 /* Półprzezroczyste tło z rozmyciem — pasek postępu, nagłówek, stopka. */
 @utility surface-glass {
-  @apply bg-background/65 backdrop-blur supports-[backdrop-filter]:bg-background/60;
+  @apply bg-background/65 backdrop-blur supports-backdrop-filter:bg-background/60;
 }
 
 /* Kontener treści podstron — ten sam rytm odstępów na każdej z nich. */

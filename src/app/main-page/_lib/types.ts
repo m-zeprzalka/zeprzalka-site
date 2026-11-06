@@ -1,6 +1,6 @@
 /**
- * Kształty danych, które serwer (`content.ts`) podaje komponentom. Same typy —
- * żadnych importów treści, więc plik może trafić do paczki klienta.
+ * Kształty danych, które serwer (`_lib/content/*`) podaje komponentom. Same
+ * typy — żadnych importów treści, więc plik może trafić do paczki klienta.
  */
 
 export interface Media {
@@ -19,8 +19,9 @@ export interface Link {
 }
 
 /**
- * Karta podglądu: jeden wygląd na najechanie, po kliknięciu i na telefonie.
- * Media (0–3) na górze, potem tytuł, opis albo oś czasu i link.
+ * Karta podglądu — ten sam wygląd na marginesie (desktop) i w popoverze
+ * (dotyk). Kadr w naturalnych proporcjach (albo mozaika), pod nim podpis,
+ * opis albo oś czasu i link.
  */
 export interface Peek {
   title: string
@@ -76,6 +77,7 @@ export interface Post {
   /** „02.11” — dzień i miesiąc; rok stoi w kolumnie grupy. */
   day: string
   iso: string
+  cover: Media
   isNew: boolean
 }
 
@@ -84,12 +86,15 @@ export interface SectionLink {
   label: string
 }
 
+export type SearchItemIcon = "section" | "work" | "post" | "page" | "email" | "theme"
+
 export interface SearchItem {
   id: string
   label: string
+  icon: SearchItemIcon
   /** Druga kolumna wiersza: kategoria, data, adres. */
   hint?: string
-  /** Podgląd obok listy (od tabletu): miniatura i jedno zdanie. */
+  /** Podgląd obok listy (od tabletu) i miniatura w wierszu. */
   thumb?: string
   detail?: string
   href?: string

@@ -11,7 +11,21 @@
 
 @source "./";
 
-@custom-variant dark (&:is(.dark *));
+/*
+ * Ciemny motyw tylko na ekranie: na wydruku ani paleta `.dark`, ani `dark:`
+ * nie działają (next-themes zostawia klasę na <html>) — nigdy jasny tekst
+ * na białym papierze. Ten sam wzór co w arkuszu serwisu.
+ */
+/* Desktop z myszą od 1280 px: karta podglądu na marginesie — to samo zapytanie co `STAGE_QUERY` (_lib/hooks.ts). */
+@custom-variant stage (@media (min-width: 80rem) and (hover: hover) and (pointer: fine));
+
+@custom-variant dark {
+  @media not print {
+    &:is(.dark *) {
+      @slot;
+    }
+  }
+}
 
 /* Tokeny shadcn (paleta neutral) — nazwy semantyczne, wartości w oklch. */
 :root {
@@ -37,25 +51,27 @@
   --success: oklch(0.72 0.17 150);
 }
 
-.dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.19 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.19 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.985 0 0);
-  --primary-foreground: oklch(0.145 0 0);
-  --secondary: oklch(0.24 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.24 0 0);
-  --muted-foreground: oklch(0.65 0 0);
-  --accent: oklch(0.26 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 14%);
-  --ring: oklch(0.556 0 0);
+@media not print {
+  .dark {
+    --background: oklch(0.145 0 0);
+    --foreground: oklch(0.985 0 0);
+    --card: oklch(0.19 0 0);
+    --card-foreground: oklch(0.985 0 0);
+    --popover: oklch(0.19 0 0);
+    --popover-foreground: oklch(0.985 0 0);
+    --primary: oklch(0.985 0 0);
+    --primary-foreground: oklch(0.145 0 0);
+    --secondary: oklch(0.24 0 0);
+    --secondary-foreground: oklch(0.985 0 0);
+    --muted: oklch(0.24 0 0);
+    --muted-foreground: oklch(0.65 0 0);
+    --accent: oklch(0.26 0 0);
+    --accent-foreground: oklch(0.985 0 0);
+    --destructive: oklch(0.704 0.191 22.216);
+    --border: oklch(1 0 0 / 10%);
+    --input: oklch(1 0 0 / 14%);
+    --ring: oklch(0.556 0 0);
+  }
 }
 
 @theme inline {
@@ -82,6 +98,8 @@
   --color-input: var(--input);
   --color-ring: var(--ring);
   --color-success: var(--success);
+  /* Czerń druku ze znaków (kadr startu) — ta sama w obu motywach; canvas: `GLYPH_REVEAL.paper`. */
+  --color-print: #0b0b0b;
 
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -100,13 +118,18 @@
   --spacing-page: 1.25rem;
   --spacing-track: 2rem;
 
+  /* Ruch: wyjście z rozmycia i płynięcie — jedna krzywa dla całej strony. */
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
 
-  --animate-enter: enter 560ms var(--ease-out) both;
-  --animate-fill: fill linear both;
-  --animate-peek-in: peek-in 240ms var(--ease-out) both;
-  --animate-peek-out: peek-out 200ms var(--ease-out) both;
+  /* `backwards`: przed startem stan początkowy, po końcu — bez śladu (żadnego `filter`). */
+  --animate-enter: enter 540ms var(--ease-out) backwards;
+  --animate-peek-in: peek-in 240ms var(--ease-out) backwards;
+  --animate-peek-out: peek-out 200ms var(--ease-out) forwards;
+  --animate-draw: draw 450ms var(--ease-in-out) 150ms backwards;
+  /* Akordeon: wysokość z pomiaru Radix; przed pomiarem (bez hydratacji) — zero, nie `auto`. */
+  --animate-expand: expand 200ms var(--ease-out);
+  --animate-collapse: collapse 200ms var(--ease-out);
 }
 
 @media (min-width: 48rem) {
@@ -137,32 +160,70 @@
 }
 
 /*
- * Tekst wypełniany przewijaniem: każde dziecko akapitu (słowo albo fraza)
- * przechodzi z szarości do koloru tekstu, gdy przejeżdża przez środek okna.
- * Jedyny efekt sterowany przewijaniem — niewypełnione słowa są częścią wzoru.
+ * Wejście słowo po słowie: dzieci z indeksem `--i` (`<Segments split="block">`)
+ * wyostrzają się z rozmycia; start i krok ustawia rodzic (`--enter-delay`,
+ * `--enter-step`). Dzieci muszą być `inline-block` — inaczej `translate` nie działa.
+ */
+@utility enter-stagger {
+  @media (prefers-reduced-motion: no-preference) {
+    & > * {
+      animation: var(--animate-enter);
+      animation-delay: calc(var(--enter-delay, 0ms) + var(--i, 0) * var(--enter-step, 24ms));
+    }
+  }
+}
+
+/*
+ * Tekst wypełniany przewijaniem (wyjątek reguły ruchu — niewypełnione słowa są
+ * częścią wzoru): akapit to jedna oś czasu (`view-timeline`), a fala koloru idzie
+ * po słowach z indeksem `--i` z `--n`, gdy akapit przejeżdża przez okno.
  */
 @utility scroll-fill {
+  view-timeline: --fill block;
+
   @supports (animation-timeline: view()) {
     @media (prefers-reduced-motion: no-preference) {
       & > * {
-        animation: var(--animate-fill);
-        animation-timeline: view();
-        animation-range: entry 70% cover 55%;
+        animation: fill linear both;
+        animation-timeline: --fill;
+        animation-range: cover calc(12% + var(--i) * 38% / var(--n)) cover
+          calc(12% + (var(--i) + 3) * 38% / var(--n));
       }
     }
   }
 }
 
-/* Wejście z rozmycia — nagłówek, tytuł, wideo i znak w stopce. */
-@keyframes enter {
-  from {
-    opacity: 0;
-    filter: blur(10px);
-    translate: 0 0.25em;
+/*
+ * Litera napisu w trakcie przebiegu (`GlyphText`): znak sygnetu rysuje `::after`,
+ * litera pod spodem trzyma szerokość. Tekst alternatywny `/ ""` — czytniki
+ * czytają literę, nie znak.
+ */
+@utility glyph-text {
+  & [data-glyph] {
+    position: relative;
+    color: transparent;
+  }
+
+  & [data-glyph]::after {
+    content: attr(data-glyph) / "";
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    font-family: var(--font-logo);
+    font-weight: 400;
+    color: var(--muted-foreground);
   }
 }
 
-/* Karta podglądu: kolejna treść wyostrza się z lekkiego rozmycia, poprzednia gaśnie. */
+@keyframes enter {
+  from {
+    opacity: 0;
+    filter: blur(8px);
+    translate: 0 0.3em;
+  }
+}
+
 @keyframes peek-in {
   from {
     opacity: 0;
@@ -177,12 +238,58 @@
   }
 }
 
-/* Tekst „O mnie” wypełnia się przy przewijaniu (każde słowo osobno). */
+/* Niewypełnione słowo: 45% koloru tekstu — fala jest wyraźna, a kontrast dużego tekstu ≥ 3:1 (WCAG). */
 @keyframes fill {
   from {
-    color: var(--muted-foreground);
-    opacity: 0.45;
+    color: color-mix(in oklab, var(--foreground) 45%, transparent);
   }
+}
+
+@keyframes expand {
+  from {
+    height: 0;
+  }
+  to {
+    height: var(--radix-accordion-content-height, auto);
+  }
+}
+
+@keyframes collapse {
+  from {
+    height: var(--radix-accordion-content-height, 0);
+  }
+  to {
+    height: 0;
+  }
+}
+
+@keyframes draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+}
+
+/*
+ * Przelot kadru z karty na marginesie do panelu realizacji (`_lib/morph.ts`):
+ * leci tylko kadr, reszta strony zmienia się od razu, bez przenikania.
+ */
+::view-transition-old(root) {
+  display: none;
+}
+
+::view-transition-new(root) {
+  animation: none;
+}
+
+::view-transition-group(peek-media) {
+  animation-duration: 480ms;
+  animation-timing-function: var(--ease-out);
+}
+
+::view-transition-old(peek-media),
+::view-transition-new(peek-media) {
+  height: 100%;
+  object-fit: cover;
 }
 
 @layer base {
@@ -190,6 +297,7 @@
     @apply border-border outline-ring/50;
   }
 
+  /* Odstęp kotwic pod przyklejonym nagłówkiem — ta sama wartość co `HEADER_OFFSET` (_lib/anchors.ts). */
   html {
     scroll-padding-top: 5rem;
   }
@@ -198,9 +306,31 @@
     @apply bg-background text-foreground;
   }
 
+  /* Cel skoku do kotwicy dostaje fokus programowo (`goToAnchor`) — bez obwódki wokół całej sekcji. */
+  [tabindex="-1"]:focus {
+    outline: none;
+  }
+
   @media (prefers-reduced-motion: no-preference) {
     html {
       scroll-behavior: smooth;
+    }
+  }
+
+  /*
+   * „Ogranicz ruch” w jednym miejscu: każde przejście i animacja kończy się od
+   * razu w stanie końcowym. 1 ms zamiast zera, bo `animationend` i
+   * `transitionend` muszą nadal przyjść (Radix, warstwy karty podglądu).
+   */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    ::before,
+    ::after {
+      animation-duration: 1ms !important;
+      animation-delay: 0ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 1ms !important;
+      transition-delay: 0ms !important;
     }
   }
 }

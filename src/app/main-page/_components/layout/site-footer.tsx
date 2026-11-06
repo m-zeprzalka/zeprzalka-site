@@ -16,6 +16,7 @@ export function SiteFooter({
   city,
   localTimeLabel,
   newTabLabel,
+  locale,
 }: {
   copyright: string
   profilesHeading: string
@@ -24,28 +25,32 @@ export function SiteFooter({
   city: string
   localTimeLabel: string
   newTabLabel: string
+  locale: string
 }) {
   return (
     <footer className="mt-40 overflow-hidden">
       <div className="column flex flex-col-reverse gap-6 pb-10 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
         <p className="flex flex-wrap gap-x-3 gap-y-1">
           <span>{copyright}</span>
-          <LocalTime city={city} label={localTimeLabel} />
+          <LocalTime city={city} label={localTimeLabel} locale={locale} />
         </p>
         <nav aria-label={profilesHeading}>
-          <ul className="flex flex-wrap gap-2">
-            {profiles.map((profile) => (
-              <li key={profile.href}>
-                <Button asChild variant="secondary" size="sm">
-                  <a href={profile.href} target="_blank" rel="noopener noreferrer me">
-                    {profile.label}
-                    <ArrowUpRightIcon />
-                    <span className="sr-only">({newTabLabel})</span>
-                  </a>
-                </Button>
-              </li>
-            ))}
-          </ul>
+          {/* Profile to kontakt z autorem strony — `address` (bez kursywy przeglądarki). */}
+          <address className="not-italic">
+            <ul className="flex flex-wrap gap-2">
+              {profiles.map((profile) => (
+                <li key={profile.href}>
+                  <Button asChild variant="secondary" size="sm">
+                    <a href={profile.href} target="_blank" rel="noopener noreferrer me">
+                      {profile.label}
+                      <ArrowUpRightIcon />
+                      <span className="sr-only">({newTabLabel})</span>
+                    </a>
+                  </Button>
+                </li>
+              ))}
+            </ul>
+          </address>
         </nav>
       </div>
       <div className="px-2 pb-2 sm:px-3 sm:pb-3">

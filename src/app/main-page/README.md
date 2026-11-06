@@ -3,19 +3,23 @@
 Decyzje dla przebudowy strony (blog i strona wizytówkowa). Ten plik jest instrukcją dla agenta i
 opisem architektury. Zmiany decyzji wpisujemy tutaj.
 
-## Stan (6.11.2026)
+## Stan (7.11.2026)
 
-Wariant 1 strony głównej po polsku: `/main-page` (lokalnie i na zeprzalka.com przy
-`DEMO_PUBLIC=1`). Kanon Indeksu (`/demo/indeks-1`) przepisany od zera na shadcn i Tailwind,
-z poprawkami z testów właściciela. Gdzie co zmieniać:
+Wariant 1 strony głównej po polsku: `/main-page`, a jego design system z żywymi przykładami:
+`/main-page/design-system` (lokalnie i na zeprzalka.com przy `DEMO_PUBLIC=1`). Kanon Indeksu
+(`/demo/indeks-1`) przepisany od zera na shadcn i Tailwind, z poprawkami z testów właściciela.
+Gdzie co zmieniać:
 
 | Co | Gdzie |
 | --- | --- |
 | teksty nowej strony (napisy, frazy otwierające karty, liczby) | `src/i18n/content/main-page.ts` |
-| które realizacje pokazuje karta danej frazy | `PEEK_WORKS` w `_lib/content.ts` |
+| które realizacje pokazuje karta danej frazy (filmy „webowych” / „multimedialnych”) | `PEEK_WORKS` w `_lib/content/peeks.ts` |
 | efekt znaków w wideo startu (komórka, tempo, front, kontrast) | `GLYPH_REVEAL` w `_lib/glyph-reveal.ts` |
-| kolory, promień, kolumna, krzywe ruchu | `globals.css` |
+| dekodowanie liter (czas, fala, tempo) | stałe na górze `_components/motion/glyph-text.tsx` |
+| kolory, promień, kolumna, krzywe i czasy ruchu | `globals.css` |
 | wygląd przycisków, pól, akordeonu, okien | `_components/ui/*` (zmiany oznaczone `// zeprzalka:`) |
+| kotwice, skok do sekcji i realizacji, odstęp pod nagłówkiem | `_lib/anchors.ts` (`goToAnchor`, `HEADER_OFFSET`) |
+| „ogranicz ruch” i animacje „przy wejściu w kadr” | reguła na końcu `globals.css` + `_lib/motion.ts` |
 
 Nowy komponent shadcn: `pnpm dlx shadcn@latest add <nazwa> -y` — `components.json` wskazuje już
 `_components/ui`. CLI w wersji 4 wpisuje import `cn` z paczki `cn` i ją instaluje: po każdej
@@ -29,7 +33,7 @@ poniższych punktów są dopuszczalne, jeśli wymaga tego wygląd:
 
 - **Lighthouse 100 / 100 / 100 / 100** (wydajność, dostępność, dobre praktyki, SEO) na telefonie;
 - **LCP < 1,8 s** (telefon, 4G), **CLS = 0**, **INP < 200 ms**;
-- **JS na start nie więcej niż obecna strona** (ok. 210 KB gzip; sama baza Next 16 + React 19 to ok. 170 KB) — wariant 1 ma 222 KB, a cięższe części (wyszukiwarka, popover) ładują się dopiero przy użyciu;
+- **JS na start nie więcej niż obecna strona** (ok. 210 KB gzip; sama baza Next 16 + React 19 to ok. 170 KB) — cięższe części (wyszukiwarka, popover) ładują się dopiero przy użyciu;
 - **0 błędów axe** (WCAG 2.2 AA), **0 błędów** w testach danych strukturalnych;
 - **kod do zrozumienia w 30 sekund na plik:** małe pliki, jedna odpowiedzialność, zero magii.
 
@@ -43,7 +47,8 @@ Wygląd: kanon **Indeksu** (wąska kolumna, menu i media na żądanie, ⌘K). De
 2. **shadcn/ui zawsze nadrzędnie, z Tailwindem jako jedynym systemem UI.**
    - Przed napisaniem czegokolwiek sprawdzamy, czy komponent albo funkcja jest w ui.shadcn.com.
    - Własny komponent tylko wtedy, gdy shadcn go nie ma.
-   - Żadnych własnych prymitywów obok `ui/`.
+   - Żadnych własnych prymitywów obok `ui/`. Jedyny własny prymityw w `ui/` to `choice-group.tsx`
+     (natywne radio: działa bez JS; `RadioGroup` i `ToggleGroup` shadcn to Radix ze stanem).
 3. **Własny CSS tylko na tokeny** (`@theme`), `@keyframes` i opisane wyjątki. `globals.css` jak
    najkrótszy.
 4. **Domyślnie komponenty serwerowe.** `"use client"` tylko na małych wyspach interakcji.
@@ -79,18 +84,25 @@ src/app/main-page/
   (pl)/page.demo.tsx          # /main-page — wariant 1                    → src/app/(pl)/page.tsx
   (pl)/wariant-2/page.demo.tsx  # kolejne warianty tak samo (jeszcze nie ma)
   en/…                        # wersja angielska — po akceptacji polskiej
+  (pl)/design-system/page.demo.tsx  # /main-page/design-system — tokeny, komponenty, ruch
   _components/
     ui/                       # shadcn z CLI, zmiany systemowe z `// zeprzalka:` → src/components/ui
-    layout/                   # powłoka, nagłówek, logo, ⌘K, motyw, język, stopka → src/components/layout
+    layout/                   # powłoka, nagłówek, logo, ⌘K, motyw, język, spis, stopka → src/components/layout
     sections/                 # sekcje strony głównej (wspólne dla wariantów)   → src/components/home
     peek/                     # karty podglądu: margines (desktop) i popover     → src/components/peek
+    motion/                   # GlyphText — dekodowanie liter ze znaków sygnetu
     seo/                      # dane strukturalne
   _lib/
-    content.ts                # model widoku z src/i18n i src/lib (serwer)
-    types.ts, anchors.ts, text.ts, hooks.ts, keep-in-view.ts
-    glyph-reveal.ts           # jedyny efekt znaków: odsłanianie wideo w starcie
+    content/                  # model widoku (serwer): source (cache), shell, home, peeks, search
+    types.ts, text.ts, hooks.ts, glyphs.ts
+    anchors.ts                # kotwice, `goToAnchor` (jedna ścieżka skoku), `HEADER_OFFSET`
+    motion.ts                 # „ogranicz ruch” i `observeReveal` (wejście w kadr bez pomiarów)
+    keep-in-view.ts, morph.ts # akordeon w kadrze, przelot kadru (View Transitions)
+    video.ts                  # klip gra tylko w kadrze
+    glyph-reveal.ts           # wideo startu wyłaniające się z druku ze znaków
   _variants/
     wariant-1/home-page.tsx   # kompozycja strony głównej wariantu         → src/components/views
+  _design-system/             # sekcje i przykłady design systemu (kod przykładu = plik)
 ```
 
 - **Warianty strony głównej** (2–3 do testów UX i A/B) korzystają z jednego systemu: jednego `ui/`,
@@ -110,7 +122,9 @@ src/app/main-page/
   2. zmieniamy `.demo.tsx` na `.tsx`;
   3. raz zamieniamy prefiks importów `@/app/main-page/_components/` → `@/components/`;
   4. pozostałe warianty i stare pliki usuwamy w tym samym commicie;
-  5. obecna strona zostaje w gicie jako tag archiwum (np. `v1-archiwum`), nie jako folder w repo.
+  5. obecna strona zostaje w gicie jako tag archiwum (np. `v1-archiwum`), nie jako folder w repo;
+  6. `src/app/global-error.tsx` dostaje nowy arkusz — dziś importuje arkusz serwisu, więc każda
+     trasa (także `/main-page`) pobiera go z wyprzedzeniem (`preload`, ok. 17 KB gzip).
 
 ## 4. Stos technologiczny
 
@@ -120,11 +134,11 @@ src/app/main-page/
 | UI | shadcn/ui (prymitywy Radix) + Tailwind 4 |
 | Paleta ⌘K | shadcn `Command` (cmdk) w `Dialog` |
 | Arkusze na telefonie | shadcn `Drawer` (vaul) |
-| Karty na marginesie | shadcn `HoverCard` / `Popover` |
+| Karty podglądu | własny tor na marginesie (`PeekStage`, `inert`) + shadcn `Popover` (dotyk, klawiatura) |
 | Ikony | lucide-react |
 | Motyw | next-themes, ciemny domyślnie |
-| Animacje | CSS: przejścia, `@keyframes`, `tw-animate-css`, animacje sterowane przewijaniem. Karta podglądu płynie i przenika bez biblioteki. Motion (`motion/react`) zostaje w zależnościach do morfa karty w panel i gestów, gdy będą potrzebne. Bez GSAP |
-| Efekt znaków | MVP: tylko wideo startu (`_lib/glyph-reveal.ts`, Canvas 2D, wzór kart z `/demo/glif`) i sygnet logo. Reszta efektów znaków wraca po dopracowaniu ręcznym |
+| Animacje | CSS: przejścia, `@keyframes`, `tw-animate-css`, animacje sterowane przewijaniem; przelot kadru karta → panel przez View Transitions API. Bez bibliotek animacji (Motion zostaje w zależnościach na gesty, gdy będą potrzebne). Bez GSAP |
+| Efekt znaków | jeden zestaw znaków (`_lib/glyphs.ts`, krój `font-logo`): sygnet logo, `GlyphText` (dekodowanie nagłówków i liczb, fala w logo) i wideo startu (`_lib/glyph-reveal.ts`, Canvas 2D) |
 | Treść | MDX (blog), frontmatter walidowany przez zod, i18n własne typowane (lustrzane drzewa `pl`/`en`) |
 | Formularz | Server Action + zod + pole-pułapka + limit zapytań |
 | SEO | Metadata API + `buildMetadata`, `alternates.ts`, JSON-LD (`schema.ts`, typy `schema-dts`), mapa strony, robots, RSS, karty OG |
@@ -173,13 +187,32 @@ Szczegóły (skale, tokeny, warianty) powstają razem ze stroną główną i są
   - wejście strony (nawigacja → tekst → wideo) ≤ 0,9 s i nigdy nie czeka na JS;
   - napisy nie za szybkie (ok. 600–900 ms).
 - **Spoczynek zawsze kompletny.** Wyjątek: tekst „Mam 15 lat…” wypełniany przewijaniem.
-  Przy `prefers-reduced-motion` od razu stan końcowy.
-- **Znaki w MVP (decyzja 6.11):** tylko duże wideo startu wyłania się z druku ze znaków
-  (wzór kart portfolio z `/demo/glif`) i sygnet logo zmienia znak co sekundę. Bez dekodowania
-  nagłówków i liczb, bez znaków w kartach i stopce, bez kafelkowej zmiany motywu.
-- **Morf zamiast znaków:** karta podglądu płynie za wskazaną frazą, dopasowuje wysokość, a treść
-  przenika z lekkim rozmyciem (wzór: pierwszy `/demo/indeks`). Najechanie i kliknięcie dają ten sam
-  wygląd karty; bez krzyżyka (Escape i klik obok zamykają).
+  Przy `prefers-reduced-motion` od razu stan końcowy: jedna reguła w `globals.css` skraca każde
+  przejście i animację do 1 ms (zdarzenia końca nadal przychodzą), JS pyta `prefersReducedMotion()`.
+- **Wejście w kadr bez pomiarów:** napisy, „Nowy” i stopka pytają pierwszy odczyt
+  IntersectionObservera (`observeReveal`), a nie `getBoundingClientRect` przy hydratacji.
+- **Wejście „harmonijka”:** nagłówek, status, słowa tytułu i zdania (z rozmycia, jedno po drugim),
+  przyciski, na końcu wideo — samo CSS (`enter-stagger`), bez czekania na JS.
+- **Znaki (decyzja 6.11, druga):** sygnet logo zmienia znak co sekundę, najechanie na logo puszcza
+  szum sygnetu i falę znaków przez domenę; nagłówki sekcji i cztery liczby odczytują się ze znaków
+  przy wejściu w kadr (`GlyphText`); wideo startu wyłania się z druku ze znaków. W kartach
+  podglądu i w stopce znaków nie ma.
+- **Karta podglądu (desktop):** tylko na czas najechania albo fokusu — kliknięcie myszą jej nie
+  przypina. Tor jest czysto wizualny (`inert`); Enter i Spacja (klawiatura, czytnik) otwierają tę
+  samą kartę jako popover z fokusem w środku, Escape oddaje fokus frazie.
+  Stoi środkiem przy kursorze i płynie za nim w pionie, kadry w naturalnych proporcjach, wysokość
+  i treść przenikają przy zmianie (wzór: `/demo/indeks-1`). Przewijanie pod nieruchomym kursorem
+  nic nie otwiera.
+- **Karta na dotyku:** popover pod frazą na szerokość kolumny, zawsze pod spodem — gdy brakuje
+  miejsca, strona się dosuwa. Frazy „webowych” i „multimedialnych” pokazują jeden film.
+- **Portfolio:** kliknięcie wiersza z kartą na marginesie — kadr przelatuje z karty do panelu
+  (View Transition, `_lib/morph.ts`); bez API albo przy „ogranicz ruch” zwykłe rozwinięcie.
+  Kotwice `#realizacja-…` (adres, ⌘K, dowody kompetencji, wstecz/dalej) idą jedną ścieżką:
+  wiersz otwiera się od razu, potem strona przewija, a fokus przechodzi na wiersz.
+- **„O mnie”:** fala koloru słowo po słowie na jednej osi czasu akapitu (`scroll-fill`, wzór
+  `/demo/indeks-1`); niewypełnione słowo ma kontrast ≥ 3:1.
+- **Spis sekcji (od 1280 px):** w starcie i przy stopce go nie ma; w spoczynku sama bieżąca sekcja
+  z kropką, przy kursorze blisko lewej krawędzi pozostałe wyostrzają się kolejno.
 - **Motyw:** zwykła zmiana klasy bez animacji (shadcn, `disableTransitionOnChange`).
 - **Stopka:** „Zeprzałka” na całą szerokość okna wyostrza się z rozmycia przy wejściu w kadr.
 - **Interakcje:**
@@ -205,6 +238,9 @@ Szczegóły (skale, tokeny, warianty) powstają razem ze stroną główną i są
   - `preload="none"`, gra tylko w kadrze;
   - pauza dla zapętlonego ruchu (WCAG 2.2.2).
 - Silnik znaków i Motion ładowane leniwie; żadnych długich zadań > 50 ms w pierwszych 1,2 s.
+  Odsłanianie wideo rysuje w klatce tylko komórki, które zmieniły stan (komórki posortowane progiem).
+- Stan 7.11: JS 224 KB gzip (stara strona 208 KB) — różnica to głównie akordeon Radix (ok. 12 KB);
+  HTML 34 KB gzip (dane wyszukiwarki i kart w ładunku RSC — do przeniesienia do osobnego pliku).
 
 ## 10. Dostępność i jakość
 
@@ -220,6 +256,9 @@ Szczegóły (skale, tokeny, warianty) powstają razem ze stroną główną i są
   - w CI: te same + Playwright + Lighthouse CI.
 - **ESLint:** zakaz importów piaskownicy w serwisie, zakaz `style={{}}` poza zmiennymi CSS,
   porządek importów.
+- **Klasy Tailwinda w zapisie kanonicznym:** `pnpm check:classes` (część `pnpm check`) sprawdza każdą
+  klasę systemem projektowym Tailwinda — to samo, co podpowiedzi edytora, dla wszystkich plików;
+  `--fix` poprawia. Prettier sortuje klasy według tokenów `main-page/globals.css`.
 - **Decyzje architektoniczne** jako krótkie ADR w `docs/adr/`, commity `feat:` / `fix:` / `docs:`.
 
 ## 11. Plan etapów

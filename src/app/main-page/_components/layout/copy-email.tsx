@@ -9,7 +9,8 @@ const CONFIRM_MS = 1600
 
 /**
  * Adres e-mail jako przycisk kopiujący. Bez schowka (stara przeglądarka,
- * brak uprawnień) działa zwykły link `mailto:`.
+ * brak uprawnień, odmowa zapisu) działa zwykły link `mailto:`. Nazwa dla
+ * czytnika zaczyna się od widocznego adresu (WCAG 2.5.3), dopisek mówi, co robi.
  */
 export function CopyEmail({
   email,
@@ -34,14 +35,18 @@ export function CopyEmail({
     <Button asChild variant="outline" size="lg" className={className}>
       <a
         href={`mailto:${email}`}
-        aria-label={label}
         onClick={(event) => {
           if (!navigator.clipboard) return
           event.preventDefault()
-          navigator.clipboard.writeText(email).then(() => setCopied(true))
+          const mailto = event.currentTarget.href
+          navigator.clipboard.writeText(email).then(
+            () => setCopied(true),
+            () => window.location.assign(mailto)
+          )
         }}
       >
         {email}
+        <span className="sr-only"> — {label}</span>
         {copied ? <CheckIcon /> : <CopyIcon />}
         <span aria-live="polite" className="sr-only">
           {copied ? copiedLabel : ""}

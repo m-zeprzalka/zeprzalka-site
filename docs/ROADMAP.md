@@ -1,6 +1,6 @@
 # Plan — jedyna lista otwartych zadań
 
-Stan na 5 listopada 2026. Tu są **tylko rzeczy do zrobienia**: zrobione punkty
+Stan na 7 listopada 2026. Tu są **tylko rzeczy do zrobienia**: zrobione punkty
 przenosimy do [DZIENNIK.md](DZIENNIK.md) i usuwamy stąd. Szczegóły, które nie mogą być
 publiczne (bezpieczeństwo, marketing), są w `docs/prywatne/` — tutaj tylko odnośnik.
 
@@ -15,8 +15,20 @@ Plan i budżet jakości: [KIERUNEK-WIZUALNY.md](KIERUNEK-WIZUALNY.md) §3.
 - [ ] **[Ty]** Testy ręczne i na telefonie nowej strony głównej `/main-page` (wariant 1, kanon
       Indeksu na shadcn) — uwagi do kolejnej iteracji; decyzje i przepięcie w
       `src/app/main-page/README.md`.
+- [ ] **[Ty]** Decyzje z przeglądu kodu `main-page` (7.11): cele dotyku 36/28/32 px w nagłówku,
+      przełączniku języka i stopce (README obiecuje 44 px, próg AA 24 px jest spełniony); sygnet
+      zmieniający znak co sekundę bez końca (ryzyko WCAG 2.2.2 — np. stop po kilku cyklach);
+      linki do podstron w stopce (dziś `/uslugi`, `/o-mnie`, `/kontakt` są tylko w ⌘K, poza HTML).
 - [ ] **[Kod]** Po akceptacji wariantu 1: ewentualnie warianty 2–3 do testów A/B, wersja
       angielska, potem podstrony na nowym systemie (etapy w README `main-page`).
+- [ ] **[Kod]** `main-page`, wydajność: dane ⌘K jako statyczny plik pobierany z oknem (dziś
+      ok. 17 KB w ładunku RSC strony; HTML 34 KB gzip przy 20 KB starej strony); `cva`
+      i `tailwind-merge` poza wyspami klienckimi (klasy liczone na serwerze, jak w serwisie);
+      akordeon portfolio i kompetencji bez Radix (`<details name>`, ok. −12 KB JS), jeśli
+      zostanie zgoda na odejście od shadcn w tym miejscu.
+- [ ] **[Kod]** Pole-pułapka formularza nazywa się `company` — sprawdzić, czy autouzupełnianie
+      Chrome (organizacja) nie wypełnia go prawdziwym osobom (akcja po cichu odrzuca zgłoszenie);
+      dotyczy też formularza serwisu.
 - [ ] **[Ty]** Tekst w serwisie: „Wykładowca akademicki 2016–2026” w `/o-mnie` i CV → „2016–obecnie”
       (wykłady trwają), a zdania o WSR i Civitas w czasie przeszłym; X (`x.com/zeprzalka_com`)
       w profilach serwisu — w demach już jest, w serwisie dopiero na Twoją prośbę.

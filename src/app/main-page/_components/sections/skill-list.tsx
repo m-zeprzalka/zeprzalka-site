@@ -20,12 +20,13 @@ const ICONS = {
   teaching: GraduationCapIcon,
 } satisfies Record<Skill["id"], unknown>
 
-const itemId = (id: string) => `kompetencja-${id}`
+const itemId = (id: Skill["id"]) => `kompetencja-${id}`
 
 /**
- * Kompetencje jako akordeon shadcn. Otwarty element staje się kartą (te same
- * wcięcia co wiersz, treść od ikony do „+”), pozostałe przygasają. Na
- * najechaniu wiersza karta podglądu pokazuje dowody z portfolio albo bloga.
+ * Kompetencje jako akordeon shadcn. Wiersz reaguje na najechanie tłem karty,
+ * a otwarty staje się kartą — te same wcięcia w obu stanach, więc ikona
+ * i tytuł nie skaczą; treść biegnie od ikony do „−”. Pozostałe wiersze
+ * przygasają. Na najechaniu karta na marginesie pokazuje dowody.
  */
 export function SkillList({ items }: { items: readonly Skill[] }) {
   const [open, setOpen] = useState("")
@@ -36,9 +37,9 @@ export function SkillList({ items }: { items: readonly Skill[] }) {
       collapsible
       value={open}
       onValueChange={(next) => {
-        setOpen(next)
-        const item = next && document.getElementById(itemId(next))
+        const item = next && document.getElementById(itemId(next as Skill["id"]))
         if (item) keepInView(item)
+        setOpen(next)
       }}
       className="group/skills mt-8 grid gap-1"
     >
@@ -57,11 +58,11 @@ function SkillItem({ skill }: { skill: Skill }) {
     <AccordionItem
       value={skill.id}
       id={itemId(skill.id)}
-      className="rounded-2xl border border-transparent px-4 transition-[background-color,border-color,opacity] duration-300 last:border-b-transparent group-has-data-[state=open]/skills:data-[state=closed]:opacity-55 group-has-data-[state=open]/skills:data-[state=closed]:hover:opacity-100 data-[state=open]:border-border data-[state=open]:bg-card sm:px-5"
+      className="group/skill rounded-2xl border border-transparent px-4 transition-[background-color,border-color,opacity] duration-300 last:border-b-transparent hover:bg-accent/50 group-has-data-[state=open]/skills:data-[state=closed]:opacity-55 group-has-data-[state=open]/skills:data-[state=closed]:hover:opacity-100 data-[state=open]:border-border data-[state=open]:bg-card sm:px-5"
     >
       <AccordionTrigger {...hover} className="items-center py-3 text-base">
         <span className="flex items-center gap-4">
-          <span className="grid size-9 shrink-0 place-items-center rounded-xl border bg-background">
+          <span className="grid size-9 shrink-0 place-items-center rounded-xl border bg-background transition-colors group-hover/skill:border-foreground/20">
             <Icon className="size-4" />
           </span>
           {skill.title}

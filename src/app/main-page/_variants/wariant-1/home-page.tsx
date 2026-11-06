@@ -8,27 +8,26 @@ import { Skills } from "@/app/main-page/_components/sections/skills"
 import { Work } from "@/app/main-page/_components/sections/work"
 import { Writing } from "@/app/main-page/_components/sections/writing"
 import { JsonLd } from "@/app/main-page/_components/seo/json-ld"
-import { getHomeContent } from "@/app/main-page/_lib/content"
+import { getHomeContent } from "@/app/main-page/_lib/content/home"
 import type { Locale } from "@/i18n/config"
 import { graph, personSchema, websiteSchema } from "@/lib/schema"
 
 /**
- * Wariant 1 — kanon „Indeksu”: jedna wąska kolumna, spis sekcji i karta
+ * Wariant 1 — kanon „Indeksu”: jedna wąska kolumna, a spis sekcji i karta
  * podglądu pojawiają się na marginesach dopiero wtedy, gdy są potrzebne.
  * Sama kompozycja — sekcje i system są wspólne dla wszystkich wariantów.
  */
 export function HomePage({ locale }: { locale: Locale }) {
-  const content = getHomeContent(locale)
-  const { ui, person } = content
+  const { email, ui, peeks, sections, hero, about, skills, work, blog, contact } =
+    getHomeContent(locale)
 
   return (
-    <PeekProvider peeks={content.peeks}>
+    <PeekProvider peeks={peeks}>
       <JsonLd data={graph(websiteSchema(locale), personSchema(locale))} />
-      <SectionNav label={ui.onPage} sections={content.sections} />
-
+      <SectionNav label={ui.onPage} sections={sections} />
       <Hero
-        {...content.hero}
-        email={person.email}
+        {...hero}
+        email={email}
         labels={{
           copyEmail: ui.copyEmail,
           copied: ui.copied,
@@ -36,46 +35,11 @@ export function HomePage({ locale }: { locale: Locale }) {
           pauseVideo: ui.pauseVideo,
         }}
       />
-      <About {...content.about} />
-      <Skills {...content.skills} />
-      <Work
-        title={content.work.title}
-        lead={content.work.lead}
-        groups={content.work.groups}
-        all={content.work.all}
-        labels={{
-          visitSite: ui.visitSite,
-          inPortfolio: ui.inPortfolio,
-          newTab: ui.newTab,
-          portfolioHref: content.work.all.href,
-        }}
-      />
-      <Writing
-        title={content.blog.title}
-        lead={content.blog.lead}
-        posts={content.blog.posts}
-        visible={content.blog.visible}
-        all={content.blog.all}
-        labels={{ newPost: ui.newPost, showAll: ui.showAll, showLess: ui.showLess }}
-      />
-      <Contact
-        title={content.contact.title}
-        lead={content.contact.lead}
-        email={person.email}
-        labels={{
-          copyEmail: ui.copyEmail,
-          copied: ui.copied,
-          responseTimeLabel: ui.responseTimeLabel,
-          responseTime: ui.responseTime,
-        }}
-        form={{
-          locale,
-          copy: content.contact.form,
-          projectTypes: content.contact.projectTypes,
-          privacyHref: content.contact.privacyHref,
-        }}
-      />
-
+      <About {...about} />
+      <Skills {...skills} />
+      <Work {...work} />
+      <Writing {...blog} />
+      <Contact {...contact} email={email} />
       <PeekStage />
     </PeekProvider>
   )

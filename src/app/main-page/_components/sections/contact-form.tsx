@@ -1,13 +1,13 @@
 "use client"
 
-import { useActionState, useState } from "react"
+import { useActionState, useEffect, useRef } from "react"
 import { ArrowRightIcon } from "lucide-react"
 import { sendContactEmail, type ContactField, type ContactFormState } from "@/app/actions/contact"
+import { ChoiceGroup } from "@/app/main-page/_components/ui/choice-group"
 import { Button } from "@/app/main-page/_components/ui/button"
 import { Field, FieldLabel } from "@/app/main-page/_components/ui/field"
 import { Input } from "@/app/main-page/_components/ui/input"
 import { Textarea } from "@/app/main-page/_components/ui/textarea"
-import { ToggleGroup, ToggleGroupItem } from "@/app/main-page/_components/ui/toggle-group"
 import type { Locale } from "@/i18n/config"
 import { cn } from "@/lib/utils"
 
@@ -27,11 +27,13 @@ export interface ContactFormCopy {
 }
 
 const INITIAL: ContactFormState = { success: false, message: "" }
+const STATUS_ID = "contact-status"
 
 /**
  * Formularz kontaktowy na komponentach shadcn i akcji serwerowej serwisu
  * (`sendContactEmail`: walidacja zod, limit, pole-pułapka). Przy błędzie akcja
- * odsyła wpisane wartości — nic nie znika po jednej literówce.
+ * odsyła wpisane wartości — nic nie znika po jednej literówce — a fokus
+ * wraca na pierwsze błędne pole, opisane komunikatem (`aria-describedby`).
  */
 export function ContactForm({
   locale,
@@ -45,14 +47,20 @@ export function ContactForm({
   privacyHref: string
 }) {
   const [state, action, pending] = useActionState(sendContactEmail, INITIAL)
-  const [projectType, setProjectType] = useState("")
-  const invalid = (field: ContactField) => state.invalid?.includes(field) || undefined
+  const form = useRef<HTMLFormElement>(null)
+  const invalid = (field: ContactField) =>
+    state.invalid?.includes(field)
+      ? ({ "aria-invalid": true, "aria-describedby": STATUS_ID } as const)
+      : {}
   const values = state.success ? undefined : state.fields
 
+  useEffect(() => {
+    if (state.invalid?.length) form.current?.querySelector<HTMLElement>("[aria-invalid]")?.focus()
+  }, [state])
+
   return (
-    <form action={action} className="relative mt-10 grid gap-6">
+    <form ref={form} action={action} className="relative mt-10 grid gap-6">
       <input type="hidden" name="locale" value={locale} />
-      <input type="hidden" name="project-type" value={projectType} />
       {/* Pole-pułapka: niewidoczne i poza kolejnością Tab — wypełniają je tylko boty. */}
       <div aria-hidden="true" className="absolute size-px overflow-hidden opacity-0">
         <label htmlFor="company">{copy.honeypot}</label>
@@ -68,7 +76,7 @@ export function ContactForm({
             autoComplete="name"
             placeholder={copy.namePlaceholder}
             defaultValue={values?.name}
-            aria-invalid={invalid("name")}
+            {...invalid("name")}
             required
             minLength={2}
           />
@@ -82,30 +90,18 @@ export function ContactForm({
             autoComplete="email"
             placeholder={copy.emailPlaceholder}
             defaultValue={values?.email}
-            aria-invalid={invalid("email")}
+            {...invalid("email")}
             required
           />
         </Field>
       </div>
 
-      <Field>
-        <FieldLabel id="project-type-label">{copy.projectType}</FieldLabel>
-        <ToggleGroup
-          type="single"
-          variant="outline"
-          spacing={2}
-          value={projectType}
-          onValueChange={setProjectType}
-          aria-labelledby="project-type-label"
-          className="flex-wrap"
-        >
-          {projectTypes.map((type) => (
-            <ToggleGroupItem key={type} value={type} className="h-10 px-4">
-              {type}
-            </ToggleGroupItem>
-          ))}
-        </ToggleGroup>
-      </Field>
+      <ChoiceGroup
+        legend={copy.projectType}
+        name="project-type"
+        options={projectTypes}
+        defaultValue={values?.projectType}
+      />
 
       <Field>
         <FieldLabel htmlFor="message">{copy.message}</FieldLabel>
@@ -114,7 +110,7 @@ export function ContactForm({
           name="message"
           placeholder={copy.messagePlaceholder}
           defaultValue={values?.message}
-          aria-invalid={invalid("message")}
+          {...invalid("message")}
           required
           minLength={5}
         />
@@ -133,10 +129,11 @@ export function ContactForm({
         </Button>
       </div>
 
+      {/* Region stoi w drzewie dostępności także pusty — inaczej czytnik nie ogłosi komunikatu. */}
       <p
+        id={STATUS_ID}
         role="status"
-        aria-live="polite"
-        className={cn("text-sm empty:hidden", state.success ? "text-success" : "text-destructive")}
+        className={cn("text-sm empty:sr-only", state.success ? "text-success" : "text-destructive")}
       >
         {state.message}
       </p>

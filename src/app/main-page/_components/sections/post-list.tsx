@@ -1,13 +1,14 @@
 "use client"
 
 import { useState } from "react"
+import Image from "next/image"
 import Link from "next/link"
 import { ArrowUpRightIcon, ChevronDownIcon } from "lucide-react"
 import { usePeekHover } from "@/app/main-page/_components/peek/peek-context"
-import { Badge } from "@/app/main-page/_components/ui/badge"
 import { Button } from "@/app/main-page/_components/ui/button"
 import type { Link as LinkData, Post } from "@/app/main-page/_lib/types"
 import { cn } from "@/lib/utils"
+import { NewMark } from "./new-mark"
 
 interface Labels {
   newPost: string
@@ -16,9 +17,10 @@ interface Labels {
 }
 
 /**
- * Wpisy jako indeks: rok w lewej kolumnie (raz na rok), tytuł, data. Najechanie
- * pokazuje okładkę na marginesie. „Pokaż wszystkie” odsłania resztę listy
- * w miejscu, „Wszystkie artykuły” prowadzi do bloga.
+ * Wpisy jako indeks: rok w lewej kolumnie (raz na rok), tytuł, data. Na
+ * desktopie najechanie pokazuje okładkę na marginesie; węziej najnowszy wpis
+ * ma okładkę nad listą. „Pokaż wszystkie” odsłania resztę listy w miejscu,
+ * „Wszystkie artykuły” prowadzi do bloga.
  */
 export function PostList({
   posts,
@@ -33,10 +35,28 @@ export function PostList({
 }) {
   const [expanded, setExpanded] = useState(false)
   const shown = expanded ? posts : posts.slice(0, visible)
+  const [latest] = posts
 
   return (
     <>
-      <ol className="mt-8 grid">
+      {latest && (
+        <Link
+          href={latest.href}
+          tabIndex={-1}
+          aria-hidden="true"
+          className="mt-8 block overflow-hidden rounded-2xl bg-muted stage:hidden"
+        >
+          <Image
+            src={latest.cover.src}
+            alt=""
+            width={latest.cover.width}
+            height={latest.cover.height}
+            sizes="(min-width: 48rem) 40rem, 100vw"
+            className="aspect-video w-full object-cover"
+          />
+        </Link>
+      )}
+      <ol className="mt-6 grid stage:mt-8">
         {shown.map((post, index) => (
           <PostRow
             key={post.slug}
@@ -46,18 +66,22 @@ export function PostList({
           />
         ))}
       </ol>
-      <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
-        {posts.length > visible && (
+      <div className="mt-6 flex items-center justify-between gap-2">
+        {posts.length > visible ? (
           <Button
-            variant="secondary"
+            variant="ghost"
+            size="sm"
             onClick={() => setExpanded((value) => !value)}
             aria-expanded={expanded}
+            className="-ms-2.5"
           >
             {expanded ? labels.showLess : labels.showAll}
             <ChevronDownIcon className={cn("transition-transform", expanded && "rotate-180")} />
           </Button>
+        ) : (
+          <span />
         )}
-        <Button asChild variant="ghost" className="ml-auto">
+        <Button asChild variant="ghost" size="sm" className="-me-2.5">
           <Link href={all.href}>
             {all.label}
             <ArrowUpRightIcon />
@@ -84,23 +108,21 @@ function PostRow({
       <span className="text-sm text-muted-foreground tabular-nums">
         {showYear ? post.year : ""}
       </span>
-      <Link
-        href={post.href}
-        {...hover}
-        className="flex min-h-11 items-baseline justify-between gap-4 rounded-xl px-3 py-2.5 outline-none hover:bg-accent/60 focus-visible:ring-[3px] focus-visible:ring-ring/50"
-      >
-        <span className="text-pretty">
-          {post.title}
-          {post.isNew && (
-            <Badge variant="outline" className="ml-2 -translate-y-px align-middle">
-              {newLabel}
-            </Badge>
-          )}
-        </span>
-        <time dateTime={post.iso} className="shrink-0 text-sm text-muted-foreground tabular-nums">
-          {post.day}
-        </time>
-      </Link>
+      <article>
+        <Link
+          href={post.href}
+          {...hover}
+          className="-mx-3 flex min-h-11 items-baseline justify-between gap-4 rounded-xl px-3 py-2.5 transition-colors outline-none hover:bg-accent/60 focus-visible:ring-[3px] focus-visible:ring-ring/50"
+        >
+          <span className="text-pretty">
+            {post.title}
+            {post.isNew && <NewMark label={newLabel} />}
+          </span>
+          <time dateTime={post.iso} className="shrink-0 text-sm text-muted-foreground tabular-nums">
+            {post.day}
+          </time>
+        </Link>
+      </article>
     </li>
   )
 }

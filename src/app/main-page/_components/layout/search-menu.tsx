@@ -12,19 +12,28 @@ const loadDialog = () => import("./search-dialog")
 /** Okno z `cmdk` i `vaul` dochodzi dopiero przy pierwszej potrzebie — nie obciąża wejścia strony. */
 const SearchDialog = dynamic(loadDialog, { ssr: false })
 
-/** Skrót: ⌘ na urządzeniach Apple, Ctrl gdzie indziej — wybiera atrybut `data-os` na `<html>`. */
-function ModifierKey() {
+/**
+ * Skrót: ⌘K na urządzeniach Apple, Ctrl+K gdzie indziej — wybiera atrybut
+ * `data-os` na `<html>` (skrypt przed pierwszym malowaniem), bez podmiany.
+ */
+function Shortcut() {
   return (
-    <Kbd>
-      <span className="in-data-[os=other]:hidden">⌘</span>
-      <span className="hidden in-data-[os=other]:inline">Ctrl</span>
-    </Kbd>
+    <KbdGroup className="hidden text-muted-foreground sm:inline-flex">
+      <Kbd>
+        <span className="in-data-[os=other]:hidden">⌘</span>
+        <span className="hidden in-data-[os=other]:inline">Ctrl</span>
+      </Kbd>
+      <span aria-hidden="true" className="hidden text-[0.625rem] in-data-[os=other]:inline">
+        +
+      </span>
+      <Kbd>K</Kbd>
+    </KbdGroup>
   )
 }
 
 /**
- * Przycisk wyszukiwarki ⌘K w nagłówku i skrót klawiszowy. Kod okna pobiera
- * się przy najechaniu albo fokusie na przycisku, a najpóźniej przy otwarciu.
+ * Przycisk wyszukiwarki w nagłówku i skrót klawiszowy. Na telefonie sama ikona.
+ * Kod okna pobiera się przy najechaniu albo fokusie, najpóźniej przy otwarciu.
  */
 export function SearchMenu({
   groups,
@@ -45,8 +54,11 @@ export function SearchMenu({
   }
 
   useEffect(() => {
+    // Na Apple tylko ⌘K: Ctrl+K w polu tekstowym usuwa tam do końca wiersza.
+    const apple = document.documentElement.dataset.os === "apple"
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key.toLowerCase() !== "k" || !(event.metaKey || event.ctrlKey)) return
+      // `key` bywa pusty (np. wybór podpowiedzi autouzupełniania w formularzu).
+      if (event.key?.toLowerCase() !== "k" || !(apple ? event.metaKey : event.ctrlKey)) return
       event.preventDefault()
       setMounted(true)
       setOpen((value) => !value)
@@ -60,19 +72,17 @@ export function SearchMenu({
       <Button
         ref={button}
         variant="secondary"
-        size="sm"
         onClick={() => show(true)}
         onPointerEnter={() => void loadDialog()}
         onFocus={() => void loadDialog()}
+        aria-haspopup="dialog"
+        aria-expanded={open}
         aria-keyshortcuts="Meta+K Control+K"
-        className="h-9 gap-2 pr-1.5 pl-3 text-muted-foreground"
+        className="size-9 px-0 text-muted-foreground sm:w-auto sm:gap-2 sm:ps-3 sm:pe-1.5"
       >
         <SearchIcon />
         <span className="sr-only sm:not-sr-only">{labels.search}</span>
-        <KbdGroup className="hidden sm:inline-flex">
-          <ModifierKey />
-          <Kbd>K</Kbd>
-        </KbdGroup>
+        <Shortcut />
       </Button>
       {mounted && (
         <SearchDialog

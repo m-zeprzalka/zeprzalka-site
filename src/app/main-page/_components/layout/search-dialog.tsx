@@ -1,9 +1,10 @@
 "use client"
 
-import { useEffect, useRef, useState, type ReactNode, type RefObject } from "react"
+import { useRef, useState, type ReactNode, type RefObject } from "react"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
 import { useTheme } from "next-themes"
+import { ArrowUpRightIcon, CopyIcon, HashIcon, SunMoonIcon, type LucideIcon } from "lucide-react"
 import {
   Command,
   CommandEmpty,
@@ -25,8 +26,9 @@ import {
   DrawerTitle,
 } from "@/app/main-page/_components/ui/drawer"
 import { Kbd, KbdGroup } from "@/app/main-page/_components/ui/kbd"
+import { goToAnchor } from "@/app/main-page/_lib/anchors"
 import { useMediaQuery } from "@/app/main-page/_lib/hooks"
-import type { SearchGroup, SearchItem } from "@/app/main-page/_lib/types"
+import type { SearchGroup, SearchItem, SearchItemIcon } from "@/app/main-page/_lib/types"
 
 export interface SearchLabels {
   search: string
@@ -37,13 +39,20 @@ export interface SearchLabels {
   hints: { select: string; open: string; close: string }
 }
 
-/** Okno zamyka się 200 ms (animacja shadcn) — nawigujemy dopiero potem, gdy strona znowu się przewija. */
-const CLOSE_MS = 220
+/** Ikony pozycji bez miniatury (realizacje i wpisy mają miniatury). */
+const ICONS: Record<Exclude<SearchItemIcon, "work" | "post">, LucideIcon> = {
+  section: HashIcon,
+  page: ArrowUpRightIcon,
+  email: CopyIcon,
+  theme: SunMoonIcon,
+}
 
 /**
- * Okno wyszukiwarki ⌘K (ładowane leniwie przez `SearchMenu`): od tabletu okno
- * shadcn na szerokość kolumny z podglądem obok listy, na telefonie arkusz od
- * dołu, który nie włącza klawiatury sam z siebie.
+ * Okno wyszukiwarki ⌘K (ładowane leniwie przez `SearchMenu`). Od tabletu okno
+ * shadcn na szerokość kolumny z podglądem obok listy; na telefonie arkusz od
+ * dołu, który nie włącza klawiatury sam z siebie. Wybrana pozycja działa
+ * dopiero po zamknięciu okna (gdy strona znów się przewija): skok do kotwicy
+ * przenosi tam fokus, a bez skoku fokus wraca do przycisku.
  */
 export default function SearchDialog({
   open,
@@ -67,24 +76,15 @@ export default function SearchDialog({
   const router = useRouter()
   const { resolvedTheme, setTheme } = useTheme()
 
-  useEffect(() => {
-    const href = pending.current
-    if (open || !href) return
-    pending.current = null
-    const timer = setTimeout(() => {
-      if (!href.startsWith("#")) return router.push(href)
-      // Ten sam hash nie wywołuje zdarzenia — ogłaszamy go sami (sekcja portfolio otwiera wtedy realizację).
-      history.pushState(null, "", href)
-      window.dispatchEvent(new HashChangeEvent("hashchange"))
-      document.getElementById(href.slice(1))?.scrollIntoView()
-    }, CLOSE_MS)
-    return () => clearTimeout(timer)
-  }, [open, router])
-
-  // Po zamknięciu fokus wraca do przycisku (WCAG 2.4.3) — także po otwarciu skrótem.
-  const returnFocus = (event: Event) => {
+  const onCloseAutoFocus = (event: Event) => {
     event.preventDefault()
-    trigger.current?.focus()
+    const href = pending.current
+    pending.current = null
+    if (!href) return trigger.current?.focus()
+    // Klatkę później: blokada przewijania okna jest już zdjęta.
+    requestAnimationFrame(() =>
+      href.startsWith("#") ? goToAnchor(href.slice(1)) : router.push(href)
+    )
   }
 
   function run(item: SearchItem) {
@@ -101,7 +101,7 @@ export default function SearchDialog({
     <Command value={selected} onValueChange={setSelected} className="bg-transparent">
       <CommandInput placeholder={labels.placeholder} />
       <div className="md:grid md:grid-cols-[minmax(0,1fr)_15rem] md:divide-x">
-        <CommandList className="max-h-[min(28rem,60dvh)] p-2">
+        <CommandList className="max-h-[min(30rem,62dvh)] p-2">
           <CommandEmpty>{labels.empty}</CommandEmpty>
           {groups.map((group) => (
             <CommandGroup key={group.id} heading={group.heading}>
@@ -111,11 +111,12 @@ export default function SearchDialog({
                   value={item.id}
                   keywords={[item.label, item.hint ?? ""]}
                   onSelect={() => run(item)}
-                  className="min-h-11 px-3"
+                  className="min-h-12 gap-3 px-3 text-[0.9375rem] md:min-h-11"
                 >
-                  <span className="truncate">{item.label}</span>
+                  <ItemIcon item={item} />
+                  <span className="min-w-0 flex-1 truncate">{item.label}</span>
                   {item.hint && (
-                    <span className="ml-auto shrink-0 truncate text-xs text-muted-foreground">
+                    <span className="max-w-[40%] shrink-0 truncate text-xs text-muted-foreground">
                       {item.hint}
                     </span>
                   )}
@@ -149,8 +150,8 @@ export default function SearchDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       {/* Oś kolumny: środek okna przesunięty o połowę zdjętego paska przewijania. */}
       <DialogContent
-        onCloseAutoFocus={returnFocus}
-        className="sm:max-w-column top-[12vh] left-[calc(50%-var(--removed-body-scroll-bar-size,0px)/2)] max-w-[calc(100%-2*var(--spacing-page))] translate-y-0 gap-0 overflow-hidden p-0"
+        onCloseAutoFocus={onCloseAutoFocus}
+        className="top-[12vh] left-[calc(50%-var(--removed-body-scroll-bar-size,0px)/2)] max-w-[calc(100%-2*var(--spacing-page))] translate-y-0 gap-0 overflow-hidden p-0 sm:max-w-column"
       >
         <DialogTitle className="sr-only">{labels.title}</DialogTitle>
         <DialogDescription className="sr-only">{labels.description}</DialogDescription>
@@ -162,7 +163,7 @@ export default function SearchDialog({
       {/* Bez automatycznego fokusu na polu — klawiatura nie zasłania połowy ekranu. */}
       <DrawerContent
         onOpenAutoFocus={(event) => event.preventDefault()}
-        onCloseAutoFocus={returnFocus}
+        onCloseAutoFocus={onCloseAutoFocus}
       >
         <DrawerTitle className="sr-only">{labels.title}</DrawerTitle>
         <DrawerDescription className="sr-only">{labels.description}</DrawerDescription>
@@ -172,10 +173,32 @@ export default function SearchDialog({
   )
 }
 
+/** Miniatura realizacji i wpisu albo ikona — kolumna 28 px, równa we wszystkich wierszach. */
+function ItemIcon({ item }: { item: SearchItem }) {
+  if (item.thumb) {
+    return (
+      <Image
+        src={item.thumb}
+        alt=""
+        width={56}
+        height={56}
+        sizes="28px"
+        className="size-7 shrink-0 rounded-md bg-muted object-cover"
+      />
+    )
+  }
+  const Icon = ICONS[item.icon as keyof typeof ICONS]
+  return (
+    <span className="grid size-7 shrink-0 place-items-center rounded-md border bg-background">
+      <Icon className="size-3.5" />
+    </span>
+  )
+}
+
 function Preview({ item }: { item: SearchItem }) {
   return (
     <div aria-hidden="true" className="hidden flex-col gap-3 p-4 md:flex">
-      {item.thumb && (
+      {item.thumb ? (
         <Image
           src={item.thumb}
           alt=""
@@ -184,8 +207,12 @@ function Preview({ item }: { item: SearchItem }) {
           sizes="240px"
           className="aspect-video w-full rounded-lg bg-muted object-cover"
         />
+      ) : (
+        <span className="grid aspect-video w-full place-items-center rounded-lg border bg-muted/50">
+          <ItemIcon item={item} />
+        </span>
       )}
-      <p className="text-sm font-medium">{item.label}</p>
+      <p className="text-sm font-medium text-pretty">{item.label}</p>
       {item.detail && (
         <p className="line-clamp-5 text-sm text-pretty text-muted-foreground">{item.detail}</p>
       )}

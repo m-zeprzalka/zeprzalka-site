@@ -20,11 +20,12 @@ export const GLYPH_REVEAL = {
   jitter: 0.22,
   /** Krzywa tonów druku: 1 — liniowo, więcej — ciemniej (więcej kropek, mniej pełnych kół). */
   contrast: 1.8,
-  /** Tło i kolor druku — szkielet jest zawsze jasny na czerni, w obu motywach. */
+  /** Tło i kolor druku — szkielet jest zawsze jasny na czerni, w obu motywach (`--color-print`). */
   paper: "#0b0b0b",
   ink: "255, 255, 255",
 } as const
 
+/** Na kadrze węższym niż 480 px oczko 8 px — to samo co szkielet w CSS (`@max-[30rem]`). */
 export function cellFor(width: number) {
   return width < 480 ? 8 : GLYPH_REVEAL.cell
 }
@@ -124,30 +125,41 @@ export function createGlyphReveal(
     }
   }
 
-  const draw = (progress: number) => {
-    context.clearRect(0, 0, width, height)
-    for (let y = 0; y < rows; y++) {
-      for (let x = 0; x < cols; x++) {
-        const i = y * cols + x
-        const t = threshold[i]!
-        if (t < progress - GLYPH_REVEAL.front) continue // odsłonięta — widać obraz pod spodem
-        const left = x * size
-        const top = y * size
-        if (t < progress) {
-          // Pasmo frontu: komórka błyska jasno, zanim zniknie.
-          context.fillStyle = `rgba(${GLYPH_REVEAL.ink}, ${0.2 + light[i]! * 0.6})`
-          context.fillRect(left, top, size, size)
-          continue
-        }
-        context.fillStyle = GLYPH_REVEAL.paper
-        context.fillRect(left, top, size, size)
-        drawGlyph(context, left + size / 2, top + size / 2, size, light[i]!)
-      }
+  // Druk rysujemy raz, w całości.
+  context.fillStyle = GLYPH_REVEAL.paper
+  context.fillRect(0, 0, width, height)
+  for (let i = 0; i < threshold.length; i++) {
+    const x = (i % cols) * size
+    const y = Math.floor(i / cols) * size
+    drawGlyph(context, x + size / 2, y + size / 2, size, light[i]!)
+  }
+
+  // Front idzie tylko naprzód, więc komórki ułożone według progu zmieniają
+  // stan po kolei: druk → pasmo → odsłonięta. Klatka rysuje wyłącznie te,
+  // które właśnie przeszły dalej — zamiast całej siatki od nowa.
+  const order = Uint32Array.from(threshold.keys()).sort((a, b) => threshold[a]! - threshold[b]!)
+  let banded = 0
+  let revealed = 0
+  const advance = (progress: number) => {
+    const cleared = progress - GLYPH_REVEAL.front
+    for (; banded < order.length && threshold[order[banded]!]! < progress; banded++) {
+      const i = order[banded]!
+      if (threshold[i]! < cleared) continue // przeskoczyła pasmo w jednej klatce
+      const x = (i % cols) * size
+      const y = Math.floor(i / cols) * size
+      // Pasmo frontu: komórka błyska jasno, zanim zniknie.
+      context.clearRect(x, y, size, size)
+      context.fillStyle = `rgba(${GLYPH_REVEAL.ink}, ${0.2 + light[i]! * 0.6})`
+      context.fillRect(x, y, size, size)
+    }
+    for (; revealed < banded && threshold[order[revealed]!]! < cleared; revealed++) {
+      const i = order[revealed]!
+      // Odsłonięta — widać obraz pod spodem.
+      context.clearRect((i % cols) * size, Math.floor(i / cols) * size, size, size)
     }
   }
 
   let frame = 0
-  draw(0)
 
   return {
     play(onDone) {
@@ -157,7 +169,7 @@ export function createGlyphReveal(
         const linear = Math.max(0, (now - start) / GLYPH_REVEAL.duration)
         // Łagodny start i koniec frontu.
         const eased = linear < 1 ? 0.5 - Math.cos(Math.PI * linear) / 2 : 1
-        draw(eased * end)
+        advance(eased * end)
         if (linear < 1) frame = requestAnimationFrame(tick)
         else onDone()
       }

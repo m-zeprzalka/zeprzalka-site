@@ -11,9 +11,10 @@ export function sentences(text: string): string[] {
 /**
  * Polska typografia: jednoliterowe spójniki i przyimki („i”, „w”, „z”…) nie
  * zostają na końcu wiersza — sklejamy je twardą spacją z następnym słowem.
+ * Lookbehind nie zjada spacji przed literą, więc łańcuch „i w domu” sklei się cały.
  */
 export function noOrphans(text: string): string {
-  return text.replace(/(^|\s)([aiouwzAIOUWZ])\s+/g, "$1$2 ")
+  return text.replace(/(?<=^|\s)([aiouwz])\s+/giu, "$1\u00A0")
 }
 
 /**

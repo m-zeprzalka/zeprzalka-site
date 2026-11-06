@@ -1,32 +1,35 @@
-/** Tyle trwa rozwinięcie akordeonu (`animate-accordion-down` z tw-animate-css). */
+import { HEADER_OFFSET } from "@/app/main-page/_lib/anchors"
+
+/** Tyle trwa rozwinięcie akordeonu (`animate-accordion-down` z tw-animate-css) z zapasem. */
 const EXPAND_MS = 260
-/** Wolne miejsce pod przyklejonym nagłówkiem i nad dolną krawędzią okna. */
-const TOP_GAP = 80
+/** Wolne miejsce nad dolną krawędzią okna. */
 const BOTTOM_GAP = 16
 
 /**
  * Otwierany element akordeonu zostaje tam, gdzie go kliknięto, choć nad nim
  * zwija się poprzedni (kompensacja przewinięcia klatka po klatce), a po
  * rozwinięciu cały mieści się w oknie — na telefonie nie ucina się pół karty.
- * Przewijamy natychmiast (`instant`), bo CSS strony ma płynne przewijanie.
+ * `holdMs` wydłuża przytrzymanie (np. na czas przelotu kadru w portfolio).
+ * Przytrzymanie przewija natychmiast (`instant`); dosunięcie — tak, jak każe CSS
+ * (płynnie, a przy „ogranicz ruch” od razu).
  */
-export function keepInView(item: HTMLElement) {
+export function keepInView(item: HTMLElement, holdMs = EXPAND_MS) {
   const start = item.getBoundingClientRect().top
-  const until = performance.now() + EXPAND_MS
-
-  const hold = () => {
-    const drift = item.getBoundingClientRect().top - start
-    if (Math.abs(drift) > 0.5) window.scrollBy({ top: drift, behavior: "instant" })
-    if (performance.now() < until) requestAnimationFrame(hold)
-    else reveal()
-  }
+  const until = performance.now() + holdMs
 
   const reveal = () => {
     const box = item.getBoundingClientRect()
     const overflow = box.bottom - (window.innerHeight - BOTTOM_GAP)
     if (overflow <= 0) return
     // Nigdy tak daleko, żeby górna krawędź schowała się pod nagłówkiem.
-    window.scrollBy({ top: Math.min(overflow, box.top - TOP_GAP), behavior: "smooth" })
+    window.scrollBy({ top: Math.min(overflow, box.top - HEADER_OFFSET) })
+  }
+
+  const hold = () => {
+    const drift = item.getBoundingClientRect().top - start
+    if (Math.abs(drift) > 0.5) window.scrollBy({ top: drift, behavior: "instant" })
+    if (performance.now() < until) requestAnimationFrame(hold)
+    else reveal()
   }
 
   requestAnimationFrame(hold)

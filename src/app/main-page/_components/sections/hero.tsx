@@ -15,8 +15,9 @@ const CHIP_ICONS = {
 
 /**
  * Start: status, dwutonowe zdanie (tytuł + pierwsze zdanie biogramu z trzema
- * frazami-podglądami), dwa działania i wideo. Wchodzi „harmonijką”: nagłówek,
- * tekst, przyciski, wideo — każde z opóźnieniem, całość poniżej sekundy.
+ * frazami-podglądami), dwa działania i wideo. Wejście „harmonijką” po nagłówku:
+ * status, słowa tytułu i zdania wyostrzają się z rozmycia jedno po drugim,
+ * potem przyciski i wideo — tylko CSS, czasy w klasach `[--enter-…]`.
  */
 export function Hero({
   status,
@@ -40,20 +41,22 @@ export function Hero({
       data-peek-column=""
       className="column pt-14 md:pt-24"
     >
-      <p className="motion-safe:animate-enter flex items-center gap-2.5 text-sm text-muted-foreground motion-safe:[animation-delay:80ms]">
-        <span aria-hidden="true" className="bg-success size-2 rounded-full" />
+      <p className="flex items-center gap-2.5 text-sm text-muted-foreground motion-safe:animate-enter motion-safe:[animation-delay:80ms]">
+        <span aria-hidden="true" className="size-2 rounded-full bg-success" />
         {status}
       </p>
       <h1
         id="start-title"
-        className="motion-safe:animate-enter mt-6 text-[1.625rem] leading-[1.2] font-medium tracking-tight text-pretty motion-safe:[animation-delay:140ms] sm:text-[2.125rem]"
+        className="mt-6 text-[1.625rem] leading-[1.2] font-medium tracking-tight text-pretty sm:text-[2.125rem]"
       >
-        {title}{" "}
-        <span className="text-muted-foreground">
-          <Segments segments={lead} icons={CHIP_ICONS} />
+        <span className="enter-stagger [--enter-delay:140ms] [--enter-step:32ms]">
+          <Segments segments={[{ text: title }]} split="block" />
+        </span>{" "}
+        <span className="enter-stagger text-muted-foreground [--enter-delay:320ms] [--enter-step:14ms]">
+          <Segments segments={lead} icons={CHIP_ICONS} split="block" />
         </span>
       </h1>
-      <div className="motion-safe:animate-enter mt-8 flex flex-wrap gap-3 motion-safe:[animation-delay:240ms]">
+      <div className="mt-8 flex flex-wrap gap-3 motion-safe:animate-enter motion-safe:[animation-delay:560ms]">
         <Button asChild size="lg">
           <a href={`#${SECTION.contact}`}>
             {cta}

@@ -3,9 +3,9 @@ import type { Peek } from "@/app/main-page/_lib/types"
 import { PeekMedia } from "./peek-media"
 
 /**
- * Treść karty podglądu — ten sam wygląd na marginesie (najechanie i klik)
- * i w popoverze na telefonie. Kadry (0–3) na górze, pod nimi podpis, opis
- * albo oś czasu i link. Gra tylko pierwszy kadr — trzy klipy naraz to za dużo.
+ * Treść karty podglądu — ten sam wygląd na marginesie i w popoverze. Pierwszy
+ * kadr w naturalnych proporcjach (gra tylko on), kolejne jako miniatury, pod
+ * nimi podpis, opis albo oś czasu i link.
  */
 export function PeekCard({ peek, play }: { peek: Peek; play: boolean }) {
   const [first, ...rest] = peek.media
@@ -18,12 +18,12 @@ export function PeekCard({ peek, play }: { peek: Peek; play: boolean }) {
             media={first}
             play={play}
             sizes="(min-width: 80rem) 24rem, 100vw"
-            className="aspect-[16/10]"
+            className="max-h-[min(55svh,26rem)]"
           />
           {rest.length > 0 && (
             <div className="grid grid-cols-2 gap-1">
               {rest.map((media) => (
-                <PeekMedia key={media.src} media={media} sizes="12rem" className="aspect-[4/3]" />
+                <PeekMedia key={media.src} media={media} ratio="4 / 3" sizes="12rem" />
               ))}
             </div>
           )}

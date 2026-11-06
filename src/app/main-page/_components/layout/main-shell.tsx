@@ -2,7 +2,7 @@ import type { ReactNode } from "react"
 import { ThemeProvider } from "next-themes"
 import "@/app/main-page/globals.css"
 import { fontVariables } from "@/app/fonts"
-import { getHomeContent } from "@/app/main-page/_lib/content"
+import { getShellContent } from "@/app/main-page/_lib/content/shell"
 import type { Locale } from "@/i18n/config"
 import { logoFontVariables } from "./fonts"
 import { SiteFooter } from "./site-footer"
@@ -20,7 +20,7 @@ const PLATFORM_SCRIPT = `document.documentElement.dataset.os=/Mac|iPhone|iPad|iP
  * `(pl)` i `en` — atrybut `lang` ustawia tylko układ główny.
  */
 export function MainShell({ locale, children }: { locale: Locale; children: ReactNode }) {
-  const { ui, person, search, language, footer } = getHomeContent(locale)
+  const { skipToContent, header, footer } = getShellContent(locale)
 
   return (
     <html
@@ -40,38 +40,13 @@ export function MainShell({ locale, children }: { locale: Locale; children: Reac
             href="#main"
             className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:rounded-full focus:bg-primary focus:px-4 focus:py-2.5 focus:text-sm focus:font-medium focus:text-primary-foreground"
           >
-            {ui.skipToContent}
+            {skipToContent}
           </a>
-          <SiteHeader
-            domain={person.domain}
-            homeHref={person.homeHref}
-            themeLabel={ui.themeToggle}
-            language={language}
-            search={{
-              groups: search,
-              email: person.email,
-              labels: {
-                search: ui.search,
-                title: ui.searchTitle,
-                description: ui.searchDescription,
-                placeholder: ui.searchPlaceholder,
-                empty: ui.searchEmpty,
-                hints: ui.searchHints,
-              },
-            }}
-          />
+          <SiteHeader {...header} />
           <main id="main" tabIndex={-1} className="outline-none">
             {children}
           </main>
-          <SiteFooter
-            copyright={footer.copyright}
-            profilesHeading={footer.profilesHeading}
-            profiles={footer.profiles}
-            wordmark={footer.wordmark}
-            city={footer.city}
-            localTimeLabel={ui.localTime}
-            newTabLabel={ui.newTab}
-          />
+          <SiteFooter {...footer} locale={locale} />
         </ThemeProvider>
       </body>
     </html>

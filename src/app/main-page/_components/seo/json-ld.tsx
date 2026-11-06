@@ -1,5 +1,5 @@
 /**
- * Blok danych strukturalnych. `<` zamieniamy na `<`: tekst zawierający
+ * Blok danych strukturalnych. `<` zamieniamy na `\u003c`: tekst zawierający
  * `</script>` nie zamknie znacznika (dla parsera JSON to ten sam znak).
  */
 export function JsonLd({ data }: { data: Record<string, unknown> }) {

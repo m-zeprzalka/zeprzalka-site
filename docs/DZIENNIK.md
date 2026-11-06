@@ -6,6 +6,101 @@ w `docs/prywatne/` (poza repozytorium). Iteracja bez wpisu tutaj nie jest skońc
 
 ---
 
+## Iteracja 9 — 6–7 listopada 2026: refaktor `main-page`, ruch jak w Indeksie · I, design system
+
+Zakres od właściciela: pogłębiony audyt i refaktor kodu, uwagi z testów ręcznych sekcja po
+sekcji, ruch na poziom `/demo/indeks-1`, potem podstrona design systemu.
+
+**Kod:**
+- model treści rozbity na moduły (`_lib/content/`: source z `cache`, shell, home, peeks, search);
+- kontekst kart rozdzielony na akcje i stan;
+- jeden zestaw znaków (`_lib/glyphs.ts`) dla logo i `GlyphText`;
+- `pnpm check:classes` (w `pnpm check`) pilnuje kanonicznego zapisu klas Tailwinda w całym
+  `main-page` (np. `ease-(--ease-out)` → `ease-out`);
+- Prettier sortuje klasy według tokenów `main-page`;
+- poprawiona podpowiedź `supports-backdrop-filter:` w `globals.css` serwisu (bez zmiany wyglądu);
+- jeden model wpisu (`card` dla klienta, opis i kategorie tylko na serwerze) zamiast dwóch
+  równoległych tablic;
+- „ogranicz ruch” w jednym miejscu (reguła w `globals.css`, `_lib/motion.ts`), wejście w kadr
+  jednym wzorem (`observeReveal`), skok do kotwic jedną ścieżką (`goToAnchor`);
+- formularz: wybór rodzaju projektu jako natywne radio (`ui/choice-group.tsx`) zamiast
+  `ToggleGroup` — działa bez JS.
+
+**Wydajność:**
+- odsłanianie wideo rysuje w klatce tylko zmienione komórki (wcześniej całą siatkę), praca
+  głównego wątku po 2 s: z 1,5 s do 0,6 s (CPU ×4);
+- animacje „przy wejściu w kadr” bez `getBoundingClientRect` przy hydratacji (wymuszone
+  przeliczenia układu: z 48 ms do 7 ms);
+- plakat wideo startu (LCP) pobierany z wyprzedzeniem; klipy grają tylko w kadrze;
+- JS 224 KB gzip (stara strona 208 KB): różnica to głównie akordeon Radix.
+
+**Niezależny przegląd kodu** (osobny agent) — poprawione:
+- karta na marginesie `inert` zamiast `aria-hidden` z linkiem w kolejności Tab; Enter/Spacja
+  otwierają tę samą kartę jako popover z fokusem, Escape wraca na frazę; popover ma nazwę,
+  `aria-haspopup`, `aria-controls`;
+- karta pojawia się przy kursorze (gałąź „bez dojazdu” wcześniej nigdy się nie wykonywała);
+- ⌘K: brak błędu przy `keydown` bez `key` (autouzupełnianie), na Apple tylko ⌘ (Ctrl+K w polu
+  tekstowym zostaje systemowy);
+- otwieranie realizacji z ⌘K i z dowodów kompetencji: wiersz nie ucieka przy zwijaniu
+  poprzedniego, działa ponowny klik, fokus przechodzi na wiersz; podwójny odstęp nad kotwicą
+  (`scroll-mt` + `scroll-padding`) usunięty;
+- e-mail do skopiowania: nazwa zawiera widoczny adres (WCAG 2.5.3), odmowa schowka → `mailto:`;
+- formularz: region komunikatu stale w drzewie dostępności, błędne pola opisane komunikatem,
+  fokus na pierwszym błędnym;
+- wydruk z ciemnego motywu: jasna paleta (jak w serwisie);
+- przy „ogranicz ruch” stoją też karta, spis sekcji i akordeony;
+- akordeony przed hydratacją nie rozpychają strony (własne `collapse`/`expand` od zera);
+- nagłówki portfolio: grupa `h3`, wiersz `h4`; `article` dla wpisów i realizacji, `address`
+  w stopce; `time` z `dateTime` w stopce;
+- „i w domu”: łańcuch jednoliterowych słów sklejany cały;
+- przelot kadru odporny na dwa szybkie kliknięcia; przycisk pauzy poza Tabem, póki niewidoczny;
+  siatka szkieletu wideo w oczku canvasu na telefonie; wariant `stage:` = zapytanie z JS.
+
+**Poprawki właściciela:**
+- Nagłówek:
+  - rysunek logo i ikona motywu na liniach kolumny;
+  - stopniowane rozmycie tła (mocniej u góry, bez koloru i kreski);
+  - logo z szumem sygnetu i falą znaków przez domenę na najechanie;
+  - PL/EN jako przełącznik segmentowy tej samej wysokości co wyszukiwarka;
+  - klawisze ⌘/Ctrl+K z obrysem (`Kbd`).
+- Wyszukiwarka: wyższe pole (16 px), ikony i miniatury w wierszach, obły arkusz na telefonie.
+- Spis sekcji: bez napisu „Na tej stronie”, sama bieżąca sekcja z kropką, rozwija się przy lewej
+  krawędzi, znika przy stopce.
+- Start i karty podglądu:
+  - wejście słowo po słowie z rozmycia (nagłówek → tekst → przyciski → wideo);
+  - na desktopie karta tylko na najechanie (bez przypinania), płynie za kursorem w pionie, kadry
+    w naturalnych proporcjach;
+  - na telefonie popover zawsze pod frazą, z dosunięciem strony;
+  - „webowych” i „multimedialnych” — po jednym filmie.
+- „O mnie”: nagłówek i liczby odczytują się ze znaków; fala wypełniania jak w Indeksie · I;
+  podpisy liczb bez tła na najechanie.
+- Kompetencje: najechanie na wiersz.
+- Portfolio:
+  - kategoria pod nazwą na telefonie;
+  - kadr przelatuje z karty do otwartego panelu (View Transitions).
+- Blog:
+  - okładka najnowszego wpisu poniżej 1280 px;
+  - rysowana obwódka „Nowy”;
+  - linki „Pokaż wszystkie” i „Wszystkie artykuły” mieszczą się na telefonie.
+
+**Design system:** `/main-page/design-system` z tokenami (kolory, pismo, siatka, kształty, ruch),
+komponentami shadcn i kompozycjami strony. Każdy przykład jest żywy, a jego kod czytany jest
+z pliku przykładu.
+
+**Sprawdzone:**
+- Lighthouse (telefon): dostępność 100, dobre praktyki 100. Wcześniej było 96: za niski kontrast
+  niewypełnionych słów. SEO na podglądzie 58 przez celowe `noindex` i canonical do obecnej
+  strony — po przepięciu odpada. Wydajność lokalnie (WSL) 87–92 przy 93–96 starej strony w tych
+  samych warunkach.
+- 360–1920 px: 0 poziomego przewijania, krawędzie na liniach kolumny.
+- Zrzuty `/main-page` przed i po poprawkach z przeglądu: identyczne co do piksela (390, 768,
+  1440 ciemny i jasny); zachowania (klawiatura, ⌘K, kotwice, wideo, formularz, wydruk) sprawdzone
+  w Playwright.
+- `pnpm check` i build z demami (`VERCEL_ENV=production DEMO_PUBLIC=1`) w czystej kopii;
+  `pnpm visual --all`: serwis identyczny co do piksela.
+
+---
+
 ## Iteracja 8 — 6 listopada 2026: nowa strona główna na shadcn (`src/app/main-page`)
 
 Zakres od właściciela: koniec nowych koncepcji. Strona główna w kanonie Indeksu (`/demo/indeks-1`)

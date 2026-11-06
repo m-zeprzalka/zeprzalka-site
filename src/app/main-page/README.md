@@ -241,6 +241,9 @@ Szczegóły (skale, tokeny, warianty) powstają razem ze stroną główną i są
   Odsłanianie wideo rysuje w klatce tylko komórki, które zmieniły stan (komórki posortowane progiem).
 - Stan 7.11: JS 224 KB gzip (stara strona 208 KB) — różnica to głównie akordeon Radix (ok. 12 KB);
   HTML 34 KB gzip (dane wyszukiwarki i kart w ładunku RSC — do przeniesienia do osobnego pliku).
+- Odrzucone 7.11: `content-visibility: auto` na sekcjach pod zgięciem — oszczędza 150–550 ms
+  głównego wątku przy starcie, ale skoki do kotwic lądują w złym miejscu (pozycja liczona
+  z szacowanych wysokości sekcji, np. „Kontakt” −190 px zamiast 80 px).
 
 ## 10. Dostępność i jakość
 

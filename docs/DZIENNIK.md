@@ -98,6 +98,12 @@ z pliku przykładu.
   w Playwright.
 - `pnpm check` i build z demami (`VERCEL_ENV=production DEMO_PUBLIC=1`) w czystej kopii;
   `pnpm visual --all`: serwis identyczny co do piksela.
+- Po wdrożeniu (`1569d7a`) Lighthouse z WSL na produkcji, telefon: `/main-page` wydajność 73–89
+  (TBT 420–1150 ms), stara strona główna 91–93 w tych samych przebiegach; dostępność i dobre
+  praktyki 100 na obu. Różnicę robi hydratacja Reacta (większe wyspy klienckie: akordeony Radix,
+  karty, napisy) — kierunki w ROADMAP. API PageSpeed bez klucza zwróciło limit (429), więc
+  pomiar PSI zostaje do zrobienia ręcznie.
+- `content-visibility: auto` dla sekcji sprawdzone i odrzucone (psuje skoki do kotwic).
 
 ---
 

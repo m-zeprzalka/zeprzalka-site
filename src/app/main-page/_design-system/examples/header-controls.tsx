@@ -6,13 +6,7 @@ import { NewMark } from "@/app/main-page/_components/sections/new-mark"
 export function HeaderControlsExample() {
   return (
     <>
-      <LanguageSwitch
-        label="Język"
-        links={[
-          { label: "PL", href: "/main-page", current: true },
-          { label: "EN", href: "/en", current: false },
-        ]}
-      />
+      <LanguageSwitch label="Język" locale="pl" fallback="/en" />
       <ThemeToggle label="Zmień motyw" />
       <CopyEmail email="m@zeprzalka.com" label="Kopiuj adres e-mail" copiedLabel="Skopiowano" />
       <span>

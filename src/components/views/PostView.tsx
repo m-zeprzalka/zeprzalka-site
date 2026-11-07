@@ -17,13 +17,13 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
 import { Separator } from "@/components/ui/separator"
-import { ROUTES, categoryPath, postPath, tagPath, type Locale } from "@/i18n/config"
+import { ROUTES, categoryPath, tagPath, type Locale } from "@/i18n/config"
 import { getCommon } from "@/i18n/content/common"
 import { getPages } from "@/i18n/content/pages"
 import { formatDate } from "@/i18n/format"
 import { renderMdx } from "@/lib/mdx"
 import { formatReadingTime, getRelatedPosts, type Post } from "@/lib/posts"
-import { blogPostingSchema, breadcrumbSchema, graph } from "@/lib/schema"
+import { postPageSchema } from "@/lib/page-schema"
 import { AUTHOR } from "@/lib/site"
 import { slugify } from "@/lib/slug"
 
@@ -54,18 +54,9 @@ export async function PostView({ post, locale }: { post: Post; locale: Locale })
   const related = getRelatedPosts(post)
   const Cover = post.frontmatter.imageCaption ? "figure" : "div"
 
-  // Wpis, okruszki (Start → Blog → wpis) i odwołanie do autora przez @id.
-  const jsonLd = graph(
-    blogPostingSchema(post),
-    breadcrumbSchema(locale, [
-      { name: copy.breadcrumbBlog, path: ROUTES.blog[locale] },
-      { name: post.frontmatter.title, path: postPath(locale, post.slug) },
-    ])
-  )
-
   return (
     <>
-      <JsonLd data={jsonLd} />
+      <JsonLd data={postPageSchema(locale, post)} />
       <div className="container mx-auto p-4 py-6 md:py-8 lg:py-12 xl:py-16">
         <div className="grid grid-cols-1 lg:grid-cols-12 lg:gap-x-12">
           <aside className="hidden lg:col-span-4 lg:block xl:col-span-3" data-print-hide>

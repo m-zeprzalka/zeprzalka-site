@@ -4,7 +4,7 @@
  * łatwo je zmienić bez szukania warunków w kodzie.
  */
 import "server-only"
-import type { Link, Media, Peek } from "../types"
+import type { Link, Media, Peek, Post } from "../types"
 import { SECTION } from "../anchors"
 import { sentences } from "../text"
 import { need, type Source } from "./source"
@@ -119,8 +119,13 @@ export function buildPeeks(source: Source): Record<string, Peek> {
         ])
       )
     ),
-    ...Object.fromEntries(
-      posts.map(({ card }) => [`post-${card.slug}`, { title: card.title, media: [card.cover] } satisfies Peek])
-    ),
+    ...postPeeks(posts.map(({ card }) => card)),
   }
+}
+
+/** Karty wpisów `post-<slug>`: okładka na marginesie przy najechaniu na wiersz listy. */
+export function postPeeks(cards: readonly Post[]): Record<string, Peek> {
+  return Object.fromEntries(
+    cards.map((card) => [`post-${card.slug}`, { title: card.title, media: [card.cover] }])
+  )
 }

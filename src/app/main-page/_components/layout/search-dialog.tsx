@@ -81,10 +81,13 @@ export default function SearchDialog({
     const href = pending.current
     pending.current = null
     if (!href) return trigger.current?.focus()
-    // Klatkę później: blokada przewijania okna jest już zdjęta.
-    requestAnimationFrame(() =>
-      href.startsWith("#") ? goToAnchor(href.slice(1)) : router.push(href)
-    )
+    // Klatkę później: blokada przewijania okna jest już zdjęta. Kotwica na tej samej
+    // stronie — skok w miejscu; na innej (sekcja startu wybrana z podstrony) — przejście.
+    requestAnimationFrame(() => {
+      const [path = "", hash] = href.split("#")
+      if (hash && (!path || path === window.location.pathname)) goToAnchor(hash)
+      else router.push(href)
+    })
   }
 
   function run(item: SearchItem) {

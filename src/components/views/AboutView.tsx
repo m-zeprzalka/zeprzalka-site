@@ -5,9 +5,9 @@ import { MapPin, Mail, Globe, ArrowRight, Download } from "lucide-react"
 import Link from "next/link"
 import { JsonLd } from "@/components/JsonLd"
 import { StatusBadge } from "@/components/StatusBadge"
-import { CONTACT_EMAIL, CV_PDF, SITE_HOST, SITE_URL, absoluteUrl } from "@/lib/site"
-import { PERSON_ID, breadcrumbSchema, graph, personSchema } from "@/lib/schema"
-import { INTL_LOCALE, ROUTES, type Locale } from "@/i18n/config"
+import { CONTACT_EMAIL, CV_PDF, SITE_HOST, SITE_URL } from "@/lib/site"
+import { profilePageSchema } from "@/lib/page-schema"
+import { ROUTES, type Locale } from "@/i18n/config"
 import { getPages } from "@/i18n/content/pages"
 
 /**
@@ -17,20 +17,9 @@ import { getPages } from "@/i18n/content/pages"
 export function AboutView({ locale }: { locale: Locale }) {
   const copy = getPages(locale).about
 
-  const profileJsonLd = graph(
-    {
-      "@type": "ProfilePage",
-      url: absoluteUrl(ROUTES.about[locale]),
-      inLanguage: INTL_LOCALE[locale],
-      mainEntity: { "@id": PERSON_ID },
-    },
-    personSchema(locale),
-    breadcrumbSchema(locale, [{ name: copy.aboutHeading, path: ROUTES.about[locale] }])
-  )
-
   return (
     <div className="page-shell max-w-4xl">
-      <JsonLd data={profileJsonLd} />
+      <JsonLd data={profilePageSchema(locale)} />
       {/* Header */}
       <header className="mb-16">
         <StatusBadge label={copy.status} className="mb-6 w-fit" />

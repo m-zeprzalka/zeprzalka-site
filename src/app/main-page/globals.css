@@ -127,6 +127,9 @@
   --animate-peek-in: peek-in 240ms var(--ease-out) backwards;
   --animate-peek-out: peek-out 200ms var(--ease-out) forwards;
   --animate-draw: draw 450ms var(--ease-in-out) 150ms backwards;
+  /* Kadr LCP (okładka wpisu): tylko wyostrzenie — bez `opacity`, więc LCP liczy się od
+     pierwszego malowania, a kadr i tak należy do „harmonijki”. */
+  --animate-sharpen: sharpen 540ms var(--ease-out) backwards;
   /* Akordeon: wysokość z pomiaru Radix; przed pomiarem (bez hydratacji) — zero, nie `auto`. */
   --animate-expand: expand 200ms var(--ease-out);
   --animate-collapse: collapse 200ms var(--ease-out);
@@ -148,6 +151,19 @@
 @media (min-width: 105rem) {
   :root {
     --container-column: 48rem;
+  }
+}
+
+/* Największy stopień pisma: h1 startu i nagłówki podstron (dwutonowe z rozwinięciem). */
+@utility text-display {
+  font-size: 1.625rem;
+  line-height: 1.2;
+  font-weight: var(--font-weight-medium);
+  letter-spacing: var(--tracking-tight);
+  text-wrap: pretty;
+
+  @media (width >= 40rem) {
+    font-size: 2.125rem;
   }
 }
 
@@ -221,6 +237,12 @@
     opacity: 0;
     filter: blur(8px);
     translate: 0 0.3em;
+  }
+}
+
+@keyframes sharpen {
+  from {
+    filter: blur(12px);
   }
 }
 

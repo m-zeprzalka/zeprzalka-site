@@ -73,7 +73,7 @@ function SkillItem({ skill }: { skill: Skill }) {
         <ul className="flex flex-wrap gap-2">
           {skill.tags.map((tag) => (
             <li key={tag}>
-              <Badge variant="secondary" className="px-2.5 py-1">
+              <Badge variant="secondary" size="md">
                 {tag}
               </Badge>
             </li>

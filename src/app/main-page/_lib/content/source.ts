@@ -5,7 +5,7 @@
  */
 import "server-only"
 import { cache } from "react"
-import { postPath, type Locale } from "@/i18n/config"
+import type { Locale } from "@/i18n/config"
 import { getCommon } from "@/i18n/content/common"
 import { getHome, homeSkills } from "@/i18n/content/home"
 import { getMainPage } from "@/i18n/content/main-page"
@@ -13,6 +13,7 @@ import { getPages } from "@/i18n/content/pages"
 import { portfolioGroups, portfolioItems, type PortfolioItem } from "@/lib/portfolio"
 import { getAllPosts } from "@/lib/posts"
 import type { Media, Post, WorkGroup } from "../types"
+import { postHref } from "../routes"
 
 /** Wpis jest „nowy” przez 30 dni od publikacji (liczone przy buildzie). */
 const NEW_FOR_MS = 30 * 24 * 60 * 60 * 1000
@@ -70,7 +71,7 @@ export const getSource = cache((locale: Locale) => {
     const card: Post = {
       slug,
       title: frontmatter.title,
-      href: postPath(locale, slug),
+      href: postHref(locale, slug),
       year,
       day: `${day}.${month}`,
       iso: frontmatter.date,
@@ -91,6 +92,7 @@ export const getSource = cache((locale: Locale) => {
     common: getCommon(locale),
     home: getHome(locale),
     copy: getMainPage(locale),
+    pages: getPages(locale),
     about,
     freelance,
     teaching,

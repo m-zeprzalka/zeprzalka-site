@@ -6,6 +6,57 @@ w `docs/prywatne/` (poza repozytorium). Iteracja bez wpisu tutaj nie jest skońc
 
 ---
 
+## Iteracja 10 — 7 listopada 2026: podstrony w nowym systemie (`main-page`)
+
+Zakres od właściciela: wszystkie strony starej wersji w nowym wydaniu, według zasad `main-page`.
+
+**Strony** (podgląd pod `/main-page/…`, po polsku, `noindex`, karty OG z fabryk serwisu):
+- usługi — pakiety jako indeks z ceną zawsze widoczną (zakres po rozwinięciu, w HTML także
+  zwinięty), kroki współpracy, gwarancje, wycena;
+- portfolio — galeria w naturalnych proporcjach, dwie kolumny; filmy dochodzą tuż przed
+  kadrem i grają tylko w kadrze;
+- o mnie — biogram i CV (doświadczenie, umiejętności, edukacja w kolumnie etykiet), PDF z CV;
+  wykłady „2016–obecnie” bez nazw uczelni, jak na starcie;
+- kontakt — e-mail do skopiowania, miejsce i czas odpowiedzi, ten sam formularz co na starcie;
+- polityka prywatności;
+- blog — kategorie pod nagłówkiem, dwa wyróżnione wpisy, indeks z okładką na marginesie,
+  archiwum stron (shadcn `Pagination`); kategorie, kategoria, tag;
+- wpis — spis rozdziałów w lewym torze, okładka, treść (`article.css`, tylko na wpisach), blok
+  kodu z kopiowaniem, film YouTube bez śledzenia do kliknięcia, tagi, autor (bez zdjęcia),
+  wezwanie do rozmowy, „Czytaj dalej”;
+- 404 dla `notFound()` w podglądzie.
+
+**System:**
+- klocki podstron w `_components/page` (nagłówek z okruszkami w stopniu `text-display`, sekcja,
+  wiersz z kolumną etykiety, panel wezwania, plakietki, indeks wpisów, paginacja);
+- adresy podglądu w jednym miejscu (`_lib/routes.ts`; przy przepięciu `BASE = ""`), linki
+  wewnętrzne we wpisach też zostają w podglądzie;
+- stopka z listą podstron (jedyne ich linki w HTML), przełącznik języka prowadzi na angielski
+  odpowiednik oglądanej strony, ⌘K z podstrony przechodzi do sekcji i realizacji startu;
+- dane strukturalne podstron przeniesione do `src/lib/page-schema.ts` — serwis i podgląd mają
+  jedną definicję (JSON-LD serwisu identyczny na 15 sprawdzonych stronach PL i EN);
+- shadcn z CLI: `breadcrumb`, `pagination` (napisy z treści serwisu zamiast angielskich);
+  wariant `row` akordeonu dla wierszy indeksu.
+
+**Sprawdzone:**
+- wszystkie trasy 200, nieznany wpis 404; tekst stron z JS i bez JS identyczny (dev i build);
+- w trybie dev wiersz akordeonu znikał po hydratacji (`asChild` w komponencie klienckim
+  z elementem z serwera) — poprawione, zasada w README;
+- strona główna: zmiana tylko w stopce (porównanie pikseli dwóch buildów produkcyjnych);
+- Lighthouse lokalnie (telefon): dostępność i dobre praktyki 100 po poprawkach listy opisowej
+  i paginacji.
+- Niezależny przegląd kodu (osobny agent) — poprawione: spis wpisu chowany przy stopce serwisu
+  (nie przy stopce artykułu), klipy galerii tylko na żądanie (WCAG 2.2.2; wcześniej montowało się
+  ok. 19 MB wideo), adresy w przykładach design systemu przez `_lib/routes.ts`, linki MDX do
+  `/kategoria/next.js` nie są brane za pliki, kolejność czytania w CV (nagłówek przed okresem),
+  bloki kodu i tabele bez mnożenia punktów orientacyjnych, link karty wpisu tylko na tytule,
+  paginacja przez `next/link`, „Zobacz w portfolio” prowadzi wprost do kafla, rozmiar plakietek
+  jako wariant `Badge`, jedna lista podstron dla stopki i ⌘K.
+- Przełącznik języka czyta odpowiednik strony z jej `hreflang` w `<head>` — bez mapy adresów
+  w JS (wersja z `counterpart()` dokładała ok. 9 KB gzip na każdej stronie).
+
+---
+
 ## Iteracja 9 — 6–7 listopada 2026: refaktor `main-page`, ruch jak w Indeksie · I, design system
 
 Zakres od właściciela: pogłębiony audyt i refaktor kodu, uwagi z testów ręcznych sekcja po

@@ -1,14 +1,12 @@
 /** Treść powłoki: nagłówek (logo, wyszukiwarka, język, motyw) i stopka. */
 import "server-only"
-import { ROUTES, type Locale } from "@/i18n/config"
+import { ROUTES, otherLocale, type Locale } from "@/i18n/config"
 import { fill } from "@/i18n/format"
 import { CONTACT_EMAIL, SITE_DOMAIN, SOCIAL_PROFILES } from "@/lib/site"
+import { PAGE_KEYS, pageHref } from "../routes"
 import type { Link } from "../types"
 import { buildSearch } from "./search"
 import { getSource } from "./source"
-
-/** Adres strony głównej w podglądzie; po przepięciu: `ROUTES.home[locale]`. */
-export const HOME_HREF = "/main-page"
 
 /** Profil X jest pierwszy (prośba właściciela); przy przepięciu trafi do `SOCIAL_PROFILES`. */
 const PROFILES: readonly Link[] = [
@@ -24,15 +22,9 @@ export function getShellContent(locale: Locale) {
     skipToContent: common.ui.skipToContent,
     header: {
       domain: SITE_DOMAIN,
-      homeHref: HOME_HREF,
+      homeHref: pageHref("home", locale),
       themeLabel: common.ui.themeToggle,
-      language: {
-        label: copy.ui.language,
-        links: [
-          { label: "PL", href: ROUTES.home.pl, current: locale === "pl" },
-          { label: "EN", href: ROUTES.home.en, current: locale === "en" },
-        ],
-      },
+      language: { label: copy.ui.language, locale, fallback: ROUTES.home[otherLocale(locale)] },
       search: {
         groups: buildSearch(source),
         email: CONTACT_EMAIL,
@@ -47,6 +39,9 @@ export function getShellContent(locale: Locale) {
       },
     },
     footer: {
+      navigationHeading: common.footer.navigation,
+      pages: PAGE_KEYS.map((key) => ({ label: common.nav[key], href: pageHref(key, locale) })),
+      privacy: { label: common.form.privacyLink, href: pageHref("privacy", locale) },
       copyright: fill(common.footer.copyright, { year: String(new Date().getFullYear()) }),
       profilesHeading: common.footer.social,
       profiles: PROFILES,

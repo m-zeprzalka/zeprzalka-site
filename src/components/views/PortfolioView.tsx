@@ -2,12 +2,11 @@ import { Separator } from "@/components/ui/separator"
 import { PageHeader } from "@/components/PageHeader"
 import { CtaPanel } from "@/components/CtaPanel"
 import { PortfolioGrid } from "@/components/portfolio/PortfolioGrid"
-import { getPortfolioByGroup, portfolioGroups, portfolioItems } from "@/lib/portfolio"
+import { getPortfolioByGroup, portfolioGroups } from "@/lib/portfolio"
 import { JsonLd } from "@/components/JsonLd"
-import { SITE_NAME, absoluteUrl } from "@/lib/site"
-import { PERSON_ID, breadcrumbSchema, graph } from "@/lib/schema"
-import { INTL_LOCALE, ROUTES, type Locale } from "@/i18n/config"
-import { fill, plural } from "@/i18n/format"
+import { portfolioPageSchema } from "@/lib/page-schema"
+import { ROUTES, type Locale } from "@/i18n/config"
+import { plural } from "@/i18n/format"
 import { getCommon } from "@/i18n/content/common"
 import { getPages } from "@/i18n/content/pages"
 
@@ -15,41 +14,9 @@ export function PortfolioView({ locale }: { locale: Locale }) {
   const copy = getPages(locale).portfolio
   const common = getCommon(locale)
 
-  /**
-   * Zbiór realizacji w danych strukturalnych. Świadomie `CreativeWork`, a nie
-   * `VideoObject`: ten drugi wymaga daty publikacji i opisu każdego materiału,
-   * a tych danych po prostu nie mam — lepiej podać mniej i prawdziwie.
-   */
-  const portfolioJsonLd = graph(
-    {
-      "@type": "CollectionPage",
-      inLanguage: INTL_LOCALE[locale],
-      author: { "@id": PERSON_ID },
-      name: fill(copy.collectionName, { name: SITE_NAME }),
-      url: absoluteUrl(ROUTES.portfolio[locale]),
-      about: portfolioGroups.map((group) => group.label[locale]),
-      mainEntity: {
-        "@type": "ItemList",
-        numberOfItems: portfolioItems.length,
-        itemListElement: portfolioItems.map((item, index) => ({
-          "@type": "ListItem",
-          position: index + 1,
-          item: {
-            "@type": "CreativeWork",
-            name: item.title[locale],
-            genre: item.category[locale],
-            image: absoluteUrl(item.poster),
-            creator: { "@id": PERSON_ID },
-          },
-        })),
-      },
-    },
-    breadcrumbSchema(locale, [{ name: copy.title, path: ROUTES.portfolio[locale] }])
-  )
-
   return (
     <div className="page-shell">
-      <JsonLd data={portfolioJsonLd} />
+      <JsonLd data={portfolioPageSchema(locale)} />
 
       <PageHeader badge={copy.badge} title={copy.title} description={copy.description} />
 

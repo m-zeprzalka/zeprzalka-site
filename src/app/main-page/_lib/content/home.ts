@@ -1,10 +1,11 @@
 /** Treść strony głównej: sekcje, karty podglądu i spis sekcji. */
 import "server-only"
-import { ROUTES, type Locale } from "@/i18n/config"
+import type { Locale } from "@/i18n/config"
 import { CONTACT_EMAIL } from "@/lib/site"
 import type { Fact, Link, Segment, Skill } from "../types"
 import { workAnchor } from "../anchors"
 import { noOrphans, segment, sentences } from "../text"
+import { pageHref } from "../routes"
 import { buildPeeks, lecturesOf, PEEK_WORKS } from "./peeks"
 import { buildSections } from "./search"
 import { getSource, type Source } from "./source"
@@ -109,12 +110,12 @@ export function getHomeContent(locale: Locale) {
       title: home.portfolio.title,
       lead: home.portfolio.lead,
       groups: source.groups,
-      all: { label: copy.ui.allWorks, href: ROUTES.portfolio[locale] },
+      all: { label: copy.ui.allWorks, href: pageHref("portfolio", locale) },
       labels: {
         visitSite: copy.ui.visitSite,
         inPortfolio: copy.ui.inPortfolio,
         newTab: common.ui.newTab,
-        portfolioHref: ROUTES.portfolio[locale],
+        portfolioHref: pageHref("portfolio", locale),
       },
     },
     blog: {
@@ -122,7 +123,7 @@ export function getHomeContent(locale: Locale) {
       lead: home.blog.lead,
       posts: source.posts.map((post) => post.card),
       visible: POSTS_VISIBLE,
-      all: { label: home.blog.cta, href: ROUTES.blog[locale] },
+      all: { label: home.blog.cta, href: pageHref("blog", locale) },
       labels: { newPost: copy.ui.newPost, showAll: copy.ui.showAll, showLess: copy.ui.showLess },
     },
     contact: {
@@ -138,7 +139,7 @@ export function getHomeContent(locale: Locale) {
         locale,
         copy: common.form,
         projectTypes: copy.contact.projectTypes,
-        privacyHref: ROUTES.privacy[locale],
+        privacyHref: pageHref("privacy", locale),
       },
     },
   }

@@ -5,9 +5,8 @@ import { JsonLd } from "@/components/JsonLd"
 import { PageHeader } from "@/components/PageHeader"
 import { ROUTES, type Locale } from "@/i18n/config"
 import { getCommon } from "@/i18n/content/common"
-import { getMeta } from "@/i18n/content/meta"
 import { getPages } from "@/i18n/content/pages"
-import { PERSON_ID, breadcrumbSchema, graph, webPageSchema } from "@/lib/schema"
+import { contactPageSchema } from "@/lib/page-schema"
 import { CONTACT_EMAIL } from "@/lib/site"
 
 export function ContactView({ locale }: { locale: Locale }) {
@@ -34,21 +33,9 @@ export function ContactView({ locale }: { locale: Locale }) {
     },
   ]
 
-  const meta = getMeta(locale).contact
-  const path = ROUTES.contact[locale]
-  const jsonLd = graph(
-    webPageSchema(
-      "ContactPage",
-      locale,
-      { name: meta.title, description: meta.description, path },
-      { mainEntity: { "@id": PERSON_ID } }
-    ),
-    breadcrumbSchema(locale, [{ name: meta.title, path }])
-  )
-
   return (
     <div className="page-shell">
-      <JsonLd data={jsonLd} />
+      <JsonLd data={contactPageSchema(locale)} />
       <PageHeader badge={copy.badge} title={copy.title} description={copy.description} />
 
       <div className="grid gap-12 lg:grid-cols-12 lg:gap-16">

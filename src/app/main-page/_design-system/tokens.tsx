@@ -57,8 +57,8 @@ export function RadiusTokens() {
 const TYPE = [
   {
     sample: "Przekształcam ambitne projekty",
-    className: "text-[1.625rem] leading-[1.2] font-medium tracking-tight sm:text-[2.125rem]",
-    use: "h1 startu",
+    className: "text-display",
+    use: "h1 startu i podstron",
   },
   {
     sample: "Łączę umiejętności techniczne",

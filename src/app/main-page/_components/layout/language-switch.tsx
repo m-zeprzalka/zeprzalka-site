@@ -1,47 +1,69 @@
-import Link from "next/link"
-import { cn } from "@/lib/utils"
+"use client"
 
-interface LanguageLink {
-  label: string
-  href: string
-  current: boolean
-}
+import { useSyncExternalStore } from "react"
+import { locales, otherLocale, type Locale } from "@/i18n/config"
 
 const SEGMENT =
-  "grid h-7 min-w-9 place-items-center rounded-full px-2.5 text-xs font-medium outline-none transition-colors focus-visible:ring-[3px] focus-visible:ring-ring/50"
+  "grid h-7 min-w-9 place-items-center rounded-full px-2.5 text-xs font-medium uppercase outline-none transition-colors focus-visible:ring-[3px] focus-visible:ring-ring/50"
+const CURRENT = `${SEGMENT} bg-background text-foreground shadow-xs`
+const OTHER = `${SEGMENT} text-muted-foreground hover:text-foreground`
+
+/** Metadane zmieniają się przy przejściu między stronami — wtedy liczymy adres od nowa. */
+function subscribe(onChange: () => void) {
+  const observer = new MutationObserver(onChange)
+  observer.observe(document.head, { childList: true, subtree: true, attributes: true })
+  return () => observer.disconnect()
+}
+
+/** Odpowiednik oglądanej strony w języku `target` — z jej znacznika `hreflang` (metadane). */
+function counterpartFromHead(target: Locale): string | null {
+  const link = document.querySelector<HTMLLinkElement>(
+    `link[rel="alternate"][hreflang="${target}"]`
+  )
+  return link ? new URL(link.href).pathname : null
+}
 
 /**
  * PL / EN jako przełącznik segmentowy w stylu shadcn (Tabs): obła ścieżka tej
  * samej wysokości co wyszukiwarka i przycisk motywu, bieżący język na jasnym
- * segmencie. Bieżący język nie jest linkiem (`aria-current`).
+ * segmencie (nie jest linkiem — `aria-current`).
+ *
+ * Drugi język prowadzi na odpowiednik oglądanej strony. Adres podaje sama
+ * strona: jej znacznik `hreflang` liczy `src/i18n/alternates.ts` (metadane),
+ * więc do przeglądarki nie trafia żadna mapa adresów. Do hydratacji (i bez JS)
+ * link prowadzi na stronę główną drugiej wersji. Podgląd ma tylko wersję
+ * polską — angielski odpowiednik to dziś strona serwisu. Zwykłe `<a>`: wersje
+ * językowe mają osobne układy główne. Klasy bez `cn()` — `tailwind-merge` nie
+ * trafia do paczki nagłówka.
  */
 export function LanguageSwitch({
   label,
-  links,
+  locale,
+  fallback,
 }: {
   label: string
-  links: readonly LanguageLink[]
+  locale: Locale
+  /** Strona główna drugiej wersji — gdy strona nie ma odpowiednika. */
+  fallback: string
 }) {
+  const target = otherLocale(locale)
+  const href = useSyncExternalStore(
+    subscribe,
+    () => counterpartFromHead(target) ?? fallback,
+    () => fallback
+  )
+
   return (
     <nav aria-label={label} className="flex h-9 items-center rounded-full bg-secondary p-1">
-      {links.map((link) =>
-        link.current ? (
-          <span
-            key={link.label}
-            aria-current="page"
-            className={cn(SEGMENT, "bg-background text-foreground shadow-xs")}
-          >
-            {link.label}
+      {locales.map((code) =>
+        code === locale ? (
+          <span key={code} aria-current="page" className={CURRENT}>
+            {code}
           </span>
         ) : (
-          <Link
-            key={link.label}
-            href={link.href}
-            hrefLang={link.label.toLowerCase()}
-            className={cn(SEGMENT, "text-muted-foreground hover:text-foreground")}
-          >
-            {link.label}
-          </Link>
+          <a key={code} href={href} hrefLang={code} className={OTHER}>
+            {code}
+          </a>
         )
       )}
     </nav>

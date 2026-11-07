@@ -4,6 +4,7 @@ import { useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { ArrowUpRightIcon, ChevronDownIcon } from "lucide-react"
+import { INDEX_ROW } from "@/app/main-page/_components/page/index-row"
 import { usePeekHover } from "@/app/main-page/_components/peek/peek-context"
 import { Button } from "@/app/main-page/_components/ui/button"
 import type { Link as LinkData, Post } from "@/app/main-page/_lib/types"
@@ -92,7 +93,7 @@ export function PostList({
   )
 }
 
-function PostRow({
+export function PostRow({
   post,
   showYear,
   newLabel,
@@ -109,11 +110,7 @@ function PostRow({
         {showYear ? post.year : ""}
       </span>
       <article>
-        <Link
-          href={post.href}
-          {...hover}
-          className="-mx-3 flex min-h-11 items-baseline justify-between gap-4 rounded-xl px-3 py-2.5 transition-colors outline-none hover:bg-accent/60 focus-visible:ring-[3px] focus-visible:ring-ring/50"
-        >
+        <Link href={post.href} {...hover} className={INDEX_ROW}>
           <span className="text-pretty">
             {post.title}
             {post.isNew && <NewMark label={newLabel} />}

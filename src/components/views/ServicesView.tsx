@@ -4,13 +4,10 @@ import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import { PageHeader } from "@/components/PageHeader"
 import { CtaPanel } from "@/components/CtaPanel"
-import { guarantees, packages, processSteps, type ServicePackage } from "@/lib/services"
+import { guarantees, packages, processSteps } from "@/lib/services"
 import { JsonLd } from "@/components/JsonLd"
-import { absoluteUrl } from "@/lib/site"
-import { PERSON_ID, breadcrumbSchema, graph } from "@/lib/schema"
+import { servicesPageSchema } from "@/lib/page-schema"
 import { ROUTES, type Locale } from "@/i18n/config"
-import { getCommon } from "@/i18n/content/common"
-import { getMeta } from "@/i18n/content/meta"
 import { getPages } from "@/i18n/content/pages"
 import { formatNumber } from "@/i18n/format"
 
@@ -18,55 +15,13 @@ import { formatNumber } from "@/i18n/format"
  * Strona ofertowa. Jeden układ dla obu języków — pakiety i kwoty siedzą
  * w `src/lib/services.ts`, więc korekta stawki to nadal zmiana jednej liczby.
  */
-/** Cena w danych strukturalnych: stała (`price`) albo minimalna (`minPrice`), netto. */
-function priceSpecification(pack: ServicePackage, locale: Locale) {
-  return {
-    "@type": pack.unit ? "UnitPriceSpecification" : "PriceSpecification",
-    [pack.fixed ? "price" : "minPrice"]: pack.from,
-    priceCurrency: "PLN",
-    valueAddedTaxIncluded: false,
-    ...(pack.unit ? { unitText: pack.unit[locale] } : {}),
-  }
-}
-
 export function ServicesView({ locale }: { locale: Locale }) {
   const copy = getPages(locale).services
   const badges = { start: copy.startBadge, recurring: copy.recurringBadge }
 
-  /**
-   * Katalog usług w danych strukturalnych. Wyszukiwarka dostaje wprost, co
-   * i za ile jest oferowane, zamiast domyślać się z treści strony.
-   */
-  const offerJsonLd = graph(
-    {
-      // `Service` świadczona przez osobę (Person z @id), a nie `ProfessionalService`:
-      // ten drugi to podtyp LocalBusiness i wymaga adresu siedziby.
-      "@type": "Service",
-      "@id": `${absoluteUrl(ROUTES.services[locale])}#service`,
-      name: getMeta(locale).services.title,
-      description: getMeta(locale).root.ogDescription,
-      url: absoluteUrl(ROUTES.services[locale]),
-      areaServed: "PL",
-      provider: { "@id": PERSON_ID },
-      hasOfferCatalog: {
-        "@type": "OfferCatalog",
-        name: copy.offerCatalog,
-        itemListElement: packages.map((pack) => ({
-          "@type": "Offer",
-          name: pack.name[locale],
-          description: pack.scope[locale],
-          priceSpecification: priceSpecification(pack, locale),
-        })),
-      },
-    },
-    breadcrumbSchema(locale, [
-      { name: getCommon(locale).nav.services, path: ROUTES.services[locale] },
-    ])
-  )
-
   return (
     <div className="page-shell">
-      <JsonLd data={offerJsonLd} />
+      <JsonLd data={servicesPageSchema(locale)} />
 
       <PageHeader badge={copy.badge} title={copy.title} description={copy.description} />
 

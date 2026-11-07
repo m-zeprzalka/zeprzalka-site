@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react"
 import { flushSync } from "react-dom"
 import { ArrowUpRightIcon } from "lucide-react"
 import { usePeekActions, usePeekHover } from "@/app/main-page/_components/peek/peek-context"
+import { LabelRow } from "@/app/main-page/_components/page/label-row"
 import { PeekMedia } from "@/app/main-page/_components/peek/peek-media"
 import { STAGE_ID } from "@/app/main-page/_components/peek/peek-stage"
 import {
@@ -125,14 +126,11 @@ export function WorkList({
         className="mt-8 grid gap-10"
       >
         {groups.map((group) => (
-          <div key={group.id} className="grid gap-1 md:grid-cols-[9.5rem_minmax(0,1fr)] md:gap-6">
-            <h3 className="py-2 text-sm text-muted-foreground md:py-3">{group.label}</h3>
-            <div>
-              {group.works.map((work) => (
-                <WorkItem key={work.slug} work={work} open={open === work.slug} labels={labels} />
-              ))}
-            </div>
-          </div>
+          <LabelRow key={group.id} label={group.label} labelAs="h3" labelClassName="py-2 md:py-3">
+            {group.works.map((work) => (
+              <WorkItem key={work.slug} work={work} open={open === work.slug} labels={labels} />
+            ))}
+          </LabelRow>
         ))}
       </Accordion>
       <Button asChild variant="ghost" size="sm" className="-ms-2.5 mt-6">
@@ -155,7 +153,7 @@ function WorkItem({ work, open, labels }: { work: Work; open: boolean; labels: L
           headingLevel={4}
           // Rozwinięty wiersz pokazuje kadr w panelu — karta z marginesu by go dublowała.
           {...(open ? {} : hover)}
-          className="-mx-3 items-center rounded-xl px-3 py-3 text-base font-normal transition-colors hover:bg-accent/60 data-[state=open]:bg-accent/60"
+          variant="row"
         >
           <span className="grid flex-1 gap-0.5 sm:flex sm:items-baseline sm:justify-between sm:gap-4">
             <span>{work.title}</span>
@@ -180,7 +178,7 @@ function WorkItem({ work, open, labels }: { work: Work; open: boolean; labels: L
                 <span className="sr-only">({labels.newTab})</span>
               </a>
             ) : (
-              <a href={labels.portfolioHref}>
+              <a href={`${labels.portfolioHref}#${workAnchor(work.slug)}`}>
                 {labels.inPortfolio}
                 <ArrowUpRightIcon />
               </a>

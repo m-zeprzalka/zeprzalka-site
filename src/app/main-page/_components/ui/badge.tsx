@@ -17,9 +17,15 @@ const badgeVariants = cva(
         ghost: "[a&]:hover:bg-accent [a&]:hover:text-accent-foreground",
         link: "text-primary underline-offset-4 [a&]:hover:underline",
       },
+      // zeprzalka: `md` — tagi i plakietki-linki na stronach (kompetencje, o mnie, blog).
+      size: {
+        default: "",
+        md: "px-2.5 py-1",
+      },
     },
     defaultVariants: {
       variant: "default",
+      size: "default",
     },
   }
 )
@@ -27,6 +33,7 @@ const badgeVariants = cva(
 function Badge({
   className,
   variant = "default",
+  size,
   asChild = false,
   ...props
 }: React.ComponentProps<"span"> & VariantProps<typeof badgeVariants> & { asChild?: boolean }) {
@@ -36,7 +43,7 @@ function Badge({
     <Comp
       data-slot="badge"
       data-variant={variant}
-      className={cn(badgeVariants({ variant }), className)}
+      className={cn(badgeVariants({ variant, size }), className)}
       {...props}
     />
   )

@@ -45,10 +45,7 @@ export function Hero({
         <span aria-hidden="true" className="size-2 rounded-full bg-success" />
         {status}
       </p>
-      <h1
-        id="start-title"
-        className="mt-6 text-[1.625rem] leading-[1.2] font-medium tracking-tight text-pretty sm:text-[2.125rem]"
-      >
+      <h1 id="start-title" className="mt-6 text-display">
         <span className="enter-stagger [--enter-delay:140ms] [--enter-step:32ms]">
           <Segments segments={[{ text: title }]} split="block" />
         </span>{" "}

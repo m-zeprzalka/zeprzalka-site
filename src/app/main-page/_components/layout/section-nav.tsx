@@ -32,14 +32,25 @@ export function SectionNav({
     const targets = sections
       .map((section) => document.getElementById(section.id))
       .filter((element): element is HTMLElement => element !== null)
-    const current = new IntersectionObserver(
-      (entries) => {
-        const hit = entries.find((entry) => entry.isIntersecting)
-        if (hit) setActive(targets.indexOf(hit.target as HTMLElement))
-      },
-      { rootMargin: "-45% 0px -54% 0px" }
-    )
-    targets.forEach((target) => current.observe(target))
+    // Bieżąca pozycja: ostatni cel, którego górna krawędź minęła linię 45% okna. Działa
+    // dla wysokich sekcji startu i dla niskich nagłówków wpisu — także po skoku do kotwicy,
+    // gdy żaden cel nie przejeżdża przez linię. Odczyt raz na klatkę, bez zapisów do DOM.
+    let frame = 0
+    const measureActive = () => {
+      frame = 0
+      const line = window.innerHeight * 0.45
+      let index = 0
+      targets.forEach((target, i) => {
+        if (target.getBoundingClientRect().top <= line) index = i
+      })
+      setActive(index)
+    }
+    const onScroll = () => {
+      if (!frame) frame = requestAnimationFrame(measureActive)
+    }
+    // Pierwszy odczyt w klatce po hydratacji, nie w trakcie niej.
+    onScroll()
+    window.addEventListener("scroll", onScroll, { passive: true })
 
     let inStart = true
     let inFooter = false
@@ -56,14 +67,15 @@ export function SectionNav({
       update()
     })
     if (targets[0]) start.observe(targets[0])
-    const footerElement = document.querySelector("footer")
+    // Stopka serwisu, nie stopka artykułu (`<footer>` wpisu z tagami i autorem).
+    const footerElement = document.querySelector("[data-site-footer]")
     if (footerElement) footer.observe(footerElement)
 
     // Kursor przy lewej krawędzi kolumny — spis rozwija się, zanim w niego trafisz.
     // Krawędź mierzymy raz i przy zmianie rozmiaru okna, nie przy każdym ruchu.
-    const measure = () => targets[0]?.getBoundingClientRect().left ?? window.innerWidth / 4
-    let edge = measure()
-    const onResize = () => (edge = measure())
+    const measureEdge = () => targets[0]?.getBoundingClientRect().left ?? window.innerWidth / 4
+    let edge = measureEdge()
+    const onResize = () => (edge = measureEdge())
     const onMove = (event: PointerEvent) => {
       if (event.pointerType === "mouse") setNear(event.clientX < edge - 24)
     }
@@ -71,7 +83,8 @@ export function SectionNav({
     window.addEventListener("resize", onResize)
 
     return () => {
-      current.disconnect()
+      cancelAnimationFrame(frame)
+      window.removeEventListener("scroll", onScroll)
       start.disconnect()
       footer.disconnect()
       window.removeEventListener("pointermove", onMove)

@@ -16,11 +16,13 @@ Plan i budżet jakości: [KIERUNEK-WIZUALNY.md](KIERUNEK-WIZUALNY.md) §3.
       Indeksu na shadcn) — uwagi do kolejnej iteracji; decyzje i przepięcie w
       `src/app/main-page/README.md`.
 - [ ] **[Ty]** Decyzje z przeglądu kodu `main-page` (7.11): cele dotyku 36/28/32 px w nagłówku,
-      przełączniku języka i stopce (README obiecuje 44 px, próg AA 24 px jest spełniony); sygnet
+      przełączniku języka i stopce, ok. 26 px w plakietkach kategorii i tagów (README obiecuje 44 px, próg AA 24 px jest spełniony); sygnet
       zmieniający znak co sekundę bez końca (ryzyko WCAG 2.2.2 — np. stop po kilku cyklach);
-      linki do podstron w stopce (dziś `/uslugi`, `/o-mnie`, `/kontakt` są tylko w ⌘K, poza HTML).
-- [ ] **[Kod]** Po akceptacji wariantu 1: ewentualnie warianty 2–3 do testów A/B, wersja
-      angielska, potem podstrony na nowym systemie (etapy w README `main-page`).
+      nagłówek bez menu (podstrony prowadzą ⌘K i lista w stopce) — zostaje tak czy menu?
+- [ ] **[Ty]** Testy ręczne i na telefonie podstron w nowym systemie (`/main-page/uslugi`,
+      `/portfolio`, `/o-mnie`, `/kontakt`, `/blog`, wpisy) — uwagi do kolejnej iteracji.
+- [ ] **[Kod]** Po akceptacji: ewentualnie warianty 2–3 strony głównej do testów A/B, wersja
+      angielska nowego systemu, potem przepięcie (README `main-page`, sekcja 3).
 - [ ] **[Kod]** `main-page`, wydajność: dane ⌘K jako statyczny plik pobierany z oknem (dziś
       ok. 17 KB w ładunku RSC strony; HTML 34 KB gzip przy 20 KB starej strony); `cva`
       i `tailwind-merge` poza wyspami klienckimi (klasy liczone na serwerze, jak w serwisie);

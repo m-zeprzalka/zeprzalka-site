@@ -10,12 +10,11 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination"
-import { ROUTES, blogPagePath, type Locale } from "@/i18n/config"
-import { getMeta } from "@/i18n/content/meta"
+import { blogPagePath, type Locale } from "@/i18n/config"
 import { getPages } from "@/i18n/content/pages"
 import { fill } from "@/i18n/format"
 import { getBlogPages, paginationRange, postsOnPage } from "@/lib/blog-pages"
-import { blogSchema, breadcrumbSchema, graph } from "@/lib/schema"
+import { blogIndexSchema } from "@/lib/page-schema"
 
 /** Indeks bloga i kolejne strony archiwum (`/blog`, `/blog/strona/2`…). */
 export function BlogIndexView({ locale, page = 1 }: { locale: Locale; page?: number }) {
@@ -23,23 +22,12 @@ export function BlogIndexView({ locale, page = 1 }: { locale: Locale; page?: num
   const pages = getBlogPages(locale)
   const { current, posts } = postsOnPage(pages, page)
   const { featured, totalPages } = pages
-  const meta = getMeta(locale).blog
-  const path = blogPagePath(locale, current)
-  const name = current === 1 ? meta.title : fill(copy.pageTitle, { current })
-  const jsonLd = graph(
-    blogSchema(locale, { name, description: meta.description, path }, [
-      ...(current === 1 ? featured : []),
-      ...posts,
-    ]),
-    breadcrumbSchema(locale, [
-      { name: copy.breadcrumbBlog, path: ROUTES.blog[locale] },
-      ...(current === 1 ? [] : [{ name, path }]),
-    ])
-  )
 
   return (
     <div className="page-shell">
-      <JsonLd data={jsonLd} />
+      <JsonLd
+        data={blogIndexSchema(locale, current, [...(current === 1 ? featured : []), ...posts])}
+      />
       <PageHeader
         badge={copy.badge}
         title={current === 1 ? copy.title : fill(copy.pageTitle, { current })}

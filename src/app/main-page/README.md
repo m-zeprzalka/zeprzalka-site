@@ -5,8 +5,10 @@ opisem architektury. Zmiany decyzji wpisujemy tutaj.
 
 ## Stan (7.11.2026)
 
-Wariant 1 strony głównej po polsku: `/main-page`, a jego design system z żywymi przykładami:
-`/main-page/design-system` (lokalnie i na zeprzalka.com przy `DEMO_PUBLIC=1`). Kanon Indeksu
+Wariant 1 strony głównej po polsku: `/main-page`, wszystkie podstrony serwisu w nowym systemie
+(`/main-page/uslugi`, `/portfolio`, `/o-mnie`, `/kontakt`, `/polityka-prywatnosci`, `/blog` z archiwum,
+kategoriami, tagami i wpisami) oraz design system z żywymi przykładami: `/main-page/design-system`
+(lokalnie i na zeprzalka.com przy `DEMO_PUBLIC=1`). Kanon Indeksu
 (`/demo/indeks-1`) przepisany od zera na shadcn i Tailwind, z poprawkami z testów właściciela.
 Gdzie co zmieniać:
 
@@ -19,6 +21,8 @@ Gdzie co zmieniać:
 | kolory, promień, kolumna, krzywe i czasy ruchu | `globals.css` |
 | wygląd przycisków, pól, akordeonu, okien | `_components/ui/*` (zmiany oznaczone `// zeprzalka:`) |
 | kotwice, skok do sekcji i realizacji, odstęp pod nagłówkiem | `_lib/anchors.ts` (`goToAnchor`, `HEADER_OFFSET`) |
+| adresy podstron w podglądzie (prefiks `/main-page`) | `_lib/routes.ts` — jedyne miejsce; przy przepięciu `BASE = ""` |
+| typografia treści wpisu (MDX) | `_components/blog/article.css` (ładowany tylko na wpisach) |
 | „ogranicz ruch” i animacje „przy wejściu w kadr” | reguła na końcu `globals.css` + `_lib/motion.ts` |
 
 Nowy komponent shadcn: `pnpm dlx shadcn@latest add <nazwa> -y` — `components.json` wskazuje już
@@ -84,12 +88,18 @@ src/app/main-page/
   (pl)/page.demo.tsx          # /main-page — wariant 1                    → src/app/(pl)/page.tsx
   (pl)/wariant-2/page.demo.tsx  # kolejne warianty tak samo (jeszcze nie ma)
   en/…                        # wersja angielska — po akceptacji polskiej
+  (pl)/uslugi, portfolio, o-mnie, kontakt, polityka-prywatnosci/  # podstrony (page + karta OG)
+  (pl)/blog/…                 # indeks, strona/[strona], kategoria(/[kategoria]), tag/[tag], [slug]
+  (pl)/not-found.demo.tsx     # 404 dla `notFound()` w podglądzie
   (pl)/design-system/page.demo.tsx  # /main-page/design-system — tokeny, komponenty, ruch
   _components/
     ui/                       # shadcn z CLI, zmiany systemowe z `// zeprzalka:` → src/components/ui
     layout/                   # powłoka, nagłówek, logo, ⌘K, motyw, język, spis, stopka → src/components/layout
     sections/                 # sekcje strony głównej (wspólne dla wariantów)   → src/components/home
     peek/                     # karty podglądu: margines (desktop) i popover     → src/components/peek
+    page/                     # klocki podstron: nagłówek, sekcja, wiersz etykiety, CTA, listy
+    views/                    # widoki podstron (usługi, blog, wpis…)              → src/components/views
+    blog/                     # treść wpisu: komponenty MDX, blok kodu, film, article.css
     motion/                   # GlyphText — dekodowanie liter ze znaków sygnetu
     seo/                      # dane strukturalne
   _lib/
@@ -99,6 +109,8 @@ src/app/main-page/
     motion.ts                 # „ogranicz ruch” i `observeReveal` (wejście w kadr bez pomiarów)
     keep-in-view.ts, morph.ts # akordeon w kadrze, przelot kadru (View Transitions)
     video.ts                  # klip gra tylko w kadrze
+    routes.ts, metadata.ts    # adresy podglądu (`withBase`) i metadane `noindex` (`preview`)
+  _routes/blog.tsx            # fabryki tras bloga z parametrem                → src/routes/blog.tsx
     glyph-reveal.ts           # wideo startu wyłaniające się z druku ze znaków
   _variants/
     wariant-1/home-page.tsx   # kompozycja strony głównej wariantu         → src/components/views
@@ -113,7 +125,12 @@ src/app/main-page/
   - ESLint zabrania serwisowi importów z `main-page`;
   - `globals.css` serwisu dostaje `@source not "./main-page"`;
   - `main-page` nie importuje niczego z `/demo`.
-- **Z serwisu importujemy wprost** `src/i18n` i `src/lib` (treść, posty, SEO, mail, `cn()`).
+- **Z serwisu importujemy wprost** `src/i18n`, `src/lib` (treść, posty, SEO, mail, `cn()`) i
+  `src/routes/params.ts`. Dane strukturalne podstron są w `src/lib/page-schema.ts` — wspólne dla
+  serwisu i podglądu.
+- **Nawigacja:** nagłówek bez menu — podstrony prowadzi ⌘K (na telefonie arkusz wyszukiwarki),
+  a stopka ma ich listę (jedyne linki do podstron w HTML każdej strony). Każda podstrona ma
+  okruszki, spis sekcji w lewym torze i zamknięcie z wezwaniem.
 - **shadcn tylko do `_components/ui/`:** obecne `src/components/ui/` zostaje nietknięte. Po każdej
   instalacji z CLI importy między komponentami poprawiamy na `@/app/main-page/_components/ui/…`
   (`components.json` wskazuje stary alias), a ESLint zabrania `main-page` importów ze starego `ui/`.
@@ -123,7 +140,8 @@ src/app/main-page/
   3. raz zamieniamy prefiks importów `@/app/main-page/_components/` → `@/components/`;
   4. pozostałe warianty i stare pliki usuwamy w tym samym commicie;
   5. obecna strona zostaje w gicie jako tag archiwum (np. `v1-archiwum`), nie jako folder w repo;
-  6. `src/app/global-error.tsx` dostaje nowy arkusz — dziś importuje arkusz serwisu, więc każda
+  6. `BASE = ""` w `_lib/routes.ts` i `preview()` zdjęte z metadanych tras;
+  7. `src/app/global-error.tsx` dostaje nowy arkusz — dziś importuje arkusz serwisu, więc każda
      trasa (także `/main-page`) pobiera go z wyprzedzeniem (`preload`, ok. 17 KB gzip).
 
 ## 4. Stos technologiczny
@@ -189,6 +207,14 @@ Szczegóły (skale, tokeny, warianty) powstają razem ze stroną główną i są
 - **Spoczynek zawsze kompletny.** Wyjątek: tekst „Mam 15 lat…” wypełniany przewijaniem.
   Przy `prefers-reduced-motion` od razu stan końcowy: jedna reguła w `globals.css` skraca każde
   przejście i animację do 1 ms (zdarzenia końca nadal przychodzą), JS pyta `prefersReducedMotion()`.
+- **404 w podglądzie:** `not-found.demo.tsx` obsługuje `notFound()` z tras (np. nieznany wpis);
+  zupełnie nieznany adres (`/main-page/xyz`) dostaje `global-not-found.tsx` serwisu.
+- **Wideo poza startem gra tylko na żądanie** (WCAG 2.2.2): w galerii portfolio najechanie myszą
+  to podgląd, przycisk (dotyk, klawiatura) włącza i wyłącza klip; plik pobiera się dopiero wtedy.
+- **`asChild` w komponentach klienckich tylko z dzieckiem z klienta.** Slot Radix nie przyjmuje
+  elementu z komponentu serwerowego (w trybie dev przychodzi jako leniwa referencja RSC — wiersz
+  akordeonu znikał po hydratacji). W widokach serwerowych `AccordionItem` bez `asChild`;
+  `Button`, `Badge` i `Breadcrumb` są serwerowe, więc tam `asChild` jest bezpieczne.
 - **Wejście w kadr bez pomiarów:** napisy, „Nowy” i stopka pytają pierwszy odczyt
   IntersectionObservera (`observeReveal`), a nie `getBoundingClientRect` przy hydratacji.
 - **Wejście „harmonijka”:** nagłówek, status, słowa tytułu i zdania (z rozmycia, jedno po drugim),

@@ -4,6 +4,7 @@ import { ROUTES } from "@/i18n/config"
 import { CONTACT_EMAIL } from "@/lib/site"
 import type { SearchGroup, SectionLink } from "../types"
 import { SECTION, workAnchor } from "../anchors"
+import { PAGE_KEYS, homeAnchor, pageHref } from "../routes"
 import type { Source } from "./source"
 
 /** Spis sekcji strony — wspólny dla wyszukiwarki i spisu w lewym torze. */
@@ -38,7 +39,7 @@ export function buildSearch(source: Source): SearchGroup[] {
         label: section.label,
         icon: "section",
         detail: detail[section.id],
-        href: `#${section.id}`,
+        href: homeAnchor(locale, section.id),
       })),
     },
     {
@@ -52,7 +53,7 @@ export function buildSearch(source: Source): SearchGroup[] {
           hint: work.category,
           thumb: work.media.src,
           detail: work.description ?? group.label,
-          href: `#${workAnchor(work.slug)}`,
+          href: homeAnchor(locale, workAnchor(work.slug)),
         }))
       ),
     },
@@ -72,12 +73,12 @@ export function buildSearch(source: Source): SearchGroup[] {
     {
       id: "pages",
       heading: copy.ui.searchGroups.pages,
-      items: (["services", "portfolio", "blog", "about", "contact"] as const).map((key) => ({
+      items: PAGE_KEYS.map((key) => ({
         id: `page-${key}`,
         label: common.nav[key],
         icon: "page" as const,
         hint: ROUTES[key][locale],
-        href: ROUTES[key][locale],
+        href: pageHref(key, locale),
       })),
     },
     {

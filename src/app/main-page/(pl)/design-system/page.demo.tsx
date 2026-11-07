@@ -8,10 +8,13 @@ import { ButtonExample } from "@/app/main-page/_design-system/examples/button"
 import { EnterStaggerExample } from "@/app/main-page/_design-system/examples/enter-stagger"
 import { FieldExample } from "@/app/main-page/_design-system/examples/field"
 import { GlyphTextExample } from "@/app/main-page/_design-system/examples/glyph-text"
+import { CtaPanelExample } from "@/app/main-page/_design-system/examples/cta-panel"
 import { HeaderControlsExample } from "@/app/main-page/_design-system/examples/header-controls"
+import { LabelRowExample } from "@/app/main-page/_design-system/examples/label-row"
 import { PeekTriggerExample } from "@/app/main-page/_design-system/examples/peek-trigger"
 import { ScrollFillExample } from "@/app/main-page/_design-system/examples/scroll-fill"
 import { SectionHeadingExample } from "@/app/main-page/_design-system/examples/section-heading"
+import { TermLinksExample } from "@/app/main-page/_design-system/examples/term-links"
 import { Replay } from "@/app/main-page/_design-system/replay"
 import {
   ColorTokens,
@@ -33,6 +36,7 @@ const SECTIONS = [
   { id: "ksztalty", label: "Kształty" },
   { id: "komponenty", label: "Komponenty" },
   { id: "kompozycje", label: "Kompozycje" },
+  { id: "podstrony", label: "Podstrony" },
   { id: "ruch", label: "Ruch" },
 ]
 
@@ -47,7 +51,7 @@ export default function DesignSystemPage() {
       <SectionNav label="Rozdziały" sections={SECTIONS} />
       <header className="column pt-14 md:pt-24">
         <p className="text-sm text-muted-foreground">src/app/main-page</p>
-        <h1 className="mt-4 text-[1.625rem] leading-[1.2] font-medium tracking-tight text-pretty sm:text-[2.125rem]">
+        <h1 className="mt-4 text-display">
           Design system{" "}
           <span className="text-muted-foreground">
             — shadcn i Tailwind na własnych tokenach. Co jest, gdzie mieszka i jak tego używać.
@@ -125,6 +129,36 @@ export default function DesignSystemPage() {
         </Example>
         <Example file="header-controls.tsx">
           <HeaderControlsExample />
+        </Example>
+      </DsSection>
+
+      <DsSection
+        id="podstrony"
+        title="Podstrony"
+        lead="Klocki usług, bloga, wpisu, o mnie i kontaktu"
+      >
+        <DsNote>
+          Każda podstrona zaczyna się od <Code>PageHeader</Code>: okruszki (shadcn{" "}
+          <Code>Breadcrumb</Code>), tytuł i rozwinięcie w stopniu <Code>text-display</Code>, ta sama
+          „harmonijka” co start. Dalej sekcje <Code>Section</Code> (nagłówek jak na starcie), spis w
+          lewym torze (<Code>SectionNav</Code> — sekcje albo rozdziały wpisu) i zamknięcie{" "}
+          <Code>CtaPanel</Code>. Listy wpisów to te same wiersze co na starcie (
+          <Code>PostIndex</Code>), z okładką na marginesie; archiwum dzieli shadcn{" "}
+          <Code>Pagination</Code>.
+        </DsNote>
+        <DsNote>
+          Adresy w podglądzie mają prefiks <Code>/main-page</Code> — dokleja go wyłącznie{" "}
+          <Code>_lib/routes.ts</Code> (<Code>pageHref</Code>, <Code>postHref</Code>…). Treść wpisu
+          stylizuje <Code>article.css</Code>, ładowany tylko na wpisach.
+        </DsNote>
+        <Example file="label-row.tsx">
+          <LabelRowExample />
+        </Example>
+        <Example file="term-links.tsx">
+          <TermLinksExample />
+        </Example>
+        <Example file="cta-panel.tsx">
+          <CtaPanelExample />
         </Example>
       </DsSection>
 

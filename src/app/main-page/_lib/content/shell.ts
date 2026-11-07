@@ -4,12 +4,12 @@ import { ROUTES, otherLocale, type Locale } from "@/i18n/config"
 import { fill } from "@/i18n/format"
 import { CONTACT_EMAIL, SITE_DOMAIN, SOCIAL_PROFILES } from "@/lib/site"
 import { PAGE_KEYS, pageHref } from "../routes"
-import type { Link } from "../types"
+import type { LinkData } from "../types"
 import { buildSearch } from "./search"
 import { getSource } from "./source"
 
 /** Profil X jest pierwszy (prośba właściciela); przy przepięciu trafi do `SOCIAL_PROFILES`. */
-const PROFILES: readonly Link[] = [
+const PROFILES: readonly LinkData[] = [
   { label: "X", href: "https://x.com/zeprzalka_com", external: true },
   ...SOCIAL_PROFILES.map((profile) => ({ label: profile.label, href: profile.url, external: true })),
 ]
@@ -28,12 +28,17 @@ export function getShellContent(locale: Locale) {
       search: {
         groups: buildSearch(source),
         email: CONTACT_EMAIL,
+        homeHref: pageHref("home", locale),
+        locale,
         labels: {
           search: copy.ui.search,
           title: copy.ui.searchTitle,
           description: copy.ui.searchDescription,
           placeholder: copy.ui.searchPlaceholder,
           empty: copy.ui.searchEmpty,
+          homeSections: common.nav.home,
+          copied: common.ui.copied,
+          results: copy.ui.searchResults,
           hints: copy.ui.searchHints,
         },
       },

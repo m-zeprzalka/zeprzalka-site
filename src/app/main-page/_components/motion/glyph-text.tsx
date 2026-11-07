@@ -35,7 +35,8 @@ function waveWindows(count: number): Window[] {
 /**
  * Przebieg na literach: w swoim oknie litera pokazuje znak (atrybut `data-glyph`,
  * rysuje go CSS — `glyph-text` w globals.css), potem wraca. Tekst w DOM się nie
- * zmienia, więc szerokość, SEO i czytniki widzą zawsze prawdziwy napis.
+ * zmienia, więc szerokość i SEO widzą zawsze prawdziwy napis, a czytnik — jego kopię
+ * w jednym kawałku.
  */
 function play(letters: readonly HTMLElement[], windows: readonly Window[]): () => void {
   const end = Math.max(...windows.map(([, to]) => to))
@@ -114,19 +115,25 @@ export function GlyphText({
       unobserve()
       stop()
     }
-  }, [mode])
+  }, [mode, text])
 
+  // Czytnik dostaje cały napis w jednym kawałku (`sr-only`); litery do animacji są
+  // `aria-hidden` — VoiceOver i TalkBack potrafią czytać osobne `span` litera po literze.
   return (
     <span ref={ref} className={cn("glyph-text", className)}>
-      {Array.from(text).map((char, index) =>
-        char === " " ? (
-          " "
-        ) : (
-          <span key={index} data-letter="">
-            {char}
-          </span>
-        )
-      )}
+      <span className="sr-only">{text}</span>
+      <span aria-hidden="true">
+        {Array.from(text).map((char, index) =>
+          // Spacje (także twarde z `noOrphans`) zostają tekstem — znak pojawia się tylko w literach.
+          /\s/.test(char) ? (
+            char
+          ) : (
+            <span key={index} data-letter="">
+              {char}
+            </span>
+          )
+        )}
+      </span>
     </span>
   )
 }

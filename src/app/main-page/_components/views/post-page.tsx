@@ -10,14 +10,13 @@ import { TermLinks } from "@/app/main-page/_components/page/term-links"
 import { PeekProvider } from "@/app/main-page/_components/peek/peek-context"
 import { PeekStage } from "@/app/main-page/_components/peek/peek-stage"
 import { JsonLd } from "@/app/main-page/_components/seo/json-ld"
-import { SECTION } from "@/app/main-page/_lib/anchors"
-import { breadcrumb, cardsOf, termLinks } from "@/app/main-page/_lib/content/pages"
+import { PAGE_SECTION, SECTION } from "@/app/main-page/_lib/anchors"
+import { breadcrumb, cardsOf, postDate, termLinks } from "@/app/main-page/_lib/content/pages"
 import { postPeeks } from "@/app/main-page/_lib/content/peeks"
 import { getSource } from "@/app/main-page/_lib/content/source"
-import { COLUMN_SIZES } from "@/app/main-page/_lib/media"
+import { COLUMN_SIZES, COVER } from "@/app/main-page/_lib/media"
 import { pageHref } from "@/app/main-page/_lib/routes"
 import type { Locale } from "@/i18n/config"
-import { formatDate } from "@/i18n/format"
 import { renderMdx } from "@/lib/mdx"
 import { postPageSchema } from "@/lib/page-schema"
 import { formatReadingTime, getRelatedPosts, type Post } from "@/lib/posts"
@@ -37,7 +36,11 @@ export async function PostPage({ post, locale }: { post: Post; locale: Locale })
   const related = cardsOf(locale, getRelatedPosts(post))
   const chapters = headings
     .filter((heading) => heading.level === 2)
-    .map((heading) => ({ id: heading.id, label: heading.text }))
+    // Emoji z początku nagłówka („🎬 Dwie perspektywy”) nie trafia do spisu.
+    .map((heading) => ({
+      id: heading.id,
+      label: heading.text.replace(/^\p{Extended_Pictographic}\uFE0F?\s*/u, ""),
+    }))
   const Cover = frontmatter.imageCaption ? "figure" : "div"
 
   return (
@@ -56,10 +59,11 @@ export async function PostPage({ post, locale }: { post: Post; locale: Locale })
           ])}
           title={frontmatter.title}
           lead={frontmatter.description}
+          compactLead
         >
           <div className="flex flex-wrap items-center gap-x-3 gap-y-3 text-sm text-muted-foreground">
             <time dateTime={frontmatter.date} className="tabular-nums">
-              {formatDate(frontmatter.date, locale)}
+              {postDate(locale, frontmatter.date)}
             </time>
             <span aria-hidden="true">·</span>
             <span>{formatReadingTime(post.readingMinutes, locale)}</span>
@@ -75,10 +79,11 @@ export async function PostPage({ post, locale }: { post: Post; locale: Locale })
           <Image
             src={frontmatter.image}
             alt=""
-            width={1600}
-            height={900}
+            width={COVER.width}
+            height={COVER.height}
             sizes={COLUMN_SIZES}
             preload
+            fetchPriority="high"
             className="aspect-video w-full rounded-2xl bg-muted object-cover"
           />
           {frontmatter.imageCaption && (
@@ -92,22 +97,25 @@ export async function PostPage({ post, locale }: { post: Post; locale: Locale })
           <div className="article">{content}</div>
         </div>
 
-        <footer className="column mt-16 grid gap-8 border-t pt-8">
-          {frontmatter.tags.length > 0 && (
-            <TermLinks terms={termLinks(locale, "tags", frontmatter.tags)} variant="outline" />
-          )}
-          <div className="grid gap-1">
-            <p className="font-medium">{AUTHOR.name}</p>
-            <p className="text-sm text-muted-foreground">{AUTHOR.jobTitle[locale]}</p>
-            <p className="mt-2 max-w-[60ch] text-pretty text-muted-foreground">
-              {AUTHOR.bio[locale]}
-            </p>
+        {/* Kreska na szerokość treści, nie kolumny z marginesem strony. */}
+        <footer className="column mt-16">
+          <div className="grid gap-8 border-t pt-8">
+            {frontmatter.tags.length > 0 && (
+              <TermLinks terms={termLinks(locale, "tags", frontmatter.tags)} variant="outline" />
+            )}
+            <div className="grid gap-1">
+              <p className="font-medium">{AUTHOR.name}</p>
+              <p className="text-sm text-muted-foreground">{AUTHOR.jobTitle[locale]}</p>
+              <p className="mt-2 max-w-[60ch] text-pretty text-muted-foreground">
+                {AUTHOR.bio[locale]}
+              </p>
+            </div>
           </div>
         </footer>
       </article>
 
       <CtaPanel
-        id="wspolpraca"
+        id={PAGE_SECTION.cooperation}
         as="aside"
         heading={common.postCta.title}
         body={common.postCta.description}
@@ -117,7 +125,7 @@ export async function PostPage({ post, locale }: { post: Post; locale: Locale })
         ]}
       />
       {related.length > 0 && (
-        <Section id="czytaj-dalej" title={copy.relatedHeading}>
+        <Section id={PAGE_SECTION.related} title={copy.relatedHeading}>
           <PostIndex posts={related} newLabel={mainPage.ui.newPost} />
         </Section>
       )}

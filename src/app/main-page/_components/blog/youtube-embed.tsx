@@ -48,7 +48,7 @@ export function YouTubeEmbed({
             type="button"
             onClick={() => setActive(true)}
             aria-describedby={titleId}
-            className="group absolute inset-0 grid place-content-center justify-items-center gap-3 text-sm text-muted-foreground outline-none hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:ring-inset"
+            className="group absolute inset-0 grid place-content-center justify-items-center gap-3 text-sm text-muted-foreground outline-none hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring focus-visible:ring-inset"
           >
             <span className="grid size-14 place-items-center rounded-full border bg-background shadow-xs transition-transform group-hover:scale-105">
               <PlayIcon className="size-5 translate-x-0.5" />

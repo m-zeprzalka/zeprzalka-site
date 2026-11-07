@@ -7,7 +7,7 @@ import { Section } from "@/app/main-page/_components/page/section"
 import { JsonLd } from "@/app/main-page/_components/seo/json-ld"
 import { Badge } from "@/app/main-page/_components/ui/badge"
 import { Button } from "@/app/main-page/_components/ui/button"
-import { SECTION } from "@/app/main-page/_lib/anchors"
+import { PAGE_SECTION, SECTION } from "@/app/main-page/_lib/anchors"
 import { breadcrumb } from "@/app/main-page/_lib/content/pages"
 import { lecturesOf } from "@/app/main-page/_lib/content/peeks"
 import { getSource } from "@/app/main-page/_lib/content/source"
@@ -17,13 +17,8 @@ import type { Locale } from "@/i18n/config"
 import { profilePageSchema } from "@/lib/page-schema"
 import { CONTACT_EMAIL, CV_PDF, SITE_HOST, SITE_URL } from "@/lib/site"
 
-/** Kotwice sekcji „O mnie” — stałe dla obu języków, jak kotwice startu. */
-const ID = {
-  bio: "biogram",
-  experience: "doswiadczenie",
-  skills: "umiejetnosci",
-  education: "edukacja",
-}
+/** Kotwice sekcji „O mnie” (`_lib/anchors.ts`). */
+const ID = PAGE_SECTION
 
 /**
  * O mnie — biogram i CV na jednej stronie: doświadczenie, umiejętności

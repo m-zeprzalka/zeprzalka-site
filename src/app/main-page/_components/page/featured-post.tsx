@@ -21,7 +21,7 @@ export function FeaturedPost({
   priority?: boolean
 }) {
   return (
-    <article className="group relative -m-2 grid gap-4 rounded-3xl p-2 has-focus-visible:ring-[3px] has-focus-visible:ring-ring/50">
+    <article className="group relative -m-2 grid gap-4 rounded-3xl p-2 has-focus-visible:ring-[3px] has-focus-visible:ring-ring">
       <span className="block overflow-hidden rounded-2xl bg-muted">
         <Image
           src={post.cover.src}
@@ -30,10 +30,11 @@ export function FeaturedPost({
           height={post.cover.height}
           sizes={HALF_COLUMN_SIZES}
           preload={priority}
+          fetchPriority={priority ? "high" : undefined}
           className="aspect-video w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.02]"
         />
       </span>
-      <div className="grid gap-1.5 px-1">
+      <div className="grid gap-1.5">
         <h3 className="font-medium text-pretty">
           <Link
             href={post.href}

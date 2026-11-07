@@ -54,8 +54,17 @@ jobs:
           key: next-${{ hashFiles('pnpm-lock.yaml') }}-${{ hashFiles('src/**', 'content/**') }}
           restore-keys: next-${{ hashFiles('pnpm-lock.yaml') }}-
 
-      - name: Build produkcyjny
+      # Vercel produkcyjny buduje też podgląd nowej wersji (`DEMO_PUBLIC=1`): błędy treści
+      # wykrywane dopiero przy buildzie (np. brak frazy w `segment()`) nie mogą przejść zielono.
+      - name: Build z podglądem nowej wersji (jak na Vercelu)
         run: pnpm build
+        env:
+          VERCEL_ENV: production
+          DEMO_PUBLIC: "1"
+
+      - name: Build produkcyjny (do kontroli wyniku)
+        # Bez wyniku poprzedniego buildu (z podglądem); cache Next zostaje.
+        run: rm -rf .next/server .next/static && pnpm build
         env:
           VERCEL_ENV: production
 

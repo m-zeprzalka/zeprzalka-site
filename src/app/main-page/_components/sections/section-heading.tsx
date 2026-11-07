@@ -1,5 +1,5 @@
 import { GlyphText } from "@/app/main-page/_components/motion/glyph-text"
-import { lowerFirst } from "@/app/main-page/_lib/text"
+import { lowerFirst, noOrphans } from "@/app/main-page/_lib/text"
 
 /**
  * Nagłówek sekcji w jednym wierszu: tytuł (odczytuje się ze znaków przy wejściu
@@ -9,11 +9,11 @@ import { lowerFirst } from "@/app/main-page/_lib/text"
 export function SectionHeading({ id, title, lead }: { id: string; title: string; lead?: string }) {
   return (
     <h2 id={id} className="text-base font-medium text-pretty">
-      <GlyphText text={title} />
+      <GlyphText text={noOrphans(title)} />
       {lead && (
         <span className="font-normal text-muted-foreground">
           {" — "}
-          {lowerFirst(lead)}
+          {noOrphans(lowerFirst(lead))}
         </span>
       )}
     </h2>

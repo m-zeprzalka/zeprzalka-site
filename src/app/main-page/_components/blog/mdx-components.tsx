@@ -61,15 +61,17 @@ export function mdxComponents(locale: Locale) {
     ),
     // Wewnętrzne przez next/link (strony — w obrębie podglądu), zewnętrzne w nowej karcie.
     a: ({ href = "", ...props }: ComponentProps<"a">) => {
+      // Adres wykonywalny (`javascript:`, `data:`) z treści nie staje się linkiem.
+      if (/^\s*(?:javascript|data|vbscript):/i.test(href)) return <span {...props} />
       if (isInternal(href)) return <Link href={isFile(href) ? href : withBase(href)} {...props} />
-      const external = /^(https?:)?\/\//.test(href)
+      if (!/^(https?:)?\/\//.test(href)) return <a href={href} {...props} />
+      // Nowa karta zapowiedziana czytnikowi — jak przy każdym linku zewnętrznym w UI.
+      const { children, ...rest } = props
       return (
-        <a
-          href={href}
-          target={external ? "_blank" : undefined}
-          rel={external ? "noopener noreferrer" : undefined}
-          {...props}
-        />
+        <a href={href} target="_blank" rel="noopener noreferrer" {...rest}>
+          {children}
+          <span className="sr-only"> ({ui.newTab})</span>
+        </a>
       )
     },
   }

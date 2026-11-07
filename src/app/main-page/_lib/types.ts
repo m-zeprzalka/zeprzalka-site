@@ -12,10 +12,13 @@ export interface Media {
   video?: string
 }
 
-export interface Link {
+/** Link w danych widoku (nazwa różna od komponentu `next/link`). */
+export interface LinkData {
   label: string
   href: string
   external?: boolean
+  /** Dopisek dla czytnika przy linku zewnętrznym („otwiera się w nowej karcie”). */
+  newTab?: string
 }
 
 /**
@@ -29,7 +32,7 @@ export interface Peek {
   body?: string
   timeline?: readonly { period: string; role: string; company: string }[]
   media: readonly Media[]
-  link?: Link
+  link?: LinkData
 }
 
 /** Zdanie podzielone na zwykły tekst i frazy otwierające kartę (`peek` = klucz w `peeks`). */
@@ -51,7 +54,7 @@ export interface Skill {
   description: string
   tags: readonly string[]
   peek: string
-  proofs: { heading: string; items: readonly Link[] }
+  proofs: { heading: string; items: readonly LinkData[] }
 }
 
 export interface Work {

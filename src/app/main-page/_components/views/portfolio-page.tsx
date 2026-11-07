@@ -43,7 +43,7 @@ export function PortfolioPage({ locale }: { locale: Locale }) {
         title={copy.title}
         lead={copy.description}
       />
-      {groups.map((group) => (
+      {groups.map((group, groupIndex) => (
         <Section
           key={group.id}
           id={group.id}
@@ -54,10 +54,11 @@ export function PortfolioPage({ locale }: { locale: Locale }) {
             {noOrphans(description(group.id))}
           </p>
           <div className="mt-8 gap-6 sm:columns-2">
-            {group.works.map((work) => (
+            {group.works.map((work, index) => (
               <GalleryTile
                 key={work.slug}
                 work={work}
+                priority={groupIndex === 0 && index === 0}
                 labels={{
                   newTab: common.ui.newTab,
                   play: mainPage.ui.playVideo,

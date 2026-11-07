@@ -5,7 +5,7 @@
  * są (`pages.ts`, `home.ts`, `src/lib`); ten moduł je tylko wskazuje.
  *
  * Frazy muszą stać w tekście dokładnie tak jak tutaj — brak frazy zatrzymuje
- * build (`segment()` w `src/app/main-page/_lib/content.ts`).
+ * build (`segment()` w `src/app/main-page/_lib/text.ts`).
  */
 import "server-only"
 import type { Locale } from "@/i18n/config"
@@ -25,6 +25,8 @@ const pl = {
       actions: "Akcje",
     },
     searchHints: { select: "wybierz", open: "otwórz", close: "zamknij" },
+    /** Liczba wyników ⌘K dla czytnika — formy dla `plural()`. */
+    searchResults: { one: "wynik", few: "wyniki", many: "wyników", other: "wyniku" },
     copyEmail: "Kopiuj adres e-mail",
     onPage: "Na tej stronie",
     language: "Język",
@@ -40,7 +42,6 @@ const pl = {
     responseTimeLabel: "Czas odpowiedzi:",
     responseTime: "do 24 godzin w dni robocze",
     localTime: "Czas lokalny",
-    backToTop: "Na górę",
     /** Koniec okresu, który trwa („2016–obecnie”). */
     present: "obecnie",
   },
@@ -88,6 +89,7 @@ const en: typeof pl = {
       actions: "Actions",
     },
     searchHints: { select: "select", open: "open", close: "close" },
+    searchResults: { one: "result", few: "results", many: "results", other: "results" },
     copyEmail: "Copy email address",
     onPage: "On this page",
     language: "Language",
@@ -103,7 +105,6 @@ const en: typeof pl = {
     responseTimeLabel: "Response time:",
     responseTime: "within 24 hours on working days",
     localTime: "Local time",
-    backToTop: "Back to top",
     present: "present",
   },
   hero: {

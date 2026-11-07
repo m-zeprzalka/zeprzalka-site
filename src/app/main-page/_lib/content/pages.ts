@@ -1,14 +1,14 @@
 /** Wspólne dane podstron: okruszki, karty wpisów i linki kategorii oraz tagów. */
 import "server-only"
-import type { Locale } from "@/i18n/config"
+import { INTL_LOCALE, type Locale } from "@/i18n/config"
 import { slugify } from "@/lib/slug"
 import { getTerms, type Post as SourcePost, type TaxonomyField } from "@/lib/posts"
 import { categoryHref, pageHref, tagHref } from "../routes"
-import type { Link, Post } from "../types"
+import type { LinkData, Post } from "../types"
 import { need, getSource } from "./source"
 
 /** Okruszki nagłówka podstrony: zawsze od strony głównej, potem `trail`, na końcu ona sama. */
-export function breadcrumb(locale: Locale, current: string, trail: readonly Link[] = []) {
+export function breadcrumb(locale: Locale, current: string, trail: readonly LinkData[] = []) {
   const { common, pages } = getSource(locale)
   return {
     label: pages.blog.breadcrumbAria,
@@ -24,7 +24,7 @@ export function cardsOf(locale: Locale, posts: readonly SourcePost[]): Post[] {
 }
 
 /** Kategorie od najliczniejszej (przy remisie — kolejność pierwszego wystąpienia). */
-export function categoryLinks(locale: Locale): (Link & { count: number })[] {
+export function categoryLinks(locale: Locale): (LinkData & { count: number })[] {
   return getTerms(locale, "categories")
     .sort((a, b) => b.posts.length - a.posts.length)
     .map((term) => ({
@@ -35,10 +35,20 @@ export function categoryLinks(locale: Locale): (Link & { count: number })[] {
 }
 
 /** Kategorie albo tagi wpisu jako linki. */
-export function termLinks(locale: Locale, field: TaxonomyField, labels: readonly string[]): Link[] {
+export function termLinks(locale: Locale, field: TaxonomyField, labels: readonly string[]): LinkData[] {
   const href = field === "categories" ? categoryHref : tagHref
   return labels.map((label) => ({
     label: field === "tags" ? `#${label}` : label,
     href: href(locale, slugify(label)),
   }))
+}
+
+/** Pełna data wpisu w tym samym zapisie co dzień i miesiąc na listach („02.11.2026”). */
+export function postDate(locale: Locale, iso: string): string {
+  return new Intl.DateTimeFormat(INTL_LOCALE[locale], {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    timeZone: "UTC",
+  }).format(new Date(iso))
 }

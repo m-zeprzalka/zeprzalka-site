@@ -6,7 +6,7 @@ import { NewMark } from "@/app/main-page/_components/sections/new-mark"
 export function HeaderControlsExample() {
   return (
     <>
-      <LanguageSwitch label="Język" locale="pl" fallback="/en" />
+      <LanguageSwitch label="Język (przykład)" locale="pl" fallback="/en" />
       <ThemeToggle label="Zmień motyw" />
       <CopyEmail email="m@zeprzalka.com" label="Kopiuj adres e-mail" copiedLabel="Skopiowano" />
       <span>

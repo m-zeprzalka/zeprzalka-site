@@ -4,8 +4,10 @@
  * łatwo je zmienić bez szukania warunków w kodzie.
  */
 import "server-only"
-import type { Link, Media, Peek, Post } from "../types"
+import type { LinkData, Media, Peek, Post } from "../types"
 import { SECTION } from "../anchors"
+import { slugify } from "@/lib/slug"
+import type { Locale, Localized } from "@/i18n/config"
 import { sentences } from "../text"
 import { need, type Source } from "./source"
 
@@ -22,6 +24,22 @@ export const PEEK_WORKS = {
   development: ["vinci-facilities", "spartanie-dzieciom", "ip"],
 } as const
 
+/**
+ * Wpisy-dowody kompetencji: po slugu kategorii albo tagu, w każdym języku — etykiety
+ * („Kurs” / „Course”) mogą się różnić, slug jest stały w obrębie języka.
+ */
+const POST_TOPICS = {
+  ai: { field: "categories", slug: { pl: "ai", en: "ai" } },
+  teaching: { field: "tags", slug: { pl: "kurs", en: "course" } },
+} as const satisfies Record<string, { field: "categories" | "tags"; slug: Localized<string> }>
+
+export function postsAbout(source: Source, topic: keyof typeof POST_TOPICS) {
+  const { field, slug } = POST_TOPICS[topic]
+  return source.posts.filter((post) =>
+    post[field].some((label) => slugify(label) === slug[source.locale as Locale])
+  )
+}
+
 /** Okres wykładów: trwają, więc bez daty końca, a opis bez nazw uczelni (prośba właściciela, 5.11). */
 export function lecturesOf(source: Source) {
   const since = need(source.teaching.period.match(/^\d{4}/)?.[0], "początek wykładów")
@@ -34,7 +52,7 @@ export function lecturesOf(source: Source) {
 export function buildPeeks(source: Source): Record<string, Peek> {
   const { about, copy, freelance, skills, work, media, posts, groups } = source
   const lectures = lecturesOf(source)
-  const workPeek = (slug: string, link?: Link): Peek => {
+  const workPeek = (slug: string, link?: LinkData): Peek => {
     const item = work(slug)
     return {
       title: item.title[source.locale],
@@ -48,12 +66,11 @@ export function buildPeeks(source: Source): Record<string, Peek> {
     title,
     media: items.slice(0, 3),
   })
-  const covers = (match: (post: Source["posts"][number]) => boolean) =>
-    posts
-      .filter(match)
+  const covers = (topic: Parameters<typeof postsAbout>[1]) =>
+    postsAbout(source, topic)
       .slice(0, 3)
       .map((post) => post.card.cover)
-  const allWorks: Link = { label: copy.ui.allWorks, href: `#${SECTION.work}` }
+  const allWorks: LinkData = { label: copy.ui.allWorks, href: `#${SECTION.work}` }
   const prfct = work(PEEK_WORKS.systems)
 
   return {
@@ -90,6 +107,7 @@ export function buildPeeks(source: Source): Record<string, Peek> {
       label: copy.ui.visitSite,
       href: need(prfct.url, "adres prfct"),
       external: true,
+      newTab: source.common.ui.newTab,
     }),
     ai: mosaic(
       skills.ai.category,
@@ -105,11 +123,11 @@ export function buildPeeks(source: Source): Record<string, Peek> {
     ),
     "skill-ai": mosaic(
       skills.ai.category,
-      covers((post) => post.categories.includes("AI"))
+      covers("ai")
     ),
     "skill-teaching": mosaic(
       source.teaching.role,
-      covers((post) => post.tags.includes("Kurs"))
+      covers("teaching")
     ),
     ...Object.fromEntries(
       groups.flatMap((group) =>

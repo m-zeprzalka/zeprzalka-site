@@ -10,7 +10,7 @@ const loadPopover = () => import("./peek-popover")
 const PeekPopover = dynamic(loadPopover, { ssr: false })
 
 const triggerVariants = cva(
-  "inline cursor-pointer text-start underline decoration-dashed decoration-1 underline-offset-[0.22em] transition-colors outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50",
+  "inline cursor-pointer text-start underline decoration-dashed decoration-1 underline-offset-[0.22em] transition-colors outline-none focus-visible:ring-[3px] focus-visible:ring-ring",
   {
     variants: {
       variant: {
@@ -53,7 +53,6 @@ export function PeekTrigger({
   const hover = usePeekHover(id)
   const [open, setOpen] = useState(false)
   const [mounted, setMounted] = useState(false)
-  const [viaKeyboard, setViaKeyboard] = useState(false)
   const ref = useRef<HTMLButtonElement>(null)
   const popoverId = useId()
   const peek = peeks[id]
@@ -76,7 +75,6 @@ export function PeekTrigger({
           const keyboard = event.detail === 0
           if (stage && !keyboard) return
           if (stage) hide()
-          setViaKeyboard(keyboard)
           setMounted(true)
           setOpen((value) => !value)
         }}
@@ -86,14 +84,7 @@ export function PeekTrigger({
         {children}
       </button>
       {mounted && peek && (
-        <PeekPopover
-          id={popoverId}
-          peek={peek}
-          open={open}
-          onOpenChange={setOpen}
-          trigger={ref}
-          focusContent={viaKeyboard}
-        />
+        <PeekPopover id={popoverId} peek={peek} open={open} onOpenChange={setOpen} trigger={ref} />
       )}
     </>
   )

@@ -1,4 +1,4 @@
-import type { CSSProperties, ReactNode } from "react"
+import type { ReactNode } from "react"
 import type { Segment } from "@/app/main-page/_lib/types"
 import { cn } from "@/lib/utils"
 import { PeekTrigger } from "./peek-trigger"
@@ -23,11 +23,7 @@ export function Segments({
 }) {
   let index = 0
   const item = (key: string, node: ReactNode) => (
-    <span
-      key={key}
-      className={cn(split === "block" && "inline-block")}
-      style={{ "--i": index++ } as CSSProperties}
-    >
+    <span key={key} className={cn(split === "block" && "inline-block")} style={{ "--i": index++ }}>
       {node}
     </span>
   )

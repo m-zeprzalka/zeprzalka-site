@@ -37,7 +37,7 @@ type PaginationLinkProps = {
   React.ComponentProps<"a">
 
 // zeprzalka: strona z adresem przez next/link (przejście bez przeładowania i prefetch);
-// bez adresu (brzeg archiwum) — zwykły element, nie link.
+// bez adresu (brzeg archiwum) — `span` z `aria-disabled`, nie link bez celu.
 function PaginationLink({
   className,
   isActive,
@@ -45,10 +45,11 @@ function PaginationLink({
   href,
   ...props
 }: PaginationLinkProps) {
-  const Comp = href ? Link : "a"
+  const Comp = href ? Link : "span"
   return (
     <Comp
       href={href as string}
+      aria-disabled={href ? undefined : true}
       aria-current={isActive ? "page" : undefined}
       data-slot="pagination-link"
       data-active={isActive}

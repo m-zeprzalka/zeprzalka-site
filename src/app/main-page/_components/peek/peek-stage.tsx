@@ -22,12 +22,12 @@ const FADE_MS = 500
  *   z klawiatury stoi przy elemencie.
  * - Wysokość płynnie dopasowuje się do kolejnej treści (kadry w naturalnych
  *   proporcjach), a poprzednia treść gaśnie w rozmyciu, gdy nowa się wyostrza.
- * Wizualne uzupełnienie treści strony: `inert` — poza drzewem dostępności
- * i kolejnością Tab. Klawiatura i czytnik dostają tę samą kartę jako popover
- * (`PeekTrigger`).
+ * Wizualne uzupełnienie treści strony: `aria-hidden`, a linki poza kolejnością
+ * Tab — klawiatura i czytnik dostają tę samą kartę jako popover (`PeekTrigger`).
+ * Kursor może przejechać na kartę (zwłoka ukrycia, `hold`) i kliknąć jej link.
  */
 export function PeekStage() {
-  const { peeks, stage } = usePeekActions()
+  const { peeks, stage, hide, hold } = usePeekActions()
   const state = usePeekState()
   const frame = useRef<HTMLDivElement>(null)
   const body = useRef<HTMLDivElement>(null)
@@ -94,7 +94,9 @@ export function PeekStage() {
       element.style.translate = `0 ${Math.round(top)}px`
     }
     place()
-    const onMove = (event: PointerEvent) => event.pointerType === "mouse" && place()
+    // Kursor na samej karcie — karta stoi (inaczej uciekałaby spod niego).
+    const onMove = (event: PointerEvent) =>
+      event.pointerType === "mouse" && !element.contains(event.target as Node) && place()
     window.addEventListener("pointermove", onMove, { passive: true })
     window.addEventListener("scroll", place, { passive: true })
     window.addEventListener("resize", place)
@@ -114,11 +116,16 @@ export function PeekStage() {
     <div
       ref={frame}
       id={STAGE_ID}
-      inert
+      // Wizualny duplikat treści strony: poza drzewem dostępności, linki poza Tabem
+      // (`PeekCard inStage`) — klawiatura dostaje tę samą kartę jako popover.
+      aria-hidden="true"
+      onPointerEnter={hold}
+      onPointerLeave={() => state.id && hide(state.id)}
       className={cn(
-        "pointer-events-none fixed top-0 z-30 transition-[translate,opacity] duration-500 ease-out data-appearing:transition-opacity data-instant:transition-none",
+        "fixed top-0 z-30 transition-[translate,opacity] duration-500 ease-out data-appearing:transition-opacity data-instant:transition-none",
         "left-[calc(50%+var(--container-column)/2+var(--spacing-track))] w-[min(24rem,calc(50%-var(--container-column)/2-2*var(--spacing-track)))]",
-        current ? "opacity-100" : "opacity-0"
+        // Widoczną kartę da się wskazać kursorem i kliknąć jej link (WCAG 1.4.13).
+        current ? "opacity-100" : "pointer-events-none opacity-0"
       )}
     >
       <div
@@ -131,7 +138,7 @@ export function PeekStage() {
             className="absolute inset-x-0 top-0 animate-peek-out"
             onAnimationEnd={() => setLayers((value) => ({ ...value, leaving: null }))}
           >
-            <PeekCard peek={leaving} play={false} />
+            <PeekCard peek={leaving} play={false} inStage />
           </div>
         )}
         {current && (
@@ -141,7 +148,7 @@ export function PeekStage() {
             data-peek-layer={layers.id ?? undefined}
             className="animate-peek-in"
           >
-            <PeekCard peek={current} play />
+            <PeekCard peek={current} play inStage />
           </div>
         )}
       </div>

@@ -19,10 +19,16 @@ export function PeekMedia({
   play = false,
   ratio = `${media.width} / ${media.height}`,
   sizes,
+  onDemand = false,
+  priority = false,
   className,
 }: {
   media: Media
   play?: boolean
+  /** Klip włączony przyciskiem przez użytkownika — gra także przy „ogranicz ruch”. */
+  onDemand?: boolean
+  /** Kadr w pierwszym ekranie (LCP): bez leniwego ładowania, z wysokim priorytetem. */
+  priority?: boolean
   /** Proporcje kadru — domyślnie naturalne; miniatury w mozaice mają stałe. */
   ratio?: string
   sizes: string
@@ -30,7 +36,7 @@ export function PeekMedia({
 }) {
   const reducedMotion = useReducedMotion()
   const video = useRef<HTMLVideoElement>(null)
-  const playing = play && Boolean(media.video) && !reducedMotion
+  const playing = play && Boolean(media.video) && (onDemand || !reducedMotion)
 
   useEffect(() => {
     const player = video.current
@@ -50,6 +56,8 @@ export function PeekMedia({
         width={media.width}
         height={media.height}
         sizes={sizes}
+        preload={priority}
+        fetchPriority={priority ? "high" : undefined}
         className="size-full object-cover object-top"
       />
       {playing && (

@@ -1,18 +1,48 @@
-import { useEffect, useState, useSyncExternalStore, type RefObject } from "react"
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  useSyncExternalStore,
+  type RefObject,
+} from "react"
+import { useTheme } from "next-themes"
 import { observeReveal, REDUCED_MOTION } from "@/app/main-page/_lib/motion"
+import { applyThemeColor } from "@/app/main-page/_lib/theme"
+
+/** Jedna lista zapytań i jedna subskrypcja na zapytanie — stała między renderami. */
+const queries = new Map<
+  string,
+  { list: MediaQueryList; subscribe: (onChange: () => void) => () => void }
+>()
+function mediaStore(query: string) {
+  let store = queries.get(query)
+  if (!store) {
+    const list = window.matchMedia(query)
+    store = {
+      list,
+      subscribe: (onChange) => {
+        list.addEventListener("change", onChange)
+        return () => list.removeEventListener("change", onChange)
+      },
+    }
+    queries.set(query, store)
+  }
+  return store
+}
+
+const noSubscription = () => () => {}
 
 /**
  * Zapytanie medialne jako stan Reacta. Na serwerze i przy hydratacji zwraca
- * `serverValue`, więc pierwszy render klienta zgadza się z HTML-em.
+ * `serverValue`, więc pierwszy render klienta zgadza się z HTML-em. Subskrypcja
+ * i lista zapytania są tworzone raz (bez nowej subskrypcji przy każdym renderze).
  */
 export function useMediaQuery(query: string, serverValue = false): boolean {
+  const store = typeof window === "undefined" ? null : mediaStore(query)
   return useSyncExternalStore(
-    (onChange) => {
-      const media = window.matchMedia(query)
-      media.addEventListener("change", onChange)
-      return () => media.removeEventListener("change", onChange)
-    },
-    () => window.matchMedia(query).matches,
+    store?.subscribe ?? noSubscription,
+    () => store?.list.matches ?? serverValue,
     () => serverValue
   )
 }
@@ -47,4 +77,39 @@ export function useReveal(
     )
   }, [ref, rootMargin, threshold])
   return state
+}
+
+/**
+ * Flaga na chwilę (np. „Skopiowano”): `trigger()` włącza ją na `duration` ms, a kolejne
+ * wywołanie w trakcie odlicza od nowa.
+ */
+export function useTransientFlag(duration: number): [boolean, () => void] {
+  const [on, setOn] = useState(false)
+  const timer = useRef<ReturnType<typeof setTimeout>>(undefined)
+  useEffect(() => () => clearTimeout(timer.current), [])
+  const trigger = useCallback(() => {
+    setOn(true)
+    clearTimeout(timer.current)
+    timer.current = setTimeout(() => setOn(false), duration)
+  }, [duration])
+  return [on, trigger]
+}
+
+/**
+ * Przełączenie jasny / ciemny — przycisk w nagłówku i akcja w ⌘K (razem z kolorem paska).
+ * Przejścia są wyłączone tylko na czas samej zmiany klasy: `disableTransitionOnChange`
+ * w next-themes robiłby to też przy każdym wczytaniu strony (pełne przeliczenie stylu).
+ */
+export function useToggleTheme(): () => void {
+  const { resolvedTheme, setTheme } = useTheme()
+  return () => {
+    const next = resolvedTheme === "dark" ? "light" : "dark"
+    const freeze = document.createElement("style")
+    freeze.textContent = "*,*::before,*::after{transition:none!important}"
+    document.head.append(freeze)
+    setTheme(next)
+    applyThemeColor(next)
+    // Klasę motywu next-themes ustawia w efekcie — styl zdejmujemy dwie klatki później.
+    requestAnimationFrame(() => requestAnimationFrame(() => freeze.remove()))
+  }
 }

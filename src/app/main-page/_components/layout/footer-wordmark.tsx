@@ -22,8 +22,9 @@ export function FooterWordmark({ text }: { text: string }) {
       aria-hidden="true"
       viewBox="0 0 1000 206"
       className={cn(
+        // Uzbrojenie poza kadrem bez przejścia — 1,2 s przeliczeń stylu, których nikt nie widzi.
         "block w-full fill-current transition-[opacity,filter,translate] duration-1200 ease-out",
-        state === "armed" && "translate-y-6 opacity-0 blur-xl"
+        state === "armed" && "translate-y-6 opacity-0 blur-xl transition-none"
       )}
     >
       <text

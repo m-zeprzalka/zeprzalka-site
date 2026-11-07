@@ -2,7 +2,8 @@
 
 import { useEffect, useRef, useState } from "react"
 import { flushSync } from "react-dom"
-import { ArrowUpRightIcon } from "lucide-react"
+import Link from "next/link"
+import { ArrowUpRightIcon, ArrowRightIcon } from "lucide-react"
 import { usePeekActions, usePeekHover } from "@/app/main-page/_components/peek/peek-context"
 import { LabelRow } from "@/app/main-page/_components/page/label-row"
 import { PeekMedia } from "@/app/main-page/_components/peek/peek-media"
@@ -17,7 +18,8 @@ import { Button } from "@/app/main-page/_components/ui/button"
 import { ANCHOR_EVENT, WORK_PREFIX, goToAnchor, workAnchor } from "@/app/main-page/_lib/anchors"
 import { keepInView } from "@/app/main-page/_lib/keep-in-view"
 import { morph } from "@/app/main-page/_lib/morph"
-import type { Link, Work, WorkGroup } from "@/app/main-page/_lib/types"
+import type { LinkData, Work, WorkGroup } from "@/app/main-page/_lib/types"
+import { COLUMN_SIZES } from "@/app/main-page/_lib/media"
 
 /** Przelot kadru do panelu (CSS `::view-transition-group(peek-media)`) — wiersz stoi tyle w miejscu. */
 const MORPH_MS = 480
@@ -48,7 +50,7 @@ export function WorkList({
   labels,
 }: {
   groups: readonly WorkGroup[]
-  all: Link
+  all: LinkData
   labels: Labels
 }) {
   const [open, setOpen] = useState("")
@@ -57,7 +59,7 @@ export function WorkList({
 
   useEffect(() => {
     /** Otwiera wiersz z kotwicy i przewija do niego; `false` — to nie kotwica realizacji. */
-    const reveal = (id: string, scroll: boolean) => {
+    const reveal = (id: string) => {
       const item = id.startsWith(WORK_PREFIX) ? document.getElementById(id) : null
       if (!item) return false
       flushSync(() => {
@@ -66,13 +68,13 @@ export function WorkList({
       })
       // Zwijanie i rozwijanie od razu w stanie końcowym — układ jest ostateczny przed przewinięciem.
       list.current?.getAnimations({ subtree: true }).forEach((animation) => animation.finish())
-      if (scroll) item.scrollIntoView()
+      item.scrollIntoView()
       return true
     }
     const onAnchor = (event: Event) => {
-      if (reveal((event as CustomEvent<string>).detail, true)) event.preventDefault()
+      if (reveal((event as CustomEvent<string>).detail)) event.preventDefault()
     }
-    const onHashChange = () => reveal(window.location.hash.slice(1), true)
+    const onHashChange = () => reveal(window.location.hash.slice(1))
     // Linki do realizacji w treści strony (dowody kompetencji) — także ponowny klik w ten sam.
     const onClick = (event: MouseEvent) => {
       if (event.defaultPrevented || event.button !== 0) return
@@ -82,8 +84,6 @@ export function WorkList({
       event.preventDefault()
       goToAnchor(link.getAttribute("href")!.slice(1))
     }
-    // Wejście z adresem: przeglądarka już przewinęła do wiersza — wystarczy go otworzyć.
-    reveal(window.location.hash.slice(1), false)
     window.addEventListener(ANCHOR_EVENT, onAnchor)
     window.addEventListener("hashchange", onHashChange)
     document.addEventListener("click", onClick)
@@ -93,6 +93,15 @@ export function WorkList({
       document.removeEventListener("click", onClick)
     }
   }, [hide])
+
+  // Wejście z adresem `#realizacja-…`: przeglądarka już przewinęła do wiersza — wystarczy go
+  // otworzyć, raz. (Bez `flushSync`: w efekcie i tak nie opróżnia kolejki.)
+  useEffect(() => {
+    const id = window.location.hash.slice(1)
+    if (!id.startsWith(WORK_PREFIX) || !document.getElementById(id)) return
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- stan z adresu, raz po hydratacji
+    setOpen(id.slice(WORK_PREFIX.length))
+  }, [])
 
   const change = (next: string) => {
     const item = next ? document.getElementById(workAnchor(next)) : null
@@ -134,10 +143,10 @@ export function WorkList({
         ))}
       </Accordion>
       <Button asChild variant="ghost" size="sm" className="-ms-2.5 mt-6">
-        <a href={all.href}>
+        <Link href={all.href}>
           {all.label}
-          <ArrowUpRightIcon />
-        </a>
+          <ArrowRightIcon />
+        </Link>
       </Button>
     </>
   )
@@ -145,6 +154,10 @@ export function WorkList({
 
 function WorkItem({ work, open, labels }: { work: Work; open: boolean; labels: Labels }) {
   const hover = usePeekHover(peekOf(work.slug))
+  // Kadr panelu dopiero po pierwszym otwarciu: zamknięte wiersze (opisy są w HTML) nie pobierają
+  // przy starcie kilkunastu obrazów — na wolnej sieci Chrome ładuje „leniwe” z dużym wyprzedzeniem.
+  const [seen, setSeen] = useState(open)
+  if (open && !seen) setSeen(true)
 
   return (
     <AccordionItem asChild value={work.slug} id={workAnchor(work.slug)} className="border-0">
@@ -156,17 +169,19 @@ function WorkItem({ work, open, labels }: { work: Work; open: boolean; labels: L
           variant="row"
         >
           <span className="grid flex-1 gap-0.5 sm:flex sm:items-baseline sm:justify-between sm:gap-4">
-            <span>{work.title}</span>
+            <span>{work.title}</span>{" "}
             <span className="text-sm text-muted-foreground">{work.category}</span>
           </span>
         </AccordionTrigger>
         <AccordionContent forceMount className="grid gap-4 pt-3 pb-6">
-          <PeekMedia
-            media={work.media}
-            play={open}
-            sizes="(min-width: 48rem) 40rem, 100vw"
-            className="max-h-[70svh]"
-          />
+          {seen && (
+            <PeekMedia
+              media={work.media}
+              play={open}
+              sizes={COLUMN_SIZES}
+              className="max-h-[70svh]"
+            />
+          )}
           {work.description && (
             <p className="text-base text-pretty text-muted-foreground">{work.description}</p>
           )}
@@ -178,10 +193,10 @@ function WorkItem({ work, open, labels }: { work: Work; open: boolean; labels: L
                 <span className="sr-only">({labels.newTab})</span>
               </a>
             ) : (
-              <a href={`${labels.portfolioHref}#${workAnchor(work.slug)}`}>
+              <Link href={`${labels.portfolioHref}#${workAnchor(work.slug)}`}>
                 {labels.inPortfolio}
                 <ArrowUpRightIcon />
-              </a>
+              </Link>
             )}
           </Button>
         </AccordionContent>

@@ -14,7 +14,7 @@ Plan i budżet jakości: [KIERUNEK-WIZUALNY.md](KIERUNEK-WIZUALNY.md) §3.
 
 - [ ] **[Ty]** Testy ręczne i na telefonie nowej strony głównej `/main-page` (wariant 1, kanon
       Indeksu na shadcn) — uwagi do kolejnej iteracji; decyzje i przepięcie w
-      `src/app/main-page/README.md`.
+      `src/app/main-page/ZASADY.md` i `README.md`.
 - [ ] **[Ty]** Decyzje z przeglądu kodu `main-page` (7.11): cele dotyku 36/28/32 px w nagłówku,
       przełączniku języka i stopce, ok. 26 px w plakietkach kategorii i tagów (README obiecuje 44 px, próg AA 24 px jest spełniony); sygnet
       zmieniający znak co sekundę bez końca (ryzyko WCAG 2.2.2 — np. stop po kilku cyklach);
@@ -22,10 +22,18 @@ Plan i budżet jakości: [KIERUNEK-WIZUALNY.md](KIERUNEK-WIZUALNY.md) §3.
 - [ ] **[Ty]** Testy ręczne i na telefonie podstron w nowym systemie (`/main-page/uslugi`,
       `/portfolio`, `/o-mnie`, `/kontakt`, `/blog`, wpisy) — uwagi do kolejnej iteracji.
 - [ ] **[Kod]** Po akceptacji: ewentualnie warianty 2–3 strony głównej do testów A/B, wersja
-      angielska nowego systemu, potem przepięcie (README `main-page`, sekcja 3).
+      angielska nowego systemu, potem przepięcie (`src/app/main-page/README.md`, „Przepięcie”).
+- [ ] **[Ty]** Decyzje z audytu „agencji” (7.11): tło pod nagłówkiem (dziś samo rozmycie „bez koloru”
+      — UX proponuje lekki gradient tła, bo tekst pod logo bywa czytelny); oznaczenie pól wymaganych
+      w formularzu (nowy napis, np. „(opcjonalnie)” przy rodzaju projektu); teksty alternatywne obrazów
+      we wpisie „Claude Design” (dziś angielskie, ogólne) i literówka `**Pytania? **` na jego końcu;
+      ujęcia ekipy w pętli wideo startu — sprawdzić, że to nie Ty.
 - [ ] **[Kod]** `main-page`, wydajność: dane ⌘K jako statyczny plik pobierany z oknem (dziś
       ok. 17 KB w ładunku RSC strony; HTML 34 KB gzip przy 20 KB starej strony); `cva`
-      i `tailwind-merge` poza wyspami klienckimi (klasy liczone na serwerze, jak w serwisie);
+      i `tailwind-merge` poza wyspami klienckimi (klasy liczone na serwerze, jak w serwisie; ok.
+      −8 KB gz i −34 ms startu); jedna wyspa nagłówka zamiast czterech (Turbopack dubluje moduły
+      między paczką układu i strony, ok. 11 KB gz); `<Suspense>` wokół sekcji pod zgięciem
+      (hydratacja w kilku krótszych zadaniach) — do zmierzenia; lżejsze wideo startu na telefon;
       akordeon portfolio i kompetencji bez Radix (`<details name>`, ok. −12 KB JS), jeśli
       zostanie zgoda na odejście od shadcn w tym miejscu.
 - [ ] **[Kod]** Pole-pułapka formularza nazywa się `company` — sprawdzić, czy autouzupełnianie

@@ -5,12 +5,15 @@ import { randomGlyph, START_GLYPH } from "@/app/main-page/_lib/glyphs"
 import { useReducedMotion } from "@/app/main-page/_lib/hooks"
 
 const INTERVAL_MS = 1000
+/** Jak długo sygnet zmienia się sam (ms) — krócej niż 5 s. */
+const RUN_MS = 4500
 /** Najechanie: krótki szum sygnetu — kilka znaków co tyle ms. */
 const SCRAMBLE_STEPS = 7
 const SCRAMBLE_MS = 42
 
 /**
- * Sygnet: znak podmieniany co sekundę, a przy najechaniu na logo krótki szum.
+ * Sygnet: znak podmieniany co sekundę przez pierwsze sekundy, a przy najechaniu albo
+ * fokusie na logo krótki szum.
  * Pudełko o stałej szerokości, znak przy lewej krawędzi — rysunek zaczyna się
  * na linii kolumny, a domena nie przesuwa się przy zmianie znaku. Znak startowy
  * stały (bez rozjazdu hydratacji). `aria-hidden`: nazwa linku się nie zmienia.
@@ -24,17 +27,23 @@ export function LogoMark() {
     const host = ref.current?.closest("a")
     if (reducedMotion || !host) return
     const timer = setInterval(() => setGlyph(randomGlyph()), INTERVAL_MS)
+    // Samoczynna zmiana znaku tylko przez kilka sekund od wejścia (WCAG 2.2.2: ruch dłuższy
+    // niż 5 s wymagałby pauzy); potem sygnet stoi i ożywa przy najechaniu albo fokusie.
+    const stop = setTimeout(() => clearInterval(timer), RUN_MS)
     let scramble: ReturnType<typeof setTimeout>[] = []
-    const play = (event: PointerEvent) => {
-      if (event.pointerType !== "mouse") return
+    const play = (event: Event) => {
+      if (event instanceof PointerEvent && event.pointerType !== "mouse") return
       scramble.forEach(clearTimeout)
       scramble = Array.from({ length: SCRAMBLE_STEPS }, (_, step) =>
         setTimeout(() => setGlyph(randomGlyph()), (step + 1) * SCRAMBLE_MS)
       )
     }
     host.addEventListener("pointerenter", play)
+    host.addEventListener("focus", play)
     return () => {
       clearInterval(timer)
+      clearTimeout(stop)
+      host.removeEventListener("focus", play)
       scramble.forEach(clearTimeout)
       host.removeEventListener("pointerenter", play)
     }

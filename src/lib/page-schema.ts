@@ -1,7 +1,9 @@
 /**
  * Dane strukturalne podstron — jedna definicja dla widoków serwisu i nowej
  * wersji strony (`src/app/main-page`). Wcześniej każdy widok składał je sam,
- * więc druga wersja musiałaby je skopiować.
+ * więc druga wersja musiałaby je skopiować. Każdy graf, który odwołuje się do
+ * autora przez `@id`, zawiera też jego węzeł (`personSchema`) — odwołanie bez
+ * definicji na tej samej stronie wyszukiwarka może pominąć.
  */
 import "server-only"
 import {
@@ -70,6 +72,7 @@ export function servicesPageSchema(locale: Locale) {
         })),
       },
     },
+    personSchema(locale),
     breadcrumbSchema(locale, [
       { name: getCommon(locale).nav.services, path: ROUTES.services[locale] },
     ])
@@ -107,6 +110,7 @@ export function portfolioPageSchema(locale: Locale) {
         })),
       },
     },
+    personSchema(locale),
     breadcrumbSchema(locale, [{ name: copy.title, path: ROUTES.portfolio[locale] }])
   )
 }
@@ -136,6 +140,7 @@ export function contactPageSchema(locale: Locale) {
       { name: meta.title, description: meta.description, path },
       { mainEntity: { "@id": PERSON_ID } }
     ),
+    personSchema(locale),
     breadcrumbSchema(locale, [{ name: meta.title, path }])
   )
 }
@@ -148,6 +153,7 @@ export function blogIndexSchema(locale: Locale, current: number, posts: readonly
   const name = current === 1 ? meta.title : fill(copy.pageTitle, { current })
   return graph(
     blogSchema(locale, { name, description: meta.description, path }, [...posts]),
+    personSchema(locale),
     breadcrumbSchema(locale, [
       { name: copy.breadcrumbBlog, path: ROUTES.blog[locale] },
       ...(current === 1 ? [] : [{ name, path }]),
@@ -196,6 +202,7 @@ export function taxonomySchema(locale: Locale, field: TaxonomyField, term: Term)
 export function postPageSchema(locale: Locale, post: Post) {
   return graph(
     blogPostingSchema(post),
+    personSchema(locale),
     breadcrumbSchema(locale, [
       { name: getPages(locale).blog.breadcrumbBlog, path: ROUTES.blog[locale] },
       { name: post.frontmatter.title, path: postPath(locale, post.slug) },

@@ -1,9 +1,9 @@
 "use client"
 
-import { useRef, useState, type ReactNode, type RefObject } from "react"
+import { useMemo, useRef, useState, type ReactNode, type RefObject } from "react"
+import { defaultFilter, useCommandState } from "cmdk"
 import Image from "next/image"
-import { useRouter } from "next/navigation"
-import { useTheme } from "next-themes"
+import { usePathname, useRouter } from "next/navigation"
 import { ArrowUpRightIcon, CopyIcon, HashIcon, SunMoonIcon, type LucideIcon } from "lucide-react"
 import {
   Command,
@@ -21,14 +21,19 @@ import {
 } from "@/app/main-page/_components/ui/dialog"
 import {
   Drawer,
+  DrawerClose,
   DrawerContent,
   DrawerDescription,
   DrawerTitle,
 } from "@/app/main-page/_components/ui/drawer"
+import { Button } from "@/app/main-page/_components/ui/button"
 import { Kbd, KbdGroup } from "@/app/main-page/_components/ui/kbd"
 import { goToAnchor } from "@/app/main-page/_lib/anchors"
-import { useMediaQuery } from "@/app/main-page/_lib/hooks"
+import { copyText } from "@/app/main-page/_lib/clipboard"
+import { useMediaQuery, useToggleTheme } from "@/app/main-page/_lib/hooks"
 import type { SearchGroup, SearchItem, SearchItemIcon } from "@/app/main-page/_lib/types"
+import type { Locale } from "@/i18n/config"
+import { plural, type PluralForms } from "@/i18n/format"
 
 export interface SearchLabels {
   search: string
@@ -36,6 +41,11 @@ export interface SearchLabels {
   description: string
   placeholder: string
   empty: string
+  /** Nagłówek grupy sekcji startu, gdy okno otwarto na podstronie („Na tej stronie” — tylko na starcie). */
+  homeSections: string
+  copied: string
+  /** Liczba wyników dla czytnika — formy liczby mnogiej (`plural`). */
+  results: PluralForms
   hints: { select: string; open: string; close: string }
 }
 
@@ -60,21 +70,31 @@ export default function SearchDialog({
   groups,
   labels,
   email,
+  homeHref,
+  locale,
   trigger,
+  onCopied,
 }: {
   open: boolean
   onOpenChange: (open: boolean) => void
   groups: readonly SearchGroup[]
   labels: SearchLabels
   email: string
+  homeHref: string
+  locale: Locale
   /** Przycisk, do którego wraca fokus po zamknięciu. */
   trigger: RefObject<HTMLButtonElement | null>
+  /** Adres skopiowany — potwierdzenie ogłasza przycisk (okno jest już zamknięte). */
+  onCopied: () => void
 }) {
   const [selected, setSelected] = useState("")
   const pending = useRef<string | null>(null)
   const desktop = useMediaQuery("(min-width: 48rem)")
   const router = useRouter()
-  const { resolvedTheme, setTheme } = useTheme()
+  const pathname = usePathname()
+  const onHome = pathname === homeHref
+  const toggleTheme = useToggleTheme()
+  const sheet = useRef<HTMLDivElement>(null)
 
   const onCloseAutoFocus = (event: Event) => {
     event.preventDefault()
@@ -92,27 +112,83 @@ export default function SearchDialog({
 
   function run(item: SearchItem) {
     onOpenChange(false)
-    if (item.action === "copy-email") void navigator.clipboard?.writeText(email)
-    else if (item.action === "toggle-theme") setTheme(resolvedTheme === "dark" ? "light" : "dark")
+    // Bez schowka — zwykły `mailto:`, jak przy adresie na stronie.
+    if (item.action === "copy-email")
+      void copyText(email).then((ok) =>
+        ok ? onCopied() : window.location.assign(`mailto:${email}`)
+      )
+    else if (item.action === "toggle-theme") toggleTheme()
     else if (item.href) pending.current = item.href
   }
 
-  const items = groups.flatMap((group) => group.items)
-  const preview = items.find((item) => item.id === selected) ?? items[0]
+  // Kolejność: sekcje oglądanej strony, podstrony, sekcje startu (tylko poza nim), realizacje,
+  // wpisy, akcje — podstrony nie giną za kilkudziesięcioma wierszami.
+  const ordered = useMemo(() => {
+    if (!open) return []
+    const byId = new Map(groups.map((group) => [group.id, group]))
+    const local = pageSections()
+    const sections = byId.get("sections")
+    const pick = (id: string) => byId.get(id) ?? null
+    return [
+      local.length > 0 && sections ? { ...sections, id: "local", items: local } : null,
+      pick("pages"),
+      onHome || !sections ? null : { ...sections, heading: labels.homeSections },
+      pick("works"),
+      pick("posts"),
+      pick("actions"),
+    ].filter((group): group is SearchGroup => group !== null)
+    // `pathname`: po przejściu na inną stronę spis jej sekcji jest inny.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open, groups, onHome, labels.homeSections, pathname])
+  // Filtrowanie i sortowanie po naszej stronie: cmdk 1.1.1 nie przestawia grup (szuka ich
+  // po wewnętrznym id, a w DOM stoją pod nagłówkiem), więc Enter brał pierwszy wiersz w DOM,
+  // a nie najlepsze trafienie. Ta sama miara trafności co w cmdk (`defaultFilter`).
+  const [search, setSearch] = useState("")
+  // Każde otwarcie zaczyna od pustego pola (okno zostaje zamontowane między otwarciami).
+  const [wasOpen, setWasOpen] = useState(open)
+  if (open !== wasOpen) {
+    setWasOpen(open)
+    if (open) setSearch("")
+  }
+  const visible = useMemo(() => {
+    if (!search.trim()) return ordered
+    return ordered
+      .map((group) => {
+        const scored = group.items
+          .map((item) => ({
+            item,
+            score: defaultFilter("", search, [item.label, item.hint ?? "", item.detail ?? ""]),
+          }))
+          .filter((entry) => entry.score > 0)
+          .sort((a, b) => b.score - a.score)
+        return { group, scored, best: scored[0]?.score ?? 0 }
+      })
+      .filter((entry) => entry.scored.length > 0)
+      .sort((a, b) => b.best - a.best)
+      .map(({ group, scored }) => ({ ...group, items: scored.map((entry) => entry.item) }))
+  }, [ordered, search])
+  const items = visible.flatMap((group) => group.items)
+  const preview = items.find((item) => item.id === selected)
 
   const body = (
-    <Command value={selected} onValueChange={setSelected} className="bg-transparent">
-      <CommandInput placeholder={labels.placeholder} />
+    <Command
+      value={selected}
+      onValueChange={setSelected}
+      label={labels.title}
+      shouldFilter={false}
+      className="bg-transparent"
+    >
+      <CommandInput placeholder={labels.placeholder} value={search} onValueChange={setSearch} />
+      <ResultCount locale={locale} forms={labels.results} empty={labels.empty} />
       <div className="md:grid md:grid-cols-[minmax(0,1fr)_15rem] md:divide-x">
-        <CommandList className="max-h-[min(30rem,62dvh)] p-2">
+        <CommandList label={labels.title} className="max-h-[min(30rem,62dvh)] p-2">
           <CommandEmpty>{labels.empty}</CommandEmpty>
-          {groups.map((group) => (
+          {visible.map((group) => (
             <CommandGroup key={group.id} heading={group.heading}>
               {group.items.map((item) => (
                 <CommandItem
                   key={item.id}
                   value={item.id}
-                  keywords={[item.label, item.hint ?? ""]}
                   onSelect={() => run(item)}
                   className="min-h-12 gap-3 px-3 text-[0.9375rem] md:min-h-11"
                 >
@@ -128,7 +204,8 @@ export default function SearchDialog({
             </CommandGroup>
           ))}
         </CommandList>
-        {desktop && preview && <Preview item={preview} />}
+        {/* Bez wyników — pusty podgląd, a nie pierwsza pozycja listy. */}
+        {desktop && (preview ? <Preview item={preview} /> : <div aria-hidden="true" />)}
       </div>
       {desktop && (
         <div className="flex items-center gap-4 border-t px-4 py-2.5 text-xs text-muted-foreground">
@@ -163,16 +240,60 @@ export default function SearchDialog({
     </Dialog>
   ) : (
     <Drawer open={open} onOpenChange={onOpenChange}>
-      {/* Bez automatycznego fokusu na polu — klawiatura nie zasłania połowy ekranu. */}
+      {/* Fokus na arkuszu, nie w polu — klawiatura ekranowa nie zasłania połowy ekranu,
+          a czytnik nie zostaje na przycisku za oknem (ukrytym przez `aria-hidden`). */}
       <DrawerContent
-        onOpenAutoFocus={(event) => event.preventDefault()}
+        ref={sheet}
+        onOpenAutoFocus={(event) => {
+          event.preventDefault()
+          sheet.current?.focus()
+        }}
         onCloseAutoFocus={onCloseAutoFocus}
       >
         <DrawerTitle className="sr-only">{labels.title}</DrawerTitle>
+        {/* Arkusz da się zamknąć bez gestu — przyciskiem z widocznym napisem. */}
+        <DrawerClose asChild>
+          <Button variant="ghost" size="sm" className="absolute top-2 right-2 capitalize">
+            {labels.hints.close}
+          </Button>
+        </DrawerClose>
         <DrawerDescription className="sr-only">{labels.description}</DrawerDescription>
         {body}
       </DrawerContent>
     </Drawer>
+  )
+}
+
+/**
+ * Sekcje oglądanej strony — te same, które pokazuje spis w lewym torze (`SectionNav`
+ * jest w DOM także poniżej 1280 px, tylko ukryty). Strona bez spisu nie ma tej grupy.
+ */
+function pageSections(): SearchItem[] {
+  return [
+    ...document.querySelectorAll<HTMLAnchorElement>("nav[data-section-nav] a[href^='#']"),
+  ].map((link) => ({
+    id: `local-${link.hash.slice(1)}`,
+    label: link.textContent?.trim() ?? "",
+    icon: "section",
+    href: link.hash,
+  }))
+}
+
+/** Liczba wyników (albo ich brak) dla czytnika — `[cmdk-empty]` nie jest regionem na żywo. */
+function ResultCount({
+  locale,
+  forms,
+  empty,
+}: {
+  locale: Locale
+  forms: PluralForms
+  empty: string
+}) {
+  const count = useCommandState((state) => state.filtered.count)
+  return (
+    <p role="status" className="sr-only">
+      {count ? plural(count, locale, forms) : empty}
+    </p>
   )
 }
 

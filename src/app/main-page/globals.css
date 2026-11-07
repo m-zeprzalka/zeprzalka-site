@@ -11,14 +11,14 @@
 
 @source "./";
 
+/* Desktop z myszą od 1280 px: karta podglądu na marginesie — to samo zapytanie co `STAGE_QUERY` (_lib/hooks.ts). */
+@custom-variant stage (@media (min-width: 80rem) and (hover: hover) and (pointer: fine));
+
 /*
  * Ciemny motyw tylko na ekranie: na wydruku ani paleta `.dark`, ani `dark:`
  * nie działają (next-themes zostawia klasę na <html>) — nigdy jasny tekst
  * na białym papierze. Ten sam wzór co w arkuszu serwisu.
  */
-/* Desktop z myszą od 1280 px: karta podglądu na marginesie — to samo zapytanie co `STAGE_QUERY` (_lib/hooks.ts). */
-@custom-variant stage (@media (min-width: 80rem) and (hover: hover) and (pointer: fine));
-
 @custom-variant dark {
   @media not print {
     &:is(.dark *) {
@@ -47,7 +47,8 @@
   --destructive: oklch(0.577 0.245 27.325);
   --border: oklch(0.91 0 0);
   --input: oklch(0.91 0 0);
-  --ring: oklch(0.708 0 0);
+  /* Obwódka fokusu ≥ 3:1 na tle (WCAG 1.4.11) — w obu motywach pełnym kolorem, bez przezroczystości. */
+  --ring: oklch(0.556 0 0);
   --success: oklch(0.72 0.17 150);
 }
 
@@ -70,7 +71,7 @@
     --destructive: oklch(0.704 0.191 22.216);
     --border: oklch(1 0 0 / 10%);
     --input: oklch(1 0 0 / 14%);
-    --ring: oklch(0.556 0 0);
+    --ring: oklch(0.708 0 0);
   }
 }
 
@@ -133,6 +134,13 @@
   /* Akordeon: wysokość z pomiaru Radix; przed pomiarem (bez hydratacji) — zero, nie `auto`. */
   --animate-expand: expand 200ms var(--ease-out);
   --animate-collapse: collapse 200ms var(--ease-out);
+}
+
+/* Poniżej 360 px węższy margines — przy 320 px (powiększenie 400%) nagłówek mieści się bez przewijania. */
+@media (max-width: 22.4375rem) {
+  :root {
+    --spacing-page: 1rem;
+  }
 }
 
 @media (min-width: 48rem) {
@@ -316,7 +324,7 @@
 
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    @apply border-border outline-ring;
   }
 
   /* Odstęp kotwic pod przyklejonym nagłówkiem — ta sama wartość co `HEADER_OFFSET` (_lib/anchors.ts). */

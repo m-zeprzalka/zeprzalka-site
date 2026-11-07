@@ -27,7 +27,12 @@ export function Example({
     <figure className="mt-6 overflow-hidden rounded-2xl border text-foreground">
       <div className={cn("flex flex-wrap items-center gap-3 p-6", className)}>{children}</div>
       <figcaption className="sr-only">{file}</figcaption>
-      <pre className="max-h-96 overflow-auto border-t bg-muted/40 px-5 py-4 font-mono text-[0.8125rem] leading-relaxed text-muted-foreground">
+      <pre
+        tabIndex={0}
+        role="group"
+        aria-label={`Kod przykładu: ${file}`}
+        className="max-h-96 overflow-auto border-t bg-muted/40 px-5 py-4 font-mono text-[0.8125rem] leading-relaxed text-muted-foreground"
+      >
         <code>{source.trim()}</code>
       </pre>
     </figure>

@@ -8,3 +8,6 @@ export const COLUMN_SIZES =
 
 export const HALF_COLUMN_SIZES =
   "(min-width: 105rem) 24rem, (min-width: 90rem) 22rem, (min-width: 40rem) 20rem, 100vw"
+
+/** Okładki wpisów mają proporcje bliskie 16:9 — kadr rezerwuje miejsce bez mierzenia plików. */
+export const COVER = { width: 1600, height: 900 } as const

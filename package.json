@@ -13,14 +13,15 @@
     "start": "next start",
     "lint": "eslint",
     "typecheck": "next typegen && tsc --noEmit",
-    "check": "pnpm check:content && pnpm check:classes && pnpm format:check && pnpm lint && pnpm build && pnpm check:build",
+    "check": "pnpm check:content && pnpm test && pnpm check:classes && pnpm format:check && pnpm lint && pnpm build && pnpm check:build",
     "check:build": "node scripts/check-build.mjs",
     "check:content": "node scripts/check-content.mjs",
     "cv": "node scripts/cv-pdf.mjs",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "visual": "node scripts/visual-diff.mjs",
-    "check:classes": "node scripts/check-classes.mjs"
+    "check:classes": "node scripts/check-classes.mjs",
+    "test": "node --conditions=react-server --import ./scripts/test-hooks.mjs --test \"src/**/*.test.ts\""
   },
   "dependencies": {
     "@vercel/analytics": "^2.0.1",

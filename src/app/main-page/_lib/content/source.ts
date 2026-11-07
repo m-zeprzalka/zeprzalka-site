@@ -5,7 +5,7 @@
  */
 import "server-only"
 import { cache } from "react"
-import type { Locale } from "@/i18n/config"
+import { INTL_LOCALE, type Locale } from "@/i18n/config"
 import { getCommon } from "@/i18n/content/common"
 import { getHome, homeSkills } from "@/i18n/content/home"
 import { getMainPage } from "@/i18n/content/main-page"
@@ -13,13 +13,12 @@ import { getPages } from "@/i18n/content/pages"
 import { portfolioGroups, portfolioItems, type PortfolioItem } from "@/lib/portfolio"
 import { getAllPosts } from "@/lib/posts"
 import type { Media, Post, WorkGroup } from "../types"
+import { COVER } from "../media"
 import { postHref } from "../routes"
 
 /** Wpis jest „nowy” przez 30 dni od publikacji (liczone przy buildzie). */
 const NEW_FOR_MS = 30 * 24 * 60 * 60 * 1000
 
-/** Okładki wpisów mają proporcje bliskie 16:9 — kadr rezerwuje miejsce bez mierzenia plików. */
-const COVER = { width: 1600, height: 900 } as const
 
 export function need<T>(value: T | null | undefined, what: string): T {
   if (value === null || value === undefined) throw new Error(`main-page: brak treści — ${what}`)
@@ -64,16 +63,22 @@ export const getSource = cache((locale: Locale) => {
   }))
 
   const now = Date.now()
+  // Dzień i miesiąc w zapisie języka („02.11”, „02/11”) — rok stoi w kolumnie listy.
+  const dayMonth = new Intl.DateTimeFormat(INTL_LOCALE[locale], {
+    day: "2-digit",
+    month: "2-digit",
+    timeZone: "UTC",
+  })
   // Wpis: `card` idzie do klienta, reszta pól służy tylko serwerowi (opis w wyszukiwarce,
   // wybór dowodów i okładek po kategorii albo tagu).
   const posts = getAllPosts(locale).map(({ slug, frontmatter }, index) => {
-    const [year = "", month = "", day = ""] = frontmatter.date.split("-")
+    const [year = ""] = frontmatter.date.split("-")
     const card: Post = {
       slug,
       title: frontmatter.title,
       href: postHref(locale, slug),
       year,
-      day: `${day}.${month}`,
+      day: dayMonth.format(new Date(frontmatter.date)),
       iso: frontmatter.date,
       cover: { src: frontmatter.image, alt: frontmatter.title, ...COVER },
       // Tylko najnowszy wpis — wyróżnienie przestaje znaczyć, gdy jest go więcej.

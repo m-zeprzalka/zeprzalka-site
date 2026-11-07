@@ -1,8 +1,9 @@
 "use client"
 
-import { useEffect, useState } from "react"
 import { CheckIcon, CopyIcon } from "lucide-react"
 import { Button } from "@/app/main-page/_components/ui/button"
+import { copyText } from "@/app/main-page/_lib/clipboard"
+import { useTransientFlag } from "@/app/main-page/_lib/hooks"
 
 /** Jak długo przycisk pokazuje potwierdzenie po skopiowaniu. */
 const CONFIRM_MS = 1600
@@ -23,35 +24,29 @@ export function CopyEmail({
   copiedLabel: string
   className?: string
 }) {
-  const [copied, setCopied] = useState(false)
-
-  useEffect(() => {
-    if (!copied) return
-    const timer = setTimeout(() => setCopied(false), CONFIRM_MS)
-    return () => clearTimeout(timer)
-  }, [copied])
+  const [copied, confirm] = useTransientFlag(CONFIRM_MS)
 
   return (
-    <Button asChild variant="outline" size="lg" className={className}>
-      <a
-        href={`mailto:${email}`}
-        onClick={(event) => {
-          if (!navigator.clipboard) return
-          event.preventDefault()
-          const mailto = event.currentTarget.href
-          navigator.clipboard.writeText(email).then(
-            () => setCopied(true),
-            () => window.location.assign(mailto)
-          )
-        }}
-      >
-        {email}
-        <span className="sr-only"> — {label}</span>
-        {copied ? <CheckIcon /> : <CopyIcon />}
-        <span aria-live="polite" className="sr-only">
-          {copied ? copiedLabel : ""}
-        </span>
-      </a>
-    </Button>
+    <>
+      <Button asChild variant="outline" size="lg" className={className}>
+        <a
+          href={`mailto:${email}`}
+          onClick={(event) => {
+            if (!navigator.clipboard) return
+            event.preventDefault()
+            const mailto = event.currentTarget.href
+            void copyText(email).then((ok) => (ok ? confirm() : window.location.assign(mailto)))
+          }}
+        >
+          {email}
+          <span className="sr-only"> — {label}</span>
+          {copied ? <CheckIcon /> : <CopyIcon />}
+        </a>
+      </Button>
+      {/* Poza linkiem: komunikat nie zmienia jego nazwy dostępnej. */}
+      <span role="status" className="sr-only">
+        {copied ? copiedLabel : ""}
+      </span>
+    </>
   )
 }

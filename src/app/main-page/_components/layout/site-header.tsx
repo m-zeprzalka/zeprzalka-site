@@ -40,9 +40,10 @@ export function SiteHeader({
           <div key={layer} className={cn("absolute inset-0", layer)} />
         ))}
       </div>
-      <div className="relative column flex h-16 items-center justify-between gap-3">
+      {/* `overflow-x-clip`: powiększone pola dotyku przycisków (`after:`) nie poszerzają strony przy 320 px. */}
+      <div className="relative column flex h-16 items-center justify-between gap-3 overflow-x-clip">
         <Logo domain={domain} href={homeHref} />
-        <div className="-me-2.5 flex items-center gap-1.5">
+        <div className="-me-2.5 flex items-center gap-1 min-[22.5rem]:gap-1.5">
           <SearchMenu {...search} />
           <LanguageSwitch {...language} />
           <ThemeToggle label={themeLabel} />

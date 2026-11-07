@@ -1,6 +1,7 @@
 "use client"
 
-import { useEffect, useState, type CSSProperties } from "react"
+import { useEffect, useState } from "react"
+import { goToAnchor } from "@/app/main-page/_lib/anchors"
 import { useMediaQuery } from "@/app/main-page/_lib/hooks"
 import type { SectionLink } from "@/app/main-page/_lib/types"
 import { cn } from "@/lib/utils"
@@ -96,28 +97,38 @@ export function SectionNav({
 
   return (
     <nav
+      data-section-nav=""
       aria-label={label}
-      inert={!shown}
       data-open={(near && shown) || undefined}
       className={cn(
-        "group/toc fixed top-1/2 right-[calc(50%+var(--container-column)/2+var(--spacing-track))] z-30 hidden -translate-y-1/2 transition-[opacity,filter,translate] duration-300 ease-out xl:block",
-        shown ? "opacity-100" : "pointer-events-none -translate-x-2 opacity-0 blur-sm"
+        // Szerokość toru (od krawędzi okna do kolumny) — długie rozdziały wpisu nie wychodzą poza ekran.
+        "group/toc fixed top-1/2 right-[calc(50%+var(--container-column)/2+var(--spacing-track))] z-30 hidden max-w-[calc(50vw-var(--container-column)/2-var(--spacing-track)-var(--spacing-page))] -translate-y-1/2 transition-[opacity,filter,translate] duration-300 ease-out xl:block",
+        // Schowany (start, stopka) — ale osiągalny z klawiatury: fokus w środku go pokazuje.
+        shown
+          ? "opacity-100"
+          : "pointer-events-none -translate-x-2 opacity-0 blur-sm focus-within:pointer-events-auto focus-within:translate-x-0 focus-within:opacity-100 focus-within:blur-none"
       )}
     >
       {/* Kropka przesuwa się o `--active` wierszy po h-8 (wysokość pozycji spisu). */}
-      <div className="relative" style={{ "--active": active } as CSSProperties}>
+      <div className="relative" style={{ "--active": active }}>
         <span
           aria-hidden="true"
           className="absolute top-[calc(1rem-2.5px)] left-0 size-1.25 translate-y-[calc(var(--active)*(--spacing(8)))] rounded-full bg-foreground transition-[translate] duration-300 ease-in-out"
         />
         <ol>
           {sections.map((section, index) => (
-            <li key={section.id} style={{ "--k": Math.abs(index - active) } as CSSProperties}>
+            <li key={section.id} style={{ "--k": Math.abs(index - active) }}>
               <a
                 href={`#${section.id}`}
+                // Ta sama ścieżka skoku co ⌘K: hash, przewinięcie i fokus na celu.
+                onClick={(event) => {
+                  event.preventDefault()
+                  goToAnchor(section.id)
+                }}
                 aria-current={index === active ? "location" : undefined}
+                title={section.label}
                 className={cn(
-                  "flex h-8 items-center rounded-full ps-4 pe-2 text-sm whitespace-nowrap text-muted-foreground outline-none hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50 aria-[current]:text-foreground",
+                  "block h-8 truncate rounded-full ps-4 pe-2 text-sm leading-8 text-muted-foreground outline-none hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring aria-[current]:text-foreground",
                   // W spoczynku tylko bieżąca; rozwinięty spis — kolejno od bieżącej (28 ms na pozycję).
                   "opacity-0 blur-[3px] transition-[opacity,filter,color] duration-200 aria-[current]:opacity-100 aria-[current]:blur-none",
                   "group-focus-within/toc:opacity-100 group-focus-within/toc:blur-none group-hover/toc:opacity-100 group-hover/toc:blur-none group-data-open/toc:opacity-100 group-data-open/toc:blur-none",

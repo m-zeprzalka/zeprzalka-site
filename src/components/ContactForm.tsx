@@ -93,7 +93,7 @@ export function ContactForm({
       {/* Honeypot — pole niewidoczne dla ludzi, wypełniają je tylko boty */}
       <div className="absolute -z-10 h-0 overflow-hidden opacity-0" aria-hidden="true">
         <label htmlFor={ids.company}>{copy.honeypot}</label>
-        <input id={ids.company} name="company" type="text" tabIndex={-1} autoComplete="off" />
+        <input id={ids.company} name="hp" type="text" tabIndex={-1} autoComplete="off" />
       </div>
 
       {/*

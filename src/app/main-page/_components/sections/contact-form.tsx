@@ -1,11 +1,12 @@
 "use client"
 
-import { useActionState, useEffect, useRef } from "react"
+import { useActionState, useEffect, useId, useRef } from "react"
+import Link from "next/link"
 import { ArrowRightIcon } from "lucide-react"
 import { sendContactEmail, type ContactField, type ContactFormState } from "@/app/actions/contact"
 import { ChoiceGroup } from "@/app/main-page/_components/ui/choice-group"
 import { Button } from "@/app/main-page/_components/ui/button"
-import { Field, FieldLabel } from "@/app/main-page/_components/ui/field"
+import { Field, FieldError, FieldLabel } from "@/app/main-page/_components/ui/field"
 import { Input } from "@/app/main-page/_components/ui/input"
 import { Textarea } from "@/app/main-page/_components/ui/textarea"
 import type { Locale } from "@/i18n/config"
@@ -27,7 +28,6 @@ export interface ContactFormCopy {
 }
 
 const INITIAL: ContactFormState = { success: false, message: "" }
-const STATUS_ID = "contact-status"
 
 /**
  * Formularz kontaktowy na komponentach shadcn i akcji serwerowej serwisu
@@ -47,11 +47,26 @@ export function ContactForm({
   privacyHref: string
 }) {
   const [state, action, pending] = useActionState(sendContactEmail, INITIAL)
+  // Identyfikatory z `useId` — drugi formularz albo nagłówek wpisu nie zdubluje `id`.
+  const uid = useId()
+  const ids = {
+    name: `${uid}-name`,
+    email: `${uid}-email`,
+    message: `${uid}-message`,
+    trap: `${uid}-trap`,
+    status: `${uid}-status`,
+  }
   const form = useRef<HTMLFormElement>(null)
+  // Pole z błędem opisuje jego własny komunikat (pod polem), a nie wspólny region statusu.
+  const errorId = (field: ContactField) => `${uid}-${field}-error`
   const invalid = (field: ContactField) =>
     state.invalid?.includes(field)
-      ? ({ "aria-invalid": true, "aria-describedby": STATUS_ID } as const)
+      ? ({ "aria-invalid": true, "aria-describedby": errorId(field) } as const)
       : {}
+  const error = (field: ContactField) =>
+    state.errors?.[field] ? (
+      <FieldError id={errorId(field)}>{state.errors[field]}</FieldError>
+    ) : null
   const values = state.success ? undefined : state.fields
 
   useEffect(() => {
@@ -63,15 +78,16 @@ export function ContactForm({
       <input type="hidden" name="locale" value={locale} />
       {/* Pole-pułapka: niewidoczne i poza kolejnością Tab — wypełniają je tylko boty. */}
       <div aria-hidden="true" className="absolute size-px overflow-hidden opacity-0">
-        <label htmlFor="company">{copy.honeypot}</label>
-        <input id="company" name="company" type="text" tabIndex={-1} autoComplete="off" />
+        {/* Nazwa bez znaczenia dla autouzupełniania (np. „company” Chrome wypełniłby danymi firmy). */}
+        <label htmlFor={ids.trap}>{copy.honeypot}</label>
+        <input id={ids.trap} name="hp" type="text" tabIndex={-1} autoComplete="off" />
       </div>
 
       <div className="grid gap-6 sm:grid-cols-2">
         <Field>
-          <FieldLabel htmlFor="name">{copy.name}</FieldLabel>
+          <FieldLabel htmlFor={ids.name}>{copy.name}</FieldLabel>
           <Input
-            id="name"
+            id={ids.name}
             name="name"
             autoComplete="name"
             placeholder={copy.namePlaceholder}
@@ -80,11 +96,12 @@ export function ContactForm({
             required
             minLength={2}
           />
+          {error("name")}
         </Field>
         <Field>
-          <FieldLabel htmlFor="email">{copy.email}</FieldLabel>
+          <FieldLabel htmlFor={ids.email}>{copy.email}</FieldLabel>
           <Input
-            id="email"
+            id={ids.email}
             name="email"
             type="email"
             autoComplete="email"
@@ -93,6 +110,7 @@ export function ContactForm({
             {...invalid("email")}
             required
           />
+          {error("email")}
         </Field>
       </div>
 
@@ -104,9 +122,9 @@ export function ContactForm({
       />
 
       <Field>
-        <FieldLabel htmlFor="message">{copy.message}</FieldLabel>
+        <FieldLabel htmlFor={ids.message}>{copy.message}</FieldLabel>
         <Textarea
-          id="message"
+          id={ids.message}
           name="message"
           placeholder={copy.messagePlaceholder}
           defaultValue={values?.message}
@@ -114,14 +132,15 @@ export function ContactForm({
           required
           minLength={5}
         />
+        {error("message")}
       </Field>
 
       <div className="flex flex-col-reverse gap-4 sm:flex-row sm:items-center sm:justify-between">
         <p className="max-w-[40ch] text-xs text-pretty text-muted-foreground">
           {copy.privacyNote}{" "}
-          <a href={privacyHref} className="underline underline-offset-4 hover:text-foreground">
+          <Link href={privacyHref} className="underline underline-offset-4 hover:text-foreground">
             {copy.privacyLink}
-          </a>
+          </Link>
         </p>
         <Button type="submit" size="lg" disabled={pending} className="w-full sm:w-auto">
           {pending ? copy.submitting : copy.submit}
@@ -131,7 +150,7 @@ export function ContactForm({
 
       {/* Region stoi w drzewie dostępności także pusty — inaczej czytnik nie ogłosi komunikatu. */}
       <p
-        id={STATUS_ID}
+        id={ids.status}
         role="status"
         className={cn("text-sm empty:sr-only", state.success ? "text-success" : "text-destructive")}
       >

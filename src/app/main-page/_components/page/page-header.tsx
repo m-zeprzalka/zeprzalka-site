@@ -11,7 +11,8 @@ import {
 } from "@/app/main-page/_components/ui/breadcrumb"
 import { SECTION } from "@/app/main-page/_lib/anchors"
 import { noOrphans } from "@/app/main-page/_lib/text"
-import type { Link as LinkData } from "@/app/main-page/_lib/types"
+import type { LinkData } from "@/app/main-page/_lib/types"
+import { cn } from "@/lib/utils"
 
 /**
  * Nagłówek podstrony — ten sam stopień i ta sama „harmonijka” co start:
@@ -24,11 +25,14 @@ export function PageHeader({
   breadcrumb,
   title,
   lead,
+  compactLead = false,
   children,
 }: {
   breadcrumb: { label: string; trail: readonly LinkData[]; current: string }
   title: string
   lead?: string
+  /** Wpis: rozwinięcie stopień niżej — długi opis nie spycha okładki o kilkanaście wierszy. */
+  compactLead?: boolean
   children?: ReactNode
 }) {
   return (
@@ -61,7 +65,12 @@ export function PageHeader({
           <Segments segments={[{ text: noOrphans(title) }]} split="block" />
         </h1>
         {lead && (
-          <p className="enter-stagger text-muted-foreground [--enter-delay:320ms] [--enter-step:14ms]">
+          <p
+            className={cn(
+              "enter-stagger text-muted-foreground [--enter-delay:320ms] [--enter-step:14ms]",
+              compactLead && "mt-3 text-lg leading-snug font-normal tracking-normal sm:text-xl"
+            )}
+          >
             <Segments segments={[{ text: noOrphans(lead) }]} split="block" />
           </p>
         )}

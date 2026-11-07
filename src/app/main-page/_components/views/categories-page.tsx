@@ -1,7 +1,9 @@
 import Link from "next/link"
+import { CtaPanel } from "@/app/main-page/_components/page/cta-panel"
 import { INDEX_ROW } from "@/app/main-page/_components/page/index-row"
 import { PageHeader } from "@/app/main-page/_components/page/page-header"
 import { JsonLd } from "@/app/main-page/_components/seo/json-ld"
+import { PAGE_SECTION } from "@/app/main-page/_lib/anchors"
 import { breadcrumb, categoryLinks } from "@/app/main-page/_lib/content/pages"
 import { getSource } from "@/app/main-page/_lib/content/source"
 import { pageHref } from "@/app/main-page/_lib/routes"
@@ -36,6 +38,15 @@ export function CategoriesPage({ locale }: { locale: Locale }) {
           </li>
         ))}
       </ul>
+      <CtaPanel
+        id={PAGE_SECTION.cooperation}
+        heading={common.postCta.title}
+        body={common.postCta.description}
+        actions={[
+          { label: common.postCta.primary, href: pageHref("contact", locale) },
+          { label: common.postCta.secondary, href: pageHref("services", locale) },
+        ]}
+      />
     </>
   )
 }

@@ -22,7 +22,7 @@ React 19, TypeScript strict, Tailwind 4, shadcn/ui, pnpm, Vercel. Opis architekt
    `DEMO_PUBLIC=1` — ustawione w Vercelu na czas prac nad wyglądem). Build z demami trzeba
    sprawdzić osobno (`VERCEL_ENV=production DEMO_PUBLIC=1 pnpm build`) — CI buduje bez nich.
    Komponenty systemu „Forma” łączą klasy przez `forma/cn.ts` (zna tokeny `fm-*`).
-   **Nowa wersja strony** powstaje w `src/app/main-page/` (decyzje i przepięcie: README tam):
+   **Nowa wersja strony** powstaje w `src/app/main-page/` (zasady i decyzje: `ZASADY.md`, dokumentacja i przepięcie: `README.md` — oba tam):
    własne `_components/ui` z shadcn (CLI wskazuje tam przez `components.json`), własny
    `globals.css`, trasy `.demo.tsx`. ESLint pilnuje izolacji w obie strony — serwis nie importuje
    z `main-page`, a `main-page` nie importuje starych komponentów (`@/components/*`) ani `/demo`.

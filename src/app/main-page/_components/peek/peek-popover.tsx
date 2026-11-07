@@ -3,6 +3,7 @@
 import { useEffect, useRef, type RefObject } from "react"
 import { Popover, PopoverAnchor, PopoverContent } from "@/app/main-page/_components/ui/popover"
 import { HEADER_OFFSET } from "@/app/main-page/_lib/anchors"
+import { focusAfter, tabbables } from "@/app/main-page/_lib/focus"
 import type { Peek } from "@/app/main-page/_lib/types"
 import { PeekCard } from "./peek-card"
 
@@ -35,15 +36,12 @@ export default function PeekPopover({
   open,
   onOpenChange,
   trigger,
-  focusContent,
 }: {
   id: string
   peek: Peek
   open: boolean
   onOpenChange: (open: boolean) => void
   trigger: RefObject<HTMLButtonElement | null>
-  /** Otwarte z klawiatury (albo czytnikiem): fokus wchodzi do karty, więc jej link jest osiągalny. */
-  focusContent: boolean
 }) {
   const anchor = useRef({
     getBoundingClientRect: () => (trigger.current ? columnRect(trigger.current) : new DOMRect()),
@@ -76,12 +74,32 @@ export default function PeekPopover({
         sideOffset={10}
         // Zawsze pod frazą: zamiast odwracać kartę nad tekst, dosuwamy stronę (efekt wyżej).
         avoidCollisions={false}
-        // Dotyk zostawia fokus na frazie — bez skoku strony i bez obwódki fokusu w karcie.
-        onOpenAutoFocus={(event) => !focusContent && event.preventDefault()}
+        // Fokus na samej karcie (bez skoku strony i bez obwódki): czytnik czyta kartę,
+        // a następny Tab trafia w jej link.
+        onOpenAutoFocus={(event) => {
+          event.preventDefault()
+          content.current?.focus({ preventScroll: true })
+        }}
+        // Karta stoi w kolejności Tab zaraz po frazie, choć w DOM jest na końcu `<body>`:
+        // Tab za ostatnim elementem karty idzie dalej po frazie, Shift+Tab z początku — na nią.
+        onKeyDown={(event) => {
+          const card = content.current
+          const phrase = trigger.current
+          if (event.key !== "Tab" || !card || !phrase) return
+          const inside = tabbables(card)
+          const active = document.activeElement
+          const leaving = event.shiftKey
+            ? active === card || active === inside[0]
+            : inside.length === 0 || active === inside.at(-1)
+          if (!leaving) return
+          event.preventDefault()
+          onOpenChange(false)
+          if (event.shiftKey) phrase.focus()
+          else focusAfter(phrase, card)
+        }}
         // Bez `PopoverTrigger` Radix nie wie, dokąd oddać fokus: po Escape wraca na frazę,
-        // a po wyjściu Tabem zostaje tam, dokąd użytkownik przeszedł. (Dotyk fokusu nie przenosił.)
+        // a po wyjściu Tabem zostaje tam, dokąd użytkownik przeszedł.
         onCloseAutoFocus={(event) => {
-          if (!focusContent) return
           const active = document.activeElement
           if (active && active !== document.body && !content.current?.contains(active)) return
           event.preventDefault()
@@ -90,9 +108,10 @@ export default function PeekPopover({
         onPointerDownOutside={(event) => {
           if (trigger.current?.contains(event.target as Node)) event.preventDefault()
         }}
-        className="max-h-(--radix-popover-content-available-height) w-(--radix-popover-trigger-width) overflow-y-auto overscroll-contain p-0"
+        // Telefon — na szerokość kolumny; od 768 px karta 24 rem, nie zasłania pół ekranu.
+        className="max-h-(--radix-popover-content-available-height) w-(--radix-popover-trigger-width) overflow-y-auto overscroll-contain p-0 md:w-96"
       >
-        <PeekCard peek={peek} play={open} />
+        <PeekCard peek={peek} play={open} onNavigate={() => onOpenChange(false)} />
       </PopoverContent>
     </Popover>
   )

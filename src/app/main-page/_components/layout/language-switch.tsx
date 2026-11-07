@@ -4,7 +4,7 @@ import { useSyncExternalStore } from "react"
 import { locales, otherLocale, type Locale } from "@/i18n/config"
 
 const SEGMENT =
-  "grid h-7 min-w-9 place-items-center rounded-full px-2.5 text-xs font-medium uppercase outline-none transition-colors focus-visible:ring-[3px] focus-visible:ring-ring/50"
+  "relative grid h-7 min-w-9 place-items-center rounded-full px-2.5 text-xs font-medium uppercase outline-none transition-colors focus-visible:ring-[3px] focus-visible:ring-ring after:absolute after:-inset-y-2 after:inset-x-0"
 const CURRENT = `${SEGMENT} bg-background text-foreground shadow-xs`
 const OTHER = `${SEGMENT} text-muted-foreground hover:text-foreground`
 
@@ -33,8 +33,8 @@ function counterpartFromHead(target: Locale): string | null {
  * więc do przeglądarki nie trafia żadna mapa adresów. Do hydratacji (i bez JS)
  * link prowadzi na stronę główną drugiej wersji. Podgląd ma tylko wersję
  * polską — angielski odpowiednik to dziś strona serwisu. Zwykłe `<a>`: wersje
- * językowe mają osobne układy główne. Klasy bez `cn()` — `tailwind-merge` nie
- * trafia do paczki nagłówka.
+ * językowe mają osobne układy główne. Klasy jako stałe napisy (bez `cn()`) — nic
+ * tu nie scala klas.
  */
 export function LanguageSwitch({
   label,
@@ -61,7 +61,7 @@ export function LanguageSwitch({
             {code}
           </span>
         ) : (
-          <a key={code} href={href} hrefLang={code} className={OTHER}>
+          <a key={code} href={href} hrefLang={code} lang={code} className={OTHER}>
             {code}
           </a>
         )

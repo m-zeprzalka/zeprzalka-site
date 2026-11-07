@@ -52,8 +52,7 @@ function BreadcrumbPage({ className, ...props }: React.ComponentProps<"span">) {
   return (
     <span
       data-slot="breadcrumb-page"
-      role="link"
-      aria-disabled="true"
+      // zeprzalka: samo `aria-current` (wzorzec APG) — „link, niedostępny” wprowadzał w błąd.
       aria-current="page"
       className={cn("font-normal text-foreground", className)}
       {...props}

@@ -37,7 +37,7 @@ const eslintConfig = [
     },
   },
   {
-    // Nowa wersja strony (src/app/main-page/README.md): własne `ui/` z shadcn, bez starych
+    // Nowa wersja strony (src/app/main-page/ZASADY.md): własne `ui/` z shadcn, bez starych
     // komponentów i bez piaskownicy. Z serwisu wolno brać treść (`@/i18n`), logikę (`@/lib`) i hooki.
     files: ["src/app/main-page/**"],
     rules: {

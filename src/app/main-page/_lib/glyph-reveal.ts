@@ -10,8 +10,8 @@
 export const GLYPH_REVEAL = {
   /** Bok komórki w px CSS (na wąskim ekranie mniejszy — patrz `cellFor`). */
   cell: 11,
-  /** Ile trwa sam druk, zanim ruszy front (ms). */
-  hold: 450,
+  /** Ile trwa sam druk, zanim ruszy front (ms) — krótko: dłuższy martwy kadr wygląda jak ładowanie. */
+  hold: 250,
   /** Czas przejścia frontu przez cały kadr (ms). */
   duration: 1300,
   /** Szerokość jasnego pasma frontu (ułamek przebiegu). */
@@ -41,14 +41,26 @@ function noise(x: number, y: number) {
  * jest rozciągany do pełnej skali i przyciemniany krzywą (`contrast`) — jasny
  * kadr nie drukuje się jako jednolita ściana pełnych kół.
  */
-function sample(image: CanvasImageSource, cols: number, rows: number): Float32Array {
+async function sample(image: HTMLImageElement, cols: number, rows: number): Promise<Float32Array> {
+  const light = new Float32Array(cols * rows)
   const probe = document.createElement("canvas")
   probe.width = cols
   probe.height = rows
   const context = probe.getContext("2d", { willReadFrequently: true })
-  const light = new Float32Array(cols * rows)
   if (!context) return light
-  context.drawImage(image, 0, 0, cols, rows)
+  // Dekodowanie i skalowanie do siatki poza głównym wątkiem (gdy przeglądarka to umie);
+  // `getImageData` czyta potem kilka tysięcy pikseli zamiast całego plakatu.
+  if ("createImageBitmap" in window) {
+    const bitmap = await createImageBitmap(image, {
+      resizeWidth: cols,
+      resizeHeight: rows,
+      resizeQuality: "medium",
+    })
+    context.drawImage(bitmap, 0, 0)
+    bitmap.close()
+  } else {
+    context.drawImage(image, 0, 0, cols, rows)
+  }
   const { data } = context.getImageData(0, 0, cols, rows)
   let min = 1
   let max = 0
@@ -96,17 +108,20 @@ export interface GlyphReveal {
   stop: () => void
 }
 
-/** Rysuje druk od razu i zwraca sterowanie frontem. */
-export function createGlyphReveal(
+/**
+ * Rysuje druk i zwraca sterowanie frontem. Wymiary kadru podaje wywołujący (np. z
+ * `ResizeObserver`) — odczyt `clientWidth` tuż po hydratacji wymuszałby przeliczenie układu.
+ */
+export async function createGlyphReveal(
   canvas: HTMLCanvasElement,
-  image: CanvasImageSource
-): GlyphReveal | null {
+  image: HTMLImageElement,
+  width: number,
+  height: number
+): Promise<GlyphReveal | null> {
   const context = canvas.getContext("2d")
   if (!context) return null
 
   const dpr = Math.min(window.devicePixelRatio || 1, 2)
-  const width = canvas.clientWidth
-  const height = canvas.clientHeight
   canvas.width = Math.round(width * dpr)
   canvas.height = Math.round(height * dpr)
   context.scale(dpr, dpr)
@@ -114,7 +129,7 @@ export function createGlyphReveal(
   const size = cellFor(width)
   const cols = Math.ceil(width / size)
   const rows = Math.ceil(height / size)
-  const light = sample(image, cols, rows)
+  const light = await sample(image, cols, rows)
   // Próg komórki: ukośnie od lewego dolnego rogu, z nieregularnym brzegiem.
   const threshold = new Float32Array(cols * rows)
   for (let y = 0; y < rows; y++) {

@@ -5,8 +5,8 @@ import { LabelRow } from "@/app/main-page/_components/page/label-row"
 import { PageHeader } from "@/app/main-page/_components/page/page-header"
 import { Section } from "@/app/main-page/_components/page/section"
 import { JsonLd } from "@/app/main-page/_components/seo/json-ld"
+import { IndexAccordion } from "@/app/main-page/_components/page/index-accordion"
 import {
-  Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
@@ -62,19 +62,24 @@ export function ServicesPage({ locale }: { locale: Locale }) {
       />
 
       <Section id={copy.packagesId} title={copy.packagesHeading}>
-        <Accordion type="single" collapsible className="mt-6">
+        <IndexAccordion idPrefix="pakiet-" className="mt-6">
           {packages.map((pack) => (
             // Bez `asChild`: Slot w komponencie klienckim nie przyjmuje elementu z serwera
             // (w trybie dev przychodzi jako leniwa referencja i wiersz znikał po hydratacji).
-            <AccordionItem key={pack.id} value={pack.id} className="border-0">
+            <AccordionItem
+              key={pack.id}
+              id={`pakiet-${pack.id}`}
+              value={pack.id}
+              className="border-0"
+            >
               <article>
                 <AccordionTrigger variant="row">
                   <span className="grid flex-1 gap-0.5 sm:flex sm:items-baseline sm:justify-between sm:gap-4">
                     <span className="flex flex-wrap items-center gap-x-2.5 gap-y-1">
                       {pack.name[locale]}
                       {pack.badge && <Badge variant="outline">{badges[pack.badge]}</Badge>}
-                    </span>
-                    <span className="text-sm text-muted-foreground tabular-nums sm:text-base sm:text-foreground">
+                    </span>{" "}
+                    <span className="text-sm text-foreground tabular-nums sm:text-base">
                       {price(pack, locale, copy)}
                     </span>
                   </span>
@@ -96,7 +101,7 @@ export function ServicesPage({ locale }: { locale: Locale }) {
               </article>
             </AccordionItem>
           ))}
-        </Accordion>
+        </IndexAccordion>
         <p className="mt-6 max-w-[60ch] text-sm text-pretty text-muted-foreground">
           {noOrphans(copy.priceNote)}
         </p>

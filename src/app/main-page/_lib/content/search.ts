@@ -73,13 +73,22 @@ export function buildSearch(source: Source): SearchGroup[] {
     {
       id: "pages",
       heading: copy.ui.searchGroups.pages,
-      items: PAGE_KEYS.map((key) => ({
-        id: `page-${key}`,
-        label: common.nav[key],
-        icon: "page" as const,
-        hint: ROUTES[key][locale],
-        href: pageHref(key, locale),
-      })),
+      items: [
+        ...PAGE_KEYS.map((key) => ({
+          id: `page-${key}`,
+          label: common.nav[key],
+          icon: "page" as const,
+          hint: ROUTES[key][locale],
+          href: pageHref(key, locale),
+        })),
+        {
+          id: "page-privacy",
+          label: common.form.privacyLink,
+          icon: "page" as const,
+          hint: ROUTES.privacy[locale],
+          href: pageHref("privacy", locale),
+        },
+      ],
     },
     {
       id: "actions",

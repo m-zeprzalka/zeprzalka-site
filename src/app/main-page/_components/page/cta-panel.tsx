@@ -2,7 +2,7 @@ import Link from "next/link"
 import { ArrowRightIcon } from "lucide-react"
 import { SectionHeading } from "@/app/main-page/_components/sections/section-heading"
 import { Button } from "@/app/main-page/_components/ui/button"
-import type { Link as LinkData } from "@/app/main-page/_lib/types"
+import type { LinkData } from "@/app/main-page/_lib/types"
 import { cn } from "@/lib/utils"
 
 const VARIANTS = ["default", "outline", "ghost"] as const

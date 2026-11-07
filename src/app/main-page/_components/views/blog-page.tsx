@@ -7,13 +7,14 @@ import { TermLinks } from "@/app/main-page/_components/page/term-links"
 import { PeekProvider } from "@/app/main-page/_components/peek/peek-context"
 import { PeekStage } from "@/app/main-page/_components/peek/peek-stage"
 import { JsonLd } from "@/app/main-page/_components/seo/json-ld"
+import { PAGE_SECTION } from "@/app/main-page/_lib/anchors"
 import { blogPage } from "@/app/main-page/_lib/content/blog"
-import { breadcrumb, categoryLinks } from "@/app/main-page/_lib/content/pages"
+import { breadcrumb, categoryLinks, postDate } from "@/app/main-page/_lib/content/pages"
 import { postPeeks } from "@/app/main-page/_lib/content/peeks"
 import { getSource } from "@/app/main-page/_lib/content/source"
 import { blogPageHref, pageHref } from "@/app/main-page/_lib/routes"
 import type { Locale } from "@/i18n/config"
-import { fill, formatDate } from "@/i18n/format"
+import { fill } from "@/i18n/format"
 import { blogIndexSchema } from "@/lib/page-schema"
 
 /**
@@ -41,14 +42,14 @@ export function BlogPage({ locale, page = 1 }: { locale: Locale; page?: number }
       </PageHeader>
 
       {featured.length > 0 && (
-        <Section id="wyroznione" title={copy.featuredHeading}>
+        <Section id={PAGE_SECTION.featured} title={copy.featuredHeading}>
           <div className="mt-6 grid gap-8 sm:grid-cols-2 sm:gap-6">
             {featured.map(({ card, description }, index) => (
               <FeaturedPost
                 key={card.slug}
                 post={card}
                 description={description}
-                date={formatDate(card.iso, locale)}
+                date={postDate(locale, card.iso)}
                 priority={index === 0}
               />
             ))}
@@ -57,7 +58,7 @@ export function BlogPage({ locale, page = 1 }: { locale: Locale; page?: number }
       )}
 
       <Section
-        id="wpisy"
+        id={PAGE_SECTION.posts}
         title={copy.allHeading}
         lead={total > 1 ? fill(copy.pageOf, { current, total }) : undefined}
       >

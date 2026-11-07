@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, useState, type ComponentProps } from "react"
 import { CheckIcon, CopyIcon } from "lucide-react"
+import { copyText } from "@/app/main-page/_lib/clipboard"
+import { useTransientFlag } from "@/app/main-page/_lib/hooks"
 
 /**
  * Blok kodu we wpisie: przewijany w poziomie (osiągalny z klawiatury) i z
@@ -15,26 +17,31 @@ export function CodeBlock({
   regionLabel,
   ...props
 }: ComponentProps<"pre"> & { copyLabel: string; copiedLabel: string; regionLabel: string }) {
-  const [copied, setCopied] = useState(false)
+  const [copied, confirm] = useTransientFlag(2000)
   const pre = useRef<HTMLPreElement>(null)
-  const timer = useRef<ReturnType<typeof setTimeout>>(undefined)
-
-  useEffect(() => () => clearTimeout(timer.current), [])
-
-  const copy = () =>
-    navigator.clipboard?.writeText(pre.current?.textContent ?? "").then(
-      () => {
-        setCopied(true)
-        clearTimeout(timer.current)
-        timer.current = setTimeout(() => setCopied(false), 2000)
-      },
-      () => {}
-    )
+  const frame = useRef<HTMLDivElement>(null)
+  // Przystanek Tab tylko wtedy, gdy kod przewija się w poziomie (inaczej 17 pustych przystanków).
+  const [scrolls, setScrolls] = useState(false)
+  useEffect(() => {
+    const box = frame.current
+    if (!box) return
+    const observer = new ResizeObserver(() => setScrolls(box.scrollWidth > box.clientWidth))
+    observer.observe(box)
+    return () => observer.disconnect()
+  }, [])
+  // Bez schowka (brak uprawnień, http) nic nie udajemy — przycisk po prostu nie potwierdza.
+  const copy = () => void copyText(pre.current?.textContent ?? "").then((ok) => ok && confirm())
 
   return (
     <div className="code-block group relative">
       {/* `group`, nie `region`: kilka bloków nie mnoży jednakowych punktów orientacyjnych. */}
-      <div role="group" aria-label={regionLabel} tabIndex={0} className="overflow-x-auto">
+      <div
+        ref={frame}
+        role="group"
+        aria-label={regionLabel}
+        tabIndex={scrolls ? 0 : undefined}
+        className="overflow-x-auto"
+      >
         <pre ref={pre} {...props}>
           {children}
         </pre>
@@ -43,7 +50,7 @@ export function CodeBlock({
         type="button"
         onClick={copy}
         aria-label={copyLabel}
-        className="absolute top-2.5 right-2.5 grid size-8 place-items-center rounded-lg border bg-background/80 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100 hover:text-foreground focus-visible:opacity-100 focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-none pointer-coarse:opacity-100 [&_svg]:size-4"
+        className="absolute top-2.5 right-2.5 grid size-8 place-items-center rounded-lg border bg-background/80 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100 hover:text-foreground focus-visible:opacity-100 focus-visible:ring-[3px] focus-visible:ring-ring focus-visible:outline-none pointer-coarse:opacity-100 [&_svg]:size-4"
       >
         {copied ? <CheckIcon /> : <CopyIcon />}
       </button>

@@ -3,6 +3,7 @@
 import {
   createContext,
   use,
+  useCallback,
   useEffect,
   useMemo,
   useRef,
@@ -16,8 +17,11 @@ import type { Peek } from "@/app/main-page/_lib/types"
 
 /** Najechanie liczy się po chwili spokoju — przelot kursorem nad tekstem nic nie otwiera. */
 const SHOW_DELAY_MS = 70
-/** Krótka zwłoka przy zjechaniu: przejście między sąsiednimi frazami płynie, zamiast migać. */
-const HIDE_DELAY_MS = 120
+/**
+ * Zwłoka przy zjechaniu: przejście między sąsiednimi frazami płynie, zamiast migać, a kursor
+ * zdąży przejechać z frazy na kartę w torze (WCAG 1.4.13 — treść na najechanie da się wskazać).
+ */
+const HIDE_DELAY_MS = 300
 
 export interface PeekState {
   id: string | null
@@ -33,6 +37,8 @@ interface PeekActions {
   show: (id: string, anchor: HTMLElement, via: PeekState["via"]) => void
   /** Bez `id` — od razu, synchronicznie (np. w `flushSync`); z `id` — po krótkiej zwłoce. */
   hide: (id?: string) => void
+  /** Kursor na karcie w torze: wstrzymuje zaplanowane ukrycie. */
+  hold: () => void
 }
 
 const CLOSED: PeekState = { id: null, anchor: null, via: "pointer" }
@@ -78,33 +84,39 @@ export function PeekProvider({
     }
   }, [])
 
+  // Akcje stabilne przez cały czas życia strony — efekty, które z nich korzystają (lista
+  // realizacji), nie odpalają się ponownie przy zmianie `stage` (np. zwężenie okna).
+  /** Ostatnio wskazana fraza — ukrycie po niej zamyka kartę, nawet gdy pokazana jest inna. */
+  const intent = useRef<string | null>(null)
+
+  const show = useCallback<PeekActions["show"]>((id, anchor, via) => {
+    clearTimeout(timer.current)
+    intent.current = id
+    // Sprawdzane przy odpaleniu: zdarzenia najechania po przewinięciu przychodzą też przed `scroll`.
+    timer.current = setTimeout(
+      () => {
+        if (via === "pointer" && !moved.current) return
+        setState((current) =>
+          current.id === id && current.anchor === anchor ? current : { id, anchor, via }
+        )
+      },
+      via === "pointer" ? SHOW_DELAY_MS : 0
+    )
+  }, [])
+  const hide = useCallback<PeekActions["hide"]>((id) => {
+    clearTimeout(timer.current)
+    if (!id) return setState(CLOSED)
+    // Szybki przelot przez kolejną frazę (jej karta nie zdążyła się pokazać) i wyjście poza
+    // frazy: ostatnia intencja to ta fraza, więc zamykamy kartę poprzedniej, a nie zostawiamy jej.
+    timer.current = setTimeout(
+      () => setState((current) => (current.id === id || intent.current === id ? CLOSED : current)),
+      HIDE_DELAY_MS
+    )
+  }, [])
+  const hold = useCallback(() => clearTimeout(timer.current), [])
   const actions = useMemo<PeekActions>(
-    () => ({
-      stage,
-      peeks,
-      show(id, anchor, via) {
-        clearTimeout(timer.current)
-        // Sprawdzane przy odpaleniu: zdarzenia najechania po przewinięciu przychodzą też przed `scroll`.
-        timer.current = setTimeout(
-          () => {
-            if (via === "pointer" && !moved.current) return
-            setState((current) =>
-              current.id === id && current.anchor === anchor ? current : { id, anchor, via }
-            )
-          },
-          via === "pointer" ? SHOW_DELAY_MS : 0
-        )
-      },
-      hide(id) {
-        clearTimeout(timer.current)
-        if (!id) return setState(CLOSED)
-        timer.current = setTimeout(
-          () => setState((current) => (current.id === id ? CLOSED : current)),
-          HIDE_DELAY_MS
-        )
-      },
-    }),
-    [stage, peeks]
+    () => ({ stage, peeks, show, hide, hold }),
+    [stage, peeks, show, hide, hold]
   )
 
   return (

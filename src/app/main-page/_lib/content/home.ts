@@ -2,11 +2,11 @@
 import "server-only"
 import type { Locale } from "@/i18n/config"
 import { CONTACT_EMAIL } from "@/lib/site"
-import type { Fact, Link, Segment, Skill } from "../types"
+import type { Fact, LinkData, Segment, Skill } from "../types"
 import { workAnchor } from "../anchors"
 import { noOrphans, segment, sentences } from "../text"
 import { pageHref } from "../routes"
-import { buildPeeks, lecturesOf, PEEK_WORKS } from "./peeks"
+import { buildPeeks, lecturesOf, PEEK_WORKS, postsAbout } from "./peeks"
 import { buildSections } from "./search"
 import { getSource, type Source } from "./source"
 
@@ -14,12 +14,11 @@ import { getSource, type Source } from "./source"
 const POSTS_VISIBLE = 6
 
 function buildSkills(source: Source): Skill[] {
-  const { locale, home, skills, work, posts } = source
-  const workLinks = (slugs: readonly string[]): Link[] =>
+  const { locale, home, skills, work } = source
+  const workLinks = (slugs: readonly string[]): LinkData[] =>
     slugs.map((slug) => ({ label: work(slug).title[locale], href: `#${workAnchor(slug)}` }))
-  const postLinks = (match: (post: Source["posts"][number]) => boolean): Link[] =>
-    posts
-      .filter(match)
+  const postLinks = (topic: Parameters<typeof postsAbout>[1]): LinkData[] =>
+    postsAbout(source, topic)
       .slice(0, 3)
       .map(({ card }) => ({ label: card.title, href: card.href }))
   const [developmentSentence = "", aiSentence = ""] = sentences(
@@ -51,7 +50,7 @@ function buildSkills(source: Source): Skill[] {
       peek: "skill-ai",
       proofs: {
         heading: home.blog.title,
-        items: postLinks((post) => post.categories.includes("AI")),
+        items: postLinks("ai"),
       },
     },
     {
@@ -62,7 +61,7 @@ function buildSkills(source: Source): Skill[] {
       peek: "skill-teaching",
       proofs: {
         heading: home.blog.title,
-        items: postLinks((post) => post.tags.includes("Kurs")),
+        items: postLinks("teaching"),
       },
     },
   ]
@@ -145,4 +144,3 @@ export function getHomeContent(locale: Locale) {
   }
 }
 
-export type HomeContent = ReturnType<typeof getHomeContent>

@@ -1,7 +1,14 @@
 "use client"
 
+import Link from "next/link"
 import { useState } from "react"
-import { BrainCircuitIcon, CodeXmlIcon, GraduationCapIcon, PenToolIcon } from "lucide-react"
+import {
+  BrainCircuitIcon,
+  CodeXmlIcon,
+  GraduationCapIcon,
+  PenToolIcon,
+  ArrowRightIcon,
+} from "lucide-react"
 import { usePeekHover } from "@/app/main-page/_components/peek/peek-context"
 import {
   Accordion,
@@ -58,7 +65,7 @@ function SkillItem({ skill }: { skill: Skill }) {
     <AccordionItem
       value={skill.id}
       id={itemId(skill.id)}
-      className="group/skill rounded-2xl border border-transparent px-4 transition-[background-color,border-color,opacity] duration-300 last:border-b-transparent hover:bg-accent/50 group-has-data-[state=open]/skills:data-[state=closed]:opacity-55 group-has-data-[state=open]/skills:data-[state=closed]:hover:opacity-100 data-[state=open]:border-border data-[state=open]:bg-card sm:px-5"
+      className="group/skill -mx-3 rounded-2xl border border-transparent px-3 transition-[background-color,border-color,opacity] duration-300 last:border-b-transparent hover:bg-accent/50 group-has-data-[state=open]/skills:data-[state=closed]:opacity-60 group-has-data-[state=open]/skills:data-[state=closed]:hover:opacity-100 data-[state=open]:border-border data-[state=open]:bg-card"
     >
       <AccordionTrigger {...hover} className="items-center py-3 text-base">
         <span className="flex items-center gap-4">
@@ -83,16 +90,21 @@ function SkillItem({ skill }: { skill: Skill }) {
           <div className="grid gap-1">
             <p className="text-xs text-muted-foreground">{skill.proofs.heading}</p>
             <ul>
-              {skill.proofs.items.map((proof) => (
-                <li key={proof.href}>
-                  <a
-                    href={proof.href}
-                    className="-mx-2 flex min-h-11 items-center rounded-lg px-2 text-sm outline-none hover:bg-accent focus-visible:ring-[3px] focus-visible:ring-ring/50"
-                  >
-                    <span className="line-clamp-2">{proof.label}</span>
-                  </a>
-                </li>
-              ))}
+              {skill.proofs.items.map((proof) => {
+                // Kotwice realizacji obsługuje lista portfolio (zwykły link); wpisy — next/link.
+                const ProofLink = proof.href.startsWith("#") ? "a" : Link
+                return (
+                  <li key={proof.href}>
+                    <ProofLink
+                      href={proof.href}
+                      className="-mx-2 flex min-h-11 items-center justify-between gap-3 rounded-lg px-2 text-sm outline-none hover:bg-accent focus-visible:ring-[3px] focus-visible:ring-ring"
+                    >
+                      <span className="line-clamp-2">{proof.label}</span>
+                      <ArrowRightIcon className="size-4 shrink-0 text-muted-foreground" />
+                    </ProofLink>
+                  </li>
+                )
+              })}
             </ul>
           </div>
         )}

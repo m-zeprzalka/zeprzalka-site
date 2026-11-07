@@ -1,7 +1,7 @@
 import Link from "next/link"
 import { ArrowUpRightIcon } from "lucide-react"
 import { Button } from "@/app/main-page/_components/ui/button"
-import type { Link as LinkData } from "@/app/main-page/_lib/types"
+import type { LinkData } from "@/app/main-page/_lib/types"
 import { FooterWordmark } from "./footer-wordmark"
 import { LocalTime } from "./local-time"
 

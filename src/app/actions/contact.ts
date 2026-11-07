@@ -17,6 +17,8 @@ export interface ContactFormState {
   message: string
   /** Pola z błędem walidacji — formularz oznacza je `aria-invalid`. */
   invalid?: ContactField[]
+  /** Pierwszy komunikat każdego błędnego pola — formularz może pokazać go pod polem. */
+  errors?: Partial<Record<ContactField, string>>
   /**
    * Wpisane wartości, odsyłane przy błędzie. React 19 czyści formularz po
    * każdej akcji, więc bez tego jedna literówka w adresie kasowała całą
@@ -70,8 +72,9 @@ export async function sendContactEmail(
   }
 
   // Honeypot: pole niewidoczne dla ludzi — wypełniają je tylko boty.
-  // Zwracamy "sukces", aby bot nie wiedział, że został odfiltrowany.
-  if (formData.get("company")) {
+  // Zwracamy "sukces", aby bot nie wiedział, że został odfiltrowany. Nazwa `hp` celowo
+  // bez znaczenia: „company” Chrome autouzupełniał danymi firmy prawdziwym osobom.
+  if (formData.get("hp")) {
     return { success: true, message: copy.success }
   }
 
@@ -99,11 +102,18 @@ export async function sendContactEmail(
   if (!result.success) {
     // Komunikat: pierwszy problem (zod zwraca co najmniej jeden). Pola: wszystkie
     // z błędem — czytnik ekranu i obramowanie wskazują każde od razu.
-    const invalid = Object.keys(z.flattenError(result.error).fieldErrors) as ContactField[]
+    const fieldErrors = z.flattenError(result.error).fieldErrors as Partial<
+      Record<ContactField, string[]>
+    >
+    const invalid = Object.keys(fieldErrors) as ContactField[]
+    const errors = Object.fromEntries(
+      invalid.map((field) => [field, fieldErrors[field]?.[0] ?? copy.failed])
+    ) as Partial<Record<ContactField, string>>
     return {
       success: false,
       message: result.error.issues[0]?.message ?? copy.failed,
       invalid,
+      errors,
       fields,
     }
   }

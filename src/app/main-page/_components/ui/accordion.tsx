@@ -26,7 +26,7 @@ function AccordionItem({
 // zeprzalka: `row` — wiersz indeksu (portfolio, pakiety usług): pełna szerokość z wcięciem
 // równym ujemnemu marginesowi, obłe tło na najechanie i przy otwarciu.
 const accordionTriggerVariants = cva(
-  "flex flex-1 items-start justify-between gap-4 rounded-md py-4 text-left text-sm font-medium transition-all outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 [&[data-state=closed]>.minus]:hidden [&[data-state=open]>.plus]:hidden",
+  "flex flex-1 items-start justify-between gap-4 rounded-md py-4 text-left text-sm font-medium transition-all outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&[data-state=closed]>.minus]:hidden [&[data-state=open]>.plus]:hidden",
   {
     variants: {
       variant: {

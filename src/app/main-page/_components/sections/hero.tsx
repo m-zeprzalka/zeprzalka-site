@@ -3,6 +3,7 @@ import { CopyEmail } from "@/app/main-page/_components/layout/copy-email"
 import { Segments } from "@/app/main-page/_components/peek/segments"
 import { Button } from "@/app/main-page/_components/ui/button"
 import { SECTION } from "@/app/main-page/_lib/anchors"
+import { noOrphans } from "@/app/main-page/_lib/text"
 import type { Segment } from "@/app/main-page/_lib/types"
 import { HeroVideo } from "./hero-video"
 
@@ -35,25 +36,20 @@ export function Hero({
   labels: { copyEmail: string; copied: string; playVideo: string; pauseVideo: string }
 }) {
   return (
-    <section
-      id={SECTION.start}
-      aria-labelledby="start-title"
-      data-peek-column=""
-      className="column pt-14 md:pt-24"
-    >
+    <section id={SECTION.start} data-peek-column="" className="column pt-14 md:pt-24">
       <p className="flex items-center gap-2.5 text-sm text-muted-foreground motion-safe:animate-enter motion-safe:[animation-delay:80ms]">
         <span aria-hidden="true" className="size-2 rounded-full bg-success" />
         {status}
       </p>
       <h1 id="start-title" className="mt-6 text-display">
         <span className="enter-stagger [--enter-delay:140ms] [--enter-step:32ms]">
-          <Segments segments={[{ text: title }]} split="block" />
+          <Segments segments={[{ text: noOrphans(title) }]} split="block" />
         </span>{" "}
         <span className="enter-stagger text-muted-foreground [--enter-delay:320ms] [--enter-step:14ms]">
           <Segments segments={lead} icons={CHIP_ICONS} split="block" />
         </span>
       </h1>
-      <div className="mt-8 flex flex-wrap gap-3 motion-safe:animate-enter motion-safe:[animation-delay:560ms]">
+      <div className="mt-8 flex flex-wrap gap-3 motion-safe:animate-enter motion-safe:[animation-delay:560ms] max-sm:*:w-full">
         <Button asChild size="lg">
           <a href={`#${SECTION.contact}`}>
             {cta}

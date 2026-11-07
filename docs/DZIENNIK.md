@@ -6,6 +6,64 @@ w `docs/prywatne/` (poza repozytorium). Iteracja bez wpisu tutaj nie jest skońc
 
 ---
 
+## Iteracja 11 — 7 listopada 2026: audyt „agencji” i wersja do oddania (`main-page`)
+
+Zakres od właściciela: pogłębiony audyt UX/UI i kodu, poprawki wszystkiego, co możliwe, przed
+dalszą pracą; dokumentacja rozbita na zasady i klasyczne README. Bez przepięcia na główną.
+
+**Audyt:** pięciu niezależnych specjalistów równolegle (UX/UI, dostępność WCAG 2.2, senior dev,
+wydajność i SEO, QA), każdy na żywym podglądzie i w kodzie, tylko do odczytu — razem ok. 140
+ustaleń z plikami i scenariuszami. Poprawki wdrażał jeden agent, potem pełna weryfikacja.
+
+**Najważniejsze poprawki:**
+- ⌘K: najpierw sekcje oglądanej strony i podstrony (z polityką prywatności), własne sortowanie
+  trafności (cmdk 1.1.1 nie przestawia grup — Enter brał przypadkowy wiersz), puste pole przy
+  każdym otwarciu, okno na szerokość kolumny (`tailwind-merge` zna token `column`), potwierdzenie
+  kopiowania i `mailto:` bez schowka, fokus na arkuszu i przycisk „Zamknij” na telefonie, nazwa
+  pola i liczba wyników dla czytnika;
+- karty podglądu: na karcie w torze da się stanąć kursorem i kliknąć link (WCAG 1.4.13), karta
+  nie zostaje po szybkim przelocie przez dwie frazy, popover w kolejności Tab zaraz po frazie,
+  zamyka się po kliknięciu linku;
+- spis w lewym torze: osiągalny z klawiatury, długie rozdziały ucięte w szerokości toru, emoji
+  poza etykietami; spis także w polityce prywatności;
+- dostępność: napisy ze znaków czytane w całości (litery `aria-hidden`), obwódka fokusu ≥ 3:1
+  w obu motywach, komunikat błędu pod każdym polem formularza, przełącznik języka z `lang`,
+  okruszki bez „wyłączonego linku”, paginacja bez martwych linków, bloki kodu z przystankiem Tab
+  tylko przy przewijaniu, linki zewnętrzne we wpisach zapowiadają nową kartę, sygnet zmienia się
+  sam tylko przez 4,5 s (WCAG 2.2.2), reflow 320 px bez przewijania, pola dotyku 44 px
+  w nagłówku bez zmiany rysunku;
+- UX/UI: kompetencje i lista wpisów na osiach kolumny (wspólna kolumna etykiet), przyciski na
+  wideo czytelne w obu motywach (wariant `media`), cena pakietu wyraźna na telefonie, zamknięcia
+  z wezwaniem i rodzeństwo kategorii na stronach bloga, krótsze rozwinięcie w nagłówku wpisu,
+  „Zwiń” bez odjeżdżania strony, popover 24 rem na tabletach, twarde spacje także w nagłówkach
+  i przy liczbach, jeden zapis dat wpisów, podgląd 404 pod `/main-page/nie-znaleziono`;
+- wydajność: plakat startu jako `next/image` (rozmiar kadru, preload, wysoki priorytet),
+  próbkowanie druku poza głównym wątkiem (`createImageBitmap`) i rozmiar z `ResizeObserver`,
+  wcześniejszy start frontu, ciemny motyw już w HTML (bez błysku), przejścia wstrzymywane tylko
+  przy zmianie motywu (bez pełnego przeliczenia stylu przy każdym wczytaniu), `Intl` w stopce
+  dopiero przy użyciu, obrazy realizacji dopiero po otwarciu wiersza (wcześniej ok. 233 KB przy
+  starcie), priorytet pierwszego kafla galerii, logo bez prefetchu startu;
+- kod: stabilne akcje kart (lista realizacji nie otwierała się sama po zmianie szerokości okna),
+  przerywane przytrzymanie akordeonu, wspólne helpery (`copyText`, `useToggleTheme`,
+  `useTransientFlag`, `focusTarget`), buforowane `useMediaQuery`, wspólne fabryki tras bloga dla
+  serwisu i podglądu (`src/routes/blog-routes.tsx`), dowody kompetencji po slugu (działa dla
+  „Course” w EN), `useId` w formularzu, pole-pułapka `hp` zamiast `company` (Chrome autouzupełniał
+  je danymi firmy), granica błędów podglądu, Vercel Analytics i Speed Insights w powłoce,
+  usunięte nieużywane części shadcn z angielskimi napisami, ochrona przed `javascript:` w MDX;
+- SEO: węzeł autora w grafach, które się do niego odwołują (także w serwisie), spacje między
+  nazwą i kategorią w nagłówkach wierszy;
+- jakość: testy jednostkowe `pnpm test` (`node --test`, bez nowych paczek) w `pnpm check`; CI
+  buduje też podgląd, jak Vercel.
+
+**Dokumentacja:** `src/app/main-page/ZASADY.md` (zasady, kryteria, decyzje, pułapki) i
+`README.md` (stan, uruchomienie, gdzie co zmieniać, struktura, jak działa, przepięcie).
+
+**Sprawdzone:** `pnpm check` (221 stron, 10 testów) i build z podglądem w czystej kopii; axe na
+15 stronach × 2 szerokości × 2 motywy: 0 błędów; tekst stron z JS i bez JS zgodny (bez JS panele
+akordeonów stoją otwarte); konsola bez błędów; serwis identyczny co do piksela (`pnpm visual --all`).
+
+---
+
 ## Iteracja 10 — 7 listopada 2026: podstrony w nowym systemie (`main-page`)
 
 Zakres od właściciela: wszystkie strony starej wersji w nowym wydaniu, według zasad `main-page`.

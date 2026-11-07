@@ -1,4 +1,3 @@
-import type { CSSProperties } from "react"
 import { GlyphText } from "@/app/main-page/_components/motion/glyph-text"
 import { PeekTrigger } from "@/app/main-page/_components/peek/peek-trigger"
 import { countSegments, Segments } from "@/app/main-page/_components/peek/segments"
@@ -30,7 +29,7 @@ export function About({
     >
       <SectionHeading id="o-mnie-title" title={heading} />
       <p
-        style={{ "--n": countSegments(bio) } as CSSProperties}
+        style={{ "--n": countSegments(bio) }}
         className="mt-6 scroll-fill text-2xl leading-snug font-medium tracking-tight text-pretty md:text-[1.75rem]"
       >
         <Segments segments={bio} split="inline" />

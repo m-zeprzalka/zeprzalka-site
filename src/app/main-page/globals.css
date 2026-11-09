@@ -110,30 +110,62 @@
 }
 
 /*
- * Siatka: jedna wąska kolumna treści (`max-w-column`) na środku, a po bokach
- * dwa tory — lewy na spis sekcji, prawy na kartę podglądu (od 1280 px).
- * Margines strony jest równy odstępowi kolumny od toru.
+ * Siatka (od 1280 px): [margines][tor][odstęp][kolumna][odstęp][tor][margines].
+ * Kolumna treści (`max-w-column`) stoi na środku; dwa symetryczne tory po bokach
+ * mają stałą proporcję do kolumny (`--container-track` = 3/8 kolumny: 240 → 264 → 288 px) —
+ * lewy na menu główne (i spis rozdziałów wpisu), prawy na kartę podglądu. Odstęp
+ * toru od kolumny to `--spacing-track`; resztę szerokości okna biorą marginesy.
+ * Poniżej 1280 px torów nie ma — jest sama kolumna z marginesem strony.
  */
 @theme {
   --container-column: 40rem;
+  --container-track: calc(var(--container-column) * 0.375);
   --spacing-page: 1.25rem;
   --spacing-track: 2rem;
+  /*
+   * Górna krawędź menu w torze: treść zaczyna się 10rem od góry (nagłówek h-16 + `md:pt-24`),
+   * a wiersz menu (2rem) stoi na środku jej pierwszego wiersza (status, okruszki — 1.25rem).
+   */
+  --spacing-rail: calc(10rem - (2rem - 1.25rem) / 2);
+  /* Spis rozdziałów wpisu pod menu toru: pozycje menu po 2rem (`h-8`; liczbę podaje powłoka
+     w `--rail-items` na <html>) i 2,5rem odstępu. */
+  --spacing-rail-toc: calc(var(--spacing-rail) + var(--rail-items, 6) * 2rem + 2.5rem);
 
   /* Ruch: wyjście z rozmycia i płynięcie — jedna krzywa dla całej strony. */
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
 
-  /* `backwards`: przed startem stan początkowy, po końcu — bez śladu (żadnego `filter`). */
-  --animate-enter: enter 540ms var(--ease-out) backwards;
+  /*
+   * „Harmonijka” wejścia — `backwards`: przed startem stan początkowy, po końcu bez
+   * śladu (żadnego `filter` ani `translate`). Pory w `--enter-*` niżej.
+   */
+  --animate-enter: enter-up 720ms var(--ease-out) backwards;
+  --animate-enter-down: enter-down 700ms var(--ease-out) backwards;
+  --animate-enter-side: enter-side 700ms var(--ease-out) backwards;
+  --animate-enter-media: enter-media 1100ms var(--ease-out) backwards;
+  --animate-settle: settle 1400ms var(--ease-out) backwards;
   --animate-peek-in: peek-in 240ms var(--ease-out) backwards;
   --animate-peek-out: peek-out 200ms var(--ease-out) forwards;
   --animate-draw: draw 450ms var(--ease-in-out) 150ms backwards;
-  /* Kadr LCP (okładka wpisu): tylko wyostrzenie — bez `opacity`, więc LCP liczy się od
-     pierwszego malowania, a kadr i tak należy do „harmonijki”. */
-  --animate-sharpen: sharpen 540ms var(--ease-out) backwards;
   /* Akordeon: wysokość z pomiaru Radix; przed pomiarem (bez hydratacji) — zero, nie `auto`. */
   --animate-expand: expand 200ms var(--ease-out);
   --animate-collapse: collapse 200ms var(--ease-out);
+}
+
+/*
+ * Pory „harmonijki” (ms od pierwszego malowania): najpierw czerń, potem z góry
+ * nagłówek, z boku menu w torze, status (okruszki), tytuł słowo po słowie, szare
+ * rozwinięcie, działania, a na końcu kadr (wideo startu, okładka wpisu). Jedna oś
+ * dla startu i podstron — klasy biorą je przez `[animation-delay:var(--enter-…)]`.
+ */
+:root {
+  --enter-header: 80ms;
+  --enter-rail: 240ms;
+  --enter-status: 340ms;
+  --enter-title: 420ms;
+  --enter-lead: 640ms;
+  --enter-actions: 920ms;
+  --enter-media: 1080ms;
 }
 
 /* Poniżej 360 px węższy margines — przy 320 px (powiększenie 400%) nagłówek mieści się bez przewijania. */
@@ -183,6 +215,18 @@
   padding-inline: var(--spacing-page);
 }
 
+/* Lewy tor siatki: miejsce i szerokość (menu główne, spis rozdziałów) — lustro karty podglądu. */
+@utility rail {
+  left: calc(50% - var(--container-column) / 2 - var(--spacing-track) - var(--container-track));
+  width: var(--container-track);
+}
+
+/* Prawy tor siatki: karta podglądu na marginesie. */
+@utility stage-track {
+  left: calc(50% + var(--container-column) / 2 + var(--spacing-track));
+  width: var(--container-track);
+}
+
 /*
  * Wejście słowo po słowie: dzieci z indeksem `--i` (`<Segments split="block">`)
  * wyostrzają się z rozmycia; start i krok ustawia rodzic (`--enter-delay`,
@@ -198,20 +242,73 @@
 }
 
 /*
+ * Odsłonięcie kadru (okładka wpisu): obraz maluje się od pierwszej klatki — LCP liczy
+ * się od niej, bo zasłanianie się nie liczy — a zasłona w kolorze tła zjeżdża w dół
+ * o porze `--uncover-delay`. Kadr „pojawia się” w harmonijce bez `opacity` na obrazie
+ * (z nią LCP czekał do końca animacji, ok. 2,5 s). W spoczynku zasłony nie ma.
+ */
+@utility uncover {
+  position: relative;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    background: var(--background);
+    clip-path: inset(100% 0 0 0);
+    pointer-events: none;
+  }
+
+  @media screen and (prefers-reduced-motion: no-preference) {
+    &::after {
+      animation: uncover 900ms var(--ease-out) var(--uncover-delay, 0ms) backwards;
+    }
+  }
+}
+
+/*
+ * Wjazd bloku przy przewijaniu: element pod zgięciem wjeżdża z dołu, gdy wchodzi
+ * w okno (oś czasu `view()` — sam CSS, bez JS i bez pomiarów). Zakres w długości,
+ * nie w procentach: 12rem przewinięcia od chwili, gdy góra bloku minie dół okna
+ * o 1rem — wysoka lista nie jest półprzezroczysta przez cały ekran. Krzywa liniowa:
+ * ruch rozkłada się na cały zakres (z `ease-out` mieścił się w ostatnich 40 px okna). Widoczny przy
+ * wczytaniu stoi od razu; bez wsparcia (Firefox) i przy „ogranicz ruch” — bez ruchu.
+ * Nie na elementach, które same zmieniają `opacity` (przygaszanie, przejścia).
+ */
+@utility reveal {
+  @supports (animation-timeline: view()) {
+    /* `screen`: stan „przed” (`opacity: 0`) nie może trafić na wydruk. */
+    @media screen and (prefers-reduced-motion: no-preference) {
+      animation: rise linear both;
+      animation-timeline: view();
+      animation-range: entry 1rem entry 13rem;
+    }
+  }
+}
+
+/*
  * Tekst wypełniany przewijaniem (wyjątek reguły ruchu — niewypełnione słowa są
  * częścią wzoru): akapit to jedna oś czasu (`view-timeline`), a fala koloru idzie
- * po słowach z indeksem `--i` z `--n`, gdy akapit przejeżdża przez okno.
+ * po słowach z indeksem `--i` z `--n`. Słowo nabiera koloru, gdy samo przejeżdża
+ * przez środek okna — zaczyna na 62% wysokości okna, kończy na 46% — więc fala
+ * idzie razem z czytaniem, a nie przed nim, przy każdej wysokości akapitu.
+ *
+ * Rachunek: w zakresie `cover` przesunięcie 0 to góra akapitu na dole okna, a cały
+ * zakres to okno + akapit, więc wysokość akapitu = `100% - 100vh`. Słowo leży
+ * mniej więcej na `--i / --n` wysokości akapitu i dochodzi do linii ℓ okna po
+ * przewinięciu `(1 - ℓ) · 100vh + --i / --n · (100% - 100vh)`.
  */
 @utility scroll-fill {
   view-timeline: --fill block;
 
   @supports (animation-timeline: view()) {
-    @media (prefers-reduced-motion: no-preference) {
+    /* `screen`: wydruk zawsze w pełnym kolorze, nie z 45% niewypełnionych słów. */
+    @media screen and (prefers-reduced-motion: no-preference) {
       & > * {
         animation: fill linear both;
         animation-timeline: --fill;
-        animation-range: cover calc(12% + var(--i) * 38% / var(--n)) cover
-          calc(12% + (var(--i) + 3) * 38% / var(--n));
+        animation-range: cover calc(38vh + var(--i) / var(--n) * (100% - 100vh)) cover
+          calc(54vh + var(--i) / var(--n) * (100% - 100vh));
       }
     }
   }
@@ -240,17 +337,66 @@
   }
 }
 
-@keyframes enter {
+/* Nie `enter`: tę nazwę ma `tw-animate-css` (okna shadcn) i jego klatki wygrywały — tekst nie
+   wjeżdżał wcale (test `globals.test.ts` pilnuje, żeby nazwy się nie powtarzały). */
+@keyframes enter-up {
   from {
     opacity: 0;
-    filter: blur(8px);
-    translate: 0 0.3em;
+    filter: blur(10px);
+    translate: 0 0.5em;
   }
 }
 
-@keyframes sharpen {
+@keyframes enter-down {
   from {
-    filter: blur(12px);
+    opacity: 0;
+    filter: blur(6px);
+    translate: 0 -1rem;
+  }
+}
+
+@keyframes enter-side {
+  from {
+    opacity: 0;
+    filter: blur(6px);
+    translate: -1rem 0;
+  }
+}
+
+/* Kadr wjeżdża z dołu i rośnie z mniejszego okna do szerokości kolumny (przycięcie, nie
+   skala — kadr ma od początku prawdziwy rozmiar, więc druk ze znaków mierzy go poprawnie). */
+@keyframes enter-media {
+  from {
+    opacity: 0;
+    translate: 0 2.5rem;
+    clip-path: inset(0 6% 12% round var(--radius-2xl));
+  }
+  35% {
+    opacity: 1;
+  }
+  to {
+    clip-path: inset(0 0 0 round var(--radius-2xl));
+  }
+}
+
+@keyframes uncover {
+  from {
+    clip-path: inset(0);
+  }
+}
+
+/* Kadr pod zasłoną osiada do swojej skali (`uncover`) — ruch bez `opacity`. */
+@keyframes settle {
+  from {
+    scale: 1.06;
+  }
+}
+
+/* Wjazd przy przewijaniu (`reveal`) — tylko krycie i przesunięcie: działa na kompozytorze. */
+@keyframes rise {
+  from {
+    opacity: 0;
+    translate: 0 2rem;
   }
 }
 

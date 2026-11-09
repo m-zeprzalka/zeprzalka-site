@@ -1,13 +1,12 @@
 import Link from "next/link"
 import { ArrowRightIcon, DownloadIcon } from "lucide-react"
-import { SectionNav } from "@/app/main-page/_components/layout/section-nav"
 import { LabelRow } from "@/app/main-page/_components/page/label-row"
 import { PageHeader } from "@/app/main-page/_components/page/page-header"
 import { Section } from "@/app/main-page/_components/page/section"
 import { JsonLd } from "@/app/main-page/_components/seo/json-ld"
 import { Badge } from "@/app/main-page/_components/ui/badge"
 import { Button } from "@/app/main-page/_components/ui/button"
-import { PAGE_SECTION, SECTION } from "@/app/main-page/_lib/anchors"
+import { PAGE_SECTION } from "@/app/main-page/_lib/anchors"
 import { breadcrumb } from "@/app/main-page/_lib/content/pages"
 import { lecturesOf } from "@/app/main-page/_lib/content/peeks"
 import { getSource } from "@/app/main-page/_lib/content/source"
@@ -28,7 +27,7 @@ const ID = PAGE_SECTION
  */
 export function AboutPage({ locale }: { locale: Locale }) {
   const source = getSource(locale)
-  const { common, copy: mainPage, about } = source
+  const { common, about } = source
   const lectures = lecturesOf(source)
   const experience = about.experience.map((job) =>
     job === source.teaching
@@ -39,16 +38,6 @@ export function AboutPage({ locale }: { locale: Locale }) {
   return (
     <>
       <JsonLd data={profilePageSchema(locale)} />
-      <SectionNav
-        label={mainPage.ui.onPage}
-        sections={[
-          { id: SECTION.start, label: mainPage.ui.start },
-          { id: ID.bio, label: about.aboutHeading },
-          { id: ID.experience, label: about.experienceHeading },
-          { id: ID.skills, label: about.skillsHeading },
-          { id: ID.education, label: about.educationHeading },
-        ]}
-      />
       <PageHeader
         breadcrumb={breadcrumb(locale, common.nav.about)}
         title={about.name}

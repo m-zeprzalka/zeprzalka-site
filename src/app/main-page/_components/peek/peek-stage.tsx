@@ -123,7 +123,8 @@ export function PeekStage() {
       onPointerLeave={() => state.id && hide(state.id)}
       className={cn(
         "fixed top-0 z-30 transition-[translate,opacity] duration-500 ease-out data-appearing:transition-opacity data-instant:transition-none",
-        "left-[calc(50%+var(--container-column)/2+var(--spacing-track))] w-[min(24rem,calc(50%-var(--container-column)/2-2*var(--spacing-track)))]",
+        // Prawy tor siatki — ta sama szerokość co menu po lewej (`--container-track`).
+        "stage-track",
         // Widoczną kartę da się wskazać kursorem i kliknąć jej link (WCAG 1.4.13).
         current ? "opacity-100" : "pointer-events-none opacity-0"
       )}

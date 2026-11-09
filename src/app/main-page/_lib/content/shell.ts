@@ -28,7 +28,6 @@ export function getShellContent(locale: Locale) {
       search: {
         groups: buildSearch(source),
         email: CONTACT_EMAIL,
-        homeHref: pageHref("home", locale),
         locale,
         labels: {
           search: copy.ui.search,
@@ -36,12 +35,19 @@ export function getShellContent(locale: Locale) {
           description: copy.ui.searchDescription,
           placeholder: copy.ui.searchPlaceholder,
           empty: copy.ui.searchEmpty,
-          homeSections: common.nav.home,
           copied: common.ui.copied,
           results: copy.ui.searchResults,
           hints: copy.ui.searchHints,
         },
       },
+    },
+    rail: {
+      label: common.nav.mainAria,
+      homeHref: pageHref("home", locale),
+      items: [
+        { label: common.nav.home, href: pageHref("home", locale) },
+        ...PAGE_KEYS.map((key) => ({ label: common.nav[key], href: pageHref(key, locale) })),
+      ],
     },
     footer: {
       navigationHeading: common.footer.navigation,

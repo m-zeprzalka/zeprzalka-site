@@ -34,14 +34,15 @@ export function SiteHeader({
   search: ComponentProps<typeof SearchMenu>
 }) {
   return (
-    <header className="sticky top-0 z-40 motion-safe:animate-enter">
+    <header className="sticky top-0 z-40 motion-safe:animate-enter-down motion-safe:[animation-delay:var(--enter-header)]">
       <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 h-24">
         {BLUR_LAYERS.map((layer) => (
           <div key={layer} className={cn("absolute inset-0", layer)} />
         ))}
       </div>
-      {/* `overflow-x-clip`: powiększone pola dotyku przycisków (`after:`) nie poszerzają strony przy 320 px. */}
-      <div className="relative column flex h-16 items-center justify-between gap-3 overflow-x-clip">
+      {/* Przy 320 px rząd mieści się co do piksela (mniejszy odstęp i logo poniżej 360 px) —
+          inaczej wystawałby poza kolumnę, a z nim pola dotyku przycisków (`after:`). */}
+      <div className="relative column flex h-16 items-center justify-between gap-2 min-[22.5rem]:gap-3">
         <Logo domain={domain} href={homeHref} />
         <div className="-me-2.5 flex items-center gap-1 min-[22.5rem]:gap-1.5">
           <SearchMenu {...search} />

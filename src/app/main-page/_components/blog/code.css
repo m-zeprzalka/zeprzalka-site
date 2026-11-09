@@ -1,0 +1,110 @@
+/*
+ * Blok kodu (`code-block.tsx`) i kolorowanie składni (rehype-highlight → klasy
+ * `hljs-*`) — ten sam wygląd we wpisie, w design systemie i wszędzie, gdzie stoi
+ * `CodeBlock`. Arkusz importuje sam komponent, więc trafia tylko na strony, które mogą
+ * mieć kod (wpisy, design system) — nie na start ani pozostałe podstrony.
+ *
+ * Paleta składni to tokeny `--syntax-*`: sześć barw o tej samej jasności (jeden
+ * stopień w oklch na motyw), więc żadna kategoria nie krzyczy głośniej od innych,
+ * a każda ma kontrast ≥ 5:1 do tła bloku (WCAG 1.4.3 dla tekstu 13 px). Komentarze
+ * i interpunkcja — szarość tekstu pomocniczego; zmienne i parametry — kolor tekstu.
+ * Ciemna paleta tylko na ekranie: wydruk zawsze jasny (jak `dark:` w globals.css).
+ */
+:root {
+  --syntax-keyword: oklch(0.5 0.2 350);
+  --syntax-string: oklch(0.5 0.13 150);
+  --syntax-function: oklch(0.5 0.17 265);
+  --syntax-number: oklch(0.52 0.14 50);
+  --syntax-type: oklch(0.5 0.11 200);
+  --syntax-attribute: oklch(0.5 0.17 300);
+  --syntax-deletion: oklch(0.5 0.19 25);
+}
+
+@media not print {
+  .dark {
+    --syntax-keyword: oklch(0.78 0.15 350);
+    --syntax-string: oklch(0.8 0.13 150);
+    --syntax-function: oklch(0.78 0.12 255);
+    --syntax-number: oklch(0.8 0.12 60);
+    --syntax-type: oklch(0.8 0.1 195);
+    --syntax-attribute: oklch(0.78 0.12 300);
+    --syntax-deletion: oklch(0.75 0.15 25);
+  }
+}
+
+@layer components {
+  .code-block {
+    border: 1px solid var(--border);
+    border-radius: calc(var(--radius) + 4px);
+    background: color-mix(in oklab, var(--muted) 55%, transparent);
+    color: var(--foreground);
+  }
+
+  .code-block pre {
+    padding: 1.1rem 1.25rem;
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    line-height: 1.7;
+    tab-size: 2;
+  }
+
+  .code-block :is(.hljs-comment, .hljs-quote, .hljs-doctag) {
+    color: var(--muted-foreground);
+    font-style: italic;
+  }
+
+  .code-block :is(.hljs-keyword, .hljs-selector-tag, .hljs-meta .hljs-keyword) {
+    color: var(--syntax-keyword);
+  }
+
+  .code-block :is(.hljs-string, .hljs-regexp, .hljs-template-tag, .hljs-addition) {
+    color: var(--syntax-string);
+  }
+
+  .code-block :is(.hljs-title, .hljs-title.function_, .hljs-section) {
+    color: var(--syntax-function);
+  }
+
+  .code-block :is(.hljs-number, .hljs-literal, .hljs-symbol, .hljs-bullet, .hljs-link) {
+    color: var(--syntax-number);
+  }
+
+  .code-block
+    :is(.hljs-built_in, .hljs-type, .hljs-title.class_, .hljs-name, .hljs-selector-class) {
+    color: var(--syntax-type);
+  }
+
+  .code-block
+    :is(.hljs-attr, .hljs-attribute, .hljs-property, .hljs-selector-attr, .hljs-selector-id) {
+    color: var(--syntax-attribute);
+  }
+
+  .code-block .hljs-deletion {
+    color: var(--syntax-deletion);
+  }
+
+  .code-block :is(.hljs-punctuation, .hljs-operator, .hljs-meta, .hljs-tag) {
+    color: var(--muted-foreground);
+  }
+
+  /* Nazwa znacznika w `<Tag>` ma barwę typu, nawias — szarość interpunkcji. */
+  .code-block .hljs-tag .hljs-name {
+    color: var(--syntax-type);
+  }
+
+  .code-block .hljs-tag .hljs-attr {
+    color: var(--syntax-attribute);
+  }
+
+  .code-block :is(.hljs-variable, .hljs-params, .hljs-subst, .hljs-template-variable) {
+    color: var(--foreground);
+  }
+
+  .code-block .hljs-emphasis {
+    font-style: italic;
+  }
+
+  .code-block .hljs-strong {
+    font-weight: 600;
+  }
+}

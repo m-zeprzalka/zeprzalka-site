@@ -6,6 +6,56 @@ w `docs/prywatne/` (poza repozytorium). Iteracja bez wpisu tutaj nie jest skońc
 
 ---
 
+## Iteracja 12 — 9 listopada 2026: seria poprawek startu, design system, audyt (`main-page`)
+
+Zakres od właściciela: poziome przewijanie na telefonie, sygnet w pętli, menu = podstrony (bez
+kotwic w ⌘K i w lewym torze), wideo startu składane ze znaków, dowody kompetencji z wcięciem
+i strzałką ↗, późniejsze wypełnianie „O mnie”, liczby w jednej kolumnie na telefonie, „harmonijka”
+wejścia (czerń → nagłówek → tekst → wideo), uporządkowany design system z kolorowaniem składni,
+audyt i wersja produkcyjna. Bez przepięcia na główną.
+
+**Zrobione:**
+- przepełnienie u źródła: `max-sm:*:w-full` w rzędzie przycisków startu rozciągał niewidoczny
+  komunikat czytnika (`sr-only`, `absolute`) do szerokości ekranu (+15–20 px); rząd nagłówka przy
+  320 px był o 5 px za szeroki — mniejszy odstęp i logo poniżej 360 px, `overflow-x-clip` usunięty;
+- sygnet zmienia znak co sekundę bez końca, szum przy najechaniu (rytm rusza od nowa po szumie);
+- siatka: tory boczne o stałej proporcji (3/8 kolumny, `--container-track`, `rail`, `stage-track`);
+  menu główne (`RailNav`) w lewym torze na każdej stronie, bieżąca podstrona z kropką, prefetch
+  dopiero przy najechaniu; spis rozdziałów wpisu (`TableOfContents`) pod menu, w szerokości toru,
+  przewija się do czytanego rozdziału; poniżej 1280 px zwijany „Spis treści” nad treścią wpisu;
+  ⌘K: podstrony (z opisami z metadanych), realizacje, wpisy, akcje — bez sekcji stron;
+  spisy sekcji usunięte z usług, portfolio, o mnie i polityki prywatności;
+- wideo startu: druk ze znaków sygnetu na canvasie (atlas znaków, rampa tonów z pomiaru pokrycia
+  tuszem, przeskakiwanie znaków przy składaniu, front w wideo); kroje sygnetu wczytywane osobno
+  (wspólne `fonts.load()` odrzucał krój zastępczy `local("Arial")` na Linuksie i Androidzie);
+- „harmonijka”: znaleziona przyczyna braku animacji tekstu — nasze `@keyframes enter` przegrywało
+  z tą samą nazwą z `tw-animate-css` od iteracji 9 (teraz `enter-up` + test); pory w `--enter-*`,
+  nagłówek z góry, menu z boku, słowa tytułu i rozwinięcia, działania, na końcu kadr; bloki pod
+  zgięciem wjeżdżają przy przewijaniu (`reveal`, sama oś CSS);
+- LCP mimo „harmonijki”: plakat maluje się od pierwszej klatki pod zasłoną w kolorze tła, a ruch
+  niesie canvas (start) albo zasłona i osiadanie kadru (`uncover`, `settle` — okładka wpisu);
+  plakat dokładnie 16:9, wideo pomniejszone o 0,1% (pierwsza klatka nie wypiera plakatu);
+- kompetencje: dowody jako wiersze 48 px z tłem i ↗; „O mnie”: słowo nabiera koloru między 62%
+  a 46% wysokości okna; liczby w jednej kolumnie na telefonie;
+- kolorowanie składni: `code.css` z paletą `--syntax-*` (kontrast ≥ 5:1 w obu motywach), ten sam
+  tor w design systemie co na blogu (MDX → rehype-highlight → `CodeBlock`);
+- design system przebudowany (agent): 12 rozdziałów — zasady, kolory (z paletą składni), pismo,
+  siatka (schematy i nakładka siatki na stronę), kształty, ikony, komponenty, nawigacja i powłoka,
+  strona główna, podstrony, treść wpisu (MDX w 7 językach kodu), ruch (oś „harmonijki”, druk ze
+  znaków na żywo); wartości tokenów czytane z arkuszy przy buildzie;
+- audyt (dwa niezależne agenty, UX/UI z dostępnością i senior dev) i poprawki: wydruk bez
+  półprzezroczystych bloków (`reveal`, `scroll-fill` tylko na ekranie), menu nie znika na krótkich
+  stronach (chowa się dopiero, gdy stopka do niego dojdzie), `aria-current` „page”/„true”, spis
+  nazwany widocznym podpisem, rozmiary obrazów karty w torze, bez JS sam plakat (bez pustego
+  odtwarzacza), fokus na `<main>` po przejściu na podstronę, pola dotyku okruszków 44 px,
+  `tailwind-merge` zna `text-display`, wspólne `CHIP_ICONS` i `RAIL_DOT` zamiast kopii w przykładach.
+
+**Weryfikacja:** `pnpm check` w czystej kopii (221 stron, 11 testów), build z podglądem; LCP na
+buildzie produkcyjnym 0,2–0,6 s (start, wpis; 412, 1280, 1440, 1920 px — przed poprawką 2,5–3,1 s);
+axe 0 naruszeń (13 stron × 2 motywy × 390/1440); bez przewijania w poziomie 320–414 px na
+wszystkich stronach; bez błędów w konsoli; „harmonijka” nagrana klatka po klatce (desktop i telefon);
+`pnpm visual --all` (lokalna baza z `75e78d9` kontra zmiana): stara strona identyczna co do piksela.
+
 ## Iteracja 11 — 7 listopada 2026: audyt „agencji” i wersja do oddania (`main-page`)
 
 Zakres od właściciela: pogłębiony audyt UX/UI i kodu, poprawki wszystkiego, co możliwe, przed

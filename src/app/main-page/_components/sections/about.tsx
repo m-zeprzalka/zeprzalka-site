@@ -8,7 +8,7 @@ import { SectionHeading } from "./section-heading"
 /**
  * „O mnie”: dalszy ciąg biogramu wypełniany przewijaniem — fala koloru idzie
  * słowo po słowie, gdy akapit przejeżdża przez okno (`scroll-fill`) — i cztery
- * liczby, które odczytują się ze znaków. Podpis liczby pokazuje kartę z jej
+ * liczby, które odczytują się ze znaków (na telefonie jedna pod drugą). Podpis liczby pokazuje kartę z jej
  * kontekstem; aktywność widać po odcieniu, bez tła.
  */
 export function About({
@@ -34,9 +34,9 @@ export function About({
       >
         <Segments segments={bio} split="inline" />
       </p>
-      <dl className="mt-16 grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-4">
+      <dl className="mt-16 grid gap-x-6 gap-y-8 sm:grid-cols-4">
         {facts.map((fact) => (
-          <div key={fact.id} className="grid content-start gap-2">
+          <div key={fact.id} className="grid reveal content-start gap-2">
             <dt className="order-2 text-sm text-muted-foreground">
               <PeekTrigger id={fact.peek} variant="quiet">
                 {fact.label}

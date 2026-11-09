@@ -42,7 +42,11 @@ function BreadcrumbLink({
   return (
     <Comp
       data-slot="breadcrumb-link"
-      className={cn("transition-colors hover:text-foreground", className)}
+      // zeprzalka: pole dotyku 44 px w pionie (`after:`) bez zmiany rysunku okruszków.
+      className={cn(
+        "relative transition-colors after:absolute after:-inset-x-1 after:-inset-y-3 hover:text-foreground",
+        className
+      )}
       {...props}
     />
   )

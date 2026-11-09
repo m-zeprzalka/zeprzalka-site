@@ -1,0 +1,87 @@
+import {
+  Code,
+  DsNote,
+  DsSection,
+  Lead,
+  type ChapterProps,
+} from "@/app/main-page/_design-system/ds-section"
+import { Example } from "@/app/main-page/_design-system/example"
+import { FooterExample } from "@/app/main-page/_design-system/examples/footer"
+import { HeaderControlsExample } from "@/app/main-page/_design-system/examples/header-controls"
+import { LeftTrackExample } from "@/app/main-page/_design-system/examples/left-track"
+import { SearchExample } from "@/app/main-page/_design-system/examples/search"
+
+export function ShellChapter(props: ChapterProps) {
+  return (
+    <DsSection {...props} lead="Nagłówek, menu w torze, ⌘K i stopka">
+      <DsNote>
+        <Lead>Powłoka (MainShell).</Lead> Link „Przejdź do treści”, przyklejony nagłówek (
+        <Code>h-16</Code>, rozmycie z trzech warstw bez koloru i kreski), menu główne w lewym torze,{" "}
+        <Code>main#main</Code>, stopka. Ciemny motyw jest w HTML od pierwszej klatki, a skrypt przed
+        malowaniem ustawia <Code>data-os</Code> (skrót ⌘ albo Ctrl) i kolor paska przeglądarki.
+      </DsNote>
+      <DsNote>
+        <Lead>Nawigacja.</Lead> Nagłówek nie ma menu: od 1280 px podstrony prowadzi{" "}
+        <Code>RailNav</Code> w lewym torze, węziej — ⌘K (na telefonie arkusz od dołu) i lista w
+        stopce. Bieżąca podstrona ma kropkę (wpis podświetla „Blog”). Pod menu stoi{" "}
+        <Code>TableOfContents</Code> — rozdziały wpisu i tej strony: wszystkie pozycje widoczne,
+        kropka płynie do rozdziału, którego nagłówek minął 45% okna, długie tytuły są ucięte (pełne
+        w <Code>title</Code>). Nad stopką oba tory gasną; fokus z klawiatury pokazuje je z powrotem.
+      </DsNote>
+
+      <Example
+        file="header-controls.tsx"
+        title="Nagłówek — logo, język, motyw"
+        note={
+          <>
+            Logo zaczyna się, a ikona motywu kończy dokładnie na krawędziach kolumny. Język to
+            segmenty w stylu <Code>Tabs</Code>: drugi prowadzi na odpowiednik oglądanej strony z jej{" "}
+            <Code>hreflang</Code>. Przycisk „Szukaj” jest w nagłówku tej strony.
+          </>
+        }
+      >
+        <HeaderControlsExample />
+      </Example>
+      <Example
+        file="left-track.tsx"
+        title="Lewy tor — menu główne i spis rozdziałów"
+        note={
+          <>
+            Obraz statyczny w szerokości toru (<Code>w-(--container-track)</Code>). Żywe menu i spis
+            tej strony stoją w lewym torze od 1280 px — przewiń i patrz, jak kropka spisu idzie za
+            rozdziałem.
+          </>
+        }
+      >
+        <LeftTrackExample />
+      </Example>
+      <Example
+        file="search.tsx"
+        title="Wyszukiwarka ⌘K"
+        note={
+          <>
+            Grupy: strony (menu główne), realizacje, wpisy, akcje — bez kotwic sekcji. Od tabletu
+            okno na szerokość kolumny z podglądem obok listy, na telefonie arkusz, który nie włącza
+            sam klawiatury. Kod okna (<Code>cmdk</Code>, <Code>vaul</Code>) pobiera się dopiero przy
+            najechaniu na przycisk.
+          </>
+        }
+      >
+        <SearchExample />
+      </Example>
+      <Example
+        file="footer.tsx"
+        title="Stopka — podstrony, czas, profile, znak"
+        note={
+          <>
+            Jedyne linki podstron w HTML poza torem. Godzina w Warszawie liczy się po hydratacji
+            (szerokość zarezerwowana cyframi tabelarycznymi), znak „Zeprzałka” to SVG z{" "}
+            <Code>textLength</Code> — zawsze dokładnie na szerokość, bez mierzenia.
+          </>
+        }
+      >
+        <FooterExample />
+      </Example>
+    </DsSection>
+  )
+}

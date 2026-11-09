@@ -11,10 +11,12 @@ którzy mogą zatrudnić autora. Sukces mierzymy, a nie oceniamy na oko. Drobne 
 dopuszczalne, jeśli wymaga tego wygląd — wtedy opisujemy je w sekcji 10.
 
 - **Lighthouse 100 / 100 / 100 / 100** (wydajność, dostępność, dobre praktyki, SEO) na telefonie;
-- **LCP < 1,8 s** (telefon, 4G), **CLS = 0**, **INP < 200 ms**;
+- **LCP < 1,8 s** (telefon, 4G), **CLS = 0**, **INP < 200 ms** — także przy „harmonijce”, w której
+  kadr wchodzi ostatni: ruch niesie warstwa, która nie jest kandydatem LCP (§6);
 - **JS na start nie więcej niż obecna strona** (ok. 210 KB gzip; sama baza Next 16 + React 19 to
   ok. 170 KB) — cięższe części (wyszukiwarka, popover) ładują się dopiero przy użyciu;
-- **0 błędów axe** (WCAG 2.2 AA), **0 błędów** w testach danych strukturalnych;
+- **0 błędów axe** (WCAG 2.2 AA), **0 błędów** w testach danych strukturalnych — z jednym
+  świadomym odstępstwem: sygnet logo zmienia znak bez końca (§10);
 - **kod do zrozumienia w 30 sekund na plik:** małe pliki, jedna odpowiedzialność, zero magii.
 
 Wygląd: kanon **Indeksu** (wąska kolumna, menu i media na żądanie, ⌘K). Dema z iteracji 6–7
@@ -30,7 +32,8 @@ Wygląd: kanon **Indeksu** (wąska kolumna, menu i media na żądanie, ⌘K). De
    - Żadnych własnych prymitywów obok `ui/`. Jedyny własny prymityw w `ui/` to `choice-group.tsx`
      (natywne radio: działa bez JS; `RadioGroup` i `ToggleGroup` shadcn to Radix ze stanem).
 3. **Własny CSS tylko na tokeny** (`@theme`), `@keyframes` i opisane wyjątki (`article.css` —
-   treść wpisu). `globals.css` jak najkrótszy.
+   treść wpisu; `code.css` — blok kodu i paleta składni `--syntax-*`, importowana przez
+   `CodeBlock`). `globals.css` jak najkrótszy.
 4. **Domyślnie komponenty serwerowe.** `"use client"` tylko na małych wyspach interakcji.
 5. **Teksty wyłącznie z `src/i18n`,** zawsze w parze `pl`/`en`. Najpierw polska wersja; angielska
    po akceptacji polskiej.
@@ -63,9 +66,15 @@ Wygląd: kanon **Indeksu** (wąska kolumna, menu i media na żądanie, ⌘K). De
   tylko układowi (odstęp, szerokość, miejsce w siatce). Zmiany w `ui/*` mają komentarz
   `// zeprzalka:`.
 - **Tokeny w jednym miejscu** (`globals.css`): kolory semantyczne jak w shadcn (paleta neutral),
-  ciemny motyw domyślny i tylko na ekranie (wydruk zawsze jasny), obłości jako zasada.
-- **Siatka:** jedna kolumna treści (`column`), dwa tory boczne od 1280 px (lewy — spis, prawy —
-  karta podglądu). Ikony na krawędziach kolumny dostają ujemny margines równy wcięciu.
+  ciemny motyw domyślny i tylko na ekranie (wydruk zawsze jasny), obłości jako zasada. Wyjątek:
+  paleta składni `--syntax-*` żyje przy bloku kodu (`_components/blog/code.css`) — sześć barw
+  o jednej jasności na motyw, kontrast ≥ 5:1 do tła bloku; jedyne kolory poza paletą neutral.
+- **Siatka (9.11):** od 1280 px `[margines][tor][odstęp][kolumna][odstęp][tor][margines]`.
+  Kolumna treści (`column`, 40 → 44 → 48 rem), dwa symetryczne tory o stałej proporcji do kolumny
+  (`--container-track` = 3/8 kolumny: 240 → 264 → 288 px; `rail` po lewej — menu główne i spis
+  rozdziałów wpisu, `stage-track` po prawej — karta podglądu), odstęp toru `--spacing-track`.
+  Szerokość okna ponad to biorą marginesy — nic w torze nie rośnie z oknem. Ikony na krawędziach
+  kolumny dostają ujemny margines równy wcięciu.
 - **Stopnie pisma:** `text-display` (h1 startu i podstron), nagłówek sekcji „Tytuł — rozwinięcie”
   (`SectionHeading`), tekst, drugorzędny, najmniejszy. Żywy katalog: `/main-page/design-system`.
 
@@ -77,8 +86,8 @@ Wygląd: kanon **Indeksu** (wąska kolumna, menu i media na żądanie, ⌘K). De
 - Link to link, a przycisk to przycisk. Tekst nigdy tylko w canvasie: efekty znaków mają tekst
   w DOM, a warstwa graficzna jest `aria-hidden`.
 - Metadane przez `buildMetadata` (`src/i18n/page-metadata.ts`): canonical, hreflang `pl`/`en`
-  + `x-default`, karta OG na stronę z fabryk `src/lib/og.tsx`. W podglądzie `preview()` dokłada
-  `noindex`.
+  - `x-default`, karta OG na stronę z fabryk `src/lib/og.tsx`. W podglądzie `preview()` dokłada
+    `noindex`.
 - JSON-LD: `Person`, `WebSite`, `ProfilePage`, `BlogPosting` z `BreadcrumbList`, `Service`
   z katalogiem ofert, `CollectionPage` z `ItemList` dla portfolio — z `src/lib/page-schema.ts`.
 - Obrazy przez `next/image` (wymiary, `alt`, `sizes` z `_lib/media.ts`), kadr LCP z `preload`.
@@ -88,18 +97,35 @@ Wygląd: kanon **Indeksu** (wąska kolumna, menu i media na żądanie, ⌘K). De
 - **Spoczynek zawsze kompletny.** Wyjątek: tekst „Mam 15 lat…” wypełniany przewijaniem.
 - **„Ogranicz ruch” w jednym miejscu:** reguła w `globals.css` skraca każde przejście i animację
   do 1 ms (zdarzenia końca nadal przychodzą), JS pyta `prefersReducedMotion()` / `useReducedMotion()`.
-- **Budżet:** jedna sygnatura na sekcję; wejście strony ≤ 0,9 s i nigdy nie czeka na JS; napisy
+- **Budżet:** jedna sygnatura na sekcję; wejście strony nigdy nie czeka na JS (samo CSS); napisy
   ok. 600–900 ms.
-- **Wejście „harmonijka”:** nagłówek, status, słowa tytułu i zdania (z rozmycia, jedno po drugim),
-  przyciski, na końcu wideo albo okładka — samo CSS (`enter-stagger`). Kadr będący LCP wchodzi
-  tylko wyostrzeniem (`animate-sharpen`, bez `opacity`), żeby LCP liczył się od pierwszego malowania.
+- **Budżet wejścia startu (decyzja 9.11):** „harmonijka” trwa ok. 2 s, a druk wideo ze znaków
+  kolejne ~2,5 s — strona nadrabia prostotę ruchem.
+- **Kadr LCP nigdy nie dostaje `opacity` w animacji:** przeglądarka liczy LCP dopiero po końcu
+  takiej animacji (zmierzone 9.11: 2,3–2,5 s zamiast 0,2–0,4 s). Obraz maluje się od pierwszej
+  klatki pod zasłoną w kolorze tła (zasłanianie się do LCP nie liczy), a ruch niesie warstwa nad
+  nim: na starcie canvas z drukiem (`enter-media`), we wpisie zasłona (`uncover`) i osiadanie
+  kadru (`settle`). Plakat startu ma dokładnie 16:9 jak kadr i rozmiar wideo — pierwsza klatka
+  klipu nie wypiera go jako większy kandydat.
+- **Wejście „harmonijka” (9.11):** najpierw czerń, potem z góry nagłówek, z boku menu w torze,
+  status (okruszki), słowa tytułu i szarego rozwinięcia jedno po drugim, działania, a na końcu
+  kadr: druk wideo startu wjeżdża z dołu i rośnie do szerokości kolumny, okładkę wpisu odsłania
+  zasłona. Samo CSS,
+  pory w jednym miejscu (`--enter-*` w `globals.css`), ten sam rytm na starcie i na podstronach.
+- **Wjazd przy przewijaniu:** nagłówki sekcji i bloki treści pod zgięciem wjeżdżają z dołu
+  (`reveal` — oś `view()`, krycie i przesunięcie, zakres w długości: 10 rem przewinięcia). Nie na
+  elementach, które same zmieniają `opacity`. Firefox bez osi przewijania — bez ruchu.
 - **Wejście w kadr bez pomiarów:** napisy, „Nowy” i stopka pytają pierwszy odczyt
   IntersectionObservera (`observeReveal`), a nie `getBoundingClientRect` przy hydratacji.
-- **Znaki (6.11, poprawka 7.11):** sygnet logo zmienia znak co sekundę przez pierwsze 4,5 s
-  (WCAG 2.2.2: ruch dłuższy niż 5 s wymagałby pauzy), potem stoi; najechanie albo fokus puszcza
-  szum sygnetu i falę przez domenę; czytnik dostaje napisy w całości (`sr-only`), litery są
-  `aria-hidden`; nagłówki sekcji i liczby odczytują się ze znaków przy wejściu w kadr; wideo startu
-  wyłania się z druku ze znaków. W kartach podglądu i w stopce znaków nie ma.
+- **Znaki — wspólny język ruchu (9.11):** każda animacja „treści” opiera się na znakach sygnetu
+  (`GLYPHS`, kroje `font-logo`) — ich układaniu i przeskakiwaniu. Sygnet logo zmienia znak co
+  sekundę bez końca (decyzja właściciela; „ogranicz ruch” go zatrzymuje), najechanie albo fokus
+  puszcza szybki szum sygnetu i falę przez domenę; nagłówki sekcji i liczby odczytują się ze
+  znaków przy wejściu w kadr; wideo startu składa się ze znaków (`_lib/glyph-reveal.ts`: znak
+  dobrany do tonu obrazu według zmierzonego pokrycia tuszem, krótki druk, front w wideo). Czytnik
+  dostaje napisy w całości, warstwy znaków są `aria-hidden`. W kartach podglądu i w stopce znaków nie ma.
+- **Tekst wypełniany przewijaniem (9.11):** słowo nabiera koloru, gdy samo przejeżdża przez
+  środek okna (od 62% do 46% wysokości) — fala idzie z czytaniem, nie przed nim.
 - **Karta podglądu (desktop z myszą, od 1280 px):** tylko na czas najechania albo fokusu —
   kliknięcie myszą jej nie przypina. Kursor może przejechać na kartę (zwłoka ukrycia 300 ms)
   i kliknąć jej link (WCAG 1.4.13). Tor jest `aria-hidden`, linki w nim poza Tabem; Enter
@@ -113,12 +139,13 @@ Wygląd: kanon **Indeksu** (wąska kolumna, menu i media na żądanie, ⌘K). De
   otwiera się od razu, potem strona przewija, a fokus przechodzi na wiersz.
 - **Wideo:** start gra w kadrze z pauzą; poza startem klip gra tylko na żądanie (WCAG 2.2.2) —
   w galerii najechanie myszą to podgląd, przycisk włącza i wyłącza; plik pobiera się dopiero wtedy.
-- **Spis w lewym torze (od 1280 px):** w starcie i przy stopce serwisu go nie ma (ale fokus
-  z klawiatury go pokazuje); w spoczynku sama bieżąca pozycja (ostatnia, której górna krawędź
-  minęła 45% okna) z kropką; długie rozdziały ucięte wielokropkiem w szerokości toru.
-- **Nawigacja:** nagłówek bez menu — podstrony prowadzi ⌘K (na telefonie arkusz wyszukiwarki),
-  stopka ma ich listę; każda podstrona ma okruszki, a podstrony z sekcjami — spis. ⌘K pokazuje
-  najpierw sekcje oglądanej strony, potem podstrony, sekcje startu, realizacje, wpisy i akcje.
+- **Nawigacja = podstrony (decyzja 9.11, bez kotwic):** menu główne w lewym torze (od 1280 px,
+  `RailNav` w powłoce, każda strona) i ⌘K to te same podstrony — sekcji stron nie ma ani tu, ani tu.
+  Menu stoi w całości (bez pokazywania jednej pozycji naraz), bieżąca podstrona z kropką, chowa się
+  nad stopką. Poniżej 1280 px podstrony prowadzi ⌘K (na telefonie arkusz) i stopka. ⌘K: podstrony,
+  realizacje (otwierają swój wiersz na starcie), wpisy, akcje. Każda podstrona ma okruszki.
+- **Spis rozdziałów wpisu:** jedyny spis kotwic — pod menu w lewym torze (`TableOfContents`),
+  w szerokości toru (długi tytuł ucięty, pełny w `title`), kropka przy czytanym rozdziale.
 - **Zamknięcia:** usługi, portfolio, blog (kategorie, tagi, wpis) kończą się kartą z wezwaniem;
   kontakt kończy formularz, „O mnie” — rząd działań (z pobraniem CV).
 - **Motyw:** ciemny już w HTML (bez błysku jasnych tokenów); zmiana klasy bez animacji —
@@ -155,8 +182,21 @@ Wygląd: kanon **Indeksu** (wąska kolumna, menu i media na żądanie, ⌘K). De
 - **`asChild` w komponentach klienckich tylko z dzieckiem z klienta.** Slot Radix nie przyjmuje
   elementu z komponentu serwerowego (w dev przychodzi jako leniwa referencja RSC — wiersz akordeonu
   znikał po hydratacji). `Button`, `Badge` i `Breadcrumb` są serwerowe — tam `asChild` jest bezpieczne.
-- **`tailwind-merge` zna token `column`** (`src/lib/utils.ts`) — inaczej `max-w-column` nie gasi
-  `max-w-*` z komponentu shadcn.
+- **`tailwind-merge` zna tokeny siatki** (`column`, `track`, odstępy `page`, `track`, `rail`,
+  `rail-toc` — `src/lib/utils.ts`) — inaczej `max-w-column` nie gasi `max-w-*` z komponentu shadcn.
+- **Przepełnienie w poziomie szukamy u źródła, nie gasimy `overflow`:** `*:w-full` na rzędzie
+  rozciągał niewidoczny komunikat czytnika (`sr-only`, `absolute`) do szerokości ekranu; przy
+  320 px rząd nagłówka był o 5 px za szeroki. Pomiar: `scrollWidth` dokumentu = szerokość okna.
+- **Nazwy `@keyframes` nie mogą powtarzać nazw z `tw-animate-css`** (`enter`, `exit`,
+  `accordion-*`, `collapsible-*`, `caret-blink`): Tailwind zostawia jedną definicję, wygrywa
+  biblioteka, a nasza animacja po cichu nie działa — tak od iteracji 9 nie wjeżdżał tekst startu
+  i podstron (nasze `enter` → `enter-up`, 9.11). Pilnuje test `globals.test.ts`.
+- **Tekst wyglądający jak klasa Tailwinda potrafi zepsuć cały arkusz:** skaner czyta wszystkie
+  pliki `main-page`; napis z `&apos;` w miejscu klasy dał niepoprawny CSS i 500 na każdej trasie
+  w `pnpm dev` (9.11, design system). Po poprawce pełne przebudowanie arkusza (`touch globals.css`).
+- **`document.fonts.load()` z krojem zastępczym `next/font`:** zastępczy to `local("Arial")`,
+  którego na Linuksie i Androidzie nie ma — wspólne `load()` odrzuca się w całości. Wczytujemy
+  każdy krój sygnetu osobno (`_lib/glyph-reveal.ts`).
 - **Preload krojów i karty OG w podglądzie:** dla tras `.demo.tsx` Next nie dokleja preloadu krojów
   (tnie tylko ostatnie rozszerzenie nazwy pliku), a adresy kart OG dostają sufiks `.demo` (404).
   Wyniki CLS i SEO podglądu są przez to gorsze niż po przepięciu.
@@ -164,11 +204,15 @@ Wygląd: kanon **Indeksu** (wąska kolumna, menu i media na żądanie, ⌘K). De
   wątku, ale skoki do kotwic lądują w złym miejscu (pozycja z szacowanych wysokości).
 - **404 w podglądzie:** `not-found.demo.tsx` obsługuje `notFound()` z tras; nieznany adres
   (`/main-page/xyz`) dostaje `global-not-found.tsx` serwisu.
+- **Odstępstwo od WCAG 2.2.2 (poziom A), decyzja właściciela 9.11:** sygnet logo zmienia znak co
+  sekundę bez końca i nie ma przycisku pauzy (zatrzymuje go tylko „ogranicz ruch”). To mały znak
+  w nagłówku, nie treść, ale formalnie automat > 5 s bez pauzy — audyt axe go nie wykrywa,
+  ręczny audyt WCAG wskaże. Wcześniej (7.11) stawał po 4,5 s.
 - **Cele dotyku poniżej 44 px:** plakietki kategorii i tagów (ok. 26 px) — próg AA (24 px)
   spełniony; decyzja właściciela w ROADMAP.
 
 ## 11. Do potwierdzenia
 
-1. Nagłówek bez menu (⌘K + stopka) czy klasyczne menu.
+1. Menu poniżej 1280 px: dziś ⌘K (arkusz) i stopka — czy telefon dostaje menu w nagłówku.
 2. Analityka ruchu: GA4 (wymaga zgody na ciasteczka) albo Vercel Web Analytics (bez ciasteczek).
 3. Język komentarzy w kodzie po przepięciu (dziś polski, jak reszta repozytorium).

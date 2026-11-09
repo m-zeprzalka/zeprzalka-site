@@ -5,15 +5,14 @@ import { randomGlyph, START_GLYPH } from "@/app/main-page/_lib/glyphs"
 import { useReducedMotion } from "@/app/main-page/_lib/hooks"
 
 const INTERVAL_MS = 1000
-/** Jak długo sygnet zmienia się sam (ms) — krócej niż 5 s. */
-const RUN_MS = 4500
 /** Najechanie: krótki szum sygnetu — kilka znaków co tyle ms. */
 const SCRAMBLE_STEPS = 7
 const SCRAMBLE_MS = 42
 
 /**
- * Sygnet: znak podmieniany co sekundę przez pierwsze sekundy, a przy najechaniu albo
- * fokusie na logo krótki szum.
+ * Sygnet: znak podmieniany co sekundę, bez końca (decyzja właściciela — sygnet żyje
+ * jak w obecnym logo serwisu), a przy najechaniu albo fokusie na logo krótki szum.
+ * „Ogranicz ruch” zatrzymuje go na znaku startowym.
  * Pudełko o stałej szerokości, znak przy lewej krawędzi — rysunek zaczyna się
  * na linii kolumny, a domena nie przesuwa się przy zmianie znaku. Znak startowy
  * stały (bez rozjazdu hydratacji). `aria-hidden`: nazwa linku się nie zmienia.
@@ -26,23 +25,25 @@ export function LogoMark() {
   useEffect(() => {
     const host = ref.current?.closest("a")
     if (reducedMotion || !host) return
-    const timer = setInterval(() => setGlyph(randomGlyph()), INTERVAL_MS)
-    // Samoczynna zmiana znaku tylko przez kilka sekund od wejścia (WCAG 2.2.2: ruch dłuższy
-    // niż 5 s wymagałby pauzy); potem sygnet stoi i ożywa przy najechaniu albo fokusie.
-    const stop = setTimeout(() => clearInterval(timer), RUN_MS)
+    const tick = () => setGlyph(randomGlyph())
+    let timer = setInterval(tick, INTERVAL_MS)
     let scramble: ReturnType<typeof setTimeout>[] = []
     const play = (event: Event) => {
       if (event instanceof PointerEvent && event.pointerType !== "mouse") return
       scramble.forEach(clearTimeout)
+      clearInterval(timer)
       scramble = Array.from({ length: SCRAMBLE_STEPS }, (_, step) =>
-        setTimeout(() => setGlyph(randomGlyph()), (step + 1) * SCRAMBLE_MS)
+        setTimeout(tick, (step + 1) * SCRAMBLE_MS)
+      )
+      // Rytm co sekundę rusza od nowa po szumie — zwykła zmiana nie wpada tuż po nim.
+      scramble.push(
+        setTimeout(() => (timer = setInterval(tick, INTERVAL_MS)), SCRAMBLE_STEPS * SCRAMBLE_MS)
       )
     }
     host.addEventListener("pointerenter", play)
     host.addEventListener("focus", play)
     return () => {
       clearInterval(timer)
-      clearTimeout(stop)
       host.removeEventListener("focus", play)
       scramble.forEach(clearTimeout)
       host.removeEventListener("pointerenter", play)

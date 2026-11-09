@@ -11,7 +11,9 @@ export function Work({
   return (
     <section id={SECTION.work} aria-labelledby="portfolio-title" className="column mt-28 md:mt-36">
       <SectionHeading id="portfolio-title" title={title} lead={lead} />
-      <WorkList {...list} />
+      <div className="reveal">
+        <WorkList {...list} />
+      </div>
     </section>
   )
 }

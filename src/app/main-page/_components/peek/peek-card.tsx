@@ -29,7 +29,12 @@ export function PeekCard({
           <PeekMedia
             media={first}
             play={play}
-            sizes="(min-width: 80rem) 24rem, 100vw"
+            // W torze karta ma szerokość toru (3/8 kolumny), w popoverze — kolumny albo 24 rem.
+            sizes={
+              inStage
+                ? "(min-width: 105rem) 18rem, (min-width: 90rem) 16.5rem, 15rem"
+                : "(min-width: 48rem) 24rem, 100vw"
+            }
             className="max-h-[min(55svh,26rem)]"
           />
           {rest.length > 0 && (

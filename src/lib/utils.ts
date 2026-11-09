@@ -4,10 +4,15 @@ import { extendTailwindMerge } from "tailwind-merge"
 /**
  * `tailwind-merge` zna tokeny Tailwinda, ale nie nasze: bez tego `max-w-column`
  * (kolumna nowej wersji, `--container-column`) nie gasiłoby `max-w-lg` z komponentu,
- * a wygrywałoby to, co stoi później w arkuszu.
+ * a wygrywałoby to, co stoi później w arkuszu. To samo dla odstępów siatki (`px-page`,
+ * `top-rail`, `top-rail-toc`). `text-display` to stopień pisma, nie kolor — inaczej
+ * `cn("text-foreground", "text-display")` gubiłoby kolor.
  */
 const twMerge = extendTailwindMerge({
-  extend: { theme: { container: ["column"] } },
+  extend: {
+    theme: { container: ["column"], spacing: ["page", "track", "rail", "rail-toc"] },
+    classGroups: { "font-size": [{ text: ["display"] }] },
+  },
 })
 
 export function cn(...inputs: ClassValue[]) {

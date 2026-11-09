@@ -11,7 +11,9 @@ export function Writing({
   return (
     <section id={SECTION.blog} aria-labelledby="blog-title" className="column mt-28 md:mt-36">
       <SectionHeading id="blog-title" title={title} lead={lead} />
-      <PostList {...list} />
+      <div className="reveal">
+        <PostList {...list} />
+      </div>
     </section>
   )
 }

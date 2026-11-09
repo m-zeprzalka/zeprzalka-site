@@ -1,4 +1,4 @@
-/** Treść strony głównej: sekcje, karty podglądu i spis sekcji. */
+/** Treść strony głównej: sekcje i karty podglądu. */
 import "server-only"
 import type { Locale } from "@/i18n/config"
 import { CONTACT_EMAIL } from "@/lib/site"
@@ -7,7 +7,6 @@ import { workAnchor } from "../anchors"
 import { noOrphans, segment, sentences } from "../text"
 import { pageHref } from "../routes"
 import { buildPeeks, lecturesOf, PEEK_WORKS, postsAbout } from "./peeks"
-import { buildSections } from "./search"
 import { getSource, type Source } from "./source"
 
 /** Ile wpisów widać od razu; resztę odsłania „Pokaż wszystkie”. */
@@ -96,12 +95,10 @@ export function getHomeContent(locale: Locale) {
       copyEmail: copy.ui.copyEmail,
       copied: common.ui.copied,
       newTab: common.ui.newTab,
-      onPage: copy.ui.onPage,
       playVideo: copy.ui.playVideo,
       pauseVideo: copy.ui.pauseVideo,
     },
     peeks: buildPeeks(source),
-    sections: buildSections(source),
     hero: { status: home.hero.status, title: home.hero.title, lead, cta: home.hero.cta },
     about: { heading: about.aboutHeading, bio, facts },
     skills: { title: home.skills.title, lead: home.skills.lead, items: buildSkills(source) },

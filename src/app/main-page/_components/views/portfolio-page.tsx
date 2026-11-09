@@ -2,9 +2,7 @@ import { CtaPanel } from "@/app/main-page/_components/page/cta-panel"
 import { GalleryTile } from "@/app/main-page/_components/page/gallery-tile"
 import { PageHeader } from "@/app/main-page/_components/page/page-header"
 import { Section } from "@/app/main-page/_components/page/section"
-import { SectionNav } from "@/app/main-page/_components/layout/section-nav"
 import { JsonLd } from "@/app/main-page/_components/seo/json-ld"
-import { SECTION } from "@/app/main-page/_lib/anchors"
 import { breadcrumb } from "@/app/main-page/_lib/content/pages"
 import { getSource, need } from "@/app/main-page/_lib/content/source"
 import { pageHref } from "@/app/main-page/_lib/routes"
@@ -31,13 +29,6 @@ export function PortfolioPage({ locale }: { locale: Locale }) {
   return (
     <>
       <JsonLd data={portfolioPageSchema(locale)} />
-      <SectionNav
-        label={mainPage.ui.onPage}
-        sections={[
-          { id: SECTION.start, label: mainPage.ui.start },
-          ...groups.map((group) => ({ id: group.id, label: group.label })),
-        ]}
-      />
       <PageHeader
         breadcrumb={breadcrumb(locale, common.nav.portfolio)}
         title={copy.title}

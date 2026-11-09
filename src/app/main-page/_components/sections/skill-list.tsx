@@ -7,7 +7,7 @@ import {
   CodeXmlIcon,
   GraduationCapIcon,
   PenToolIcon,
-  ArrowRightIcon,
+  ArrowUpRightIcon,
 } from "lucide-react"
 import { usePeekHover } from "@/app/main-page/_components/peek/peek-context"
 import {
@@ -87,9 +87,10 @@ function SkillItem({ skill }: { skill: Skill }) {
           ))}
         </ul>
         {skill.proofs.items.length > 0 && (
-          <div className="grid gap-1">
+          <div className="grid gap-2">
             <p className="text-xs text-muted-foreground">{skill.proofs.heading}</p>
-            <ul>
+            {/* Dowody jako wiersze z własnym wcięciem i tłem — wyraźnie klikalne, nie sam tekst. */}
+            <ul className="grid gap-1.5">
               {skill.proofs.items.map((proof) => {
                 // Kotwice realizacji obsługuje lista portfolio (zwykły link); wpisy — next/link.
                 const ProofLink = proof.href.startsWith("#") ? "a" : Link
@@ -97,10 +98,10 @@ function SkillItem({ skill }: { skill: Skill }) {
                   <li key={proof.href}>
                     <ProofLink
                       href={proof.href}
-                      className="-mx-2 flex min-h-11 items-center justify-between gap-3 rounded-lg px-2 text-sm outline-none hover:bg-accent focus-visible:ring-[3px] focus-visible:ring-ring"
+                      className="group/proof flex min-h-12 items-center justify-between gap-3 rounded-xl bg-muted/60 px-4 py-2.5 text-sm transition-colors outline-none hover:bg-accent focus-visible:ring-[3px] focus-visible:ring-ring"
                     >
                       <span className="line-clamp-2">{proof.label}</span>
-                      <ArrowRightIcon className="size-4 shrink-0 text-muted-foreground" />
+                      <ArrowUpRightIcon className="size-4 shrink-0 text-muted-foreground transition-[translate,color] duration-200 ease-out group-hover/proof:translate-x-0.5 group-hover/proof:-translate-y-0.5 group-hover/proof:text-foreground" />
                     </ProofLink>
                   </li>
                 )

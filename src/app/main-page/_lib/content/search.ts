@@ -1,46 +1,50 @@
-/** Wyszukiwarka ⌘K: sekcje strony, realizacje, wpisy, podstrony i akcje. */
+/**
+ * Wyszukiwarka ⌘K: najpierw menu główne (podstrony), potem realizacje, wpisy i akcje.
+ * Bez sekcji stron — nawigacja serwisu to podstrony (decyzja właściciela 9.11).
+ */
 import "server-only"
 import { ROUTES } from "@/i18n/config"
+import { getMeta } from "@/i18n/content/meta"
 import { CONTACT_EMAIL } from "@/lib/site"
-import type { SearchGroup, SectionLink } from "../types"
-import { SECTION, workAnchor } from "../anchors"
+import type { SearchGroup } from "../types"
+import { workAnchor } from "../anchors"
 import { PAGE_KEYS, homeAnchor, pageHref } from "../routes"
 import type { Source } from "./source"
 
-/** Spis sekcji strony — wspólny dla wyszukiwarki i spisu w lewym torze. */
-export function buildSections({ copy, about, home }: Source): SectionLink[] {
-  return [
-    { id: SECTION.start, label: copy.ui.start },
-    { id: SECTION.about, label: about.aboutHeading },
-    { id: SECTION.skills, label: home.skills.title },
-    { id: SECTION.work, label: home.portfolio.title },
-    { id: SECTION.blog, label: home.blog.title },
-    { id: SECTION.contact, label: home.contact.title },
-  ]
-}
-
 export function buildSearch(source: Source): SearchGroup[] {
-  const { locale, common, home, about, copy, groups } = source
-  const detail: Record<string, string> = {
-    [SECTION.start]: home.hero.title,
-    [SECTION.about]: `${about.bioLeadPrefix}${about.bioLeadStrong}`,
-    [SECTION.skills]: home.skills.lead,
-    [SECTION.work]: home.portfolio.lead,
-    [SECTION.blog]: home.blog.lead,
-    [SECTION.contact]: home.contact.lead,
-  }
-
+  const { locale, common, copy, groups } = source
+  // Opis podstrony w podglądzie okna — ten sam co w metadanych strony (bez nowych tekstów).
+  const meta = getMeta(locale)
   return [
     {
-      id: "sections",
-      heading: copy.ui.searchGroups.sections,
-      items: buildSections(source).map((section) => ({
-        id: `section-${section.id}`,
-        label: section.label,
-        icon: "section",
-        detail: detail[section.id],
-        href: homeAnchor(locale, section.id),
-      })),
+      id: "pages",
+      heading: copy.ui.searchGroups.pages,
+      items: [
+        {
+          id: "page-home",
+          label: common.nav.home,
+          icon: "page" as const,
+          hint: ROUTES.home[locale],
+          detail: meta.root.description,
+          href: pageHref("home", locale),
+        },
+        ...PAGE_KEYS.map((key) => ({
+          id: `page-${key}`,
+          label: common.nav[key],
+          icon: "page" as const,
+          hint: ROUTES[key][locale],
+          detail: meta[key].description,
+          href: pageHref(key, locale),
+        })),
+        {
+          id: "page-privacy",
+          label: common.form.privacyLink,
+          icon: "page" as const,
+          hint: ROUTES.privacy[locale],
+          detail: meta.privacy.description,
+          href: pageHref("privacy", locale),
+        },
+      ],
     },
     {
       id: "works",
@@ -69,26 +73,6 @@ export function buildSearch(source: Source): SearchGroup[] {
         detail: description,
         href: card.href,
       })),
-    },
-    {
-      id: "pages",
-      heading: copy.ui.searchGroups.pages,
-      items: [
-        ...PAGE_KEYS.map((key) => ({
-          id: `page-${key}`,
-          label: common.nav[key],
-          icon: "page" as const,
-          hint: ROUTES[key][locale],
-          href: pageHref(key, locale),
-        })),
-        {
-          id: "page-privacy",
-          label: common.form.privacyLink,
-          icon: "page" as const,
-          hint: ROUTES.privacy[locale],
-          href: pageHref("privacy", locale),
-        },
-      ],
     },
     {
       id: "actions",

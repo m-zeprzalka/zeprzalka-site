@@ -14,11 +14,10 @@ const pl = {
   ui: {
     search: "Szukaj",
     searchTitle: "Wyszukiwarka",
-    searchDescription: "Sekcje tej strony, realizacje, wpisy i podstrony serwisu.",
-    searchPlaceholder: "Szukaj sekcji, realizacji i wpisów…",
+    searchDescription: "Podstrony serwisu, realizacje i wpisy.",
+    searchPlaceholder: "Szukaj podstron, realizacji i wpisów…",
     searchEmpty: "Nic nie znaleziono.",
     searchGroups: {
-      sections: "Na tej stronie",
       works: "Portfolio",
       posts: "Blog",
       pages: "Podstrony",
@@ -28,9 +27,7 @@ const pl = {
     /** Liczba wyników ⌘K dla czytnika — formy dla `plural()`. */
     searchResults: { one: "wynik", few: "wyniki", many: "wyników", other: "wyniku" },
     copyEmail: "Kopiuj adres e-mail",
-    onPage: "Na tej stronie",
     language: "Język",
-    start: "Start",
     allWorks: "Wszystkie realizacje",
     inPortfolio: "Zobacz w portfolio",
     visitSite: "Odwiedź serwis",
@@ -78,11 +75,10 @@ const en: typeof pl = {
   ui: {
     search: "Search",
     searchTitle: "Search",
-    searchDescription: "Sections of this page, work, articles and pages of the site.",
-    searchPlaceholder: "Search sections, work and articles…",
+    searchDescription: "Pages of the site, work and articles.",
+    searchPlaceholder: "Search pages, work and articles…",
     searchEmpty: "No results.",
     searchGroups: {
-      sections: "On this page",
       works: "Portfolio",
       posts: "Blog",
       pages: "Pages",
@@ -91,9 +87,7 @@ const en: typeof pl = {
     searchHints: { select: "select", open: "open", close: "close" },
     searchResults: { one: "result", few: "results", many: "results", other: "results" },
     copyEmail: "Copy email address",
-    onPage: "On this page",
     language: "Language",
-    start: "Start",
     allWorks: "All work",
     inPortfolio: "See in portfolio",
     visitSite: "Visit website",

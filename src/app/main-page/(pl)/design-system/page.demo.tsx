@@ -1,188 +1,66 @@
 import type { Metadata } from "next"
-import { SectionNav } from "@/app/main-page/_components/layout/section-nav"
-import { Code, DsNote, DsSection } from "@/app/main-page/_design-system/ds-section"
-import { Example } from "@/app/main-page/_design-system/example"
-import { AccordionExample } from "@/app/main-page/_design-system/examples/accordion"
-import { BadgeKbdExample } from "@/app/main-page/_design-system/examples/badge-kbd"
-import { ButtonExample } from "@/app/main-page/_design-system/examples/button"
-import { EnterStaggerExample } from "@/app/main-page/_design-system/examples/enter-stagger"
-import { FieldExample } from "@/app/main-page/_design-system/examples/field"
-import { GlyphTextExample } from "@/app/main-page/_design-system/examples/glyph-text"
-import { CtaPanelExample } from "@/app/main-page/_design-system/examples/cta-panel"
-import { HeaderControlsExample } from "@/app/main-page/_design-system/examples/header-controls"
-import { LabelRowExample } from "@/app/main-page/_design-system/examples/label-row"
-import { PeekTriggerExample } from "@/app/main-page/_design-system/examples/peek-trigger"
-import { ScrollFillExample } from "@/app/main-page/_design-system/examples/scroll-fill"
-import { SectionHeadingExample } from "@/app/main-page/_design-system/examples/section-heading"
-import { TermLinksExample } from "@/app/main-page/_design-system/examples/term-links"
-import { Replay } from "@/app/main-page/_design-system/replay"
-import {
-  ColorTokens,
-  RadiusTokens,
-  TokenTable,
-  TypeScale,
-} from "@/app/main-page/_design-system/tokens"
+import { TableOfContents } from "@/app/main-page/_components/layout/table-of-contents"
+import { PeekProvider } from "@/app/main-page/_components/peek/peek-context"
+import { PeekStage } from "@/app/main-page/_components/peek/peek-stage"
+import { getHomeContent } from "@/app/main-page/_lib/content/home"
+import { ArticleChapter } from "@/app/main-page/_design-system/chapters/article"
+import { ColorsChapter } from "@/app/main-page/_design-system/chapters/colors"
+import { ComponentsChapter } from "@/app/main-page/_design-system/chapters/components"
+import { GridChapter } from "@/app/main-page/_design-system/chapters/grid"
+import { HomeChapter } from "@/app/main-page/_design-system/chapters/home"
+import { IconsChapter } from "@/app/main-page/_design-system/chapters/icons"
+import { MotionChapter } from "@/app/main-page/_design-system/chapters/motion"
+import { PrinciplesChapter } from "@/app/main-page/_design-system/chapters/principles"
+import { ShapesChapter } from "@/app/main-page/_design-system/chapters/shapes"
+import { ShellChapter } from "@/app/main-page/_design-system/chapters/shell"
+import { SubpagesChapter } from "@/app/main-page/_design-system/chapters/subpages"
+import { TypeChapter } from "@/app/main-page/_design-system/chapters/type"
+import { PageHeaderExample } from "@/app/main-page/_design-system/examples/page-header"
 
 export const metadata: Metadata = {
   title: "Design system — nowa wersja",
   robots: { index: false, follow: false },
 }
 
-const SECTIONS = [
-  { id: "zasady", label: "Zasady" },
-  { id: "kolory", label: "Kolory" },
-  { id: "pismo", label: "Pismo" },
-  { id: "siatka", label: "Siatka" },
-  { id: "ksztalty", label: "Kształty" },
-  { id: "komponenty", label: "Komponenty" },
-  { id: "kompozycje", label: "Kompozycje" },
-  { id: "podstrony", label: "Podstrony" },
-  { id: "ruch", label: "Ruch" },
-]
+/**
+ * Rozdziały w kolejności czytania: od fundamentów (tokeny) przez komponenty do kompozycji
+ * stron i ruchu. Kotwica i tytuł z tej listy trafiają i do rozdziału, i do spisu w torze.
+ */
+const CHAPTERS = [
+  { id: "zasady", label: "Zasady", Chapter: PrinciplesChapter },
+  { id: "kolory", label: "Kolory", Chapter: ColorsChapter },
+  { id: "pismo", label: "Pismo", Chapter: TypeChapter },
+  { id: "siatka", label: "Siatka", Chapter: GridChapter },
+  { id: "ksztalty", label: "Kształty", Chapter: ShapesChapter },
+  { id: "ikony", label: "Ikony", Chapter: IconsChapter },
+  { id: "komponenty", label: "Komponenty", Chapter: ComponentsChapter },
+  { id: "nawigacja", label: "Nawigacja i powłoka", Chapter: ShellChapter },
+  { id: "strona-glowna", label: "Strona główna", Chapter: HomeChapter },
+  { id: "podstrony", label: "Podstrony", Chapter: SubpagesChapter },
+  { id: "tresc-wpisu", label: "Treść wpisu", Chapter: ArticleChapter },
+  { id: "ruch", label: "Ruch", Chapter: MotionChapter },
+] as const
 
 /**
- * Design system nowej wersji strony: tokeny, komponenty shadcn z `_components/ui`
- * i kompozycje strony głównej — każdy przykład żywy, z kodem czytanym z pliku.
- * Strona wewnętrzna (noindex), tylko po polsku — wyjątek z AGENTS.md.
+ * Design system nowej wersji strony: tokeny, komponenty shadcn z `_components/ui`,
+ * powłoka, kompozycje startu i podstron, treść wpisu i ruch — każdy przykład żywy,
+ * z kodem czytanym z pliku. Jak każda strona z frazami: jeden `PeekProvider` z kartami
+ * startu i jeden `PeekStage`. Strona wewnętrzna (noindex), tylko po polsku — wyjątek z AGENTS.md.
  */
 export default function DesignSystemPage() {
+  const { peeks } = getHomeContent("pl")
+
   return (
-    <>
-      <SectionNav label="Rozdziały" sections={SECTIONS} />
-      <header className="column pt-14 md:pt-24">
-        <p className="text-sm text-muted-foreground">src/app/main-page</p>
-        <h1 className="mt-4 text-display">
-          Design system{" "}
-          <span className="text-muted-foreground">
-            — shadcn i Tailwind na własnych tokenach. Co jest, gdzie mieszka i jak tego używać.
-          </span>
-        </h1>
-      </header>
-
-      <DsSection id="zasady" title="Zasady" lead="Jedna rzecz, jedno miejsce">
-        <DsNote>
-          <strong className="font-medium text-foreground">System w ui, układ w stronie.</strong>{" "}
-          Wygląd wspólny dla całej strony (promienie, rozmiary, warianty, fokus) żyje w tokenach{" "}
-          <Code>globals.css</Code> i w wariantach <Code>cva</Code> komponentów{" "}
-          <Code>_components/ui</Code>. Na stronie <Code>className</Code> służy tylko układowi:
-          odstęp, szerokość, miejsce w siatce.
-        </DsNote>
-        <DsNote>
-          <strong className="font-medium text-foreground">shadcn przez CLI.</strong>{" "}
-          <Code>pnpm dlx shadcn@latest add &lt;nazwa&gt; -y</Code> instaluje do{" "}
-          <Code>_components/ui</Code>. Zmiany systemowe w tych plikach mają komentarz{" "}
-          <Code>{"// zeprzalka:"}</Code> — reszta to kod shadcn.
-        </DsNote>
-        <DsNote>
-          <strong className="font-medium text-foreground">Klasy w zapisie kanonicznym.</strong>{" "}
-          <Code>pnpm check:classes</Code> sprawdza każdą klasę systemem Tailwinda (
-          <Code>--fix</Code> poprawia), a Prettier sortuje je według tokenów <Code>main-page</Code>.
-        </DsNote>
-      </DsSection>
-
-      <DsSection id="kolory" title="Kolory" lead="Semantyczne nazwy shadcn, ciemny motyw na start">
-        <DsNote>
-          Wartości w oklch dla <Code>:root</Code> (jasny) i <Code>.dark</Code> (ciemny). Używamy
-          nazw (<Code>bg-muted</Code>,<Code>text-muted-foreground</Code>), nigdy wartości.
-        </DsNote>
-        <ColorTokens />
-      </DsSection>
-
-      <DsSection id="pismo" title="Pismo" lead="Jeden krój (Geist), siedem stylów na całą stronę">
-        <TypeScale />
-      </DsSection>
-
-      <DsSection id="siatka" title="Siatka" lead="Jedna kolumna i dwa tory na marginesach">
-        <DsNote>
-          Nagłówek, sekcje i stopka stoją na tej samej osi (<Code>column</Code>). Od 1280 px lewy
-          tor ma spis sekcji, prawy — kartę podglądu. Ikony przycisków na krawędziach kolumny
-          dostają ujemny margines równy wcięciu ikony, więc rysunek kończy się na linii.
-        </DsNote>
-        <TokenTable rows="layout" />
-      </DsSection>
-
-      <DsSection id="ksztalty" title="Kształty" lead="Obłości jako zasada systemu">
-        <RadiusTokens />
-      </DsSection>
-
-      <DsSection id="komponenty" title="Komponenty" lead="shadcn z katalogu _components/ui">
-        <Example file="button.tsx">
-          <ButtonExample />
-        </Example>
-        <Example file="badge-kbd.tsx">
-          <BadgeKbdExample />
-        </Example>
-        <Example file="field.tsx">
-          <FieldExample />
-        </Example>
-        <Example file="accordion.tsx">
-          <AccordionExample />
-        </Example>
-      </DsSection>
-
-      <DsSection id="kompozycje" title="Kompozycje" lead="Elementy strony zbudowane z komponentów">
-        <Example file="section-heading.tsx">
-          <SectionHeadingExample />
-        </Example>
-        <Example file="peek-trigger.tsx">
-          <PeekTriggerExample />
-        </Example>
-        <Example file="header-controls.tsx">
-          <HeaderControlsExample />
-        </Example>
-      </DsSection>
-
-      <DsSection
-        id="podstrony"
-        title="Podstrony"
-        lead="Klocki usług, bloga, wpisu, o mnie i kontaktu"
-      >
-        <DsNote>
-          Każda podstrona zaczyna się od <Code>PageHeader</Code>: okruszki (shadcn{" "}
-          <Code>Breadcrumb</Code>), tytuł i rozwinięcie w stopniu <Code>text-display</Code>, ta sama
-          „harmonijka” co start. Dalej sekcje <Code>Section</Code> (nagłówek jak na starcie), spis w
-          lewym torze (<Code>SectionNav</Code> — sekcje albo rozdziały wpisu) i zamknięcie{" "}
-          <Code>CtaPanel</Code>. Listy wpisów to te same wiersze co na starcie (
-          <Code>PostIndex</Code>), z okładką na marginesie; archiwum dzieli shadcn{" "}
-          <Code>Pagination</Code>.
-        </DsNote>
-        <DsNote>
-          Adresy w podglądzie mają prefiks <Code>/main-page</Code> — dokleja go wyłącznie{" "}
-          <Code>_lib/routes.ts</Code> (<Code>pageHref</Code>, <Code>postHref</Code>…). Treść wpisu
-          stylizuje <Code>article.css</Code>, ładowany tylko na wpisach.
-        </DsNote>
-        <Example file="label-row.tsx">
-          <LabelRowExample />
-        </Example>
-        <Example file="term-links.tsx">
-          <TermLinksExample />
-        </Example>
-        <Example file="cta-panel.tsx">
-          <CtaPanelExample />
-        </Example>
-      </DsSection>
-
-      <DsSection id="ruch" title="Ruch" lead="Przewijanie uruchamia, spoczynek zawsze kompletny">
-        <DsNote>
-          Wejścia z rozmycia, dekodowanie liter ze znaków sygnetu, płynięcie karty i przelot kadru.
-          Jedyny efekt sterowany przewijaniem to tekst wypełniany słowo po słowie. Przy „ogranicz
-          ruch” wszystko stoi w stanie końcowym — jedna reguła w <Code>globals.css</Code> skraca
-          każde przejście i animację do 1 ms, a JS pyta <Code>prefersReducedMotion()</Code> albo{" "}
-          <Code>useReducedMotion()</Code>.
-        </DsNote>
-        <TokenTable rows="motion" />
-        <Example file="enter-stagger.tsx">
-          <Replay label="Powtórz">
-            <EnterStaggerExample />
-          </Replay>
-        </Example>
-        <Example file="glyph-text.tsx">
-          <GlyphTextExample />
-        </Example>
-        <Example file="scroll-fill.tsx">
-          <ScrollFillExample />
-        </Example>
-      </DsSection>
-    </>
+    <PeekProvider peeks={peeks}>
+      <TableOfContents
+        label="Rozdziały"
+        sections={CHAPTERS.map(({ id, label }) => ({ id, label }))}
+      />
+      <PageHeaderExample />
+      {CHAPTERS.map(({ id, label, Chapter }) => (
+        <Chapter key={id} id={id} title={label} />
+      ))}
+      <PeekStage />
+    </PeekProvider>
   )
 }

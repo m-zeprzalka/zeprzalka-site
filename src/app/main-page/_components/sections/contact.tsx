@@ -20,13 +20,16 @@ export function Contact({
   return (
     <section id={SECTION.contact} aria-labelledby="kontakt-title" className="column mt-28 md:mt-36">
       <SectionHeading id="kontakt-title" title={title} lead={lead} />
-      <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-3">
-        <CopyEmail email={email} label={labels.copyEmail} copiedLabel={labels.copied} />
-        <p className="text-sm text-muted-foreground">
-          {labels.responseTimeLabel} <span className="text-foreground">{labels.responseTime}</span>
-        </p>
+      <div className="reveal">
+        <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-3">
+          <CopyEmail email={email} label={labels.copyEmail} copiedLabel={labels.copied} />
+          <p className="text-sm text-muted-foreground">
+            {labels.responseTimeLabel}{" "}
+            <span className="text-foreground">{labels.responseTime}</span>
+          </p>
+        </div>
+        <ContactForm {...form} />
       </div>
-      <ContactForm {...form} />
     </section>
   )
 }

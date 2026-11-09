@@ -1,7 +1,8 @@
 import Image from "next/image"
+import { ChevronDownIcon } from "lucide-react"
 import { mdxComponents } from "@/app/main-page/_components/blog/mdx-components"
 import "@/app/main-page/_components/blog/article.css"
-import { SectionNav } from "@/app/main-page/_components/layout/section-nav"
+import { TableOfContents } from "@/app/main-page/_components/layout/table-of-contents"
 import { CtaPanel } from "@/app/main-page/_components/page/cta-panel"
 import { PageHeader } from "@/app/main-page/_components/page/page-header"
 import { PostIndex } from "@/app/main-page/_components/page/post-index"
@@ -10,7 +11,7 @@ import { TermLinks } from "@/app/main-page/_components/page/term-links"
 import { PeekProvider } from "@/app/main-page/_components/peek/peek-context"
 import { PeekStage } from "@/app/main-page/_components/peek/peek-stage"
 import { JsonLd } from "@/app/main-page/_components/seo/json-ld"
-import { PAGE_SECTION, SECTION } from "@/app/main-page/_lib/anchors"
+import { PAGE_SECTION } from "@/app/main-page/_lib/anchors"
 import { breadcrumb, cardsOf, postDate, termLinks } from "@/app/main-page/_lib/content/pages"
 import { postPeeks } from "@/app/main-page/_lib/content/peeks"
 import { getSource } from "@/app/main-page/_lib/content/source"
@@ -25,7 +26,7 @@ import { AUTHOR } from "@/lib/site"
 /**
  * Wpis: okruszki, tytuł z opisem (jak każda podstrona), data, czas lektury
  * i kategorie, okładka, treść w kolumnie (`article.css`), spis rozdziałów
- * w lewym torze (ten sam co sekcje startu), tagi i autor, wezwanie do
+ * w lewym torze pod menu głównym, tagi i autor, wezwanie do
  * rozmowy i „Czytaj dalej”. Zdjęcia autora świadomie nie ma.
  */
 export async function PostPage({ post, locale }: { post: Post; locale: Locale }) {
@@ -47,10 +48,7 @@ export async function PostPage({ post, locale }: { post: Post; locale: Locale })
     <PeekProvider peeks={postPeeks(related)}>
       <JsonLd data={postPageSchema(locale, post)} />
       {chapters.length > 0 && (
-        <SectionNav
-          label={common.ui.tableOfContents}
-          sections={[{ id: SECTION.start, label: mainPage.ui.start }, ...chapters]}
-        />
+        <TableOfContents label={common.ui.tableOfContents} sections={chapters} />
       )}
       <article>
         <PageHeader
@@ -75,23 +73,53 @@ export async function PostPage({ post, locale }: { post: Post; locale: Locale })
         </PageHeader>
 
         {/* alt pusty: okładka ilustruje tytuł, który stoi tuż nad nią. */}
-        <Cover className="column mt-10 motion-safe:animate-sharpen motion-safe:[animation-delay:300ms]">
-          <Image
-            src={frontmatter.image}
-            alt=""
-            width={COVER.width}
-            height={COVER.height}
-            sizes={COLUMN_SIZES}
-            preload
-            fetchPriority="high"
-            className="aspect-video w-full rounded-2xl bg-muted object-cover"
-          />
+        {/* Ostatnia w „harmonijce”: zasłona odsłania okładkę, a kadr osiada (`uncover`) —
+            obraz maluje się od razu, więc LCP wpisu liczy się od pierwszej klatki. */}
+        <Cover className="column mt-10">
+          <div className="uncover overflow-hidden rounded-2xl [--uncover-delay:var(--enter-media)]">
+            <Image
+              src={frontmatter.image}
+              alt=""
+              width={COVER.width}
+              height={COVER.height}
+              sizes={COLUMN_SIZES}
+              preload
+              fetchPriority="high"
+              className="aspect-video w-full bg-muted object-cover motion-safe:animate-settle motion-safe:[animation-delay:var(--enter-media)]"
+            />
+          </div>
           {frontmatter.imageCaption && (
-            <figcaption className="mt-2.5 text-sm text-muted-foreground">
+            <figcaption className="mt-2.5 text-sm text-muted-foreground motion-safe:animate-enter motion-safe:[animation-delay:calc(var(--enter-media)+300ms)]">
               {frontmatter.imageCaption}
             </figcaption>
           )}
         </Cover>
+
+        {/* Spis rozdziałów poniżej 1280 px (w torze go nie ma): natywne `details` — działa bez JS,
+            zwinięty nie zabiera miejsca nad treścią. Od 1280 px ten sam spis stoi w lewym torze. */}
+        {chapters.length > 2 && (
+          <details className="group/toc column mt-10 xl:hidden">
+            <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between gap-3 rounded-2xl border px-4 text-sm font-medium outline-none hover:bg-accent/50 focus-visible:ring-[3px] focus-visible:ring-ring [&::-webkit-details-marker]:hidden">
+              {common.ui.tableOfContents}
+              <ChevronDownIcon
+                aria-hidden="true"
+                className="size-4 text-muted-foreground transition-transform group-open/toc:rotate-180"
+              />
+            </summary>
+            <ol className="mt-2 grid gap-0.5 px-1">
+              {chapters.map((chapter) => (
+                <li key={chapter.id}>
+                  <a
+                    href={`#${chapter.id}`}
+                    className="flex min-h-11 items-center rounded-lg px-3 text-sm text-muted-foreground outline-none hover:bg-accent/50 hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring"
+                  >
+                    {chapter.label}
+                  </a>
+                </li>
+              ))}
+            </ol>
+          </details>
+        )}
 
         <div className="column mt-12">
           <div className="article">{content}</div>

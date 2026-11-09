@@ -42,13 +42,11 @@ export function SearchMenu({
   groups,
   labels,
   email,
-  homeHref,
   locale,
 }: {
   groups: readonly SearchGroup[]
   labels: SearchLabels
   email: string
-  homeHref: string
   locale: Locale
 }) {
   const [open, setOpen] = useState(false)
@@ -105,7 +103,6 @@ export function SearchMenu({
           groups={groups}
           labels={labels}
           email={email}
-          homeHref={homeHref}
           locale={locale}
           trigger={button}
           onCopied={confirmCopied}

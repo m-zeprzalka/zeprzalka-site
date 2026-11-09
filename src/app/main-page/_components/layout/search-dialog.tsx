@@ -3,8 +3,8 @@
 import { useMemo, useRef, useState, type ReactNode, type RefObject } from "react"
 import { defaultFilter, useCommandState } from "cmdk"
 import Image from "next/image"
-import { usePathname, useRouter } from "next/navigation"
-import { ArrowUpRightIcon, CopyIcon, HashIcon, SunMoonIcon, type LucideIcon } from "lucide-react"
+import { useRouter } from "next/navigation"
+import { ArrowUpRightIcon, CopyIcon, SunMoonIcon, type LucideIcon } from "lucide-react"
 import {
   Command,
   CommandEmpty,
@@ -41,28 +41,29 @@ export interface SearchLabels {
   description: string
   placeholder: string
   empty: string
-  /** Nagłówek grupy sekcji startu, gdy okno otwarto na podstronie („Na tej stronie” — tylko na starcie). */
-  homeSections: string
   copied: string
   /** Liczba wyników dla czytnika — formy liczby mnogiej (`plural`). */
   results: PluralForms
   hints: { select: string; open: string; close: string }
 }
 
+/** Zamknięte okno nie liczy wyników — stała pusta lista (stabilna zależność `useMemo`). */
+const NO_GROUPS: readonly SearchGroup[] = []
+
 /** Ikony pozycji bez miniatury (realizacje i wpisy mają miniatury). */
 const ICONS: Record<Exclude<SearchItemIcon, "work" | "post">, LucideIcon> = {
-  section: HashIcon,
   page: ArrowUpRightIcon,
   email: CopyIcon,
   theme: SunMoonIcon,
 }
 
 /**
- * Okno wyszukiwarki ⌘K (ładowane leniwie przez `SearchMenu`). Od tabletu okno
- * shadcn na szerokość kolumny z podglądem obok listy; na telefonie arkusz od
- * dołu, który nie włącza klawiatury sam z siebie. Wybrana pozycja działa
- * dopiero po zamknięciu okna (gdy strona znów się przewija): skok do kotwicy
- * przenosi tam fokus, a bez skoku fokus wraca do przycisku.
+ * Okno wyszukiwarki ⌘K (ładowane leniwie przez `SearchMenu`): menu główne serwisu
+ * (podstrony), realizacje, wpisy i akcje. Od tabletu okno shadcn na szerokość
+ * kolumny z podglądem obok listy; na telefonie arkusz od dołu, który nie włącza
+ * klawiatury sam z siebie. Wybrana pozycja działa dopiero po zamknięciu okna (gdy
+ * strona znów się przewija): realizacja na starcie otwiera swój wiersz i dostaje
+ * fokus, a bez przejścia fokus wraca do przycisku.
  */
 export default function SearchDialog({
   open,
@@ -70,7 +71,6 @@ export default function SearchDialog({
   groups,
   labels,
   email,
-  homeHref,
   locale,
   trigger,
   onCopied,
@@ -80,7 +80,6 @@ export default function SearchDialog({
   groups: readonly SearchGroup[]
   labels: SearchLabels
   email: string
-  homeHref: string
   locale: Locale
   /** Przycisk, do którego wraca fokus po zamknięciu. */
   trigger: RefObject<HTMLButtonElement | null>
@@ -91,8 +90,6 @@ export default function SearchDialog({
   const pending = useRef<string | null>(null)
   const desktop = useMediaQuery("(min-width: 48rem)")
   const router = useRouter()
-  const pathname = usePathname()
-  const onHome = pathname === homeHref
   const toggleTheme = useToggleTheme()
   const sheet = useRef<HTMLDivElement>(null)
 
@@ -101,8 +98,8 @@ export default function SearchDialog({
     const href = pending.current
     pending.current = null
     if (!href) return trigger.current?.focus()
-    // Klatkę później: blokada przewijania okna jest już zdjęta. Kotwica na tej samej
-    // stronie — skok w miejscu; na innej (sekcja startu wybrana z podstrony) — przejście.
+    // Klatkę później: blokada przewijania okna jest już zdjęta. Realizacja na starcie,
+    // gdy okno otwarto na starcie — skok w miejscu (lista otwiera wiersz); poza tym przejście.
     requestAnimationFrame(() => {
       const [path = "", hash] = href.split("#")
       if (hash && (!path || path === window.location.pathname)) goToAnchor(hash)
@@ -121,25 +118,8 @@ export default function SearchDialog({
     else if (item.href) pending.current = item.href
   }
 
-  // Kolejność: sekcje oglądanej strony, podstrony, sekcje startu (tylko poza nim), realizacje,
-  // wpisy, akcje — podstrony nie giną za kilkudziesięcioma wierszami.
-  const ordered = useMemo(() => {
-    if (!open) return []
-    const byId = new Map(groups.map((group) => [group.id, group]))
-    const local = pageSections()
-    const sections = byId.get("sections")
-    const pick = (id: string) => byId.get(id) ?? null
-    return [
-      local.length > 0 && sections ? { ...sections, id: "local", items: local } : null,
-      pick("pages"),
-      onHome || !sections ? null : { ...sections, heading: labels.homeSections },
-      pick("works"),
-      pick("posts"),
-      pick("actions"),
-    ].filter((group): group is SearchGroup => group !== null)
-    // `pathname`: po przejściu na inną stronę spis jej sekcji jest inny.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open, groups, onHome, labels.homeSections, pathname])
+  // Kolejność grup z danych: podstrony (menu główne), realizacje, wpisy, akcje.
+  const ordered = open ? groups : NO_GROUPS
   // Filtrowanie i sortowanie po naszej stronie: cmdk 1.1.1 nie przestawia grup (szuka ich
   // po wewnętrznym id, a w DOM stoją pod nagłówkiem), więc Enter brał pierwszy wiersz w DOM,
   // a nie najlepsze trafienie. Ta sama miara trafności co w cmdk (`defaultFilter`).
@@ -262,21 +242,6 @@ export default function SearchDialog({
       </DrawerContent>
     </Drawer>
   )
-}
-
-/**
- * Sekcje oglądanej strony — te same, które pokazuje spis w lewym torze (`SectionNav`
- * jest w DOM także poniżej 1280 px, tylko ukryty). Strona bez spisu nie ma tej grupy.
- */
-function pageSections(): SearchItem[] {
-  return [
-    ...document.querySelectorAll<HTMLAnchorElement>("nav[data-section-nav] a[href^='#']"),
-  ].map((link) => ({
-    id: `local-${link.hash.slice(1)}`,
-    label: link.textContent?.trim() ?? "",
-    icon: "section",
-    href: link.hash,
-  }))
 }
 
 /** Liczba wyników (albo ich brak) dla czytnika — `[cmdk-empty]` nie jest regionem na żywo. */

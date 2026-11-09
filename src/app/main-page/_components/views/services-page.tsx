@@ -1,5 +1,4 @@
 import { CheckIcon } from "lucide-react"
-import { SectionNav } from "@/app/main-page/_components/layout/section-nav"
 import { CtaPanel } from "@/app/main-page/_components/page/cta-panel"
 import { LabelRow } from "@/app/main-page/_components/page/label-row"
 import { PageHeader } from "@/app/main-page/_components/page/page-header"
@@ -12,7 +11,6 @@ import {
   AccordionTrigger,
 } from "@/app/main-page/_components/ui/accordion"
 import { Badge } from "@/app/main-page/_components/ui/badge"
-import { SECTION } from "@/app/main-page/_lib/anchors"
 import { breadcrumb } from "@/app/main-page/_lib/content/pages"
 import { getSource } from "@/app/main-page/_lib/content/source"
 import { pageHref } from "@/app/main-page/_lib/routes"
@@ -39,22 +37,13 @@ function price(
  * Kwoty i pakiety żyją w `src/lib/services.ts`, teksty w `src/i18n`.
  */
 export function ServicesPage({ locale }: { locale: Locale }) {
-  const { common, copy: mainPage, pages } = getSource(locale)
+  const { common, pages } = getSource(locale)
   const copy = pages.services
   const badges = { start: copy.startBadge, recurring: copy.recurringBadge }
 
   return (
     <>
       <JsonLd data={servicesPageSchema(locale)} />
-      <SectionNav
-        label={mainPage.ui.onPage}
-        sections={[
-          { id: SECTION.start, label: mainPage.ui.start },
-          { id: copy.packagesId, label: copy.packagesHeading },
-          { id: copy.processId, label: copy.processHeading },
-          { id: copy.guaranteesId, label: copy.guaranteesHeading },
-        ]}
-      />
       <PageHeader
         breadcrumb={breadcrumb(locale, common.nav.services)}
         title={copy.title}

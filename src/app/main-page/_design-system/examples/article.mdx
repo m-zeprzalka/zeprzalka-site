@@ -1,0 +1,106 @@
+## Rozdział wpisu (h2)
+
+Akapit wpisu ma 17 px i interlinię 1,75. Link wewnętrzny prowadzi [do bloga](/blog) przez `next/link` z prefiksem podglądu, a zewnętrzny — do [dokumentacji Next.js](https://nextjs.org/docs) — otwiera się w nowej karcie. W tekście stoi `kod w linii`, **pogrubienie** i _kursywa_.
+
+### Podrozdział (h3)
+
+- Lista punktowana: znacznik w kolorze tekstu pomocniczego.
+- Punkt z zagnieżdżeniem:
+  - drugi poziom,
+  - i jeszcze jeden.
+
+1. Lista numerowana.
+2. Kolejny krok.
+
+> Cytat: kreska po lewej i szary tekst — na definicje i uwagi.
+
+| Język      | Klasa bloku   | Gdzie na stronie          |
+| ---------- | ------------- | ------------------------- |
+| TypeScript | `tsx`, `ts`   | komponenty i logika       |
+| CSS        | `css`         | tokeny i treść wpisu      |
+| Bash       | `bash`        | polecenia w terminalu     |
+| JSON, HTML | `json`, `html` | konfiguracja, pierwsze kroki |
+
+<Image src="/blog/css.webp" alt="Okładka wpisu o CSS — obraz w treści przez next/image" />
+
+---
+
+### Kod w kilku językach
+
+```tsx
+"use client"
+
+import { useState } from "react"
+import { Button } from "@/app/main-page/_components/ui/button"
+
+/** Licznik — stan lokalny i obsługa kliknięcia. */
+export function Counter({ start = 0 }: { start?: number }) {
+  const [count, setCount] = useState(start)
+  return (
+    <Button variant="outline" onClick={() => setCount((n) => n + 1)}>
+      Kliknięto {count} razy
+    </Button>
+  )
+}
+```
+
+```ts
+type Locale = "pl" | "en"
+
+// Strefa UTC: data wpisu nie przeskakuje o dzień, niezależnie od strefy czasowej czytelnika ani serwera.
+export function formatDate(iso: string, locale: Locale = "pl"): string {
+  return new Intl.DateTimeFormat(locale, { dateStyle: "long", timeZone: "UTC" }).format(new Date(iso))
+}
+```
+
+```css
+:root {
+  --radius: 0.75rem;
+}
+
+/* Karta rośnie razem z oknem. */
+.card {
+  border-radius: calc(var(--radius) + 8px);
+  padding: 1.5rem;
+}
+
+@media (min-width: 48rem) {
+  .card {
+    padding: 2rem;
+  }
+}
+```
+
+```bash
+# Nowy komponent shadcn trafia do _components/ui
+pnpm dlx shadcn@latest add tooltip
+pnpm check && echo "Gotowe: $(date +%H:%M)"
+```
+
+```json
+{
+  "name": "zeprzalka",
+  "private": true,
+  "scripts": { "dev": "next dev", "check": "pnpm lint && pnpm build" },
+  "engines": { "node": ">=22" }
+}
+```
+
+```html
+<!doctype html>
+<html lang="pl">
+  <head>
+    <meta charset="utf-8" />
+    <title>Pierwsza strona</title>
+  </head>
+  <body>
+    <h1 class="title">Cześć!</h1>
+    <a href="/kontakt">Napisz do mnie</a>
+  </body>
+</html>
+```
+
+```diff
+- const radius = "12px"
++ const radius = "var(--radius)"
+```

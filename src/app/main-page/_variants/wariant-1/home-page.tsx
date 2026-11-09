@@ -1,4 +1,3 @@
-import { SectionNav } from "@/app/main-page/_components/layout/section-nav"
 import { PeekProvider } from "@/app/main-page/_components/peek/peek-context"
 import { PeekStage } from "@/app/main-page/_components/peek/peek-stage"
 import { About } from "@/app/main-page/_components/sections/about"
@@ -13,18 +12,16 @@ import type { Locale } from "@/i18n/config"
 import { graph, personSchema, websiteSchema } from "@/lib/schema"
 
 /**
- * Wariant 1 — kanon „Indeksu”: jedna wąska kolumna, a spis sekcji i karta
- * podglądu pojawiają się na marginesach dopiero wtedy, gdy są potrzebne.
+ * Wariant 1 — kanon „Indeksu”: jedna wąska kolumna, menu główne w lewym torze
+ * (powłoka) i karta podglądu w prawym — pojawia się dopiero wtedy, gdy jest potrzebna.
  * Sama kompozycja — sekcje i system są wspólne dla wszystkich wariantów.
  */
 export function HomePage({ locale }: { locale: Locale }) {
-  const { email, ui, peeks, sections, hero, about, skills, work, blog, contact } =
-    getHomeContent(locale)
+  const { email, ui, peeks, hero, about, skills, work, blog, contact } = getHomeContent(locale)
 
   return (
     <PeekProvider peeks={peeks}>
       <JsonLd data={graph(websiteSchema(locale), personSchema(locale))} />
-      <SectionNav label={ui.onPage} sections={sections} />
       <Hero
         {...hero}
         email={email}

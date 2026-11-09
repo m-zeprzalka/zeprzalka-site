@@ -13,7 +13,7 @@ export function Logo({ domain, href }: { domain: string; href: string }) {
       href={href}
       // Bez prefetchu: logo jest na każdej stronie, a start pobierałby sam siebie (ok. 21 KB).
       prefetch={false}
-      className="relative flex items-center gap-1.5 rounded-full text-base font-medium tracking-tight whitespace-nowrap outline-none after:absolute after:-inset-x-2 after:-inset-y-3 focus-visible:ring-[3px] focus-visible:ring-ring min-[22.5rem]:text-lg"
+      className="relative flex items-center gap-1.5 rounded-full text-base font-medium tracking-tight whitespace-nowrap outline-none after:absolute after:-inset-x-2 after:-inset-y-3 focus-visible:ring-[3px] focus-visible:ring-ring max-[22.5rem]:text-[0.9375rem] min-[22.5rem]:text-lg"
     >
       <LogoMark />
       <GlyphText text={domain} mode="wave" />

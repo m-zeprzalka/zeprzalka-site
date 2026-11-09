@@ -8,7 +8,7 @@ import type { Segment } from "@/app/main-page/_lib/types"
 import { HeroVideo } from "./hero-video"
 
 /** Ikony fraz w pierwszym zdaniu — klucze jak w kartach podglądu. */
-const CHIP_ICONS = {
+export const CHIP_ICONS = {
   experience: <HistoryIcon />,
   web: <MonitorSmartphoneIcon />,
   motion: <ClapperboardIcon />,
@@ -16,9 +16,9 @@ const CHIP_ICONS = {
 
 /**
  * Start: status, dwutonowe zdanie (tytuł + pierwsze zdanie biogramu z trzema
- * frazami-podglądami), dwa działania i wideo. Wejście „harmonijką” po nagłówku:
- * status, słowa tytułu i zdania wyostrzają się z rozmycia jedno po drugim,
- * potem przyciski i wideo — tylko CSS, czasy w klasach `[--enter-…]`.
+ * frazami-podglądami), dwa działania i wideo. Wejście „harmonijką” po nagłówku
+ * i menu: status, słowa tytułu i zdania wjeżdżają z rozmycia jedno po drugim,
+ * potem przyciski, a na końcu kadr wideo — tylko CSS, pory w `--enter-*` (globals.css).
  */
 export function Hero({
   status,
@@ -37,26 +37,33 @@ export function Hero({
 }) {
   return (
     <section id={SECTION.start} data-peek-column="" className="column pt-14 md:pt-24">
-      <p className="flex items-center gap-2.5 text-sm text-muted-foreground motion-safe:animate-enter motion-safe:[animation-delay:80ms]">
+      <p className="flex items-center gap-2.5 text-sm text-muted-foreground motion-safe:animate-enter motion-safe:[animation-delay:var(--enter-status)]">
         <span aria-hidden="true" className="size-2 rounded-full bg-success" />
         {status}
       </p>
       <h1 id="start-title" className="mt-6 text-display">
-        <span className="enter-stagger [--enter-delay:140ms] [--enter-step:32ms]">
+        <span className="enter-stagger [--enter-delay:var(--enter-title)] [--enter-step:40ms]">
           <Segments segments={[{ text: noOrphans(title) }]} split="block" />
         </span>{" "}
-        <span className="enter-stagger text-muted-foreground [--enter-delay:320ms] [--enter-step:14ms]">
+        <span className="enter-stagger text-muted-foreground [--enter-delay:var(--enter-lead)] [--enter-step:16ms]">
           <Segments segments={lead} icons={CHIP_ICONS} split="block" />
         </span>
       </h1>
-      <div className="mt-8 flex flex-wrap gap-3 motion-safe:animate-enter motion-safe:[animation-delay:560ms] max-sm:*:w-full">
-        <Button asChild size="lg">
+      {/* Pełna szerokość dostają same przyciski, nie każde dziecko rzędu: `*:w-full` rozciągał
+          też komunikat czytnika `CopyEmail` (sr-only, `absolute`) i poszerzał stronę na telefonie. */}
+      <div className="mt-8 flex flex-wrap gap-3 motion-safe:animate-enter motion-safe:[animation-delay:var(--enter-actions)]">
+        <Button asChild size="lg" className="max-sm:w-full">
           <a href={`#${SECTION.contact}`}>
             {cta}
             <ArrowRightIcon />
           </a>
         </Button>
-        <CopyEmail email={email} label={labels.copyEmail} copiedLabel={labels.copied} />
+        <CopyEmail
+          email={email}
+          label={labels.copyEmail}
+          copiedLabel={labels.copied}
+          className="max-sm:w-full"
+        />
       </div>
       <HeroVideo labels={{ play: labels.playVideo, pause: labels.pauseVideo }} />
     </section>

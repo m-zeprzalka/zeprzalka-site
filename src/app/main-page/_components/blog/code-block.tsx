@@ -4,11 +4,12 @@ import { useEffect, useRef, useState, type ComponentProps } from "react"
 import { CheckIcon, CopyIcon } from "lucide-react"
 import { copyText } from "@/app/main-page/_lib/clipboard"
 import { useTransientFlag } from "@/app/main-page/_lib/hooks"
+import "./code.css"
 
 /**
  * Blok kodu we wpisie: przewijany w poziomie (osiągalny z klawiatury) i z
  * przyciskiem kopiowania. Do schowka idzie `textContent`, więc znaczniki
- * kolorowania składni nie trafiają do kopii. Wygląd — `article.css`.
+ * kolorowania składni nie trafiają do kopii. Wygląd i paleta składni — `code.css`.
  */
 export function CodeBlock({
   children,

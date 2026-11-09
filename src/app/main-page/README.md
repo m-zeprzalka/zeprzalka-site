@@ -7,22 +7,22 @@ adresem `/main-page` jako podgląd: po polsku, zawsze `noindex`, poza mapą stro
 Zasady, kryteria i decyzje (normatywne): **[ZASADY.md](ZASADY.md)**. Ten plik opisuje, co jest,
 gdzie leży, jak działa i jak to uruchomić.
 
-## Stan (7.11.2026)
+## Stan (9.11.2026)
 
-| Strona | Adres podglądu | Widok |
-| --- | --- | --- |
-| Start (wariant 1) | `/main-page` | `_variants/wariant-1/home-page.tsx` |
-| Usługi | `/main-page/uslugi` | `_components/views/services-page.tsx` |
-| Portfolio | `/main-page/portfolio` | `portfolio-page.tsx` |
-| O mnie (biogram i CV) | `/main-page/o-mnie` | `about-page.tsx` |
-| Kontakt | `/main-page/kontakt` | `contact-page.tsx` |
-| Polityka prywatności | `/main-page/polityka-prywatnosci` | `privacy-page.tsx` |
-| Blog i archiwum | `/main-page/blog`, `/main-page/blog/strona/[strona]` | `blog-page.tsx` |
-| Kategorie | `/main-page/blog/kategoria` | `categories-page.tsx` |
-| Kategoria, tag | `/main-page/blog/kategoria/[kategoria]`, `/main-page/blog/tag/[tag]` | `taxonomy-page.tsx` |
-| Wpis | `/main-page/blog/[slug]` | `post-page.tsx` |
-| 404 (podgląd ekranu) | `/main-page/nie-znaleziono` | `not-found-page.tsx` |
-| Design system | `/main-page/design-system` | `(pl)/design-system/page.demo.tsx` |
+| Strona                | Adres podglądu                                                       | Widok                                 |
+| --------------------- | -------------------------------------------------------------------- | ------------------------------------- |
+| Start (wariant 1)     | `/main-page`                                                         | `_variants/wariant-1/home-page.tsx`   |
+| Usługi                | `/main-page/uslugi`                                                  | `_components/views/services-page.tsx` |
+| Portfolio             | `/main-page/portfolio`                                               | `portfolio-page.tsx`                  |
+| O mnie (biogram i CV) | `/main-page/o-mnie`                                                  | `about-page.tsx`                      |
+| Kontakt               | `/main-page/kontakt`                                                 | `contact-page.tsx`                    |
+| Polityka prywatności  | `/main-page/polityka-prywatnosci`                                    | `privacy-page.tsx`                    |
+| Blog i archiwum       | `/main-page/blog`, `/main-page/blog/strona/[strona]`                 | `blog-page.tsx`                       |
+| Kategorie             | `/main-page/blog/kategoria`                                          | `categories-page.tsx`                 |
+| Kategoria, tag        | `/main-page/blog/kategoria/[kategoria]`, `/main-page/blog/tag/[tag]` | `taxonomy-page.tsx`                   |
+| Wpis                  | `/main-page/blog/[slug]`                                             | `post-page.tsx`                       |
+| 404 (podgląd ekranu)  | `/main-page/nie-znaleziono`                                          | `not-found-page.tsx`                  |
+| Design system         | `/main-page/design-system`                                           | `(pl)/design-system/page.demo.tsx`    |
 
 Na zeprzalka.com podgląd jest widoczny, bo w Vercelu jest ustawione `DEMO_PUBLIC=1`. Wersja
 angielska nowego systemu powstanie po akceptacji polskiej; do tego czasu przełącznik EN prowadzi
@@ -42,23 +42,27 @@ Gdy `pnpm dev` działa w repozytorium, build produkcyjny rób w czystej kopii (p
 
 ## Gdzie co zmieniać
 
-| Co | Gdzie |
-| --- | --- |
-| teksty nowej strony (napisy, frazy otwierające karty, liczby) | `src/i18n/content/main-page.ts` (podstrony: `pages.ts`, `common.ts`, `legal.ts`) |
-| pakiety i ceny | `src/lib/services.ts` |
-| realizacje (opisy, kategorie, plakaty, wideo) | `src/lib/portfolio.ts` |
-| wpisy bloga | `content/posts/*.mdx` |
-| które realizacje pokazuje karta danej frazy | `PEEK_WORKS` w `_lib/content/peeks.ts` |
-| efekt znaków w wideo startu | `GLYPH_REVEAL` w `_lib/glyph-reveal.ts` |
-| dekodowanie liter (czas, fala, tempo) | stałe na górze `_components/motion/glyph-text.tsx` |
-| kolory, promień, kolumna, krzywe i czasy ruchu, stopnie pisma | `globals.css` |
-| wygląd przycisków, pól, akordeonu, okien, plakietek | `_components/ui/*` (zmiany oznaczone `// zeprzalka:`) |
-| adresy podstron w podglądzie (prefiks `/main-page`) | `_lib/routes.ts` — jedyne miejsce |
-| kotwice, skok do sekcji i realizacji, odstęp pod nagłówkiem | `_lib/anchors.ts` (`goToAnchor`, `HEADER_OFFSET`) |
-| `sizes` obrazów | `_lib/media.ts` |
-| typografia treści wpisu (MDX) | `_components/blog/article.css` (tylko na wpisach) |
-| „ogranicz ruch” i animacje „przy wejściu w kadr” | reguła na końcu `globals.css` + `_lib/motion.ts` |
-| dane strukturalne podstron | `src/lib/page-schema.ts` (wspólne z serwisem) |
+| Co                                                                  | Gdzie                                                                            |
+| ------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| teksty nowej strony (napisy, frazy otwierające karty, liczby)       | `src/i18n/content/main-page.ts` (podstrony: `pages.ts`, `common.ts`, `legal.ts`) |
+| pakiety i ceny                                                      | `src/lib/services.ts`                                                            |
+| realizacje (opisy, kategorie, plakaty, wideo)                       | `src/lib/portfolio.ts`                                                           |
+| wpisy bloga                                                         | `content/posts/*.mdx`                                                            |
+| które realizacje pokazuje karta danej frazy                         | `PEEK_WORKS` w `_lib/content/peeks.ts`                                           |
+| druk wideo startu ze znaków (oczko, czasy składania i frontu, tony) | `GLYPH_REVEAL` w `_lib/glyph-reveal.ts`                                          |
+| pory „harmonijki” wejścia (nagłówek, menu, tytuł, kadr)             | `--enter-*` w `globals.css`                                                      |
+| siatka: kolumna, tory boczne, górna krawędź menu                    | `--container-column`, `--container-track`, `--spacing-rail` w `globals.css`      |
+| menu główne w lewym torze i ⌘K (podstrony)                          | `rail` w `_lib/content/shell.ts`, grupy w `_lib/content/search.ts`               |
+| paleta kolorowania składni w blokach kodu                           | `--syntax-*` w `_components/blog/code.css`                                       |
+| dekodowanie liter (czas, fala, tempo)                               | stałe na górze `_components/motion/glyph-text.tsx`                               |
+| kolory, promień, kolumna, krzywe i czasy ruchu, stopnie pisma       | `globals.css`                                                                    |
+| wygląd przycisków, pól, akordeonu, okien, plakietek                 | `_components/ui/*` (zmiany oznaczone `// zeprzalka:`)                            |
+| adresy podstron w podglądzie (prefiks `/main-page`)                 | `_lib/routes.ts` — jedyne miejsce                                                |
+| kotwice (realizacje, rozdziały wpisu), odstęp pod nagłówkiem        | `_lib/anchors.ts` (`goToAnchor`, `HEADER_OFFSET`)                                |
+| `sizes` obrazów                                                     | `_lib/media.ts`                                                                  |
+| typografia treści wpisu (MDX)                                       | `_components/blog/article.css` (tylko na wpisach)                                |
+| „ogranicz ruch” i animacje „przy wejściu w kadr”                    | reguła na końcu `globals.css` + `_lib/motion.ts`                                 |
+| dane strukturalne podstron                                          | `src/lib/page-schema.ts` (wspólne z serwisem)                                    |
 
 Nowy komponent shadcn: `pnpm dlx shadcn@latest add <nazwa>` — `components.json` wskazuje
 `_components/ui`. CLI w wersji 4 dopisuje paczkę `cn`: po instalacji `pnpm remove cn` i zamiana
@@ -77,7 +81,7 @@ src/app/main-page/
   (pl)/design-system/         # żywy katalog systemu
   _components/
     ui/                       # shadcn z CLI (+ choice-group)                    → src/components/ui
-    layout/                   # powłoka: nagłówek, logo, ⌘K, motyw, język, spis, stopka
+    layout/                   # powłoka: nagłówek, logo, ⌘K, motyw, język, menu w torze, spis wpisu, stopka
     sections/                 # sekcje startu (wspólne dla wariantów)
     peek/                     # karty podglądu: tor na marginesie i popover
     page/                     # klocki podstron: nagłówek, sekcja, wiersz etykiety, CTA, listy, galeria
@@ -94,7 +98,8 @@ src/app/main-page/
     hooks.ts, text.ts, types.ts
   _routes/blog.tsx            # fabryki tras bloga z parametrem                   → src/routes/blog.tsx
   _variants/wariant-1/        # kompozycja startu (kolejne warianty — tylko kompozycja)
-  _design-system/             # sekcje i przykłady katalogu (kod przykładu = plik)
+  _design-system/             # katalog: rozdziały (`chapters/`), przykłady (`examples/`, kod przykładu = plik),
+                              # tokeny czytane z arkuszy (`css-tokens.ts`), nakładka siatki
 ```
 
 Foldery z podkreślnikiem są prywatne (kolokacja Next): leżą obok tras, ale nie tworzą adresów.
@@ -116,7 +121,8 @@ te same fabryki co w serwisie (`src/lib/og.tsx`).
 `categoryHref`, `tagHref`, `blogPageHref`, `homeAnchor`), także linki we wpisach MDX.
 
 **Wyspy klienckie** (wszystko inne renderuje serwer): nagłówek (logo z sygnetem, ⌘K ładowane
-leniwie, przełącznik języka z `hreflang` strony, motyw), spis w lewym torze, karty podglądu
+leniwie, przełącznik języka z `hreflang` strony, motyw), menu główne w lewym torze i spis
+rozdziałów wpisu, karty podglądu
 (kontekst, tor, popover ładowany leniwie, frazy), listy z akordeonem (kompetencje, portfolio),
 lista wpisów startu, formularz, wideo startu, galeria, blok kodu, film YouTube, napisy
 dekodowane, „Nowy”, znak stopki, godzina w stopce.
@@ -125,8 +131,16 @@ dekodowane, „Nowy”, znak stopki, godzina w stopce.
 kartę w prawym torze (desktop z myszą), `PeekTrigger` i `usePeekHover` podpinają frazy, wiersze
 i linki. Poza torem (dotyk, klawiatura) ta sama karta otwiera się jako popover pod frazą.
 
+**Nawigacja.** Menu główne to podstrony: `RailNav` w lewym torze (od 1280 px, w powłoce, na każdej
+stronie) i grupa „Podstrony” w ⌘K — sekcji stron jako kotwic nie ma (decyzja 9.11). Jedyne
+spisy kotwic to rozdziały wpisu (`TableOfContents`, pod menu) i katalog design systemu.
+
 **Kotwice.** `goToAnchor(id)` to jedyna ścieżka skoku: ustawia hash, pozwala liście realizacji
 przejąć zdarzenie (otwiera wiersz bez animacji zwijania), przewija i przenosi fokus.
+
+**Ruch.** Wejście strony to „harmonijka” z samego CSS (`--enter-*`, `enter-stagger`), bloki pod
+zgięciem wjeżdżają przy przewijaniu (`reveal`), a wideo startu składa się ze znaków sygnetu na
+canvasie (`_lib/glyph-reveal.ts`: atlas znaków, ton komórki z plakatu, front w wideo).
 
 ## Jakość
 
@@ -156,11 +170,11 @@ przejąć zdarzenie (otwiera wiersz bez animacji zwijania), przewija i przenosi 
 
 ## Stos
 
-| Obszar | Wybór |
-| --- | --- |
-| Framework | Next.js 16 (App Router), React 19, TypeScript strict; wszystko statyczne (SSG), formularz przez Server Action |
-| UI | shadcn/ui (Radix) + Tailwind 4; ikony lucide-react; motyw next-themes (ciemny domyślnie) |
-| ⌘K | shadcn `Command` (cmdk) w `Dialog`, na telefonie `Drawer` (vaul) |
-| Ruch | CSS (przejścia, `@keyframes`, `tw-animate-css`, animacje sterowane przewijaniem), View Transitions API dla przelotu kadru, Canvas 2D dla wideo startu |
-| Treść | MDX (`next-mdx-remote`, rehype-slug, rehype-highlight), frontmatter walidowany przez zod, i18n własne typowane |
-| SEO | Metadata API + `buildMetadata`, `alternates.ts`, JSON-LD (`schema.ts`, `page-schema.ts`), karty OG |
+| Obszar    | Wybór                                                                                                                                                 |
+| --------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Framework | Next.js 16 (App Router), React 19, TypeScript strict; wszystko statyczne (SSG), formularz przez Server Action                                         |
+| UI        | shadcn/ui (Radix) + Tailwind 4; ikony lucide-react; motyw next-themes (ciemny domyślnie)                                                              |
+| ⌘K        | shadcn `Command` (cmdk) w `Dialog`, na telefonie `Drawer` (vaul)                                                                                      |
+| Ruch      | CSS (przejścia, `@keyframes`, `tw-animate-css`, animacje sterowane przewijaniem), View Transitions API dla przelotu kadru, Canvas 2D dla wideo startu |
+| Treść     | MDX (`next-mdx-remote`, rehype-slug, rehype-highlight), frontmatter walidowany przez zod, i18n własne typowane                                        |
+| SEO       | Metadata API + `buildMetadata`, `alternates.ts`, JSON-LD (`schema.ts`, `page-schema.ts`), karty OG                                                    |

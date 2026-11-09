@@ -9,6 +9,7 @@ import { THEME_COLOR } from "@/app/main-page/_lib/theme"
 import type { Locale } from "@/i18n/config"
 import { logoFontVariables } from "./fonts"
 import { HashFocus } from "./hash-focus"
+import { RailNav } from "./rail-nav"
 import { SiteFooter } from "./site-footer"
 import { SiteHeader } from "./site-header"
 
@@ -20,11 +21,11 @@ const PLATFORM_SCRIPT = `document.documentElement.dataset.os=/Mac|iPhone|iPad|iP
 
 /**
  * Szkielet dokumentu nowej wersji: kroje, motyw (ciemny na start, bez animacji
- * przy zmianie — `useToggleTheme`), nagłówek, treść i stopka. Wspólny dla przyszłych układów
+ * przy zmianie — `useToggleTheme`), nagłówek, menu główne w lewym torze, treść i stopka. Wspólny dla przyszłych układów
  * `(pl)` i `en` — atrybut `lang` ustawia tylko układ główny.
  */
 export function MainShell({ locale, children }: { locale: Locale; children: ReactNode }) {
-  const { skipToContent, header, footer } = getShellContent(locale)
+  const { skipToContent, header, rail, footer } = getShellContent(locale)
 
   return (
     // `dark` i `color-scheme` już w HTML: domyślny motyw maluje się od pierwszej klatki, bez
@@ -32,7 +33,8 @@ export function MainShell({ locale, children }: { locale: Locale; children: Reac
     <html
       lang={locale}
       className={`dark ${fontVariables} ${logoFontVariables}`}
-      style={{ colorScheme: "dark" }}
+      // `--rail-items`: liczba pozycji menu w torze — spis rozdziałów wpisu stoi tuż pod nim.
+      style={{ colorScheme: "dark", "--rail-items": rail.items.length }}
       suppressHydrationWarning
     >
       <body className="font-sans antialiased">
@@ -45,6 +47,7 @@ export function MainShell({ locale, children }: { locale: Locale; children: Reac
             {skipToContent}
           </a>
           <SiteHeader {...header} />
+          <RailNav {...rail} />
           <main id="main" tabIndex={-1} className="outline-none">
             {children}
           </main>

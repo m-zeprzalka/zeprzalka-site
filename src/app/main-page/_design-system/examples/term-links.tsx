@@ -1,18 +1,17 @@
 import { TermLinks } from "@/app/main-page/_components/page/term-links"
-import { categoryHref, tagHref } from "@/app/main-page/_lib/routes"
+import { categoryLinks, termLinks } from "@/app/main-page/_lib/content/pages"
+import { getSource } from "@/app/main-page/_lib/content/source"
 
 export function TermLinksExample() {
+  const categories = categoryLinks("pl").slice(0, 4)
+  const [post] = getSource("pl").posts
+
   return (
     <div className="grid gap-4">
-      <TermLinks
-        label="Kategorie"
-        terms={[
-          { label: "AI", href: categoryHref("pl", "ai"), count: 11 },
-          { label: "Next.js", href: categoryHref("pl", "next.js"), count: 10 },
-          { label: "Design", href: categoryHref("pl", "design"), count: 4 },
-        ]}
-      />
-      <TermLinks variant="outline" terms={[{ label: "#Kurs", href: tagHref("pl", "kurs") }]} />
+      {/* Kategorie z liczbą wpisów; bieżąca (strona tej kategorii) — wyróżniona, `aria-current`. */}
+      <TermLinks label="Kategorie" terms={categories} current={categories[0]?.href} />
+      {/* Tagi wpisu — obrys, „#” przed nazwą. */}
+      <TermLinks variant="outline" terms={termLinks("pl", "tags", post?.tags ?? [])} />
     </div>
   )
 }

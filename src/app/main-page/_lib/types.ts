@@ -89,7 +89,7 @@ export interface SectionLink {
   label: string
 }
 
-export type SearchItemIcon = "section" | "work" | "post" | "page" | "email" | "theme"
+export type SearchItemIcon = "work" | "post" | "page" | "email" | "theme"
 
 export interface SearchItem {
   id: string

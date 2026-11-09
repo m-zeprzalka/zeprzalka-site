@@ -19,7 +19,9 @@ export function Skills({
       className="column mt-28 md:mt-36"
     >
       <SectionHeading id="kompetencje-title" title={title} lead={lead} />
-      <SkillList items={items} />
+      <div className="reveal">
+        <SkillList items={items} />
+      </div>
     </section>
   )
 }

@@ -129,37 +129,8 @@
     color: var(--muted-foreground);
   }
 
-  /* Blok kodu (`code-block.tsx`) i kolorowanie składni (rehype-highlight): bez barw —
-     słowa kluczowe pogrubione, napisy przygaszone, komentarze kursywą, jak w palecie neutral. */
+  /* Blok kodu we wpisie — odstęp w rytmie treści; wygląd i składnia w `code.css`. */
   .article .code-block {
     margin-block: 1.75em;
-    border: 1px solid var(--border);
-    border-radius: calc(var(--radius) + 4px);
-    background: color-mix(in oklab, var(--muted) 55%, transparent);
-  }
-
-  .article .code-block pre {
-    padding: 1.1rem 1.25rem;
-    font-family: var(--font-mono);
-    font-size: 0.8125rem;
-    line-height: 1.7;
-    tab-size: 2;
-  }
-
-  .article :is(.hljs-comment, .hljs-quote) {
-    color: var(--muted-foreground);
-    font-style: italic;
-  }
-
-  .article :is(.hljs-keyword, .hljs-selector-tag, .hljs-built_in, .hljs-name, .hljs-tag) {
-    font-weight: 600;
-  }
-
-  .article :is(.hljs-string, .hljs-attr, .hljs-attribute, .hljs-regexp, .hljs-symbol) {
-    color: color-mix(in oklab, var(--foreground) 62%, var(--muted-foreground));
-  }
-
-  .article :is(.hljs-punctuation, .hljs-operator, .hljs-meta) {
-    color: var(--muted-foreground);
   }
 }

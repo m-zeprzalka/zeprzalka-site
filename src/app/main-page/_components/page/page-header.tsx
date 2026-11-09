@@ -16,10 +16,10 @@ import { cn } from "@/lib/utils"
 
 /**
  * Nagłówek podstrony — ten sam stopień i ta sama „harmonijka” co start:
- * okruszki, potem słowa tytułu i rozwinięcia wyostrzają się z rozmycia jedno
- * po drugim, na końcu dodatki (`children`: dane wpisu, działania). Tytuł i
- * rozwinięcie są osobnymi elementami (`h1` + `p`), a razem czytają się jak
- * dwutonowe zdanie startu. Kotwica `#start` — pierwsza pozycja spisu w lewym torze.
+ * okruszki, potem słowa tytułu i rozwinięcia wjeżdżają z rozmycia jedno po
+ * drugim, na końcu dodatki (`children`: dane wpisu, działania) — pory `--enter-*`.
+ * Tytuł i rozwinięcie są osobnymi elementami (`h1` + `p`), a razem czytają się
+ * jak dwutonowe zdanie startu. `#start` — początek strony (cel „wróć na górę”).
  */
 export function PageHeader({
   breadcrumb,
@@ -39,7 +39,7 @@ export function PageHeader({
     <header id={SECTION.start} className="column pt-14 md:pt-24">
       <Breadcrumb
         aria-label={breadcrumb.label}
-        className="motion-safe:animate-enter motion-safe:[animation-delay:80ms]"
+        className="motion-safe:animate-enter motion-safe:[animation-delay:var(--enter-status)]"
       >
         <BreadcrumbList>
           {breadcrumb.trail.map((crumb) => (
@@ -61,13 +61,13 @@ export function PageHeader({
         </BreadcrumbList>
       </Breadcrumb>
       <div className="mt-6 text-display">
-        <h1 className="enter-stagger [--enter-delay:140ms] [--enter-step:32ms]">
+        <h1 className="enter-stagger [--enter-delay:var(--enter-title)] [--enter-step:40ms]">
           <Segments segments={[{ text: noOrphans(title) }]} split="block" />
         </h1>
         {lead && (
           <p
             className={cn(
-              "enter-stagger text-muted-foreground [--enter-delay:320ms] [--enter-step:14ms]",
+              "enter-stagger text-muted-foreground [--enter-delay:var(--enter-lead)] [--enter-step:16ms]",
               compactLead && "mt-3 text-lg leading-snug font-normal tracking-normal sm:text-xl"
             )}
           >
@@ -76,7 +76,7 @@ export function PageHeader({
         )}
       </div>
       {children && (
-        <div className="mt-8 motion-safe:animate-enter motion-safe:[animation-delay:560ms]">
+        <div className="mt-8 motion-safe:animate-enter motion-safe:[animation-delay:var(--enter-actions)]">
           {children}
         </div>
       )}

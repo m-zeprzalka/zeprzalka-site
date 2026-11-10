@@ -1,7 +1,6 @@
 /**
- * Dane strukturalne podstron — jedna definicja dla widoków serwisu i nowej
- * wersji strony (`src/app/main-page`). Wcześniej każdy widok składał je sam,
- * więc druga wersja musiałaby je skopiować. Każdy graf, który odwołuje się do
+ * Dane strukturalne podstron — jedna definicja dla wszystkich widoków (każdy
+ * widok składał je kiedyś sam). Każdy graf, który odwołuje się do
  * autora przez `@id`, zawiera też jego węzeł (`personSchema`) — odwołanie bez
  * definicji na tej samej stronie wyszukiwarka może pominąć.
  */

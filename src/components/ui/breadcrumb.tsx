@@ -1,12 +1,10 @@
 import * as React from "react"
-import { Slot } from "radix-ui"
-import { ChevronRight } from "lucide-react"
-
 import { cn } from "@/lib/utils"
+import { ChevronRight, MoreHorizontal } from "lucide-react"
+import { Slot } from "radix-ui"
 
-// `aria-label` podaje strona w swoim języku; domyślna wartość to tylko zabezpieczenie.
 function Breadcrumb({ ...props }: React.ComponentProps<"nav">) {
-  return <nav aria-label="Breadcrumb" data-slot="breadcrumb" {...props} />
+  return <nav aria-label="breadcrumb" data-slot="breadcrumb" {...props} />
 }
 
 function BreadcrumbList({ className, ...props }: React.ComponentProps<"ol">) {
@@ -14,7 +12,7 @@ function BreadcrumbList({ className, ...props }: React.ComponentProps<"ol">) {
     <ol
       data-slot="breadcrumb-list"
       className={cn(
-        "flex flex-wrap items-center gap-1.5 text-sm break-words text-muted-foreground sm:gap-2.5",
+        "flex flex-wrap items-center gap-1.5 text-sm wrap-break-word text-muted-foreground sm:gap-2.5",
         className
       )}
       {...props}
@@ -44,7 +42,11 @@ function BreadcrumbLink({
   return (
     <Comp
       data-slot="breadcrumb-link"
-      className={cn("transition-colors hover:text-foreground", className)}
+      // zeprzalka: pole dotyku 44 px w pionie (`after:`) bez zmiany rysunku okruszków.
+      className={cn(
+        "relative transition-colors after:absolute after:-inset-x-1 after:-inset-y-3 hover:text-foreground",
+        className
+      )}
       {...props}
     />
   )
@@ -54,6 +56,7 @@ function BreadcrumbPage({ className, ...props }: React.ComponentProps<"span">) {
   return (
     <span
       data-slot="breadcrumb-page"
+      // zeprzalka: samo `aria-current` (wzorzec APG) — „link, niedostępny” wprowadzał w błąd.
       aria-current="page"
       className={cn("font-normal text-foreground", className)}
       {...props}
@@ -75,6 +78,21 @@ function BreadcrumbSeparator({ children, className, ...props }: React.ComponentP
   )
 }
 
+function BreadcrumbEllipsis({ className, ...props }: React.ComponentProps<"span">) {
+  return (
+    <span
+      data-slot="breadcrumb-ellipsis"
+      role="presentation"
+      aria-hidden="true"
+      className={cn("flex size-9 items-center justify-center", className)}
+      {...props}
+    >
+      {/* zeprzalka: bez angielskiego „More” — element jest i tak `aria-hidden`. */}
+      <MoreHorizontal className="size-4" />
+    </span>
+  )
+}
+
 export {
   Breadcrumb,
   BreadcrumbList,
@@ -82,4 +100,5 @@ export {
   BreadcrumbLink,
   BreadcrumbPage,
   BreadcrumbSeparator,
+  BreadcrumbEllipsis,
 }

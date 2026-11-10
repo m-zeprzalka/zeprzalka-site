@@ -73,7 +73,8 @@ export const archivePaths = (page: number, pageCounts: Localized<number>) =>
   mapLocales((other) => (page <= pageCounts[other] ? blogPagePath(other, page) : null))
 
 /**
- * Odpowiednik bieżącego adresu w drugim języku (przełącznik języka).
+ * Odpowiednik bieżącego adresu w drugim języku (przełącznik języka — liczony z adresu,
+ * więc link jest dobry już w HTML z serwera, przed hydratacją i bez JS).
  * Gdy go nie ma — najbliższa sensowna strona: indeks bloga albo strona główna.
  */
 export function counterpart(

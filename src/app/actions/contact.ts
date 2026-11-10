@@ -66,7 +66,7 @@ export async function sendContactEmail(
 ): Promise<ContactFormState> {
   const locale = readLocale(formData.get("locale"))
   const copy = getCommon(locale).contactAction
-  // Jedno pole tekstowe (serwis) albo kilka pigułek (nowa wersja) — jedna lista.
+  // Kilka pigułek (albo jedno pole tekstowe) — jedna lista.
   const types = joinProjectTypes(formData.getAll("project-type"))
   const fields = {
     name: text(formData.get("name"), 100),

@@ -49,3 +49,9 @@ next-env.d.ts
 
 # Claude Code — ustawienia lokalne i worktree agentów
 /.claude/
+
+# Prywatne pliki właściciela w drzewie roboczym — nigdy do publicznego repozytorium
+# (zdjęcie twarzy nie może trafić do public/, briefy i szkice są robocze).
+/public/DSC_0031.jpg
+/docs/prompt*.md
+/content/drafts/budowa-saas.txt

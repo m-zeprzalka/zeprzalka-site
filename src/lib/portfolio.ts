@@ -1,12 +1,9 @@
 /**
  * Jedno miejsce z realizacjami.
  *
- * Lista mieszkała wcześniej w `components/home/Gallery.tsx`. Strona `/portfolio`
- * pokazuje ten sam materiał w komplecie, więc dane musiały wyjść z komponentu —
- * inaczej dwie kopie tej samej listy rozjeżdżają się przy pierwszej zmianie.
- *
- * Sekcja Portfolio na stronie głównej to zajawka: bierze wyłącznie pozycje
- * oznaczone `featured` i zachowuje ich kolejność.
+ * Start (lista realizacji), `/portfolio` (galeria), karty podglądu i ⌘K biorą ten sam
+ * materiał — dane żyją poza komponentami, żeby kopie nie rozjechały się przy pierwszej
+ * zmianie. `featured` i `featuredPortfolioItems` — zajawka w piaskownicy `/demo`.
  *
  * Teksty są parami `{ pl, en }` — pola techniczne (plik wideo, poster, grupa)
  * są niezależne od języka, więc występują raz.
@@ -306,7 +303,3 @@ export const portfolioItems: PortfolioItem[] = [
 
 /** Zajawka na stronie głównej — w kolejności z listy powyżej. */
 export const featuredPortfolioItems = portfolioItems.filter((item) => item.featured)
-
-export function getPortfolioByGroup(group: PortfolioGroup): PortfolioItem[] {
-  return portfolioItems.filter((item) => item.group === group)
-}

@@ -1,15 +1,16 @@
 # Zasady pracy w tym repozytorium (dla agentów AI i ludzi)
 
 zeprzalka.com — strona osobista: portfolio, blog MDX, oferta. Next.js 16 App Router,
-React 19, TypeScript strict, Tailwind 4, shadcn/ui, pnpm, Vercel. Opis architektury:
-`README.md`; jedyna lista otwartych zadań: `docs/ROADMAP.md`; dziennik: `docs/DZIENNIK.md`.
+React 19, TypeScript strict, Tailwind 4, shadcn/ui, pnpm, Vercel. Polecenia i publikacja:
+`README.md`; warstwa widoku i design system: `docs/STRONA.md`; zasady wyglądu i kodu
+(normatywne): `docs/ZASADY.md`; jedyna lista otwartych zadań: `docs/ROADMAP.md`; dziennik:
+`docs/DZIENNIK.md`.
 
 ## Twarde zasady
 
-1. **Wygląd strony głównej (`/`, `/en`) jest nietykalny bez zgody właściciela.**
-   Każda zmiana pliku z `src/components/home/*`, `layout/*`, `ContactForm`,
-   `PortfolioCard` albo `ui/*` → `pnpm visual <bazowy> <zmiana>` musi pokazać 0 px
-   (albo tylko zmiany, na które właściciel się zgodził).
+1. **Wygląd zmieniamy tylko na prośbę właściciela.** Decyzje wyglądu i zachowań są
+   w `docs/ZASADY.md` (z datą) — zmiana decyzji najpierw tam. Refaktor bez zmiany wyglądu →
+   `pnpm visual <bazowy> <zmiana> --all` musi pokazać 0 px.
 2. **Nie zmieniamy tekstów na stronie bez prośby** — copy mieszka w `src/i18n/content/*`.
 3. **Żaden tekst nie istnieje w jednym języku.** Moduły treści to lustrzane drzewa
    `pl`/`en` (`en: typeof pl`); dane mają pary `Localized<T>`. Wyjątki: katalog
@@ -19,13 +20,10 @@ React 19, TypeScript strict, Tailwind 4, shadcn/ui, pnpm, Vercel. Opis architekt
 5. **Piaskownica `/demo` jest odizolowana.** Serwis nie importuje z `src/components/demo`
    ani `src/app/demo` ani zależności piaskownicy (`motion`, `@number-flow/react`, `gsap`, `ogl`) —
    ESLint to blokuje. Pliki tras dem mają końcówkę `.demo.tsx` (na produkcji tylko przy
-   `DEMO_PUBLIC=1` — ustawione w Vercelu na czas prac nad wyglądem). Build z demami trzeba
-   sprawdzić osobno (`VERCEL_ENV=production DEMO_PUBLIC=1 pnpm build`) — CI buduje bez nich.
-   Komponenty systemu „Forma” łączą klasy przez `forma/cn.ts` (zna tokeny `fm-*`).
-   **Nowa wersja strony** powstaje w `src/app/main-page/` (zasady i decyzje: `ZASADY.md`, dokumentacja i przepięcie: `README.md` — oba tam):
-   własne `_components/ui` z shadcn (CLI wskazuje tam przez `components.json`), własny
-   `globals.css`, trasy `.demo.tsx`. ESLint pilnuje izolacji w obie strony — serwis nie importuje
-   z `main-page`, a `main-page` nie importuje starych komponentów (`@/components/*`) ani `/demo`.
+   `DEMO_PUBLIC=1`). Build z demami trzeba sprawdzić osobno
+   (`VERCEL_ENV=production DEMO_PUBLIC=1 pnpm build`). Komponenty systemu „Forma” łączą klasy
+   przez `forma/cn.ts` (zna tokeny `fm-*`). Serwis: shadcn w `src/components/ui` (CLI przez
+   `components.json`), arkusz `src/app/globals.css` skanuje kod serwisu bez piaskownicy.
 6. **Jedna gałąź: `main`. Push = wdrożenie produkcyjne.** Przed pushem `pnpm check`;
    commit i push tylko na prośbę właściciela (albo przy jego zgodzie w zadaniu).
 7. **Repozytorium jest publiczne.** Szczegóły bezpieczeństwa wyłącznie w `docs/prywatne/` (gitignore).
@@ -46,19 +44,17 @@ React 19, TypeScript strict, Tailwind 4, shadcn/ui, pnpm, Vercel. Opis architekt
   mapa strony, przełącznik). Parametry tras bloga i ich kart OG — `src/routes/params.ts`.
 - Ciemny motyw działa tylko na ekranie (`@custom-variant dark` w `@media not print`) —
   nowe style ciemne piszemy przez `dark:` albo w `.dark` wewnątrz `@media not print`.
-- Wrappery `relative` wokół `ContactForm` (strona główna, `/kontakt`) zostają: bez nich
-  pole-pułapka (`absolute -z-10`) zmienia kompozycję warstw i antyaliasing tekstu formularza.
-- Klasy przycisków w nagłówku liczy serwer (`buttonVariants`) i podaje propsem do
-  komponentów klienckich — `cva` i `tailwind-merge` nie trafiają do wspólnego JS. Z tego
-  samego powodu granice błędów ładują ekran leniwie (`LazyErrorView`).
+- Granice błędów (`error.tsx`) ładują ekran leniwie (`next/dynamic`) — granica jest w drzewie
+  każdej trasy, a ekran potrzebny dopiero przy błędzie.
+- Pułapki warstwy widoku (stałe z modułów `"use client"`, nazwy `@keyframes` z `tw-animate-css`,
+  `fonts.load()`, LCP pod animacją, `data-scroll-behavior`, hash z adresu): `docs/ZASADY.md` §10.
 - Lokalny build z `VERCEL_ENV=production` po `pnpm dev`: najpierw `rm -rf .next/dev`
   (typy tras dev zawierają dema, których build produkcyjny nie zna). Gdy `pnpm dev` wciąż
   działa, odtwarza ten katalog — wtedy build w czystej kopii (`git archive`/`rsync` + `pnpm install --offline`).
 - Kroje (`next/font`) są w `src/app/fonts.ts` — wspólne dla układów, `global-error` i `/demo`.
 - Wideo: `play()` tylko w efekcie po zatwierdzeniu `src` (inaczej przeglądarka przerywa
-  odtwarzanie nowym ładowaniem) — wzór w `LazyVideo.tsx`.
-- Warianty Tailwinda 4 działają od lewej: `prose-a:hover:underline`, nie `hover:prose-a:…`
-  (to drugie podkreśla wszystkie linki przy najechaniu na cały artykuł).
+  odtwarzanie nowym ładowaniem) — wzór w `src/lib/video.ts` (`playInView`) i `peek-media.tsx`.
+- Warianty Tailwinda 4 działają od lewej: `md:hover:…`, nie `hover:md:…`.
 - Po zmianie `/o-mnie` albo `/en/about`: `pnpm cv` na działającym buildzie (PDF w `public/`).
 
 ## Przed commitem

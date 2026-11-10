@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 /**
  * CV w PDF ze strony „O mnie” w obu językach — jedna treść, dwa formaty.
- * Arkusz druku z `globals.css` daje jasną paletę i chowa `data-print-hide`.
+ * Wydruk daje jasną paletę na białym tle (`globals.css`), a elementy bez sensu na
+ * papierze (okruszki, działania, przyciski nagłówka, menu stopki, godzina) mają `print:hidden`.
  *
  *   pnpm build && pnpm start          # w drugim terminalu
  *   pnpm cv [adres-serwisu]           # domyślnie http://localhost:3000

@@ -25,14 +25,12 @@ const pl = {
     contact: "Kontakt",
     portfolio: "Portfolio",
     mainAria: "Nawigacja główna",
-    mobileAria: "Nawigacja mobilna",
     menuTitle: "Menu nawigacyjne",
     openMenu: "Otwórz menu",
     closeMenu: "Zamknij menu",
   },
   languageSwitch: {
-    /** Napis na przycisku — zawsze kod języka, na który przełącza. */
-    label: "EN",
+    /** Nazwa linku do drugiej wersji (po kodzie języka). */
     aria: "Zmień język na angielski",
   },
   footer: {
@@ -108,13 +106,11 @@ const en: typeof pl = {
     contact: "Contact",
     portfolio: "Portfolio",
     mainAria: "Main navigation",
-    mobileAria: "Mobile navigation",
     menuTitle: "Navigation menu",
     openMenu: "Open menu",
     closeMenu: "Close menu",
   },
   languageSwitch: {
-    label: "PL",
     aria: "Switch language to Polish",
   },
   footer: {

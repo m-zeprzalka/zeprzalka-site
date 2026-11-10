@@ -38,6 +38,12 @@ jobs:
       - name: Treść bloga (frontmatter, pary PL↔EN, obrazy, slugi)
         run: pnpm check:content
 
+      - name: Testy jednostkowe
+        run: pnpm test
+
+      - name: Klasy Tailwinda w zapisie kanonicznym
+        run: pnpm check:classes
+
       - name: Formatowanie
         run: pnpm format:check
 
@@ -54,19 +60,19 @@ jobs:
           key: next-${{ hashFiles('pnpm-lock.yaml') }}-${{ hashFiles('src/**', 'content/**') }}
           restore-keys: next-${{ hashFiles('pnpm-lock.yaml') }}-
 
-      # Vercel produkcyjny buduje też podgląd nowej wersji (`DEMO_PUBLIC=1`): błędy treści
-      # wykrywane dopiero przy buildzie (np. brak frazy w `segment()`) nie mogą przejść zielono.
-      - name: Build z podglądem nowej wersji (jak na Vercelu)
+      # Vercel produkcyjny buduje też piaskownicę `/demo` (`DEMO_PUBLIC=1`): błąd w niej
+      # nie może przejść zielono, skoro wywróciłby wdrożenie.
+      - name: Build z piaskownicą (jak na Vercelu)
         run: pnpm build
         env:
           VERCEL_ENV: production
           DEMO_PUBLIC: "1"
 
       - name: Build produkcyjny (do kontroli wyniku)
-        # Bez wyniku poprzedniego buildu (z podglądem); cache Next zostaje.
+        # Bez wyniku poprzedniego buildu (z piaskownicą); cache Next zostaje.
         run: rm -rf .next/server .next/static && pnpm build
         env:
           VERCEL_ENV: production
 
-      - name: Wynik buildu (karty OG, spis treści, szczątki dem)
+      - name: Wynik buildu (karty OG, kotwice, szczątki dem)
         run: pnpm check:build --production

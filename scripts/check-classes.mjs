@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Kontrola klas Tailwinda w nowej wersji strony (`src/app/main-page`) — to samo,
+ * Kontrola klas Tailwinda w kodzie serwisu (bez piaskownicy `/demo`) — to samo,
  * co podpowiedzi „suggestCanonicalClasses” w edytorze, ale dla wszystkich plików naraz:
  * każda klasa z `className`, `cn(…)` i `cva(…)` przechodzi przez kanonizację systemu
  * projektowego (`designSystem.canonicalizeCandidates`). Klasa, która ma krótszy
@@ -14,8 +14,11 @@ import fs from "node:fs"
 import path from "node:path"
 import { __unstable__loadDesignSystem } from "tailwindcss"
 
-const ROOT = path.join(process.cwd(), "src", "app", "main-page")
-const CSS = path.join(ROOT, "globals.css")
+const SRC = path.join(process.cwd(), "src")
+const CSS = path.join(SRC, "app", "globals.css")
+/** Katalogi z klasami serwisu; piaskownica ma własny arkusz i własne tokeny. */
+const DIRS = ["app", "components", "design-system", "lib"].map((dir) => path.join(SRC, dir))
+const SKIP = new Set([path.join(SRC, "app", "demo"), path.join(SRC, "components", "demo")])
 const fix = process.argv.includes("--fix")
 
 /**
@@ -33,15 +36,16 @@ async function loadStylesheet(id, base) {
 }
 
 const design = await __unstable__loadDesignSystem(fs.readFileSync(CSS, "utf8"), {
-  base: ROOT,
+  base: path.dirname(CSS),
   loadStylesheet,
 })
 
 function* files(dir) {
   for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
     const full = path.join(dir, entry.name)
-    if (entry.isDirectory()) yield* files(full)
-    else if (/\.tsx?$/.test(entry.name)) yield full
+    if (entry.isDirectory()) {
+      if (!SKIP.has(full)) yield* files(full)
+    } else if (/\.tsx?$/.test(entry.name)) yield full
   }
 }
 
@@ -51,7 +55,7 @@ const looksLikeClasses = (text) =>
   /(^|\s)[a-z-]+[:\-[(]/.test(text) && !/[{};<>=]/.test(text.replace(/\[[^\]]*\]|\([^)]*\)/g, ""))
 
 let problems = 0
-for (const file of files(ROOT)) {
+for (const file of DIRS.flatMap((dir) => [...files(dir)])) {
   let source = fs.readFileSync(file, "utf8")
   let changed = false
   for (const match of source.matchAll(STRING)) {

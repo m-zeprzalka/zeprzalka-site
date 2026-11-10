@@ -7,9 +7,12 @@ Next.js 16 (App Router) + MDX, wersja polska i angielska, deploy na Vercel.
 
 | Plik | Po co |
 | --- | --- |
+| [docs/STRONA.md](docs/STRONA.md) | warstwa widoku: strony, gdzie co zmieniać, struktura, jak działa, ocena gotowości, przegląd kodu |
+| [docs/ZASADY.md](docs/ZASADY.md) | **zasady wyglądu i kodu (normatywne)**: kryteria, decyzje z datami, pułapki |
+| `/design-system` | żywy katalog systemu (tokeny, komponenty, ruch) — kod w `src/design-system/` |
 | [docs/ROADMAP.md](docs/ROADMAP.md) | **jedyna lista otwartych zadań** — zrobione wypadają do dziennika |
 | [docs/DZIENNIK.md](docs/DZIENNIK.md) | co zrobiono w każdej iteracji i jak to sprawdzono |
-| [docs/KIERUNEK-WIZUALNY.md](docs/KIERUNEK-WIZUALNY.md) | system „Forma”, trzy koncepcje strony głównej, plan nowego wyglądu |
+| [docs/KIERUNEK-WIZUALNY.md](docs/KIERUNEK-WIZUALNY.md) | historia: system „Forma” i koncepcje z piaskownicy (iteracje 5–7) |
 | [AGENTS.md](AGENTS.md) | twarde zasady i pułapki dla agentów AI (i ludzi) |
 | `docs/prywatne/` | tylko lokalnie (w `.gitignore`): `BEZPIECZENSTWO.md`, `MARKETING.md`, materiały referencyjne |
 
@@ -22,9 +25,9 @@ Next.js 16 (App Router) + MDX, wersja polska i angielska, deploy na Vercel.
 | Framework | Next.js 16.4 (App Router, Turbopack), wszystkie strony statyczne |
 | Runtime | React 19.3, Node.js 24 (`.nvmrc`, `engines`); Vercel: region fra1, Fluid Compute |
 | Język | TypeScript (strict) |
-| CSS / UI | Tailwind CSS 4, shadcn/ui + Radix (`radix-ui`), Prettier z sortowaniem klas |
+| CSS / UI | Tailwind CSS 4, shadcn/ui + Radix (`radix-ui`), cmdk, vaul, next-themes; Prettier z sortowaniem klas |
 | Blog | MDX (`next-mdx-remote`), gray-matter, frontmatter walidowany przez zod |
-| Markdown | remark-gfm, remark-emoji, rehype-slug, rehype-highlight; spis treści z tego samego drzewa (`src/lib/mdx.ts`) |
+| Markdown | remark-gfm, remark-emoji, rehype-slug, rehype-highlight; spis treści z tego samego drzewa (`src/lib/mdx.ts`, `src/components/blog/render-article.ts`) |
 | Formularz | Server Action + zod; wysyłka przez API Resend (przejściowo SMTP, nodemailer 10) — `src/lib/mail.ts` |
 | Analityka | Vercel Analytics + Speed Insights (bez ciasteczek) |
 | Wersje językowe | polska (`/`) i angielska (`/en`), bez bibliotek i18n — pary tekstów wymuszane typami |
@@ -42,11 +45,13 @@ pnpm lint             # ESLint
 pnpm typecheck        # next typegen + tsc --noEmit (typy tras generowane przez Next)
 pnpm check:content    # reguły treści bloga (frontmatter, pary PL↔EN, obrazy, długości, slugi)
 pnpm format           # Prettier (format:check — tylko sprawdzenie)
-pnpm check            # treść + formatowanie + lint + build + check:build — przed każdym commitem
-pnpm check:build      # kontrola gotowego HTML: karty OG, kotwice spisu treści, lang, canonical,
+pnpm test             # testy jednostkowe (node --test, pliki *.test.ts obok kodu)
+pnpm check:classes    # klasy Tailwinda w zapisie kanonicznym (--fix poprawia)
+pnpm check            # treść + testy + klasy + formatowanie + lint + build + check:build — przed każdym commitem
+pnpm check:build      # kontrola gotowego HTML: karty OG, kotwice, lang, canonical,
                       # robots, JSON-LD; z --production także brak tras /demo
-pnpm visual <bazowy> <zmiana>   # porównanie pikseli / i /en (strażnik strony głównej)
-pnpm cv [adres]       # CV w PDF (PL i EN) ze stron „O mnie” działającego serwisu
+pnpm visual <bazowy> <zmiana> [--all]   # porównanie pikseli dwóch wersji (/, /en, z --all podstrony)
+pnpm cv [adres]       # CV w PDF (PL i EN) z wydruku stron „O mnie” działającego serwisu
 ```
 
 ## Jak publikować (ważne)
@@ -54,14 +59,14 @@ pnpm cv [adres]       # CV w PDF (PL i EN) ze stron „O mnie” działającego 
 Pracujemy na jednej gałęzi, `main`. **Push na `main` od razu wdraża produkcję**
 (integracja Vercel ↔ GitHub), więc przed pushem:
 
-1. `pnpm check` lokalnie (treść, formatowanie, lint, build, kontrola HTML).
-2. Zmiana pliku używanego przez stronę główną → `pnpm visual` (niżej) albo ręczny
-   workflow „Strona główna — porównanie pikseli” w GitHub Actions.
+1. `pnpm check` lokalnie (treść, testy, klasy, formatowanie, lint, build, kontrola HTML).
+2. Refaktor bez zmiany wyglądu → `pnpm visual` z wynikiem 0 px (niżej) albo ręczny workflow
+   „porównanie pikseli” w GitHub Actions.
 3. `git push` → Vercel wdraża, GitHub Actions powtarza `pnpm check` (+ audyt zależności).
 
-Większy eksperyment (np. nowy wygląd) rodzi się w piaskownicy `/demo`. Domyślnie nie ma
-jej na produkcji; na czas prac nad wyglądem Vercel ma `DEMO_PUBLIC=1`, więc dema są pod
-zeprzalka.com/demo (`noindex`, poza mapą strony). Nowy wpis: sekcja „Dwujęzyczność” niżej.
+Piaskownica `/demo` (dawne koncepcje — specyfikacja ruchu) domyślnie nie istnieje na
+produkcji; Vercel ma `DEMO_PUBLIC=1`, więc dema są pod zeprzalka.com/demo (`noindex`, poza
+mapą strony). Nowy wpis: sekcja „Dwujęzyczność” niżej.
 
 ### Zmienne środowiskowe (`.env.local` / Vercel)
 
@@ -94,66 +99,62 @@ src/
 │   │   ├── page.tsx             # strona główna
 │   │   ├── uslugi/ o-mnie/ kontakt/ portfolio/ polityka-prywatnosci/
 │   │   ├── blog/                # indeks, [slug], strona/[n], kategoria/, tag/ (cienkie re-eksporty)
-│   │   ├── design-system/       # żywy katalog obecnego języka wizualnego (noindex)
+│   │   ├── design-system/       # żywy katalog systemu (noindex)
 │   │   └── **/opengraph-image.tsx  # karty 1200×630 — jednolinijkowce nad src/lib/og.tsx
 │   ├── en/                      # wersja angielska — lustro (pl) z angielskimi adresami
-│   ├── demo/                    # PIASKOWNICA: trasy *.demo.tsx, tylko poza produkcją
+│   ├── demo/                    # PIASKOWNICA: trasy *.demo.tsx, tylko przy DEMO_PUBLIC=1
 │   ├── actions/contact.ts       # Server Action formularza (wysyłka: src/lib/mail.ts)
+│   ├── globals.css              # arkusz serwisu: tokeny, siatka, stopnie pisma, ruch
 │   ├── fonts.ts                 # Geist i Geist Mono — wspólne dla układów, global-error i /demo
 │   ├── global-not-found.tsx     # 404 dla nieznanych adresów; global-error.tsx — błąd w układzie
 │   ├── sitemap.ts robots.ts manifest.ts icon.png apple-icon.png
-├── routes/blog.tsx              # fabryki tras bloga (wpis, taksonomia, archiwum) dla obu języków
-├── routes/params.ts             # parametry tras — wspólne dla stron i ich kart OG
-├── components/
+├── components/                  # warstwa widoku (opis: docs/STRONA.md)
 │   ├── views/                   # widoki stron — jeden na stronę, wspólny dla obu języków
-│   ├── home/                    # sekcje strony głównej (wygląd nietykalny), HomeSection
-│   ├── layout/                  # RootShell, Header, NavLink, Footer, MobileNav(+Panel), Logo(+Glyph), ReadingProgress (CSS)
-│   ├── blog/                    # PostCard/PostGrid, TermLink, mdx-components, ActiveTOC, CodeBlock, PostCta, YouTubeEmbed
-│   ├── portfolio/               # PortfolioCard (serwer), LazyVideo (klient), PortfolioGrid
-│   ├── design-system/           # sekcje katalogu /design-system
-│   ├── demo/                    # PIASKOWNICA: system „Forma” i propozycje strony głównej (README w środku)
-│   ├── system/                  # ErrorView (+ LazyErrorView), NotFoundView
-│   ├── ui/                      # shadcn/ui (10 komponentów, wszystkie w użyciu)
-│   ├── ContactForm.tsx CtaPanel.tsx StatusBadge.tsx ThemeToggle.tsx JsonLd.tsx PageHeader.tsx
+│   ├── layout/ sections/ peek/ page/ blog/ motion/ seo/
+│   ├── ui/                      # shadcn/ui z CLI (+ choice-group)
+│   └── demo/                    # PIASKOWNICA: system „Forma” i dawne propozycje (README w środku)
+├── design-system/               # rozdziały i przykłady katalogu /design-system
+├── routes/                      # fabryki tras bloga (blog.tsx, blog-routes.tsx) i parametry (params.ts)
 ├── i18n/
 │   ├── config.ts                # ROUTES, PATH_BASES, FEEDS, Localized<T>, INTL_LOCALE
 │   ├── alternates.ts            # „ta sama strona w drugim języku”: hreflang, mapa strony, przełącznik
 │   ├── format.ts                # fill, plural (Intl.PluralRules), daty, liczby, czas lektury
-│   ├── navigation.ts            # jedna lista menu (nagłówek, stopka, menu mobilne)
-│   ├── content/                 # teksty: common, home, pages, meta, legal, system (pl + en)
+│   ├── content/                 # teksty: ui, common, home, pages, meta, legal, system (pl + en)
 │   ├── blog-map.ts              # pary wpisów, kategorii i tagów PL↔EN
 │   ├── metadata.ts              # metadane i viewport układów głównych
 │   └── page-metadata.ts         # buildMetadata — metadane każdej strony
 ├── lib/
-│   ├── posts.ts                 # odczyt i walidacja MDX, indeks kategorii/tagów, powiązane, latestUpdate
-│   ├── mdx.ts                   # kompilacja wpisu + spis treści z drzewa hast
-│   ├── blog-pages.ts            # paginacja archiwum bloga
-│   ├── og.tsx                   # karty Open Graph: wygląd + fabryki
-│   ├── schema.ts                # dane strukturalne (Person z @id i reszta)
-│   ├── site.ts                  # adres, autor, e-mail, profile
-│   ├── services.ts portfolio.ts # dane oferty i realizacji (pary PL/EN)
-│   ├── mail.ts                  # wysyłka wiadomości z formularza (Resend, przejściowo SMTP)
-│   ├── feed.ts rate-limit.ts escape.ts slug.ts utils.ts
-├── hooks/                       # use-reduced-motion (useReducedMotion, useReducedMotionVideo), use-in-view
+│   ├── content/                 # model widoku (serwer): źródło, powłoka, start, karty, ⌘K, podstrony
+│   ├── posts.ts mdx.ts blog-pages.ts feed.ts   # blog: odczyt i walidacja MDX, kompilacja, paginacja, RSS
+│   ├── og.tsx schema.ts page-schema.ts         # karty Open Graph, dane strukturalne
+│   ├── site.ts services.ts portfolio.ts        # adres, autor, profile; dane oferty i realizacji (pary PL/EN)
+│   ├── mail.ts rate-limit.ts escape.ts contact-fields.ts   # formularz
+│   ├── routes.ts anchors.ts hooks.ts motion.ts glyph-reveal.ts …   # logika widoku (docs/STRONA.md)
+│   └── utils.ts slug.ts
+├── hooks/                       # hooki piaskownicy /demo
 content/
 ├── posts/*.mdx  en/posts/*.mdx  # wpisy
 └── drafts/*.txt                 # robocze notatki (nieparsowane)
 scripts/check-content.mjs        # pnpm check:content
 scripts/check-build.mjs          # pnpm check:build — kontrola wyniku buildu
-scripts/visual-diff.mjs          # pnpm visual — strażnik strony głównej
+scripts/check-classes.mjs        # pnpm check:classes — zapis kanoniczny klas
+scripts/visual-diff.mjs          # pnpm visual — porównanie pikseli dwóch wersji
 scripts/cv-pdf.mjs               # pnpm cv — CV w PDF z „O mnie”
 .github/workflows/ci.yml         # CI: audyt, treść, formatowanie, typy, lint, build, check:build
-.github/workflows/visual.yml     # porównanie pikseli / i /en — uruchamiane ręcznie
+.github/workflows/visual.yml     # porównanie pikseli — uruchamiane ręcznie
 .github/dependabot.yml           # aktualizacje miesięczne, zgrupowane; bezpieczeństwo od razu
 vercel.json                      # build przez pnpm z lockfile'a, region fra1, Fluid Compute
 AGENTS.md CLAUDE.md              # zasady dla agentów AI
 ```
 
+Poprzednia warstwa widoku (do 10.11.2026) jest w tagu `v1-archiwum`; zrzuty i kopia offline
+starej strony — `docs/prywatne/archiwum-v1/` (lokalnie).
+
 ## Dwujęzyczność
 
 Polska wersja w katalogu głównym (adresy zaindeksowane przed `/en` nie zmieniły się),
 angielska pod `/en`. Dwa niezależne układy główne (`(pl)/layout.tsx`, `en/layout.tsx`),
-bo `lang` na `<html>` ustawia tylko układ główny; wspólną treść trzyma `RootShell`.
+bo `lang` na `<html>` ustawia tylko układ główny; wspólny szkielet trzyma `MainShell`.
 Nieznany adres obsługuje `global-not-found.tsx` (flaga `experimental.globalNotFound`).
 
 | Strona | Polski | Angielski |
@@ -177,7 +178,8 @@ lektury, `{klucz}`): `src/i18n/format.ts`. Komponenty klienckie dostają teksty 
 w `src/components/views/` z `locale` → dwa cienkie pliki trasy (`(pl)/…/page.tsx`,
 `en/…/page.tsx`) z `buildMetadata` (`src/i18n/page-metadata.ts`) → `opengraph-image.tsx`
 w segmencie (`pageOgImage(locale, "klucz")` z `src/lib/og.tsx`, teksty w `meta.ts` →
-`og.cards`) → klucz w `STATIC_PAGES` (`src/app/sitemap.ts`) i ewentualnie `MAIN_NAV`.
+`og.cards`) → klucz w `STATIC_PAGES` (`src/app/sitemap.ts`) i ewentualnie `PAGE_KEYS`
+(`src/lib/routes.ts` — menu w torze, ⌘K, stopka).
 
 **Nowy wpis:** `content/posts/<slug>.mdx` → wersja EN `content/en/posts/<slug-en>.mdx`
 (własny slug) → para w `POST_SLUGS` (`src/i18n/blog-map.ts`), kategorie i tagi z par
@@ -204,14 +206,13 @@ draft: false                  # true = tylko w pnpm dev
 Błędny typ pola albo data w złym formacie zatrzymuje build z nazwą pliku.
 Reguły SEO (długości, liczba kategorii) sprawdza `pnpm check:content`. Poza tym: nowy
 tag dopiero, gdy obejmie min. 3 wpisy; bez emoji w nagłówkach H2/H3 (psują kotwice);
-tytuły po polsku bez angielskiego Title Case, myślnik „ — ”; każdy wpis kończy `PostCta`
-z linkiem do oferty (automatycznie, w szablonie).
+tytuły po polsku bez angielskiego Title Case, myślnik „ — ”; każdy wpis kończy wezwanie
+(`CtaPanel`) z linkiem do kontaktu i oferty (automatycznie, w widoku wpisu).
 
 ## Zasady, których pilnujemy
 
-- **Wygląd strony głównej jest nietykalny bez zgody właściciela.** Nowy wygląd rodzi
-  się w piaskownicy `/demo`, potem w `/design-system`. Refaktor pliku używanego przez
-  stronę główną wymaga `pnpm visual` z wynikiem 0 px.
+- **Wygląd zmieniamy tylko na prośbę właściciela** — decyzje z datami w `docs/ZASADY.md`.
+  Refaktor bez zmiany wyglądu wymaga `pnpm visual` z wynikiem 0 px.
 - **Piaskownica `/demo` nie dotyka serwisu:** serwis z niej nie importuje (ESLint),
   jej klasy nie trafiają do CSS serwisu (`@source not`), a trasy `*.demo.tsx` istnieją
   tylko poza produkcją (`pageExtensions` w `next.config.ts`). Opis: `src/components/demo/README.md`.

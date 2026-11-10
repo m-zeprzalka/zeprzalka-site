@@ -6,11 +6,13 @@
  *
  * - karta `summary_large_image` bez `og:image` / `twitter:image` (archiwum
  *   bloga i tagi gubiły obrazek przez płytkie scalanie metadanych),
- * - spis treści wpisu z kotwicą, której nie ma w artykule,
+ * - kotwica (`href="#…"` — spis treści wpisu, link „Przejdź do treści”, wezwania),
+ *   której celu nie ma na stronie,
  * - `lang` dokumentu niezgodny z wersją językową adresu,
  * - nie więcej niż jeden canonical i jeden `robots` w nagłówku,
  * - JSON-LD, który nie jest poprawnym JSON-em,
- * - z flagą `--production`: trasy piaskownicy `/demo` w buildzie.
+ * - z flagą `--production`: trasy piaskownicy `/demo` w buildzie i pliki piaskownicy
+ *   w śladach funkcji (`*.nft.json`) — np. ścieżka `fs` złożona ze zmiennych wciąga cały `src`.
  *
  * Użycie: `pnpm build && pnpm check:build [--production]`
  */
@@ -72,13 +74,12 @@ for (const file of pages) {
     }
   }
 
-  // Spis treści: każda kotwica musi wskazywać istniejący nagłówek.
-  const toc = /<nav aria-label="(?:Spis treści|Table of contents)"[^>]*>(.*?)<\/nav>/s.exec(html)
-  if (toc) {
-    const ids = new Set([...html.matchAll(/\sid="([^"]+)"/g)].map(([, id]) => id))
-    for (const [, anchor] of toc[1].matchAll(/href="#([^"]+)"/g)) {
-      if (!ids.has(decodeURIComponent(anchor))) fail(`spis treści wskazuje brakujące #${anchor}`)
-    }
+  // Kotwice na tej stronie (spis treści wpisu w torze i nad treścią, „Przejdź do treści”,
+  // wezwania): każda musi wskazywać istniejący element.
+  const body = html.slice(html.indexOf("<body"))
+  const ids = new Set([...body.matchAll(/\sid="([^"]+)"/g)].map(([, id]) => id))
+  for (const [, anchor] of body.matchAll(/<a[^>]*\shref="#([^"]+)"/g)) {
+    if (!ids.has(decodeURIComponent(anchor))) fail(`kotwica wskazuje brakujące #${anchor}`)
   }
 }
 
@@ -89,6 +90,19 @@ if (production) {
   const demoRoutes = Object.values(manifest).filter((route) => route.startsWith("/demo"))
   if (demoRoutes.length > 0)
     errors.push(`build produkcyjny zawiera piaskownicę: ${demoRoutes.join(", ")}`)
+
+  const traces = (dir) =>
+    fs.readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
+      const full = path.join(dir, entry.name)
+      if (entry.isDirectory()) return traces(full)
+      return entry.name.endsWith(".nft.json") ? [full] : []
+    })
+  for (const file of traces(APP)) {
+    const { files = [] } = JSON.parse(fs.readFileSync(file, "utf8"))
+    const demo = files.filter((entry) => /\/src\/(app|components)\/demo\//.test(entry))
+    if (demo.length > 0)
+      errors.push(`${path.relative(APP, file)}: ślad funkcji z piaskownicą (${demo.length} plików)`)
+  }
 }
 
 if (errors.length > 0) {

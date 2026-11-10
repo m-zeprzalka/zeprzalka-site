@@ -18,45 +18,12 @@ const eslintConfig = [
               // Zależności wyłącznie piaskownicy (devDependencies) razem z podścieżkami.
               // Wyrażenie, nie `group`: wzorce w stylu .gitignore łapały też segment „Motion” w ścieżkach serwisu.
               regex: "^((framer-)?motion|@number-flow/[^/]+|gsap|ogl)(/.*)?$",
-              message:
-                "Ta zależność jest tylko w piaskownicy /demo. Do serwisu trafia razem z decyzją o nowym wyglądzie.",
+              message: "Ta zależność jest tylko w piaskownicy /demo.",
             },
             {
               group: ["@/components/demo/*", "@/app/demo/*", "**/demo/**"],
               message:
                 "Piaskownica /demo nie może być importowana przez serwis (src/components/demo/README.md).",
-            },
-            {
-              group: ["@/app/main-page/*"],
-              message:
-                "Nowa wersja (src/app/main-page) nie jest jeszcze częścią serwisu — przepięcie opisuje jej README.",
-            },
-          ],
-        },
-      ],
-    },
-  },
-  {
-    // Nowa wersja strony (src/app/main-page/ZASADY.md): własne `ui/` z shadcn, bez starych
-    // komponentów i bez piaskownicy. Z serwisu wolno brać treść (`@/i18n`), logikę (`@/lib`) i hooki.
-    files: ["src/app/main-page/**"],
-    rules: {
-      "no-restricted-imports": [
-        "error",
-        {
-          patterns: [
-            {
-              regex: "^(@number-flow/[^/]+|gsap|ogl)(/.*)?$",
-              message: "Ta zależność jest tylko w piaskownicy /demo.",
-            },
-            {
-              group: ["@/components/*"],
-              message:
-                "Nowa wersja ma własne komponenty w src/app/main-page/_components (shadcn w _components/ui).",
-            },
-            {
-              group: ["@/components/demo/*", "@/app/demo/*", "**/demo/**"],
-              message: "Nowa wersja nie importuje piaskownicy /demo.",
             },
           ],
         },
@@ -66,7 +33,29 @@ const eslintConfig = [
   {
     // Moduły wspólne dla serwera i klienta: bez modułów treści (`server-only`) — inaczej
     // pierwszy komponent kliencki, który je zaimportuje, wywraca build.
-    files: ["src/i18n/format.ts", "src/i18n/config.ts", "src/lib/utils.ts", "src/lib/slug.ts"],
+    files: [
+      "src/i18n/format.ts",
+      "src/i18n/config.ts",
+      "src/lib/utils.ts",
+      "src/lib/slug.ts",
+      // Logika widoku importowana przez wyspy klienckie.
+      "src/lib/anchors.ts",
+      "src/lib/clipboard.ts",
+      "src/lib/contact-fields.ts",
+      "src/lib/focus.ts",
+      "src/lib/glyph-reveal.ts",
+      "src/lib/glyphs.ts",
+      "src/lib/hooks.ts",
+      "src/lib/keep-in-view.ts",
+      "src/lib/media.ts",
+      "src/lib/morph.ts",
+      "src/lib/motion.ts",
+      "src/lib/routes.ts",
+      "src/lib/search-match.ts",
+      "src/lib/text.ts",
+      "src/lib/theme.ts",
+      "src/lib/video.ts",
+    ],
     rules: {
       "no-restricted-imports": [
         "error",
@@ -88,7 +77,16 @@ const eslintConfig = [
     rules: { "no-restricted-imports": "off" },
   },
   {
-    ignores: ["node_modules/**", ".next/**", ".claude/**", "out/**", "build/**", "next-env.d.ts"],
+    // `docs/` — dokumentacja i lokalne archiwum (kopia offline starej strony z paczkami JS).
+    ignores: [
+      "node_modules/**",
+      ".next/**",
+      ".claude/**",
+      "docs/**",
+      "out/**",
+      "build/**",
+      "next-env.d.ts",
+    ],
   },
 ]
 

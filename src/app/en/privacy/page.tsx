@@ -1,9 +1,9 @@
 import type { Metadata } from "next"
-import { PrivacyView } from "@/components/views/PrivacyView"
+import { PrivacyPage } from "@/components/views/privacy-page"
 import { privacyMetadata } from "@/i18n/page-metadata"
 
 export const metadata: Metadata = privacyMetadata("en")
 
-export default function PrivacyPage() {
-  return <PrivacyView locale="en" />
+export default function Page() {
+  return <PrivacyPage locale="en" />
 }

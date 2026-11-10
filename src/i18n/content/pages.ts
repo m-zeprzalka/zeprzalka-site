@@ -10,7 +10,6 @@ import type { Locale } from "@/i18n/config"
 
 const pl = {
   services: {
-    badge: "Usługi",
     title: "Ile kosztuje strona internetowa?",
     description:
       "Poniżej ceny, od których zaczynamy rozmowę. Ostateczna cena zależy od zakresu — wycenę dostajesz w 24 godziny, bez zobowiązań.",
@@ -33,7 +32,6 @@ const pl = {
     quoteBody:
       "Napisz, co chcesz osiągnąć. W ciągu dnia roboczego odpowiem z pierwszą propozycją i widełkami. Jeśli uznam, że Twojego problemu nie rozwiąże strona ani aplikacja — powiem to wprost.",
     quotePrimary: "Poproś o wycenę",
-    quoteSecondary: "Kim jestem",
     quotePortfolio: "Zobacz realizacje",
     /** Nazwa katalogu ofert w danych strukturalnych. */
     offerCatalog: "Usługi cyfrowe",
@@ -140,7 +138,6 @@ const pl = {
     ],
     ctaContact: "Porozmawiajmy o projekcie",
     ctaCv: "Pobierz CV (PDF)",
-    ctaPortfolio: "Portfolio online",
     /** Dane strukturalne: miasto i obszary kompetencji. */
     addressLocality: "Warszawa",
     knowsAbout: [
@@ -155,7 +152,6 @@ const pl = {
   },
 
   contact: {
-    badge: "Kontakt",
     title: "Porozmawiajmy",
     description:
       "Masz pomysł na projekt? Chętnie go omówię i zaproponuję rozwiązanie dopasowane do Twoich potrzeb.",
@@ -168,7 +164,6 @@ const pl = {
   },
 
   portfolio: {
-    badge: "Portfolio",
     title: "Realizacje",
     description:
       "Komplet materiałów, które mogę pokazać publicznie — własne produkty, strony i aplikacje obok pracy przy kamerze i montażu.",
@@ -183,20 +178,16 @@ const pl = {
   },
 
   blog: {
-    badge: "Blog",
     title: "Blog technologiczny",
     description: "Odkryj najnowsze trendy w AI, web developmencie, designie i technologii.",
     featuredHeading: "Wyróżnione artykuły",
     allHeading: "Wszystkie artykuły",
     /** {current} i {total} podstawia komponent paginacji. */
     pageOf: "strona {current} z {total}",
-    categoriesBadge: "Blog",
     categoriesTitle: "Kategorie",
     categoriesDescription: "Przeglądaj artykuły według kategorii",
-    categoryBadge: "Kategoria",
     /** {count} z odmienionym rzeczownikiem — `plural()` i `common.plurals.articles`. */
     inCategory: "{count} w tej kategorii",
-    tagBadge: "Tag",
     withTag: "{count} z tym tagiem",
     breadcrumbBlog: "Blog",
     breadcrumbAria: "Ścieżka nawigacji",
@@ -213,7 +204,6 @@ const pl = {
 
 const en: typeof pl = {
   services: {
-    badge: "Services",
     title: "What does a website cost?",
     description:
       "Below are the prices we start the conversation from. The final price follows the scope — you get a quote within 24 hours, with no obligation.",
@@ -235,7 +225,6 @@ const en: typeof pl = {
     quoteBody:
       "Tell me what you want to achieve. Within one working day I will reply with a first proposal and a price range. If I conclude that a website or an app will not solve your problem, I will say so plainly.",
     quotePrimary: "Request a quote",
-    quoteSecondary: "Who I am",
     quotePortfolio: "See my work",
     offerCatalog: "Digital services",
   },
@@ -339,8 +328,7 @@ const en: typeof pl = {
       },
     ],
     ctaContact: "Let's talk about your project",
-    ctaCv: "Download CV (PDF, in Polish)",
-    ctaPortfolio: "Portfolio online",
+    ctaCv: "Download CV (PDF)",
     addressLocality: "Warsaw",
     knowsAbout: [
       "Web Development",
@@ -354,7 +342,6 @@ const en: typeof pl = {
   },
 
   contact: {
-    badge: "Contact",
     title: "Let's talk",
     description:
       "Got an idea for a project? I'd be glad to talk it through and propose a solution shaped around what you need.",
@@ -367,7 +354,6 @@ const en: typeof pl = {
   },
 
   portfolio: {
-    badge: "Portfolio",
     title: "Work",
     description:
       "Everything I am free to show publicly — websites and applications next to work behind the camera and in the edit.",
@@ -381,18 +367,14 @@ const en: typeof pl = {
   },
 
   blog: {
-    badge: "Blog",
     title: "Technology blog",
     description: "The latest in AI, web development, design and technology.",
     featuredHeading: "Featured articles",
     allHeading: "All articles",
     pageOf: "page {current} of {total}",
-    categoriesBadge: "Blog",
     categoriesTitle: "Categories",
     categoriesDescription: "Browse articles by category",
-    categoryBadge: "Category",
     inCategory: "{count} in this category",
-    tagBadge: "Tag",
     withTag: "{count} tagged this way",
     breadcrumbBlog: "Blog",
     breadcrumbAria: "Breadcrumb",

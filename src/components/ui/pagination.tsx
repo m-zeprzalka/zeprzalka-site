@@ -1,14 +1,15 @@
 import * as React from "react"
-import { ChevronLeftIcon, ChevronRightIcon, MoreHorizontalIcon } from "lucide-react"
 import Link from "next/link"
-
 import { cn } from "@/lib/utils"
+import { ChevronLeftIcon, ChevronRightIcon, MoreHorizontalIcon } from "lucide-react"
+
 import { buttonVariants, type Button } from "@/components/ui/button"
 
 function Pagination({ className, ...props }: React.ComponentProps<"nav">) {
   return (
     <nav
-      aria-label="Pagination"
+      role="navigation"
+      aria-label="pagination"
       data-slot="pagination"
       className={cn("mx-auto flex w-full justify-center", className)}
       {...props}
@@ -32,58 +33,41 @@ function PaginationItem({ ...props }: React.ComponentProps<"li">) {
 
 type PaginationLinkProps = {
   isActive?: boolean
-  /** Brak adresu = pozycja nieaktywna („Poprzednia” na pierwszej stronie). */
-  href?: string
 } & Pick<React.ComponentProps<typeof Button>, "size"> &
-  Omit<React.ComponentProps<typeof Link>, "href">
+  React.ComponentProps<"a">
 
+// zeprzalka: strona z adresem przez next/link (przejście bez przeładowania i prefetch);
+// bez adresu (brzeg archiwum) — `span` z `aria-disabled`, nie link bez celu.
 function PaginationLink({
   className,
   isActive,
   size = "icon",
   href,
-  children,
-  "aria-label": ariaLabel,
   ...props
 }: PaginationLinkProps) {
-  const classes = cn(
-    buttonVariants({
-      variant: isActive ? "outline" : "ghost",
-      size,
-    }),
-    className
-  )
-
-  // Nieaktywna pozycja to zwykły tekst, a nie link do bieżącej strony.
-  // Bez `aria-disabled` i `aria-label` — oba są niedozwolone na elemencie bez roli.
-  if (!href) {
-    return (
-      <span data-slot="pagination-link" className={cn(classes, "pointer-events-none opacity-50")}>
-        {children}
-      </span>
-    )
-  }
-
+  const Comp = href ? Link : "span"
   return (
-    <Link
-      href={href}
+    <Comp
+      href={href as string}
+      aria-disabled={href ? undefined : true}
       aria-current={isActive ? "page" : undefined}
-      aria-label={ariaLabel}
       data-slot="pagination-link"
       data-active={isActive}
-      className={classes}
+      className={cn(
+        buttonVariants({
+          variant: isActive ? "outline" : "ghost",
+          size,
+        }),
+        className
+      )}
       {...props}
-    >
-      {children}
-    </Link>
+    />
   )
 }
 
-/*
- * Etykiety przychodzą z treści serwisu (src/i18n), bo komponent stoi na obu
- * wersjach językowych. Nazwa dostępna jest równa widocznemu napisowi —
- * wcześniej angielskie aria-label przy polskim napisie łamało WCAG 2.5.3.
- */
+// zeprzalka: napis z treści serwisu (`label`) zamiast angielskiego na sztywno — także
+// nazwa dla czytnika, gdy na telefonie widać samą strzałkę. Bez `href` (pierwsza albo
+// ostatnia strona) element nie jest linkiem, więc nie dostaje nazwy.
 function PaginationPrevious({
   className,
   label,
@@ -91,7 +75,7 @@ function PaginationPrevious({
 }: React.ComponentProps<typeof PaginationLink> & { label: string }) {
   return (
     <PaginationLink
-      aria-label={label}
+      aria-label={props.href ? label : undefined}
       size="default"
       className={cn("gap-1 px-2.5 sm:pl-2.5", className)}
       {...props}
@@ -109,7 +93,7 @@ function PaginationNext({
 }: React.ComponentProps<typeof PaginationLink> & { label: string }) {
   return (
     <PaginationLink
-      aria-label={label}
+      aria-label={props.href ? label : undefined}
       size="default"
       className={cn("gap-1 px-2.5 sm:pr-2.5", className)}
       {...props}
@@ -128,6 +112,7 @@ function PaginationEllipsis({ className, ...props }: React.ComponentProps<"span"
       className={cn("flex size-9 items-center justify-center", className)}
       {...props}
     >
+      {/* zeprzalka: bez angielskiego „More pages” — element jest i tak `aria-hidden`. */}
       <MoreHorizontalIcon className="size-4" />
     </span>
   )

@@ -1,101 +1,74 @@
 import type { Metadata } from "next"
-import { PageHeader } from "@/components/PageHeader"
-import { DsNav } from "@/components/design-system/DsNav"
-import { dsSections } from "@/components/design-system/nav"
-import { DsInline } from "@/components/design-system/primitives"
-import { ColorSection } from "@/components/design-system/sections/Color"
-import { TypeSection } from "@/components/design-system/sections/Type"
-import { GridSection } from "@/components/design-system/sections/Grid"
-import { ShapeSection } from "@/components/design-system/sections/Shape"
-import { MotionSection } from "@/components/design-system/sections/Motion"
-import { UiKitSection } from "@/components/design-system/sections/UiKit"
-import { AppKitSection } from "@/components/design-system/sections/AppKit"
-import { AnatomySection } from "@/components/design-system/sections/Anatomy"
-import { ContentSection } from "@/components/design-system/sections/Content"
-import { StatesSection } from "@/components/design-system/sections/States"
-import { RulesSection } from "@/components/design-system/sections/Rules"
-import { DebtSection } from "@/components/design-system/sections/Debt"
+import { TableOfContents } from "@/components/layout/table-of-contents"
+import { PeekProvider } from "@/components/peek/peek-context"
+import { PeekStage } from "@/components/peek/peek-stage"
+import { getHomeContent } from "@/lib/content/home"
+import { ArticleChapter } from "@/design-system/chapters/article"
+import { ColorsChapter } from "@/design-system/chapters/colors"
+import { ComponentsChapter } from "@/design-system/chapters/components"
+import { GridChapter } from "@/design-system/chapters/grid"
+import { HomeChapter } from "@/design-system/chapters/home"
+import { IconsChapter } from "@/design-system/chapters/icons"
+import { MotionChapter } from "@/design-system/chapters/motion"
+import { PrinciplesChapter } from "@/design-system/chapters/principles"
+import { ShapesChapter } from "@/design-system/chapters/shapes"
+import { ShellChapter } from "@/design-system/chapters/shell"
+import { SubpagesChapter } from "@/design-system/chapters/subpages"
+import { TypeChapter } from "@/design-system/chapters/type"
+import { PageHeaderExample } from "@/design-system/examples/page-header"
 
 export const metadata: Metadata = {
-  title: "System projektowy",
+  title: "Design system",
   description:
-    "Katalog języka wizualnego zeprzalka.com: tokeny, typografia, siatka, komponenty i wzorce obecnej wersji serwisu.",
+    "Katalog systemu zeprzalka.com: tokeny, pismo, siatka, komponenty shadcn, powłoka, kompozycje stron, treść wpisu i ruch.",
   // Dokumentacja wewnętrzna, tylko po polsku (wyjątek od zasady dwujęzyczności,
   // AGENTS.md) — poza wyszukiwarką, z własnym adresem kanonicznym.
   robots: { index: false, follow: false },
   alternates: { canonical: "/design-system" },
 }
 
-const facts = [
-  { label: "Tokeny koloru", value: "18 semantycznych" },
-  { label: "Komponenty bazowe", value: "10 (wszystkie w użyciu)" },
-  { label: "Komponenty aplikacji", value: "15" },
-  { label: "Motywy", value: "jasny i ciemny, domyślnie ciemny" },
-]
+/**
+ * Rozdziały w kolejności czytania: od fundamentów (tokeny) przez komponenty do kompozycji
+ * stron i ruchu. Kotwica i tytuł z tej listy trafiają i do rozdziału, i do spisu w torze.
+ */
+const CHAPTERS = [
+  { id: "zasady", label: "Zasady", Chapter: PrinciplesChapter },
+  { id: "kolory", label: "Kolory", Chapter: ColorsChapter },
+  { id: "pismo", label: "Pismo", Chapter: TypeChapter },
+  { id: "siatka", label: "Siatka", Chapter: GridChapter },
+  { id: "ksztalty", label: "Kształty", Chapter: ShapesChapter },
+  { id: "ikony", label: "Ikony", Chapter: IconsChapter },
+  { id: "komponenty", label: "Komponenty", Chapter: ComponentsChapter },
+  { id: "nawigacja", label: "Nawigacja i powłoka", Chapter: ShellChapter },
+  { id: "strona-glowna", label: "Strona główna", Chapter: HomeChapter },
+  { id: "podstrony", label: "Podstrony", Chapter: SubpagesChapter },
+  { id: "tresc-wpisu", label: "Treść wpisu", Chapter: ArticleChapter },
+  { id: "ruch", label: "Ruch", Chapter: MotionChapter },
+] as const
 
+/**
+ * Design system strony: tokeny, komponenty shadcn z `components/ui`,
+ * powłoka, kompozycje startu i podstron, treść wpisu i ruch — każdy przykład żywy,
+ * z kodem czytanym z pliku. Jak każda strona z frazami: jeden `PeekProvider` z kartami
+ * startu i jeden `PeekStage`. Strona wewnętrzna (noindex), tylko po polsku — wyjątek z AGENTS.md.
+ */
 export default function DesignSystemPage() {
+  const { peeks, ui } = getHomeContent("pl")
+
   return (
-    <div className="page-shell">
-      <PageHeader
-        badge="Design System"
-        title="System projektowy"
-        description="Kompletny język wizualny obecnej wersji zeprzalka.com — tokeny, typografia, siatka, komponenty i wzorce. Katalog jest żywy: renderuje prawdziwe komponenty serwisu, czyta tokeny wprost z globals.css i mierzy typografię na wyrenderowanej stronie."
+    <PeekProvider peeks={peeks} closeLabel={ui.closeCard}>
+      <TableOfContents
+        label="Rozdziały"
+        sections={CHAPTERS.map(({ id, label }) => ({ id, label }))}
       />
-
-      <div className="grid gap-10 lg:grid-cols-12 lg:gap-8">
-        {/* min-w-0: bez tego szerokie tabele i bloki kodu rozciągają
-            kolumnę siatki do swojej naturalnej szerokości. */}
-        {/* Bez `self-start`: kolumna ma wysokość całego wiersza siatki,
-            dzięki czemu przyklejony spis treści ma się gdzie przesuwać. */}
-        <aside className="min-w-0 lg:col-span-3">
-          <DsNav entries={dsSections} />
-        </aside>
-
-        <div className="min-w-0 lg:col-span-9">
-          <section className="mb-4 rounded-lg border bg-card p-6">
-            <h2 className="text-lg font-semibold tracking-tight">Jak czytać ten katalog</h2>
-            <p className="mt-3 max-w-3xl text-sm leading-relaxed text-muted-foreground">
-              Wszystko poniżej opisuje{" "}
-              <strong className="font-medium text-foreground">obecny</strong> wariant serwisu — ten
-              pod adresem głównym. Próbki nie są rysunkami: to te same komponenty, których używają
-              strony produkcyjne. Wartości tokenów pochodzą wprost z{" "}
-              <DsInline>globals.css</DsInline>, a rozmiary typografii są mierzone na wyrenderowanej
-              próbce przy bieżącej szerokości okna. Przełącz motyw w nagłówku, aby zobaczyć serwis w
-              drugiej palecie. Fragmenty w <DsInline>tym stylu</DsInline> to klasy i nazwy z kodu.
-            </p>
-            <p className="mt-3 max-w-3xl text-sm leading-relaxed text-muted-foreground">
-              Ostatnia sekcja zbiera rozbieżności między systemem a kodem — to lista decyzji do
-              podjęcia, nie błędów do cichego poprawienia. Trzy odrzucone warianty strony głównej
-              zostały usunięte z serwisu w listopadzie 2026 — ich kod przechowuje tag gita{" "}
-              <DsInline>warianty-strony-glownej-2026-08</DsInline>.
-            </p>
-
-            <dl className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-              {facts.map((fact) => (
-                <div key={fact.label} className="flex flex-col gap-1">
-                  <dt className="text-xs font-medium tracking-widest text-muted-foreground uppercase">
-                    {fact.label}
-                  </dt>
-                  <dd className="text-sm">{fact.value}</dd>
-                </div>
-              ))}
-            </dl>
-          </section>
-
-          <ColorSection />
-          <TypeSection />
-          <GridSection />
-          <ShapeSection />
-          <MotionSection />
-          <UiKitSection />
-          <AppKitSection />
-          <AnatomySection />
-          <ContentSection />
-          <StatesSection />
-          <RulesSection />
-          <DebtSection />
-        </div>
+      <PageHeaderExample />
+      {/* Treść objęta spisem rozdziałów — za nią spis w torze się chowa. */}
+      <div data-toc-scope="">
+        {CHAPTERS.map(({ id, label, Chapter }) => (
+          <Chapter key={id} id={id} title={label} />
+        ))}
       </div>
-    </div>
+      <PeekStage />
+    </PeekProvider>
   )
 }

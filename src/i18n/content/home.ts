@@ -1,4 +1,4 @@
-/** Treść strony głównej (`src/components/home/*`). */
+/** Treść strony głównej (sekcje `src/components/sections/*`, model: `src/lib/content/home.ts`). */
 import "server-only"
 import type { Locale, Localized } from "@/i18n/config"
 

@@ -1,6 +1,6 @@
 import type { Metadata } from "next"
-import { RootShell } from "@/components/layout/RootShell"
-import { NotFoundView } from "@/components/system/NotFoundView"
+import { MainShell } from "@/components/layout/main-shell"
+import { NotFoundPage } from "@/components/views/not-found-page"
 import { DEFAULT_LOCALE } from "@/i18n/config"
 import { getMeta } from "@/i18n/content/meta"
 import { getSystem } from "@/i18n/content/system"
@@ -10,12 +10,11 @@ import { getSystem } from "@/i18n/content/system"
  *
  * Serwis ma dwa układy główne — polski i angielski — więc zwykły
  * `app/not-found.tsx` nie miałby się do czego podpiąć i renderowałby się bez
- * arkusza stylów. `global-not-found` buduje własny, kompletny dokument, więc
- * nieznany adres dostaje pełną stronę (z nagłówkiem i stopką) i status 404.
+ * arkusza stylów. `global-not-found` buduje własny, kompletny dokument (ta sama
+ * powłoka co każda strona), więc nieznany adres dostaje pełną stronę i status 404.
  *
  * Treść jest polska: to język oryginału serwisu. Nieznany adres spod `/en`
- * też trafia tutaj — angielska 404 wymagałaby trasy renderowanej na żądanie
- * (statyczny catch-all z `dynamicParams = false` i tak kończy się tą stroną).
+ * też trafia tutaj — angielska 404 wymagałaby trasy renderowanej na żądanie.
  * `noindex` dokłada sam Next — jawne `robots` dawało drugi znacznik.
  */
 export const metadata: Metadata = {
@@ -28,8 +27,8 @@ export const metadata: Metadata = {
 
 export default function GlobalNotFound() {
   return (
-    <RootShell locale={DEFAULT_LOCALE}>
-      <NotFoundView locale={DEFAULT_LOCALE} />
-    </RootShell>
+    <MainShell locale={DEFAULT_LOCALE}>
+      <NotFoundPage locale={DEFAULT_LOCALE} />
+    </MainShell>
   )
 }

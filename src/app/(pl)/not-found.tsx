@@ -1,14 +1,10 @@
 import type { Metadata } from "next"
-import { NotFoundView } from "@/components/system/NotFoundView"
+import { NotFoundPage } from "@/components/views/not-found-page"
 import { getSystem } from "@/i18n/content/system"
 
 export const metadata: Metadata = { title: getSystem("pl").notFound.title }
 
-/*
- * Siatka bezpieczeństwa dla `notFound()` w trasach tej wersji językowej. Nieznane
- * adresy (wszystkie trasy są statyczne, `dynamicParams = false`) obsługuje
- * `global-not-found.tsx` — dlatego `/en/*` dostaje dziś polską 404 (ROADMAP §4).
- */
+/** `notFound()` w trasach polskiej wersji (np. nieznany wpis). Nieznany adres — `global-not-found.tsx`. */
 export default function NotFound() {
-  return <NotFoundView locale="pl" />
+  return <NotFoundPage locale="pl" />
 }

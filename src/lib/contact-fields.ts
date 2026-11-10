@@ -1,7 +1,8 @@
 /**
- * Rodzaj projektu w formularzu kontaktowym — wspólny zapis akcji i formularzy. Serwis ma jedno
- * pole tekstowe, nowa wersja — kilka pigułek z tym samym `name`; akcja składa je w jedną
- * listę, a po błędzie walidacji odsyła ją w tej postaci (formularz rozbija ją po `SEPARATOR`).
+ * Rodzaj projektu w formularzu kontaktowym — wspólny zapis akcji i formularza. Formularz ma
+ * kilka pigułek z tym samym `name` (dawniej jedno pole tekstowe — akcja przyjmuje oba); akcja
+ * składa je w jedną listę, a po błędzie walidacji odsyła ją w tej postaci (formularz rozbija ją
+ * po `SEPARATOR`).
  * Etykiety opcji nie mogą więc zawierać separatora.
  */
 export const PROJECT_TYPE_SEPARATOR = ", "

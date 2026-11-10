@@ -30,7 +30,7 @@ export const PERSON_ID = `${SITE_URL}/#person`
 
 /**
  * Jeden adres osoby niezależnie od języka strony — encja jest jedna. Angielski
- * profil wskazuje `ProfilePage` na `/en/about` (AboutView).
+ * profil wskazuje `ProfilePage` na `/en/about` (`about-page.tsx`).
  */
 const PERSON_URL = absoluteUrl(ROUTES.about[DEFAULT_LOCALE])
 

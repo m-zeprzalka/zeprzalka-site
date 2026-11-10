@@ -8,59 +8,47 @@ publiczne (bezpieczeństwo, marketing), są w `docs/prywatne/` — tutaj tylko o
 
 ---
 
-## 1. Teraz — nowy wygląd (dziś i najbliższe dni)
+## 1. Teraz — po przepięciu (10.11.2026)
 
-Plan i budżet jakości: [KIERUNEK-WIZUALNY.md](KIERUNEK-WIZUALNY.md) §3.
+Nowa wersja jest na głównej domenie w obu językach; poprzednia — tag `v1-archiwum`, zrzuty
+i kopia offline w `docs/prywatne/archiwum-v1/`. Warstwa widoku: [STRONA.md](STRONA.md)
+(ocena gotowości 8,5/10 i braki do 10), zasady: [ZASADY.md](ZASADY.md).
 
-- [ ] **[Ty]** Testy ręczne i na telefonie nowej strony głównej `/main-page` (wariant 1, kanon
-      Indeksu na shadcn) — uwagi do kolejnej iteracji; decyzje i przepięcie w
-      `src/app/main-page/ZASADY.md` i `README.md`.
-- [ ] **[Ty]** Decyzje z przeglądu kodu `main-page` (7.11): ok. 26 px w plakietkach kategorii
-      i tagów (cel 44 px, próg AA 24 px jest spełniony); menu na telefonie — od 9.11 menu główne
-      stoi w lewym torze od 1280 px, poniżej prowadzą ⌘K (arkusz) i stopka: zostaje tak czy menu
-      w nagłówku na telefonie?
-- [ ] **[Ty]** Testy ręczne i na telefonie podstron w nowym systemie (`/main-page/uslugi`,
-      `/portfolio`, `/o-mnie`, `/kontakt`, `/blog`, wpisy) — uwagi do kolejnej iteracji.
-- [ ] **[Kod]** Po akceptacji: ewentualnie warianty 2–3 strony głównej do testów A/B, wersja
-      angielska nowego systemu, potem przepięcie (`src/app/main-page/README.md`, „Przepięcie”).
+- [ ] **[Ty]** Testy na żywo i na telefonie po przepięciu (PL i EN) — uwagi do kolejnej iteracji.
+- [ ] **[Ty]** Google Search Console i Bing: ponowne zgłoszenie mapy strony, kontrola
+      indeksowania po zmianie wyglądu (adresy te same; `/main-page/*` → 308).
+- [ ] **[Ty]** Ręczny przegląd kodu — od czego zacząć: `docs/STRONA.md`, „Przegląd kodu”.
+- [ ] **[Ty]** Decyzje: menu na telefonie (dziś ⌘K w arkuszu i stopka — czy menu w nagłówku?);
+      sygnet bez końca to formalne odstępstwo od WCAG 2.2.2 (zostaje czy pauza / stop po kilku
+      cyklach); zwijany „Spis treści” nad wpisem na telefonie (zostaje?); krzyżyk karty bez
+      kadru z obwódką (`outline`) czy ciemny jak na kadrze; plakietki kategorii i tagów ok. 26 px
+      (cel 44 px, próg AA 24 px spełniony).
 - [ ] **[Ty]** Decyzje z audytu „agencji” (7.11): tło pod nagłówkiem (dziś samo rozmycie „bez koloru”
-      — UX proponuje lekki gradient tła, bo tekst pod logo bywa czytelny); oznaczenie pól wymaganych
-      w formularzu (nowy napis, np. „(opcjonalnie)” przy rodzaju projektu); teksty alternatywne obrazów
-      we wpisie „Claude Design” (dziś angielskie, ogólne) i literówka `**Pytania? **` na jego końcu;
-      ujęcia ekipy w pętli wideo startu — sprawdzić, że to nie Ty.
-- [ ] **[Ty]** Decyzje z iteracji 12 (9.11): sygnet bez końca to formalne odstępstwo od WCAG
-      2.2.2 (poziom A) — zostaje czy przycisk pauzy / stop po kilku cyklach; spis rozdziałów wpisu
-      na telefonie (zwijane „Spis treści” nad treścią) — zostaje?
-- [ ] **[Ty]** Ręczny przegląd kodu `main-page` (10.11) — od czego zacząć: `src/app/main-page/README.md`,
-      „Przegląd kodu”; ocena gotowości i braki do 10/10 — tamże, „Gotowość do wdrożenia”.
-- [ ] **[Kod]** Do 10/10 przed przepięciem (z oceny 10.11): testy `main-page` — maszyna stanów
-      kart podglądu, spis rozdziałów i `useEdgeAbove`, akcja formularza (zgodność ze starym
-      formularzem) — oraz automatyczny przebieg axe, przepełnienia i LCP dla `/main-page`
-      w CI (dziś ręcznie; `check:build` nie obejmuje podglądu); strażnik sztuczki LCP wideo startu
-      (`scale-[1.002]` — heurystyka Chrome, nie specyfikacja).
-- [ ] **[Kod]** Design system `/main-page/design-system`: HTML ok. 1,26 MB (kod ~40 przykładów
-      kolorowany na serwerze) — zwijać kod przykładów albo dzielić katalog na podstrony.
-- [ ] **[Kod]** `main-page`, wydajność: dane ⌘K jako statyczny plik pobierany z oknem (dziś
-      ok. 17 KB w ładunku RSC strony; HTML 34 KB gzip przy 20 KB starej strony); `cva`
-      i `tailwind-merge` poza wyspami klienckimi (klasy liczone na serwerze, jak w serwisie; ok.
-      −8 KB gz i −34 ms startu); jedna wyspa nagłówka zamiast czterech (Turbopack dubluje moduły
-      między paczką układu i strony, ok. 11 KB gz); `<Suspense>` wokół sekcji pod zgięciem
-      (hydratacja w kilku krótszych zadaniach) — do zmierzenia; lżejsze wideo startu na telefon;
-      akordeon portfolio i kompetencji bez Radix (`<details name>`, ok. −12 KB JS), jeśli
-      zostanie zgoda na odejście od shadcn w tym miejscu.
-- [ ] **[Ty]** Tekst w serwisie: „Wykładowca akademicki 2016–2026” w `/o-mnie` i CV → „2016–obecnie”
-      (wykłady trwają), a zdania o WSR i Civitas w czasie przeszłym; X (`x.com/zeprzalka_com`)
-      w profilach serwisu — w demach już jest, w serwisie dopiero na Twoją prośbę.
-- [ ] **[Kod]** System „Forma” w serwisie: tokeny w `globals.css`, prymitywy w `src/components/ui/`,
-      `/design-system` na nowym systemie.
-- [ ] **[Kod]** Strona główna w wybranej koncepcji; potem podstrony (wpis, `/uslugi`, `/o-mnie`,
-      `/portfolio`, `/kontakt`, menu mobilne) — z długiem z KIERUNEK §5 (pauza wideo, podpisy
-      kafli, pole wiadomości, akordeon w HTML, `/portfolio` w nawigacji, CTA przy pakietach, FAQ).
-- [ ] **[Kod]** Wideo: przekodowanie klipów do ~600 kb/s i lżejsze hero na telefon (po decyzji).
-- [ ] **[Kod]** Po wdrożeniu: usunięcie piaskownicy `/demo`, zmiennej `DEMO_PUBLIC` z Vercela
-      (dziś dema są na zeprzalka.com/demo do testów na telefonie) i zależności `motion`,
-      `@number-flow/react`, `gsap`, jeśli nowy serwis ich nie używa (archiwum: tag
-      `piaskownica-archiwum-2026-11`); silnik znaków `shared/glyph` (z `ogl`) przenosimy do serwisu.
+      — UX proponuje lekki gradient tła); oznaczenie pól wymaganych w formularzu; teksty
+      alternatywne obrazów we wpisie „Claude Design” (dziś angielskie, ogólne) i literówka
+      `**Pytania? **` na jego końcu; ujęcia ekipy w pętli wideo startu — sprawdzić, że to nie Ty.
+- [ ] **[Kod]** Do 10/10 (z oceny 10.11): testy interakcji — maszyna stanów kart podglądu, spis
+      rozdziałów i `useEdgeAbove`, akcja formularza — oraz automatyczny przebieg axe,
+      przepełnienia i LCP w CI; strażnik sztuczki LCP wideo startu (`scale-[1.002]` — heurystyka
+      Chrome, nie specyfikacja).
+- [ ] **[Kod]** Design system `/design-system`: HTML ok. 1,3 MB (kod ~40 przykładów kolorowany
+      na serwerze) — zwijać kod przykładów albo dzielić katalog na podstrony.
+- [ ] **[Kod]** Wydajność: dane ⌘K jako statyczny plik pobierany z oknem (dziś w ładunku RSC
+      każdej strony); `cva` i `tailwind-merge` poza wyspami klienckimi (ok. −8 KB gz); jedna wyspa
+      nagłówka zamiast czterech (ok. 11 KB gz); `<Suspense>` wokół sekcji pod zgięciem — do
+      zmierzenia; lżejsze wideo startu na telefon (przekodowanie klipów do ~600 kb/s); akordeon
+      portfolio i kompetencji bez Radix (`<details name>`, ok. −12 KB JS), jeśli zostanie zgoda
+      na odejście od shadcn w tym miejscu.
+- [ ] **[Ty]** Treść wersji EN (z QA przepięcia 10.11): okładki wpisów EN z polskim napisem
+      (np. `/en/blog/fable-5-social-manager`); zapis waluty na `/en/services` mieszany („from 30,000
+      PLN” obok „PLN 490”); manifest aplikacji tylko po polsku; nieznany adres pod `/en` dostaje
+      polską 404 (angielska wymaga trasy na żądanie — ROADMAP §4).
+- [ ] **[Kod]** `/design-system` przy 320 px: 16 px przepełnienia (etykieta `MonitorSmartphone`
+      i „fraza „webowych” (start)” w przykładach ikon i kart) — strona wewnętrzna.
+- [ ] **[Ty]** → **[Kod]** Piaskownica `/demo` (dawne koncepcje, specyfikacja ruchu): zostaje
+      czy usuwamy ją razem ze zmienną `DEMO_PUBLIC` w Vercelu i zależnościami `motion`,
+      `@number-flow/react`, `gsap`, `ogl`, `src/hooks` (archiwum: tagi `v1-archiwum`,
+      `piaskownica-archiwum-2026-11`).
 
 ## 2. Bezpieczeństwo — Twoje konta (ok. 30 min)
 
@@ -94,13 +82,12 @@ Szczegóły, szkice tekstów i plan wpisów: `docs/prywatne/MARKETING.md`.
 | Podstrony usług (`/uslugi/strony-internetowe`, `…/wdrozenia-ai`…) — gdy będzie treść | nowe trasy |
 | `llms.txt` generowany z `ROUTES`, usług i wpisów | nowa trasa |
 | Wstępy do kategorii bloga (60–120 słów, link do usługi) i dłuższe opisy meta kategorii | `blog-map.ts`, `meta.ts` |
-| CSS typografii wpisów tylko na wpisach (ok. −3,5 KB na pozostałych stronach) | `globals.css`, `PostView.tsx` |
 | `typedRoutes` — literówki w adresach łapane przy kompilacji | `next.config.ts` |
 | Angielska 404 dla `/en/*` (wymaga trasy na żądanie — statyczny catch-all nie działa) | `global-not-found.tsx` |
 | Slugi `markerkit-*` → `makerkit-*` z 308 (przy odświeżaniu wpisów) | `content/posts`, `next.config.ts` |
 | Pary wpisów/kategorii/tagów w module bez zależności — `check-content` przestaje parsować TS wyrażeniem regularnym | `src/i18n/blog-map.ts`, `scripts/check-content.mjs` |
 | CSP: sprawdzić w DevTools i usunąć `vitals.vercel-insights.com` z `connect-src` (Speed Insights wysyła na własną domenę) | `next.config.ts` |
-| Drobne: `allowJs` bez plików JS, domyślne wartości w `vercel.json`, stałe klas poza `cn()` (`ActiveTOC`, `PostCard`), `CodeBlock` z `bg-white` i `!important` | różne |
+| Drobne: `allowJs` bez plików JS, domyślne wartości w `vercel.json` | różne |
 | Lucide 1.x, TypeScript 7, ESLint 10 — osobno, z pełnym testem | `package.json` |
 
 ## 5. Na końcu — pomiar

@@ -6,6 +6,56 @@ w `docs/prywatne/` (poza repozytorium). Iteracja bez wpisu tutaj nie jest skońc
 
 ---
 
+## Iteracja 14 — 10 listopada 2026: archiwum i przepięcie na nową wersję
+
+Zakres od właściciela: zarchiwizować w 100% obecną stronę (ze zrzutami podstron i grafikami),
+potem całościowo przepiąć nową wersję z `/main-page` na główną domenę, sprawdzając i poprawiając
+kod po drodze — „tak, aby wszystko działało”.
+
+**Archiwum starej strony:**
+- tag `v1-archiwum` (commit `5b6f3ce`, na GitHubie) — pełny kod i wszystkie pliki `public/`;
+- `docs/prywatne/archiwum-v1/` (lokalnie, poza gitem): 277 zrzutów pełnych stron (135 stron
+  PL i EN — także tagi spoza mapy strony — w 1440 i 390 px, start w obu motywach), kopia offline
+  do otwarcia z dysku (828 plików z grafikami, wideo, krojami i CV), 133 karty OG, lista adresów
+  ze statusami, galeria `index.html`, README z instrukcją przywrócenia; paczki `.tar.gz`
+  i `.zip` z sumami SHA-256. Źródło: wdrożenie `dpl_DDYDmeo5crsjSv37S2n7Tkb5F3qN`
+  (w Vercelu do natychmiastowego przywrócenia przez „Promote”).
+
+**Przepięcie:**
+- nowy system na właściwych miejscach: `src/components/*` (stary widok usunięty, piaskownica
+  `demo/` zostaje), logika widoku w `src/lib/*`, katalog w `src/design-system/`, arkusz
+  `src/app/globals.css`, fabryki bloga `src/routes/blog.tsx`; dokumentacja `docs/STRONA.md`
+  (warstwa widoku) i `docs/ZASADY.md` (zasady), teksty interfejsu `src/i18n/content/ui.ts`;
+- stare pliki tras PL i EN zostały (te same adresy, historia gita) i dostały nowe widoki;
+  układy na `MainShell`, nowe `error`, `not-found`, `global-not-found`, `global-error`;
+- wersja angielska nowego systemu (`/en/...`) — pierwszy raz; zegar w stopce 24-godzinny w obu
+  językach, daty EN „2 Nov 2026” zamiast „02/11/2026”, etykieta CV EN bez „in Polish”;
+- bez prefiksu i `noindex` podglądu (`BASE`, `withBase`, `preview()` usunięte); `/main-page/*`
+  → 308 na te same strony; stara kotwica `/#contact` prowadzi do `#kontakt`;
+- preload krojów działa dopiero na trasach `.tsx` — CLS z 0,1–0,3 (podgląd) do 0,000;
+- poprawki po drodze: ślad funkcji `/design-system` wciągał cały `src` z piaskownicą (ścieżka
+  `fs` ze zmiennych) — dosłowne segmenty i reguła w `check:build --production`; wydruk (CV z „O mnie”)
+  pokazywał nagłówki jako znaki sygnetu — litery na wydruku, białe tło, bez okruszków, działań,
+  menu stopki i godziny; strażnik pikseli powtarza ujęcie z różnicą (Chromium bywa jednorazowo
+  zły przy zrzucie pełnej strony); kontrola kotwic w `check:build` obejmuje każdą stronę;
+- porządki: martwy kod starego widoku (`navigation.ts`, `use-in-view.ts`, `counterpart`,
+  `getPortfolioByGroup`, `avatarSmall`, nieużywane klucze treści), `@tailwindcss/typography`
+  usunięty, `motion` tylko w zależnościach deweloperskich (piaskownica), profil X w
+  `SOCIAL_PROFILES` (także `sameAs`), ESLint pilnuje modułów wspólnych z klientem, CI uruchamia
+  testy i kontrolę klas, `.gitignore` chroni prywatne pliki właściciela.
+
+**Sprawdzone:** `pnpm check` w czystej kopii z ustawieniami Vercela (153 strony, 19 testów) i build
+bez piaskownicy z `check:build --production` (134 strony, ślady funkcji bez plików dem); niezależny
+QA przepięcia: mapa strony identyczna co do bajtu z dotychczasową (90 adresów, wszystkie 200), 43
+strony spoza mapy też 200, 1521 linków wewnętrznych bez błędu, kanały RSS identyczne, 133 karty OG
+1200×630, `/main-page/*` → 308, hreflang wzajemny na każdej stronie, wersja EN bez polskich napisów;
+axe: 0 naruszeń (PL i EN, oba motywy, 390/1440 — 532 przebiegi w QA i końcowy przebieg); CLS 0,000,
+LCP 0,1–0,4 s (telefon: portfolio 0,8 s); przełącznik języka z odpowiednikiem strony już w HTML;
+CV w PDF wygenerowane z nowego „O mnie” (stare w archiwum); strażnik pikseli nowej strony stabilny
+(`pnpm visual --all` ta sama wersja: 0 px).
+
+---
+
 ## Iteracja 13 — 10 listopada 2026: wersja MVP, blog, audyty i ocena gotowości (`main-page`)
 
 Zakres od właściciela: menu w lewym torze przesuwało się przy otwarciu ⌘K, jasna linia przy

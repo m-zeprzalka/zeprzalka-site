@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
- * Porównanie pikseli dwóch wersji serwisu — strażnik zasady „wygląd strony
- * głównej jest nietykalny bez zgody właściciela”.
+ * Porównanie pikseli dwóch wersji serwisu — strażnik zasady „wygląd zmieniamy tylko
+ * na prośbę właściciela” (refaktor = 0 px).
  *
  *   pnpm visual <adres-bazowy> <adres-zmiany> [--all] [ścieżki…]
  *   pnpm visual http://localhost:3200 http://localhost:3100
@@ -9,8 +9,9 @@
  * Domyślnie porównuje `/` i `/en` w 1440 i 390 px; `--all` dokłada podstrony.
  * Szum pomiaru wynosi 0,000%, bo zrzut jest powtarzalny: ograniczony ruch,
  * wideo zatrzymane na klatce 0, leniwe obrazki wczytane, kroje gotowe.
- * Każda różnica jest więc prawdziwa. Wyjątek: /portfolio (leniwe wideo
- * doczytuje się w różnym momencie) — dlatego nie ma go na liście.
+ * Zrzut z różnicą powtarzamy raz (Chromium bywa jednorazowo zły) — zgłaszana różnica
+ * jest powtarzalna. Wyjątek: /portfolio (leniwe wideo doczytuje się w różnym momencie) —
+ * dlatego nie ma go na liście.
  *
  * Przeglądarka: CHROME_PATH albo systemowy Google Chrome (jest na runnerach
  * GitHub Actions). Mapy różnic trafiają do .visual/ (w .gitignore).
@@ -96,24 +97,42 @@ async function shoot(context, url) {
   return PNG.sync.read(buffer)
 }
 
+/** Liczba różnych pikseli dwóch zrzutów (`-1` — inny rozmiar) i mapa różnic. */
+function compare(a, b) {
+  if (a.width !== b.width || a.height !== b.height) return { pixels: -1, diff: null }
+  const diff = new PNG({ width: a.width, height: a.height })
+  const pixels = pixelmatch(a.data, b.data, diff.data, a.width, a.height, {
+    threshold: 0,
+    includeAA: true,
+  })
+  return { pixels, diff }
+}
+
 let failed = false
 for (const [name, options] of Object.entries(VIEWPORTS)) {
   const context = await browser.newContext({ ...options, reducedMotion: "reduce" })
   for (const pathname of pages) {
-    const [a, b] = [await shoot(context, base + pathname), await shoot(context, head + pathname)]
+    const pair = async () => [
+      await shoot(context, base + pathname),
+      await shoot(context, head + pathname),
+    ]
+    let [a, b] = await pair()
+    let result = compare(a, b)
+    // Zrzut pełnej strony w Chromium bywa jednorazowo zły (np. układ z węższego okna: tytuł
+    // w rozmiarze z telefonu przy 1440 px). Różnicę zgłaszamy dopiero, gdy się powtórzy.
+    if (result.pixels !== 0) {
+      ;[a, b] = await pair()
+      result = compare(a, b)
+    }
     const label = `${name.padEnd(8)} ${pathname}`.padEnd(40)
 
-    if (a.width !== b.width || a.height !== b.height) {
+    if (result.pixels === -1) {
       console.log(`${label} ROZMIAR ${a.width}×${a.height} → ${b.width}×${b.height}`)
       failed = true
       continue
     }
 
-    const diff = new PNG({ width: a.width, height: a.height })
-    const pixels = pixelmatch(a.data, b.data, diff.data, a.width, a.height, {
-      threshold: 0,
-      includeAA: true,
-    })
+    const { pixels, diff } = result
     const share = ((100 * pixels) / (a.width * a.height)).toFixed(3)
     console.log(`${label} ${pixels === 0 ? "bez zmian" : `${pixels} px (${share}%)`}`)
 
@@ -130,7 +149,7 @@ await browser.close()
 
 if (failed) {
   console.log(
-    `\nSą różnice — mapy w ${OUT}/. Zmiana wyglądu strony głównej wymaga zgody właściciela.`
+    `\nSą różnice (powtarzalne) — mapy w ${OUT}/. Zmiana wyglądu wymaga zgody właściciela.`
   )
   process.exit(1)
 }

@@ -52,8 +52,6 @@ export const AUTHOR = {
   } satisfies Localized<string>,
   /** Pełny portret — dane strukturalne i karty. */
   avatar: "/avatar.png",
-  /** Ten sam portret w 160 px (2× slotu 80 px pod wpisem): 4 KB zamiast 68 KB. */
-  avatarSmall: "/avatar-160.webp",
 } as const
 
 /**
@@ -63,6 +61,8 @@ export const AUTHOR = {
  * adresu nie powinno wymagać zmiany w kodzie.
  */
 export const SOCIAL_PROFILES: readonly { label: string; url: string }[] = [
+  // X pierwszy — prośba właściciela (stopka pokazuje profile w tej kolejności).
+  { label: "X", url: "https://x.com/zeprzalka_com" },
   { label: "GitHub", url: "https://github.com/m-zeprzalka" },
   { label: "Facebook", url: "https://www.facebook.com/michalzeprzalka" },
   ...(process.env.NEXT_PUBLIC_LINKEDIN_URL

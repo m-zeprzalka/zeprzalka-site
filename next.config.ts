@@ -10,8 +10,9 @@ const isDev = process.env.NODE_ENV === "development"
  * Piaskownica `/demo` (src/app/demo) istnieje wyłącznie poza produkcją: jej
  * pliki tras mają końcówkę `.demo.tsx`, którą rozpoznajemy jako trasę tylko
  * w `pnpm dev`, lokalnym buildzie i podglądach Vercela. Build produkcyjny
- * nie widzi ich wcale — `/demo` dostaje zwykłą stronę 404, a paczka nie
- * zawiera ani bajtu dem. `DEMO_PUBLIC=1` świadomie to wyłącza.
+ * nie widzi ich wcale — `/demo` dostaje zwykłą stronę 404, a ślady funkcji nie
+ * zawierają plików dem (pilnuje `check:build --production`). `DEMO_PUBLIC=1`
+ * świadomie to wyłącza.
  */
 const withDemos = process.env.VERCEL_ENV !== "production" || process.env.DEMO_PUBLIC === "1"
 
@@ -126,6 +127,10 @@ const nextConfig: NextConfig = {
     return [
       // iOS i część robotów pytają o ten adres wprost; Next serwuje ikonę jako /apple-icon.png.
       { source: "/apple-touch-icon.png", destination: "/apple-icon.png", permanent: true },
+      // Podgląd nowej wersji (do 10.11.2026) żył pod /main-page — udostępnione linki
+      // prowadzą na te same strony bez prefiksu.
+      { source: "/main-page", destination: "/", permanent: true },
+      { source: "/main-page/:path*", destination: "/:path*", permanent: true },
       {
         source: "/blog",
         has: [{ type: "query", key: "page", value: page }],

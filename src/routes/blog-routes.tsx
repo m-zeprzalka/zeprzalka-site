@@ -1,8 +1,7 @@
 /**
- * Trasy bloga z parametrem — jedna definicja dla obu wersji językowych i dla obu
- * warstw widoku (serwis: `src/routes/blog.tsx`, podgląd nowej wersji:
- * `src/app/main-page/_routes/blog.tsx`). Widoki i opakowanie metadanych (np. `noindex`
- * podglądu) wstrzykuje wywołujący, więc moduł nie importuje żadnych komponentów.
+ * Trasy bloga z parametrem — jedna definicja dla obu wersji językowych. Widoki
+ * wstrzykuje wywołujący (`src/routes/blog.tsx`), więc moduł nie importuje żadnych
+ * komponentów.
  *
  * Literałem w pliku trasy zostaje tylko `dynamicParams` — Next czyta konfigurację
  * segmentu statycznie z kodu pliku, więc nie może przyjść z importu.
@@ -30,10 +29,11 @@ export interface BlogViews {
  * z `generateStaticParams`, więc brak wpisu albo terminu to błąd danych —
  * `notFound()` zamiast pustych metadanych i typów z `null`.
  */
-export function blogRoutes(
-  { Post: PostView, Taxonomy: TaxonomyView, Index: IndexView }: BlogViews,
-  wrap: (metadata: Metadata) => Metadata = (metadata) => metadata
-) {
+export function blogRoutes({
+  Post: PostView,
+  Taxonomy: TaxonomyView,
+  Index: IndexView,
+}: BlogViews) {
   /** Wpis: `/blog/[slug]`, `/en/blog/[slug]`. */
   function postRoute(locale: Locale) {
     const postFor = async (props: ParamsProps<"slug">) =>
@@ -42,7 +42,7 @@ export function blogRoutes(
     return {
       generateStaticParams: () => postParams(locale),
       generateMetadata: async (props: ParamsProps<"slug">): Promise<Metadata> =>
-        wrap(postMetadata(locale, await postFor(props))),
+        postMetadata(locale, await postFor(props)),
       Page: async (props: ParamsProps<"slug">) => (
         <PostView post={await postFor(props)} locale={locale} />
       ),
@@ -58,9 +58,7 @@ export function blogRoutes(
       generateStaticParams: () => termParams(locale, field, key),
       generateMetadata: async (props: ParamsProps<K>): Promise<Metadata> => {
         const term = await termFor(props)
-        return wrap(
-          field === "categories" ? categoryMetadata(locale, term) : tagMetadata(locale, term)
-        )
+        return field === "categories" ? categoryMetadata(locale, term) : tagMetadata(locale, term)
       },
       Page: async (props: ParamsProps<K>) => (
         <TaxonomyView locale={locale} field={field} term={await termFor(props)} />
@@ -75,7 +73,7 @@ export function blogRoutes(
     return {
       generateStaticParams: () => archiveParams(locale, key),
       generateMetadata: async (props: ParamsProps<K>): Promise<Metadata> =>
-        wrap(blogPageMetadata(locale, await pageFor(props), mapLocales(getBlogPageCount))),
+        blogPageMetadata(locale, await pageFor(props), mapLocales(getBlogPageCount)),
       Page: async (props: ParamsProps<K>) => (
         <IndexView locale={locale} page={await pageFor(props)} />
       ),

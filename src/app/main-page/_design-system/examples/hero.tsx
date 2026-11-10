@@ -1,5 +1,5 @@
-import { ArrowRightIcon } from "lucide-react"
 import { CopyEmail } from "@/app/main-page/_components/layout/copy-email"
+import { LinkArrow } from "@/app/main-page/_components/page/link-arrow"
 import { CHIP_ICONS } from "@/app/main-page/_components/sections/hero"
 import { Segments } from "@/app/main-page/_components/peek/segments"
 import { Button } from "@/app/main-page/_components/ui/button"
@@ -23,10 +23,10 @@ export function HeroExample() {
         </span>
       </p>
       <div className="flex flex-wrap gap-3">
-        <Button asChild size="lg" className="max-sm:w-full">
+        <Button asChild size="lg" className="group/link max-sm:w-full">
           <a href="#przyklad-contact">
             {hero.cta}
-            <ArrowRightIcon />
+            <LinkArrow />
           </a>
         </Button>
         <CopyEmail

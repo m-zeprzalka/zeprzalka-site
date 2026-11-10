@@ -31,7 +31,7 @@ export function BlogPage({ locale, page = 1 }: { locale: Locale; page?: number }
     current === 1 ? [] : [{ label: copy.breadcrumbBlog, href: pageHref("blog", locale) }]
 
   return (
-    <PeekProvider peeks={postPeeks(posts)}>
+    <PeekProvider peeks={postPeeks(posts)} closeLabel={mainPage.ui.closeCard}>
       <JsonLd data={blogIndexSchema(locale, current, visible)} />
       <PageHeader
         breadcrumb={breadcrumb(locale, current === 1 ? copy.breadcrumbBlog : title, trail)}

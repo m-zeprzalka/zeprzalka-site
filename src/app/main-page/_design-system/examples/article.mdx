@@ -1,6 +1,6 @@
 ## Rozdział wpisu (h2)
 
-Akapit wpisu ma 17 px i interlinię 1,75. Link wewnętrzny prowadzi [do bloga](/blog) przez `next/link` z prefiksem podglądu, a zewnętrzny — do [dokumentacji Next.js](https://nextjs.org/docs) — otwiera się w nowej karcie. W tekście stoi `kod w linii`, **pogrubienie** i _kursywa_.
+Akapit wpisu ma 17 px, od tabletu 19 px, i kolor o ton cichszy od nagłówków. Link wewnętrzny prowadzi [do bloga](/blog) przez `next/link` z prefiksem podglądu, a zewnętrzny — do [dokumentacji Next.js](https://nextjs.org/docs) — otwiera się w nowej karcie. W tekście stoi `kod w linii`, **pogrubienie** i _kursywa_.
 
 ### Podrozdział (h3)
 
@@ -9,10 +9,12 @@ Akapit wpisu ma 17 px i interlinię 1,75. Link wewnętrzny prowadzi [do bloga](/
   - drugi poziom,
   - i jeszcze jeden.
 
+#### Krok (h4)
+
 1. Lista numerowana.
 2. Kolejny krok.
 
-> Cytat: kreska po lewej i szary tekst — na definicje i uwagi.
+> Cytat: kreska po lewej, stopień większy i pełny kolor tekstu — na definicje i uwagi.
 
 | Język      | Klasa bloku   | Gdzie na stronie          |
 | ---------- | ------------- | ------------------------- |
@@ -103,4 +105,12 @@ pnpm check && echo "Gotowe: $(date +%H:%M)"
 ```diff
 - const radius = "12px"
 + const radius = "var(--radius)"
+```
+
+```mdx
+## Rozdział z filmem
+
+Akapit z **pogrubieniem** i [linkiem do bloga](/blog).
+
+<YouTubeEmbed id="IkspcJdeP3U" title="Film w treści wpisu" />
 ```

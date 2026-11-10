@@ -35,7 +35,11 @@ export function categoryLinks(locale: Locale): (LinkData & { count: number })[] 
 }
 
 /** Kategorie albo tagi wpisu jako linki. */
-export function termLinks(locale: Locale, field: TaxonomyField, labels: readonly string[]): LinkData[] {
+export function termLinks(
+  locale: Locale,
+  field: TaxonomyField,
+  labels: readonly string[]
+): LinkData[] {
   const href = field === "categories" ? categoryHref : tagHref
   return labels.map((label) => ({
     label: field === "tags" ? `#${label}` : label,

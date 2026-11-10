@@ -4,7 +4,8 @@ import { useState } from "react"
 import { flushSync } from "react-dom"
 import Image from "next/image"
 import Link from "next/link"
-import { ArrowRightIcon, ChevronDownIcon } from "lucide-react"
+import { ChevronDownIcon } from "lucide-react"
+import { LinkArrow } from "@/app/main-page/_components/page/link-arrow"
 import { INDEX_ROW } from "@/app/main-page/_components/page/index-row"
 import { usePeekHover } from "@/app/main-page/_components/peek/peek-context"
 import { Button } from "@/app/main-page/_components/ui/button"
@@ -93,10 +94,10 @@ export function PostList({
         ) : (
           <span />
         )}
-        <Button asChild variant="ghost" size="sm" className="-me-2.5">
+        <Button asChild variant="ghost" size="sm" className="group/link -me-2.5">
           <Link href={all.href}>
             {all.label}
-            <ArrowRightIcon />
+            <LinkArrow />
           </Link>
         </Button>
       </div>

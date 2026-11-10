@@ -20,7 +20,7 @@ export function HomePage({ locale }: { locale: Locale }) {
   const { email, ui, peeks, hero, about, skills, work, blog, contact } = getHomeContent(locale)
 
   return (
-    <PeekProvider peeks={peeks}>
+    <PeekProvider peeks={peeks} closeLabel={ui.closeCard}>
       <JsonLd data={graph(websiteSchema(locale), personSchema(locale))} />
       <Hero
         {...hero}

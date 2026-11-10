@@ -146,7 +146,7 @@ export function GridChapter(props: ChapterProps) {
     {
       token: "--container-track",
       value: `${grid.token("--container-track")} = ${[1280, 1440, 1680].map((w) => grid.at(w).track).join(" · ")} px`,
-      use: "tor boczny: utility rail (lewy — menu i spis) i stage-track (prawy — karta); szerokość toru gdzie indziej — w-(--container-track)",
+      use: "tor boczny: utility rail (lewy — menu główne) i stage-track (prawy — karta podglądu, spis rozdziałów); szerokość toru gdzie indziej — w-(--container-track)",
     },
     {
       token: "--spacing-track",
@@ -161,12 +161,12 @@ export function GridChapter(props: ChapterProps) {
     {
       token: "--spacing-rail",
       value: grid.token("--spacing-rail"),
-      use: "top-rail: górna krawędź menu w torze = środek pierwszego wiersza treści (154 px)",
+      use: "top-rail: górna krawędź obu torów (menu, spis) = środek pierwszego wiersza treści (154 px)",
     },
     {
-      token: "--spacing-rail-toc",
-      value: grid.token("--spacing-rail-toc"),
-      use: "top-rail-toc: spis rozdziałów pod sześcioma pozycjami menu (290 px)",
+      token: "--removed-body-scroll-bar-size",
+      value: "szerokość zdjętego paska przewijania, bez blokady 0px",
+      use: "rail i stage-track odejmują jej połowę — tory stoją w miejscu, gdy ⌘K zdejmuje pasek (react-remove-scroll)",
     },
     {
       token: "stage:",
@@ -191,9 +191,10 @@ export function GridChapter(props: ChapterProps) {
       <DsNote>
         Od 1280 px: <Code>[margines][tor][odstęp][kolumna][odstęp][tor][margines]</Code>. Kolumna
         stoi na środku, tory mają stałą proporcję do niej (3/8), resztę szerokości okna biorą
-        marginesy. Lewy tor to menu główne i spis rozdziałów, prawy — karta podglądu. Węziej jest
-        sama kolumna z marginesem strony. Nagłówek, sekcje i stopka stoją na tej samej osi (
-        <Code>column</Code>).
+        marginesy. Lewy tor to menu główne, prawy — karta podglądu, a we wpisie (i tutaj) także spis
+        rozdziałów, który ustępuje karcie. Tory są <Code>fixed</Code>, więc liczą się od okna, nie
+        od <Code>&lt;body&gt;</Code>. Węziej jest sama kolumna z marginesem strony. Nagłówek, sekcje
+        i stopka stoją na tej samej osi (<Code>column</Code>).
       </DsNote>
       <GridOverlay />
       <ul className="mt-2 flex flex-wrap gap-x-5 gap-y-2 text-xs" aria-label="Legenda">

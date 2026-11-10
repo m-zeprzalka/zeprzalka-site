@@ -33,7 +33,7 @@ export function TaxonomyPage({
   const title = isCategory ? term.label : `#${term.label}`
 
   return (
-    <PeekProvider peeks={postPeeks(posts)}>
+    <PeekProvider peeks={postPeeks(posts)} closeLabel={mainPage.ui.closeCard}>
       <JsonLd data={taxonomySchema(locale, field, term)} />
       <PageHeader
         breadcrumb={breadcrumb(locale, title, [

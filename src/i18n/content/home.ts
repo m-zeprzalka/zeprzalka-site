@@ -9,8 +9,7 @@ const pl = {
     /** Zdanie złożone z trzech części — środkowa jest wyróżniona krojem. */
     subtitleRole: "Projektant i programista produktów cyfrowych",
     subtitleHighlight: " — 15 lat ",
-    subtitleRest:
-      "doświadczenia w tworzeniu innowacyjnych rozwiązań webowych i multimedialnych",
+    subtitleRest: "doświadczenia w tworzeniu innowacyjnych rozwiązań webowych i multimedialnych",
     cta: "Zarezerwuj bezpłatną konsultację",
   },
   skills: {
@@ -41,8 +40,7 @@ const en: typeof pl = {
     title: "I turn ambitious projects into digital products.",
     subtitleRole: "Digital Product Designer & Developer",
     subtitleHighlight: " — 15 years ",
-    subtitleRest:
-      "of experience building innovative web and multimedia solutions",
+    subtitleRest: "of experience building innovative web and multimedia solutions",
     cta: "Book a free consultation",
   },
   skills: {
@@ -95,18 +93,8 @@ export const homeSkills: readonly HomeSkill[] = [
       en: "From market and user research, through information architecture (UX), to interactive prototypes (UI). I design multimedia products that users love and the business values.",
     },
     tools: {
-      pl: [
-        "User Experience (UX)",
-        "User Interface (UI)",
-        "Human-Centered Design",
-        "AI Solutions",
-      ],
-      en: [
-        "User Experience (UX)",
-        "User Interface (UI)",
-        "Human-Centered Design",
-        "AI Solutions",
-      ],
+      pl: ["User Experience (UX)", "User Interface (UI)", "Human-Centered Design", "AI Solutions"],
+      en: ["User Experience (UX)", "User Interface (UI)", "Human-Centered Design", "AI Solutions"],
     },
   },
   {
@@ -153,20 +141,8 @@ export const homeSkills: readonly HomeSkill[] = [
       en: "I create consistent, engaging communication — from branding and visual identity, through advanced digital graphics, to dynamic motion design. I make sure your brand tells a story and stands out in its market.",
     },
     tools: {
-      pl: [
-        "Adobe Photoshop",
-        "After Effects",
-        "Premiere Pro",
-        "Blender",
-        "Figma",
-      ],
-      en: [
-        "Adobe Photoshop",
-        "After Effects",
-        "Premiere Pro",
-        "Blender",
-        "Figma",
-      ],
+      pl: ["Adobe Photoshop", "After Effects", "Premiere Pro", "Blender", "Figma"],
+      en: ["Adobe Photoshop", "After Effects", "Premiere Pro", "Blender", "Figma"],
     },
   },
 ]

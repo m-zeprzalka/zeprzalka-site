@@ -7,11 +7,10 @@ export function CtaPanelExample() {
       id="ds-cta"
       className="mt-0! w-full px-0!"
       heading="Opisz projekt, odpowiem w 24 godziny"
-      body="Pierwsze działanie jest główne (ze strzałką), kolejne coraz cichsze."
+      body="Najwyżej dwa działania: główne ze strzałką linku i ciche obok — trzeciego typ nie przyjmie."
       actions={[
         { label: "Poproś o wycenę", href: pageHref("contact", "pl") },
         { label: "Zobacz realizacje", href: pageHref("portfolio", "pl") },
-        { label: "Kim jestem", href: pageHref("about", "pl") },
       ]}
     />
   )

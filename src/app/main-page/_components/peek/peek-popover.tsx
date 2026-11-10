@@ -6,6 +6,7 @@ import { HEADER_OFFSET } from "@/app/main-page/_lib/anchors"
 import { focusAfter, tabbables } from "@/app/main-page/_lib/focus"
 import type { Peek } from "@/app/main-page/_lib/types"
 import { PeekCard } from "./peek-card"
+import { usePeekActions } from "./peek-context"
 
 /**
  * Prostokąt kolumny treści na wysokości frazy — popover ma szerokość kolumny
@@ -47,6 +48,7 @@ export default function PeekPopover({
     getBoundingClientRect: () => (trigger.current ? columnRect(trigger.current) : new DOMRect()),
   })
   const content = useRef<HTMLDivElement>(null)
+  const { closeLabel } = usePeekActions()
 
   // Karta, która nie mieści się pod frazą, dosuwa stronę (nie wyżej niż fraza pod nagłówkiem).
   useEffect(() => {
@@ -111,7 +113,12 @@ export default function PeekPopover({
         // Telefon — na szerokość kolumny; od 768 px karta 24 rem, nie zasłania pół ekranu.
         className="max-h-(--radix-popover-content-available-height) w-(--radix-popover-trigger-width) overflow-y-auto overscroll-contain p-0 md:w-96"
       >
-        <PeekCard peek={peek} play={open} onNavigate={() => onOpenChange(false)} />
+        <PeekCard
+          peek={peek}
+          play={open}
+          onNavigate={() => onOpenChange(false)}
+          close={{ onClose: () => onOpenChange(false), label: closeLabel }}
+        />
       </PopoverContent>
     </Popover>
   )

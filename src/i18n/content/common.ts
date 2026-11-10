@@ -52,12 +52,10 @@ const pl = {
     projectType: "Rodzaj projektu",
     projectTypePlaceholder: "Strona internetowa / Animacja / Grafika…",
     message: "Wiadomość",
-    messagePlaceholder:
-      "Opisz swój projekt lub zadaj pytanie. Im więcej szczegółów, tym lepiej…",
+    messagePlaceholder: "Opisz swój projekt lub zadaj pytanie. Im więcej szczegółów, tym lepiej…",
     submit: "Wyślij wiadomość",
     submitting: "Wysyłanie…",
-    privacyNote:
-      "Dane z formularza wykorzystam wyłącznie do odpowiedzi na wiadomość.",
+    privacyNote: "Dane z formularza wykorzystam wyłącznie do odpowiedzi na wiadomość.",
     privacyLink: "Polityka prywatności",
   },
   contactAction: {
@@ -72,10 +70,8 @@ const pl = {
     /** {minutes} podstawia się w akcji serwerowej. */
     rateLimited:
       "Za dużo wiadomości z tego adresu. Spróbuj ponownie za {minutes} min lub napisz na m@zeprzalka.com.",
-    unavailable:
-      "Formularz jest chwilowo niedostępny. Napisz bezpośrednio na m@zeprzalka.com.",
-    failed:
-      "Nie udało się wysłać wiadomości. Spróbuj ponownie lub napisz na m@zeprzalka.com.",
+    unavailable: "Formularz jest chwilowo niedostępny. Napisz bezpośrednio na m@zeprzalka.com.",
+    failed: "Nie udało się wysłać wiadomości. Spróbuj ponownie lub napisz na m@zeprzalka.com.",
   },
   ui: {
     themeToggle: "Zmień motyw",
@@ -137,8 +133,7 @@ const en: typeof pl = {
     projectType: "Project type",
     projectTypePlaceholder: "Website / Animation / Graphic design…",
     message: "Message",
-    messagePlaceholder:
-      "Describe your project or question. The more detail, the better…",
+    messagePlaceholder: "Describe your project or question. The more detail, the better…",
     submit: "Send message",
     submitting: "Sending…",
     privacyNote: "I will use the details you send only to reply to your message.",
@@ -155,10 +150,8 @@ const en: typeof pl = {
     messageMax: "Message can be at most 5000 characters.",
     rateLimited:
       "Too many messages from this address. Try again in {minutes} min or email m@zeprzalka.com.",
-    unavailable:
-      "The form is temporarily unavailable. Please email m@zeprzalka.com directly.",
-    failed:
-      "The message could not be sent. Try again or email m@zeprzalka.com.",
+    unavailable: "The form is temporarily unavailable. Please email m@zeprzalka.com directly.",
+    failed: "The message could not be sent. Try again or email m@zeprzalka.com.",
   },
   ui: {
     themeToggle: "Toggle theme",

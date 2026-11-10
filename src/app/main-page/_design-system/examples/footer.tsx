@@ -1,7 +1,7 @@
 import Link from "next/link"
-import { ArrowUpRightIcon } from "lucide-react"
 import { FooterWordmark } from "@/app/main-page/_components/layout/footer-wordmark"
 import { LocalTime } from "@/app/main-page/_components/layout/local-time"
+import { LinkArrow } from "@/app/main-page/_components/page/link-arrow"
 import { Button } from "@/app/main-page/_components/ui/button"
 import { getShellContent } from "@/app/main-page/_lib/content/shell"
 
@@ -29,10 +29,10 @@ export function FooterExample() {
         <ul className="flex flex-wrap gap-2">
           {footer.profiles.map((profile) => (
             <li key={profile.href}>
-              <Button asChild variant="secondary" size="sm">
+              <Button asChild variant="secondary" size="sm" className="group/link">
                 <a href={profile.href} target="_blank" rel="noopener noreferrer">
                   {profile.label}
-                  <ArrowUpRightIcon />
+                  <LinkArrow />
                   <span className="sr-only">({footer.newTabLabel})</span>
                 </a>
               </Button>

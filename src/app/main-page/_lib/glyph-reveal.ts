@@ -24,7 +24,7 @@ export const GLYPH_REVEAL = {
   build: 800,
   /** Jak długo komórka przeskakuje między znakami, zanim stanie na swoim (ms). */
   morph: 300,
-  /** Co ile ms przeskakujący znak zmienia się na inny (ok. 16 kl./s — jak w nagłówkach). */
+  /** Co ile ms przeskakujący znak zmienia się na inny (ok. 16 kl./s; napisy — 70 ms). */
   tick: 60,
   /** Druk stoi tyle ms, zanim ruszy front. */
   hold: 220,

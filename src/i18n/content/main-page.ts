@@ -36,6 +36,7 @@ const pl = {
     newPost: "Nowy",
     playVideo: "Odtwórz wideo",
     pauseVideo: "Zatrzymaj wideo",
+    closeCard: "Zamknij kartę",
     responseTimeLabel: "Czas odpowiedzi:",
     responseTime: "do 24 godzin w dni robocze",
     localTime: "Czas lokalny",
@@ -67,7 +68,9 @@ const pl = {
     },
   },
   contact: {
-    projectTypes: ["Strona internetowa", "Animacja", "Grafika"],
+    /** Rodzaj projektu — wielokrotny wybór; „Inny” na końcu (szczegóły w wiadomości). */
+    projectTypes: ["Strona internetowa", "Animacja", "Grafika", "Inny"],
+    projectTypeHint: "Możesz wybrać kilka.",
   },
 }
 
@@ -96,6 +99,7 @@ const en: typeof pl = {
     newPost: "New",
     playVideo: "Play video",
     pauseVideo: "Pause video",
+    closeCard: "Close card",
     responseTimeLabel: "Response time:",
     responseTime: "within 24 hours on working days",
     localTime: "Local time",
@@ -123,7 +127,8 @@ const en: typeof pl = {
     },
   },
   contact: {
-    projectTypes: ["Website", "Animation", "Graphics"],
+    projectTypes: ["Website", "Animation", "Graphics", "Other"],
+    projectTypeHint: "You can choose more than one.",
   },
 }
 

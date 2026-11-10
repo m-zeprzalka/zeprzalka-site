@@ -9,7 +9,9 @@ import { getSource, need } from "./source"
 export function blogPage(locale: Locale, page: number) {
   const pages = getBlogPages(locale)
   const { current, posts } = postsOnPage(pages, page)
-  const descriptions = new Map(getSource(locale).posts.map((post) => [post.card.slug, post.description]))
+  const descriptions = new Map(
+    getSource(locale).posts.map((post) => [post.card.slug, post.description])
+  )
   const featured = current === 1 ? pages.featured : []
   return {
     current,

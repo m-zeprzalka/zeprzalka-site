@@ -33,6 +33,12 @@ const FAMILIES = [
 /** Stopnie pisma — tylko te, których używa strona (klasy jak w komponentach). */
 const SCALE = [
   {
+    sample: "Tytuł wpisu na blogu",
+    className: "text-title",
+    size: "32 → 44 px od 640 px → 48 px od 1440 px, 600",
+    use: 'tytuł wpisu (PageHeader variant="article") — stopień nad text-display, ciaśniej',
+  },
+  {
     sample: "Przekształcam ambitne projekty",
     className: "text-display",
     size: "26 → 34 px od 640 px",
@@ -54,7 +60,7 @@ const SCALE = [
     sample: "Opis wpisu pod tytułem",
     className: "text-lg leading-snug font-normal tracking-normal sm:text-xl",
     size: "18 → 20 px od 640 px",
-    use: "rozwinięcie nagłówka wpisu (compactLead); text-lg — biogram, logo",
+    use: 'rozwinięcie nagłówka wpisu (variant="article"); text-lg — biogram, logo',
   },
   {
     sample: "Kompetencje",
@@ -121,9 +127,10 @@ export function TypeChapter(props: ChapterProps) {
         ))}
       </ul>
       <DsNote>
-        Poza skalą: kod <Code>13 px</Code> (<Code>code.css</Code>), klawisze <Code>11 px</Code> (
-        <Code>Kbd</Code>), wiersze ⌘K <Code>15 px</Code>, znak stopki — SVG na całą szerokość okna.
-        Typografia treści wpisu (17 px, interlinia 1,75) — rozdział „Treść wpisu”.
+        Poza skalą: kod <Code>13 → 14 px</Code> od 768 px (<Code>code.css</Code>), klawisze{" "}
+        <Code>11 px</Code> (<Code>Kbd</Code>), wiersze ⌘K <Code>15 px</Code>, znak stopki — SVG na
+        całą szerokość okna. Treść wpisu ma własną skalę (tekst 17 → 19 px, h3 21 → 24 px, h2 26 →
+        32 px) — rozdział „Treść wpisu”.
       </DsNote>
     </DsSection>
   )

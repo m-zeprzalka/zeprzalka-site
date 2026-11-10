@@ -1,5 +1,5 @@
 import { GLYPH_REVEAL } from "@/app/main-page/_lib/glyph-reveal"
-import { declared, ms } from "@/app/main-page/_design-system/css-tokens"
+import { declared, ms, themeTokens } from "@/app/main-page/_design-system/css-tokens"
 import {
   Code,
   DsNote,
@@ -21,7 +21,7 @@ import { Replay } from "@/app/main-page/_design-system/replay"
 /** Kroki „harmonijki”: pora z `--enter-*`, długość z animacji, którą dany element wchodzi. */
 const CASCADE = [
   { token: "--enter-header", animation: "--animate-enter-down", what: "nagłówek" },
-  { token: "--enter-rail", animation: "--animate-enter-side", what: "menu w torze (spis +120 ms)" },
+  { token: "--enter-rail", animation: "--animate-enter-side", what: "menu i spis w torach" },
   { token: "--enter-status", animation: "--animate-enter", what: "status startu, okruszki" },
   { token: "--enter-title", animation: "--animate-enter", what: "tytuł, +40 ms na słowo" },
   { token: "--enter-lead", animation: "--animate-enter", what: "rozwinięcie, +16 ms na słowo" },
@@ -35,13 +35,25 @@ const USE: Record<string, string> = {
   "--ease-in-out": "kropka spisu, rysowanie obwódki „Nowy”",
   "--animate-enter": "słowa tytułu i zdania, status, działania (rozmycie 10 px, 0,5 em z dołu)",
   "--animate-enter-down": "nagłówek (z góry, rozmycie 6 px)",
-  "--animate-enter-side": "menu i spis w lewym torze (z lewej)",
-  "--animate-enter-media": "kadr startu i okładka wpisu: wjazd z dołu i przycięcie do kolumny",
+  "--animate-enter-side":
+    "od zewnętrznej krawędzi toru: menu w lewym z lewej, spis wpisu w prawym z prawej ([--enter-side-from:1rem])",
+  "--animate-enter-media": "kadr startu: wjazd z dołu i przycięcie do kolumny",
+  "--animate-settle": "okładka wpisu osiada do swojej skali pod zasłoną (uncover)",
   "--animate-peek-in": "nowa treść karty podglądu (z rozmycia)",
   "--animate-peek-out": "poprzednia treść karty gaśnie pod nową",
   "--animate-draw": "obwódka „Nowy” — dwa pociągnięcia",
   "--animate-expand": "akordeon: wysokość z pomiaru Radix (przed nim zero)",
   "--animate-collapse": "akordeon: zwijanie",
+}
+
+/** Niewypełnione słowo `scroll-fill` w obu motywach — z arkusza przy renderze, nie z kopii. */
+function FillFrom() {
+  const { light, dark } = themeTokens("globals")
+  return (
+    <>
+      jasny {light.get("--fill-from")}, ciemny {dark.get("--fill-from")}
+    </>
+  )
 }
 
 const OTHER = [
@@ -52,8 +64,13 @@ const OTHER = [
   },
   {
     token: "scroll-fill",
-    value: "fill · view-timeline · słowo od 62% do 46% wysokości okna",
-    use: "biogram „O mnie”: fala koloru idzie z linią czytania; niewypełnione słowo ma 45% koloru",
+    value: "fill · view-timeline · granica na 58% wysokości okna · słowo na odcinku trzech słów",
+    use: (
+      <>
+        biogram „O mnie”: ostra granica koloru idzie z linią czytania; niewypełnione słowo ma
+        --fill-from (<FillFrom /> koloru tekstu — kontrast 3:1), fraza z kartą idzie z falą
+      </>
+    ),
   },
   {
     token: "observeReveal",
@@ -162,7 +179,7 @@ export function MotionChapter(props: ChapterProps) {
 
       <DsSubheading>Harmonijka wejścia</DsSubheading>
       <DsNote>
-        Jedna oś dla startu i podstron (ms od pierwszego malowania): z góry nagłówek, z boku menu,
+        Jedna oś dla startu i podstron (ms od pierwszego malowania): z góry nagłówek, z boku tory,
         status albo okruszki, słowa tytułu i szarego rozwinięcia, działania, na końcu kadr. Klasy
         biorą pory przez <Code>motion-safe:[animation-delay:var(--enter-status)]</Code>, a animacje
         mają <Code>backwards</Code> — po końcu nie zostaje żaden <Code>filter</Code> ani{" "}
@@ -208,8 +225,11 @@ export function MotionChapter(props: ChapterProps) {
         title="Tekst wypełniany przewijaniem — scroll-fill"
         note={
           <>
-            Akapit to jedna oś czasu, słowo nabiera koloru, gdy samo przejeżdża przez środek okna —
-            przy każdej wysokości akapitu. Przewiń powoli.
+            Akapit to jedna oś czasu. Słowo nabiera koloru, gdy mija linię 58% wysokości okna, na
+            odcinku przewinięcia równym trzem słowom — granica jest ostra i idzie z czytaniem przy
+            każdej wysokości akapitu. Przed nią słowa mają <Code>--fill-from</Code>: najciemniej,
+            jak pozwala kontrast 3:1 dużego tekstu. Fraza z kartą idzie z falą, wyróżnia ją samo
+            podkreślenie. Przewiń powoli.
           </>
         }
       >

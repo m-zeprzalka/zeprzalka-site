@@ -34,6 +34,8 @@ interface PeekActions {
   /** Desktop z myszą od 1280 px: karta stoi w prawym torze. Poza nim — popover pod frazą. */
   stage: boolean
   peeks: Readonly<Record<string, Peek>>
+  /** Nazwa krzyżyka karty (czytnik, podpowiedź) — jedna dla wszystkich kart strony. */
+  closeLabel: string
   show: (id: string, anchor: HTMLElement, via: PeekState["via"]) => void
   /** Bez `id` — od razu, synchronicznie (np. w `flushSync`); z `id` — po krótkiej zwłoce. */
   hide: (id?: string) => void
@@ -49,9 +51,11 @@ const StateContext = createContext<PeekState>(CLOSED)
 
 export function PeekProvider({
   peeks,
+  closeLabel,
   children,
 }: {
   peeks: Readonly<Record<string, Peek>>
+  closeLabel: string
   children: ReactNode
 }) {
   const stage = useMediaQuery(STAGE_QUERY)
@@ -115,8 +119,8 @@ export function PeekProvider({
   }, [])
   const hold = useCallback(() => clearTimeout(timer.current), [])
   const actions = useMemo<PeekActions>(
-    () => ({ stage, peeks, show, hide, hold }),
-    [stage, peeks, show, hide, hold]
+    () => ({ stage, peeks, closeLabel, show, hide, hold }),
+    [stage, peeks, closeLabel, show, hide, hold]
   )
 
   return (

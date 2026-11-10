@@ -44,7 +44,8 @@ export function SiteHeader({
           inaczej wystawałby poza kolumnę, a z nim pola dotyku przycisków (`after:`). */}
       <div className="relative column flex h-16 items-center justify-between gap-2 min-[22.5rem]:gap-3">
         <Logo domain={domain} href={homeHref} />
-        <div className="-me-2.5 flex items-center gap-1 min-[22.5rem]:gap-1.5">
+        {/* Na wydruku same logo i domena — przyciski na papierze nic nie robią. */}
+        <div className="-me-2.5 flex items-center gap-1 min-[22.5rem]:gap-1.5 print:hidden">
           <SearchMenu {...search} />
           <LanguageSwitch {...language} />
           <ThemeToggle label={themeLabel} />

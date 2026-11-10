@@ -1,10 +1,7 @@
 "use client"
 
-import { useMemo, useRef, useState, type ReactNode, type RefObject } from "react"
-import { defaultFilter, useCommandState } from "cmdk"
-import Image from "next/image"
+import { useMemo, useRef, useState, type RefObject } from "react"
 import { useRouter } from "next/navigation"
-import { ArrowUpRightIcon, CopyIcon, SunMoonIcon, type LucideIcon } from "lucide-react"
 import {
   Command,
   CommandEmpty,
@@ -27,13 +24,15 @@ import {
   DrawerTitle,
 } from "@/app/main-page/_components/ui/drawer"
 import { Button } from "@/app/main-page/_components/ui/button"
-import { Kbd, KbdGroup } from "@/app/main-page/_components/ui/kbd"
+import { Kbd } from "@/app/main-page/_components/ui/kbd"
 import { goToAnchor } from "@/app/main-page/_lib/anchors"
 import { copyText } from "@/app/main-page/_lib/clipboard"
 import { useMediaQuery, useToggleTheme } from "@/app/main-page/_lib/hooks"
-import type { SearchGroup, SearchItem, SearchItemIcon } from "@/app/main-page/_lib/types"
+import { matchScore } from "@/app/main-page/_lib/search-match"
+import type { SearchGroup, SearchItem } from "@/app/main-page/_lib/types"
 import type { Locale } from "@/i18n/config"
-import { plural, type PluralForms } from "@/i18n/format"
+import type { PluralForms } from "@/i18n/format"
+import { Hint, ItemIcon, Preview, ResultCount } from "./search-parts"
 
 export interface SearchLabels {
   search: string
@@ -49,13 +48,6 @@ export interface SearchLabels {
 
 /** Zamknięte okno nie liczy wyników — stała pusta lista (stabilna zależność `useMemo`). */
 const NO_GROUPS: readonly SearchGroup[] = []
-
-/** Ikony pozycji bez miniatury (realizacje i wpisy mają miniatury). */
-const ICONS: Record<Exclude<SearchItemIcon, "work" | "post">, LucideIcon> = {
-  page: ArrowUpRightIcon,
-  email: CopyIcon,
-  theme: SunMoonIcon,
-}
 
 /**
  * Okno wyszukiwarki ⌘K (ładowane leniwie przez `SearchMenu`): menu główne serwisu
@@ -97,7 +89,9 @@ export default function SearchDialog({
     event.preventDefault()
     const href = pending.current
     pending.current = null
-    if (!href) return trigger.current?.focus()
+    // `preventScroll`: przycisk stoi w przyklejonym nagłówku, w strefie `scroll-padding-top`,
+    // i sam `focus()` przewijał stronę o 450–900 px w górę, żeby go „odsłonić”.
+    if (!href) return trigger.current?.focus({ preventScroll: true })
     // Klatkę później: blokada przewijania okna jest już zdjęta. Realizacja na starcie,
     // gdy okno otwarto na starcie — skok w miejscu (lista otwiera wiersz); poza tym przejście.
     requestAnimationFrame(() => {
@@ -122,7 +116,7 @@ export default function SearchDialog({
   const ordered = open ? groups : NO_GROUPS
   // Filtrowanie i sortowanie po naszej stronie: cmdk 1.1.1 nie przestawia grup (szuka ich
   // po wewnętrznym id, a w DOM stoją pod nagłówkiem), więc Enter brał pierwszy wiersz w DOM,
-  // a nie najlepsze trafienie. Ta sama miara trafności co w cmdk (`defaultFilter`).
+  // a nie najlepsze trafienie. Miara trafności — `matchScore` (słowa, nie litery w rozsypce).
   const [search, setSearch] = useState("")
   // Każde otwarcie zaczyna od pustego pola (okno zostaje zamontowane między otwarciami).
   const [wasOpen, setWasOpen] = useState(open)
@@ -137,7 +131,7 @@ export default function SearchDialog({
         const scored = group.items
           .map((item) => ({
             item,
-            score: defaultFilter("", search, [item.label, item.hint ?? "", item.detail ?? ""]),
+            score: matchScore(search, item.label, [item.hint ?? "", item.detail ?? ""]),
           }))
           .filter((entry) => entry.score > 0)
           .sort((a, b) => b.score - a.score)
@@ -175,7 +169,8 @@ export default function SearchDialog({
                   <ItemIcon item={item} />
                   <span className="min-w-0 flex-1 truncate">{item.label}</span>
                   {item.hint && (
-                    <span className="max-w-[40%] shrink-0 truncate text-xs text-muted-foreground">
+                    // Poniżej 360 px podpowiedź ustępuje nazwie (inaczej „Polityka prywa…”).
+                    <span className="max-w-[40%] shrink-0 truncate text-xs text-muted-foreground max-[22.5rem]:hidden">
                       {item.hint}
                     </span>
                   )}
@@ -226,7 +221,7 @@ export default function SearchDialog({
         ref={sheet}
         onOpenAutoFocus={(event) => {
           event.preventDefault()
-          sheet.current?.focus()
+          sheet.current?.focus({ preventScroll: true })
         }}
         onCloseAutoFocus={onCloseAutoFocus}
       >
@@ -241,79 +236,5 @@ export default function SearchDialog({
         {body}
       </DrawerContent>
     </Drawer>
-  )
-}
-
-/** Liczba wyników (albo ich brak) dla czytnika — `[cmdk-empty]` nie jest regionem na żywo. */
-function ResultCount({
-  locale,
-  forms,
-  empty,
-}: {
-  locale: Locale
-  forms: PluralForms
-  empty: string
-}) {
-  const count = useCommandState((state) => state.filtered.count)
-  return (
-    <p role="status" className="sr-only">
-      {count ? plural(count, locale, forms) : empty}
-    </p>
-  )
-}
-
-/** Miniatura realizacji i wpisu albo ikona — kolumna 28 px, równa we wszystkich wierszach. */
-function ItemIcon({ item }: { item: SearchItem }) {
-  if (item.thumb) {
-    return (
-      <Image
-        src={item.thumb}
-        alt=""
-        width={56}
-        height={56}
-        sizes="28px"
-        className="size-7 shrink-0 rounded-md bg-muted object-cover"
-      />
-    )
-  }
-  const Icon = ICONS[item.icon as keyof typeof ICONS]
-  return (
-    <span className="grid size-7 shrink-0 place-items-center rounded-md border bg-background">
-      <Icon className="size-3.5" />
-    </span>
-  )
-}
-
-function Preview({ item }: { item: SearchItem }) {
-  return (
-    <div aria-hidden="true" className="hidden flex-col gap-3 p-4 md:flex">
-      {item.thumb ? (
-        <Image
-          src={item.thumb}
-          alt=""
-          width={480}
-          height={270}
-          sizes="240px"
-          className="aspect-video w-full rounded-lg bg-muted object-cover"
-        />
-      ) : (
-        <span className="grid aspect-video w-full place-items-center rounded-lg border bg-muted/50">
-          <ItemIcon item={item} />
-        </span>
-      )}
-      <p className="text-sm font-medium text-pretty">{item.label}</p>
-      {item.detail && (
-        <p className="line-clamp-5 text-sm text-pretty text-muted-foreground">{item.detail}</p>
-      )}
-    </div>
-  )
-}
-
-function Hint({ keys, children }: { keys: ReactNode; children: ReactNode }) {
-  return (
-    <span className="flex items-center gap-1.5">
-      <KbdGroup>{keys}</KbdGroup>
-      {children}
-    </span>
   )
 }

@@ -10,6 +10,7 @@ import { Field, FieldError, FieldLabel } from "@/app/main-page/_components/ui/fi
 import { Input } from "@/app/main-page/_components/ui/input"
 import { Textarea } from "@/app/main-page/_components/ui/textarea"
 import type { Locale } from "@/i18n/config"
+import { splitProjectTypes } from "@/lib/contact-fields"
 import { cn } from "@/lib/utils"
 
 export interface ContactFormCopy {
@@ -39,11 +40,14 @@ export function ContactForm({
   locale,
   copy,
   projectTypes,
+  projectTypeHint,
   privacyHref,
 }: {
   locale: Locale
   copy: ContactFormCopy
   projectTypes: readonly string[]
+  /** Podpowiedź pod nazwą pola: wybór wielokrotny. */
+  projectTypeHint: string
   privacyHref: string
 }) {
   const [state, action, pending] = useActionState(sendContactEmail, INITIAL)
@@ -63,9 +67,12 @@ export function ContactForm({
     state.invalid?.includes(field)
       ? ({ "aria-invalid": true, "aria-describedby": errorId(field) } as const)
       : {}
+  // Bez `role="alert"`: błąd czyta czytnik raz — jako opis pola, na które przechodzi fokus.
   const error = (field: ContactField) =>
     state.errors?.[field] ? (
-      <FieldError id={errorId(field)}>{state.errors[field]}</FieldError>
+      <FieldError id={errorId(field)} role={undefined}>
+        {state.errors[field]}
+      </FieldError>
     ) : null
   const values = state.success ? undefined : state.fields
 
@@ -114,11 +121,15 @@ export function ContactForm({
         </Field>
       </div>
 
+      {/* Kilka rodzajów naraz; akcja składa je w jedną listę (`src/lib/contact-fields.ts`)
+          i po błędzie odsyła ją w tej postaci. */}
       <ChoiceGroup
         legend={copy.projectType}
+        description={projectTypeHint}
         name="project-type"
         options={projectTypes}
-        defaultValue={values?.projectType}
+        multiple
+        defaultValue={splitProjectTypes(values?.projectType)}
       />
 
       <Field>
@@ -148,13 +159,14 @@ export function ContactForm({
         </Button>
       </div>
 
-      {/* Region stoi w drzewie dostępności także pusty — inaczej czytnik nie ogłosi komunikatu. */}
+      {/* Region stoi w drzewie dostępności także pusty — inaczej czytnik nie ogłosi komunikatu.
+          Wynik wysyłki i błędy bez pola (limit, poczta); błąd pola stoi pod polem. */}
       <p
         id={ids.status}
         role="status"
         className={cn("text-sm empty:sr-only", state.success ? "text-success" : "text-destructive")}
       >
-        {state.message}
+        {state.invalid?.length ? null : state.message}
       </p>
     </form>
   )

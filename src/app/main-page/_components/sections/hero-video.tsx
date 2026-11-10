@@ -43,6 +43,8 @@ export function HeroVideo({ labels }: { labels: { play: string; pause: string } 
   const still = useRef<HTMLImageElement>(null)
   const [phase, setPhase] = useState<Phase>("cover")
   const [playing, setPlaying] = useState(false)
+  /** Wideo pokazało klatkę — plakat pod nim chowamy (patrz `scale-[1.002]` niżej). */
+  const [framed, setFramed] = useState(false)
   /** Pauza z przycisku — powrót w kadr nie wznawia wtedy klipu. */
   const pausedByUser = useRef(false)
   const reducedMotion = useReducedMotion()
@@ -126,7 +128,10 @@ export function HeroVideo({ labels }: { labels: { play: string; pause: string } 
         fetchPriority="high"
         // Narożniki o 2 px obszerniejsze niż kadr: antyaliasowany łuk kadru przykrywa wtedy
         // sama zasłona, a plakat nie prześwituje cienkim łukiem przed wejściem druku.
-        className="absolute inset-0 size-full rounded-[calc(var(--radius-2xl)+2px)] object-cover"
+        className={cn(
+          "absolute inset-0 size-full rounded-[calc(var(--radius-2xl)+2px)] object-cover",
+          framed && "invisible"
+        )}
       />
       {/* Zasłona w kolorze tła: kadr jest „niczym”, dopóki nie wjedzie druk — plakat pod nią
           maluje się od razu (LCP). Tuż nad plakatem, pod wideo i canvasem (warstwami
@@ -150,10 +155,14 @@ export function HeroVideo({ labels }: { labels: { play: string; pause: string } 
         preload="none"
         aria-hidden="true"
         onPlay={() => setPlaying(true)}
+        onPlaying={() => setFramed(true)}
         onPause={() => setPlaying(false)}
-        // `scale-[0.999]` (0,35 px na krawędź, niewidoczne): bez tego pierwsza klatka wideo
-        // bywała dla przeglądarki większym kandydatem LCP niż plakat i przesuwała LCP na ok. 3 s.
-        className="relative size-full scale-[0.999] object-cover"
+        // `scale-[1.002]`: wideo w transformacji nie jest dla Chrome kandydatem LCP — inaczej
+        // pierwsza klatka wypierała plakat i przesuwała LCP na ok. 3 s. Powiększenie, nie
+        // pomniejszenie: nadmiar (0,7 px) przycina ramka. Kompozytor dociąga warstwę wideo do
+        // pikseli urządzenia, więc przy ułamkowym DPR (2,625 — telefony) i tak zostawał rząd
+        // plakatu przy krawędzi — stąd plakat niewidoczny, gdy wideo gra (`framed`).
+        className="relative size-full scale-[1.002] object-cover"
       >
         <source src="/hero_web.webm" type="video/webm" />
         <source src="/hero_web.mp4" type="video/mp4" />

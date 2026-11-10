@@ -19,7 +19,6 @@ import { postHref } from "../routes"
 /** Wpis jest „nowy” przez 30 dni od publikacji (liczone przy buildzie). */
 const NEW_FOR_MS = 30 * 24 * 60 * 60 * 1000
 
-
 export function need<T>(value: T | null | undefined, what: string): T {
   if (value === null || value === undefined) throw new Error(`main-page: brak treści — ${what}`)
   return value

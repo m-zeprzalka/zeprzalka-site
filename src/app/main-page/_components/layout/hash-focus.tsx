@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react"
 import { usePathname } from "next/navigation"
-import { focusTarget } from "@/app/main-page/_lib/anchors"
+import { focusTarget, hashId } from "@/app/main-page/_lib/anchors"
 
 /**
  * Wejście na stronę z kotwicą (link z innej strony, realizacja z ⌘K, dowód kompetencji):
@@ -21,7 +21,7 @@ export function HashFocus() {
   useEffect(() => {
     const initial = first.current
     first.current = false
-    const id = decodeURIComponent(window.location.hash.slice(1))
+    const id = hashId(window.location.hash)
     if (!id && initial) return
     const frame = requestAnimationFrame(() => {
       const target = document.getElementById(id || "main")

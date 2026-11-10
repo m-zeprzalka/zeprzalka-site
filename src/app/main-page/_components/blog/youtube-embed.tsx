@@ -31,7 +31,7 @@ export function YouTubeEmbed({
   if (!YT_ID.test(id)) return null
 
   return (
-    <figure className="my-8">
+    <figure>
       <div className="relative aspect-video overflow-hidden rounded-2xl border bg-muted">
         {active ? (
           <iframe

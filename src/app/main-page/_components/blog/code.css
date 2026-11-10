@@ -6,7 +6,7 @@
  *
  * Paleta składni to tokeny `--syntax-*`: sześć barw o tej samej jasności (jeden
  * stopień w oklch na motyw), więc żadna kategoria nie krzyczy głośniej od innych,
- * a każda ma kontrast ≥ 5:1 do tła bloku (WCAG 1.4.3 dla tekstu 13 px). Komentarze
+ * a każda ma kontrast ≥ 5:1 do tła bloku (WCAG 1.4.3 dla tekstu 13–14 px). Komentarze
  * i interpunkcja — szarość tekstu pomocniczego; zmienne i parametry — kolor tekstu.
  * Ciemna paleta tylko na ekranie: wydruk zawsze jasny (jak `dark:` w globals.css).
  */
@@ -40,12 +40,30 @@
     color: var(--foreground);
   }
 
+  /* 13 px na telefonie (dłuższe wiersze bez przewijania), 14 px od tabletu — przy tekście
+     wpisu 19 px kod nie może być o połowę mniejszy. */
   .code-block pre {
     padding: 1.1rem 1.25rem;
     font-family: var(--font-mono);
     font-size: 0.8125rem;
     line-height: 1.7;
     tab-size: 2;
+
+    @media (width >= 48rem) {
+      font-size: 0.875rem;
+    }
+  }
+
+  /* Wydruk nie przewija: długie wiersze kodu łamią się w kolumnie papieru, zamiast znikać za nią. */
+  @media print {
+    .code-block > [role="group"] {
+      overflow: visible;
+    }
+
+    .code-block pre {
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
   }
 
   .code-block :is(.hljs-comment, .hljs-quote, .hljs-doctag) {

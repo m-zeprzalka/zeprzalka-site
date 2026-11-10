@@ -1,4 +1,5 @@
-import { ArrowRightIcon, ClapperboardIcon, HistoryIcon, MonitorSmartphoneIcon } from "lucide-react"
+import { ClapperboardIcon, HistoryIcon, MonitorSmartphoneIcon } from "lucide-react"
+import { LinkArrow } from "@/app/main-page/_components/page/link-arrow"
 import { CopyEmail } from "@/app/main-page/_components/layout/copy-email"
 import { Segments } from "@/app/main-page/_components/peek/segments"
 import { Button } from "@/app/main-page/_components/ui/button"
@@ -36,7 +37,12 @@ export function Hero({
   labels: { copyEmail: string; copied: string; playVideo: string; pauseVideo: string }
 }) {
   return (
-    <section id={SECTION.start} data-peek-column="" className="column pt-14 md:pt-24">
+    <section
+      id={SECTION.start}
+      aria-labelledby="start-title"
+      data-peek-column=""
+      className="column pt-14 md:pt-24"
+    >
       <p className="flex items-center gap-2.5 text-sm text-muted-foreground motion-safe:animate-enter motion-safe:[animation-delay:var(--enter-status)]">
         <span aria-hidden="true" className="size-2 rounded-full bg-success" />
         {status}
@@ -52,10 +58,10 @@ export function Hero({
       {/* Pełna szerokość dostają same przyciski, nie każde dziecko rzędu: `*:w-full` rozciągał
           też komunikat czytnika `CopyEmail` (sr-only, `absolute`) i poszerzał stronę na telefonie. */}
       <div className="mt-8 flex flex-wrap gap-3 motion-safe:animate-enter motion-safe:[animation-delay:var(--enter-actions)]">
-        <Button asChild size="lg" className="max-sm:w-full">
+        <Button asChild size="lg" className="group/link max-sm:w-full">
           <a href={`#${SECTION.contact}`}>
             {cta}
-            <ArrowRightIcon />
+            <LinkArrow />
           </a>
         </Button>
         <CopyEmail

@@ -1,16 +1,15 @@
 import fs from "node:fs"
 import path from "node:path"
 import type { ReactNode } from "react"
-import { mdxComponents } from "@/app/main-page/_components/blog/mdx-components"
-import { renderMdx } from "@/lib/mdx"
+import { renderArticle } from "@/app/main-page/_components/blog/render-article"
 import { cn } from "@/lib/utils"
 
-/** Język bloku kodu z rozszerzenia pliku (nazwy jak w highlight.js). */
+/** Język bloku kodu z rozszerzenia pliku (nazwy jak w highlight.js; `mdx` — alias z `renderArticle`). */
 const LANGUAGE: Record<string, string> = {
   ".tsx": "tsx",
   ".ts": "ts",
   ".css": "css",
-  ".mdx": "markdown",
+  ".mdx": "mdx",
 }
 
 /** Od tylu wierszy kod przykładu przewija się w ramce o wysokości 24 rem (`max-h-96`). */
@@ -28,14 +27,14 @@ export function readExample(file: string): string {
 }
 
 /**
- * Kod przykładu tym samym torem co blok kodu we wpisie: MDX → rehype-highlight →
+ * Kod przykładu tym samym torem co blok kodu we wpisie (`renderArticle`): MDX → rehype-highlight →
  * `CodeBlock` (kopiowanie, przewijanie, paleta składni z `code.css`). Design system
  * pokazuje więc dokładnie ten wygląd, który dostanie kod na blogu.
  */
 export async function HighlightedCode({ code, language }: { code: string; language: string }) {
   // Płot dłuższy niż najdłuższy ciąg „`” w kodzie — treść nigdy go nie zamknie.
   const fence = "`".repeat(Math.max(3, ...(code.match(/`+/g) ?? []).map((run) => run.length + 1)))
-  const { content } = await renderMdx(`${fence}${language}\n${code}\n${fence}`, mdxComponents("pl"))
+  const { content } = await renderArticle(`${fence}${language}\n${code}\n${fence}`, "pl")
   return content
 }
 
@@ -60,7 +59,7 @@ export async function Example({
 }) {
   const code = readExample(file).trim()
   const name = path.basename(file, path.extname(file))
-  // Wiersz kodu ma 22 px (13 px × 1,7) — od 16 wierszy blok przekracza 24 rem ramki.
+  // Wiersz kodu ma 22–24 px (13–14 px × 1,7) — od 16 wierszy blok przekracza 24 rem ramki.
   const tall = code.split("\n").length > TALL_LINES
 
   return (

@@ -35,7 +35,7 @@ export function GridOverlay() {
             <span className="block p-2 text-muted-foreground">tor · menu</span>
           </div>
           <div className="fixed inset-y-0 stage-track hidden bg-foreground/10 xl:block">
-            <span className="block p-2 text-muted-foreground">tor · karta</span>
+            <span className="block p-2 text-muted-foreground">tor · karta, spis</span>
           </div>
           <div className="fixed inset-x-0 top-16 h-px bg-foreground/30" />
           <div className="fixed inset-x-0 top-rail hidden h-px bg-foreground/30 xl:block" />

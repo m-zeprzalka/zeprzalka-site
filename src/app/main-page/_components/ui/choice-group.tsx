@@ -1,5 +1,5 @@
 import { buttonVariants } from "@/app/main-page/_components/ui/button"
-import { FieldLegend, FieldSet } from "@/app/main-page/_components/ui/field"
+import { FieldDescription, FieldLegend, FieldSet } from "@/app/main-page/_components/ui/field"
 import { cn } from "@/lib/utils"
 
 /**
@@ -16,33 +16,45 @@ const CHOICE = cn(
 )
 
 /**
- * zeprzalka: własny prymityw (wyjątek z ZASADY.md §2). shadcn ma `RadioGroup` i
- * `ToggleGroup`, ale oba to Radix z JS i stanem; tu jednokrotny wybór z pigułek
- * to natywne radio w `fieldset` — strzałki, Tab i wysyłka formularza działają
- * bez hydratacji, a wygląd pochodzi z `buttonVariants` i tokenów systemu.
+ * zeprzalka: własny prymityw (wyjątek z ZASADY.md §2). shadcn ma `RadioGroup`,
+ * `Checkbox` i `ToggleGroup`, ale to Radix z JS i stanem; tu pigułki to natywne pola
+ * w `fieldset` — `multiple` daje pola wyboru (kilka naraz, Tab i Spacja), bez niego radio
+ * (jedno, strzałki). Wysyłka formularza działa bez hydratacji, a wygląd pochodzi
+ * z `buttonVariants` i tokenów systemu. `description` — podpowiedź pod nazwą (np. że można
+ * wybrać kilka: zaznaczona pigułka sama tego nie mówi).
  */
 export function ChoiceGroup({
   legend,
   name,
   options,
-  defaultValue,
+  multiple = false,
+  defaultValue = [],
+  description,
 }: {
   legend: string
+  description?: string
   name: string
   options: readonly string[]
-  defaultValue?: string
+  multiple?: boolean
+  /** Zaznaczone na start (np. wartości odesłane po błędzie walidacji). */
+  defaultValue?: readonly string[]
 }) {
   return (
-    <FieldSet className="gap-0">
+    <FieldSet className="gap-0" aria-describedby={description ? `${name}-description` : undefined}>
       <FieldLegend variant="label">{legend}</FieldLegend>
+      {description && (
+        <FieldDescription id={`${name}-description`} className="-mt-2 mb-3">
+          {description}
+        </FieldDescription>
+      )}
       <div className="flex flex-wrap gap-2">
         {options.map((option) => (
           <label key={option} className={CHOICE}>
             <input
-              type="radio"
+              type={multiple ? "checkbox" : "radio"}
               name={name}
               value={option}
-              defaultChecked={defaultValue === option}
+              defaultChecked={defaultValue.includes(option)}
               className="sr-only"
             />
             {option}

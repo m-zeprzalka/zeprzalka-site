@@ -50,6 +50,8 @@
   /* Obwódka fokusu ≥ 3:1 na tle (WCAG 1.4.11) — w obu motywach pełnym kolorem, bez przezroczystości. */
   --ring: oklch(0.556 0 0);
   --success: oklch(0.72 0.17 150);
+  /* Niewypełnione słowo tekstu wypełnianego przewijaniem (`scroll-fill`, `@keyframes fill`). */
+  --fill-from: 45%;
 }
 
 @media not print {
@@ -72,6 +74,7 @@
     --border: oklch(1 0 0 / 10%);
     --input: oklch(1 0 0 / 14%);
     --ring: oklch(0.708 0 0);
+    --fill-from: 36%;
   }
 }
 
@@ -113,7 +116,7 @@
  * Siatka (od 1280 px): [margines][tor][odstęp][kolumna][odstęp][tor][margines].
  * Kolumna treści (`max-w-column`) stoi na środku; dwa symetryczne tory po bokach
  * mają stałą proporcję do kolumny (`--container-track` = 3/8 kolumny: 240 → 264 → 288 px) —
- * lewy na menu główne (i spis rozdziałów wpisu), prawy na kartę podglądu. Odstęp
+ * lewy na menu główne, prawy na kartę podglądu (we wpisie — na spis rozdziałów). Odstęp
  * toru od kolumny to `--spacing-track`; resztę szerokości okna biorą marginesy.
  * Poniżej 1280 px torów nie ma — jest sama kolumna z marginesem strony.
  */
@@ -123,13 +126,10 @@
   --spacing-page: 1.25rem;
   --spacing-track: 2rem;
   /*
-   * Górna krawędź menu w torze: treść zaczyna się 10rem od góry (nagłówek h-16 + `md:pt-24`),
-   * a wiersz menu (2rem) stoi na środku jej pierwszego wiersza (status, okruszki — 1.25rem).
+   * Górna krawędź obu torów (menu, spis rozdziałów): treść zaczyna się 10rem od góry (nagłówek
+   * h-16 + `md:pt-24`), a wiersz toru (2rem) stoi na środku jej pierwszego wiersza (okruszki — 1.25rem).
    */
   --spacing-rail: calc(10rem - (2rem - 1.25rem) / 2);
-  /* Spis rozdziałów wpisu pod menu toru: pozycje menu po 2rem (`h-8`; liczbę podaje powłoka
-     w `--rail-items` na <html>) i 2,5rem odstępu. */
-  --spacing-rail-toc: calc(var(--spacing-rail) + var(--rail-items, 6) * 2rem + 2.5rem);
 
   /* Ruch: wyjście z rozmycia i płynięcie — jedna krzywa dla całej strony. */
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
@@ -207,6 +207,27 @@
   }
 }
 
+/*
+ * Tytuł wpisu — stopień nad `text-display` (36 → 44 → 48 px), ciaśniej i ciężej: blog
+ * ma wyraźny kontrast wielkości tytuł → h2 → tekst (`article.css`), także na telefonie.
+ */
+@utility text-title {
+  font-size: 2.25rem;
+  line-height: 1.1;
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: -0.032em;
+  text-wrap: balance;
+
+  @media (width >= 40rem) {
+    font-size: 2.75rem;
+    line-height: 1.08;
+  }
+
+  @media (width >= 90rem) {
+    font-size: 3rem;
+  }
+}
+
 /* Kolumna treści z marginesem strony — jedna oś dla nagłówka, sekcji i stopki. */
 @utility column {
   margin-inline: auto;
@@ -215,15 +236,26 @@
   padding-inline: var(--spacing-page);
 }
 
-/* Lewy tor siatki: miejsce i szerokość (menu główne, spis rozdziałów) — lustro karty podglądu. */
+/*
+ * Tory siatki są `fixed`, więc ich 50% to połowa okna, a nie `<body>`. Okno modalne (⌘K) zdejmuje
+ * pasek przewijania: okno rośnie o jego szerokość, a `<body>` dostaje w zamian prawy margines
+ * (react-remove-scroll). Kolumna stoi wtedy w miejscu, a tor odjechałby o pół paska w prawo —
+ * stąd `--removed-body-scroll-bar-size` (ustawia ta sama biblioteka; bez blokady — zero).
+ */
 @utility rail {
-  left: calc(50% - var(--container-column) / 2 - var(--spacing-track) - var(--container-track));
+  left: calc(
+    50% - var(--removed-body-scroll-bar-size, 0px) / 2 - var(--container-column) / 2 -
+      var(--spacing-track) - var(--container-track)
+  );
   width: var(--container-track);
 }
 
-/* Prawy tor siatki: karta podglądu na marginesie. */
+/* Prawy tor siatki: karta podglądu na marginesie, spis rozdziałów wpisu. */
 @utility stage-track {
-  left: calc(50% + var(--container-column) / 2 + var(--spacing-track));
+  left: calc(
+    50% - var(--removed-body-scroll-bar-size, 0px) / 2 + var(--container-column) / 2 +
+      var(--spacing-track)
+  );
   width: var(--container-track);
 }
 
@@ -288,27 +320,35 @@
 
 /*
  * Tekst wypełniany przewijaniem (wyjątek reguły ruchu — niewypełnione słowa są
- * częścią wzoru): akapit to jedna oś czasu (`view-timeline`), a fala koloru idzie
- * po słowach z indeksem `--i` z `--n`. Słowo nabiera koloru, gdy samo przejeżdża
- * przez środek okna — zaczyna na 62% wysokości okna, kończy na 46% — więc fala
- * idzie razem z czytaniem, a nie przed nim, przy każdej wysokości akapitu.
+ * częścią wzoru): akapit to jedna oś czasu (`view-timeline`), a kolor idzie słowo
+ * po słowie (indeks `--i` z `--n`), z ostrą granicą jak w `/demo/indeks-1`. Każde
+ * słowo nabiera koloru na odcinku przewinięcia równym trzem słowom, więc w ruchu
+ * jest naraz najwyżej kilka sąsiednich słów: za nimi tekst pełny, przed nimi przygaszony.
+ * Granica stoi na linii 58% wysokości okna — idzie razem z czytaniem, a nie przed nim.
  *
  * Rachunek: w zakresie `cover` przesunięcie 0 to góra akapitu na dole okna, a cały
  * zakres to okno + akapit, więc wysokość akapitu = `100% - 100vh`. Słowo leży
  * mniej więcej na `--i / --n` wysokości akapitu i dochodzi do linii ℓ okna po
- * przewinięciu `(1 - ℓ) · 100vh + --i / --n · (100% - 100vh)`.
+ * przewinięciu `(1 - ℓ) · 100vh + --i / --n · (100% - 100vh)`; krok jednego słowa
+ * to `(100% - 100vh) / --n`.
  */
 @utility scroll-fill {
   view-timeline: --fill block;
 
   @supports (animation-timeline: view()) {
-    /* `screen`: wydruk zawsze w pełnym kolorze, nie z 45% niewypełnionych słów. */
+    /* `screen`: wydruk zawsze w pełnym kolorze, nie z przygaszonych słów. */
     @media screen and (prefers-reduced-motion: no-preference) {
       & > * {
         animation: fill linear both;
         animation-timeline: --fill;
-        animation-range: cover calc(38vh + var(--i) / var(--n) * (100% - 100vh)) cover
-          calc(54vh + var(--i) / var(--n) * (100% - 100vh));
+        animation-range: cover calc(42vh + var(--i) / var(--n) * (100% - 100vh)) cover
+          calc(42vh + (var(--i) + 3) / var(--n) * (100% - 100vh));
+      }
+
+      /* Fraza z kartą idzie z falą (jak w `/demo/indeks-1`) — jaśniejsza od tekstu dopiero
+         po wypełnieniu; przed nim wyróżnia ją samo podkreślenie. */
+      & > * > [data-peek-trigger] {
+        color: inherit;
       }
     }
   }
@@ -355,11 +395,12 @@
   }
 }
 
+/* Z boku — od zewnętrznej krawędzi toru: lewy tor z lewej, prawy z prawej (`--enter-side-from: 1rem`). */
 @keyframes enter-side {
   from {
     opacity: 0;
     filter: blur(6px);
-    translate: -1rem 0;
+    translate: var(--enter-side-from, -1rem) 0;
   }
 }
 
@@ -414,10 +455,14 @@
   }
 }
 
-/* Niewypełnione słowo: 45% koloru tekstu — fala jest wyraźna, a kontrast dużego tekstu ≥ 3:1 (WCAG). */
+/*
+ * Niewypełnione słowo — najciemniej, jak pozwala kontrast dużego tekstu 3:1 (WCAG 1.4.3):
+ * w ciemnym motywie 36% koloru tekstu (3,1:1), w jasnym 45% (3,1:1 — mieszanie w sRGB
+ * rozjaśnia szybciej). Stąd `--fill-from`, a nie jedna wartość dla obu motywów.
+ */
 @keyframes fill {
   from {
-    color: color-mix(in oklab, var(--foreground) 45%, transparent);
+    color: color-mix(in oklab, var(--foreground) var(--fill-from), transparent);
   }
 }
 
@@ -480,6 +525,13 @@
 
   body {
     @apply bg-background text-foreground;
+  }
+
+  /* Tailwind 4 zdjął łapkę z przycisków (preflight: `cursor: default`) — wszystko, co
+     się klika (przyciski, wiersze akordeonów, `summary`), pokazuje ją jak link. */
+  :is(button, [role="button"]):not(:disabled, [aria-disabled="true"]),
+  summary {
+    cursor: pointer;
   }
 
   /* Cel skoku do kotwicy dostaje fokus programowo (`goToAnchor`) — bez obwódki wokół całej sekcji. */

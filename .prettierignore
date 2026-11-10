@@ -1,9 +1,10 @@
-# Treść i dokumentacja mają ręczny skład (tabele, łamanie wierszy w MDX).
-content/
-docs/
+# Treść i dokumentacja mają ręczny skład (tabele, łamanie wierszy w MDX). Wzorce od korzenia:
+# samo `content/` łapało też `src/i18n/content` i `_lib/content` (moduły TypeScriptu).
+/content/
+/docs/
 *.md
 *.mdx
-public/
+/public/
 pnpm-lock.yaml
 .next/
 .claude/

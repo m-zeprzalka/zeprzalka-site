@@ -20,9 +20,9 @@ const triggerVariants = cva(
           "hover:bg-accent hover:no-underline data-active:bg-accent data-active:no-underline",
           "[&>svg]:mr-[0.22em] [&>svg]:inline [&>svg]:size-[0.72em] [&>svg]:-translate-y-[0.06em] [&>svg]:text-muted-foreground",
         ],
-        /** Podpis (liczby w „O mnie”): bez tła — tylko odcień, jak link. */
+        /** Podpis (liczby w „O mnie”): bez tła — tylko odcień, jak link; pole dotyku 44 px w pionie. */
         quiet:
-          "rounded-sm decoration-muted-foreground/50 hover:text-foreground hover:decoration-foreground/60 data-active:text-foreground",
+          "relative rounded-sm decoration-muted-foreground/50 after:absolute after:-inset-x-1 after:-inset-y-3 hover:text-foreground hover:decoration-foreground/60 data-active:text-foreground",
       },
     },
     defaultVariants: { variant: "phrase" },

@@ -24,6 +24,7 @@ import {
   SearchIcon,
   SunIcon,
   SunMoonIcon,
+  XIcon,
   type LucideIcon,
 } from "lucide-react"
 import {
@@ -39,12 +40,12 @@ import { IconsExample } from "@/app/main-page/_design-system/examples/icons"
 
 /** Każda ikona, której używa strona, i jej znaczenie — nowa ikona to nowy wiersz tutaj. */
 const ICONS: readonly { icons: readonly LucideIcon[]; name: string; use: string }[] = [
-  { icons: [ArrowRightIcon], name: "ArrowRight", use: "główne wezwanie, „wszystkie …”" },
   {
     icons: [ArrowUpRightIcon],
     name: "ArrowUpRight",
-    use: "adres zewnętrzny, konkretne miejsce gdzie indziej",
+    use: "znak każdego linku (LinkArrow), strona w ⌘K",
   },
+  { icons: [ArrowRightIcon], name: "ArrowRight", use: "tylko wysyłka formularza kontaktu" },
   { icons: [ChevronDownIcon], name: "ChevronDown", use: "pokaż wszystkie (obrót 180°)" },
   { icons: [ChevronRightIcon], name: "ChevronRight", use: "okruszki, następna strona" },
   { icons: [ChevronLeftIcon], name: "ChevronLeft", use: "poprzednia strona" },
@@ -59,6 +60,7 @@ const ICONS: readonly { icons: readonly LucideIcon[]; name: string; use: string 
     use: "kopiuj adres i kod, potem potwierdzenie",
   },
   { icons: [PlayIcon, PauseIcon], name: "Play / Pause", use: "wideo: start, galeria" },
+  { icons: [XIcon], name: "X", use: "zamknij kartę podglądu" },
   { icons: [DownloadIcon], name: "Download", use: "CV w PDF (przed tekstem)" },
   { icons: [CheckIcon], name: "Check", use: "punkty pakietu, gwarancje" },
   { icons: [RotateCwIcon], name: "RotateCw", use: "ponów — ekran błędu" },
@@ -73,7 +75,7 @@ const ICONS: readonly { icons: readonly LucideIcon[]; name: string; use: string 
 
 export function IconsChapter(props: ChapterProps) {
   return (
-    <DsSection {...props} lead="lucide, jeden rozmiar i dwie strzałki">
+    <DsSection {...props} lead="lucide, jeden rozmiar i jedna strzałka linku">
       <DsNote>
         <Lead>Rozmiar.</Lead> Ikony z <Code>lucide-react</Code> (<Code>XxxIcon</Code>, same dostają{" "}
         <Code>aria-hidden</Code>). W przycisku bez klasy rozmiaru: 16 px (
@@ -90,11 +92,14 @@ export function IconsChapter(props: ChapterProps) {
         <Code>size-7 rounded-md border</Code> (⌘K).
       </DsNote>
       <DsNote>
-        <Lead>→ i ↗.</Lead> <Code>ArrowRight</Code> — działanie w tym samym toku: główne wezwanie
-        (przycisk <Code>default</Code>, <Code>lg</Code>) i „dalej” pod listą („Wszystkie
-        realizacje”, „Wszystkie artykuły”). <Code>ArrowUpRight</Code> — wyjście do konkretnego
-        miejsca poza bieżącym blokiem: adres zewnętrzny (nowa karta i dopisek dla czytnika),
-        realizacja w portfolio, wpis-dowód kompetencji, strona w ⌘K.
+        <Lead>↗ to znak linku.</Lead> Każde przejście ze strzałką — podstrona, wpis, realizacja,
+        profil, adres zewnętrzny — ma <Code>ArrowUpRight</Code> przez <Code>LinkArrow</Code> (
+        <Code>page/link-arrow.tsx</Code>): główne wezwanie, „Wszystkie realizacje” i „Wszystkie
+        artykuły”, panel CTA, 404, profile w stopce, dowody kompetencji, galeria, link karty
+        podglądu. 16 px; na najechaniu albo fokusie linku z <Code>group/link</Code> wychyla się o 2
+        px w swoją stronę. Adres zewnętrzny dostaje jeszcze dopisek o nowej karcie dla czytnika.{" "}
+        <Code>ArrowRight</Code> (→) zostaje tylko na wysyłce formularza kontaktu — to działanie, nie
+        przejście.
       </DsNote>
       <DsSubheading>Ikony strony</DsSubheading>
       <ul className="grid grid-cols-2 gap-x-3 gap-y-4 sm:grid-cols-3">

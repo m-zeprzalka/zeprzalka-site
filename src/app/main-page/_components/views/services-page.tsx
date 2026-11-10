@@ -132,7 +132,6 @@ export function ServicesPage({ locale }: { locale: Locale }) {
         actions={[
           { label: copy.quotePrimary, href: pageHref("contact", locale) },
           { label: copy.quotePortfolio, href: pageHref("portfolio", locale) },
-          { label: copy.quoteSecondary, href: pageHref("about", locale) },
         ]}
       />
     </>

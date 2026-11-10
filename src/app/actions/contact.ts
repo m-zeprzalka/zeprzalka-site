@@ -6,6 +6,7 @@ import { checkRateLimit, clientKey } from "@/lib/rate-limit"
 import { DEFAULT_LOCALE, isLocale, type Locale } from "@/i18n/config"
 import { getCommon } from "@/i18n/content/common"
 import { fill } from "@/i18n/format"
+import { joinProjectTypes } from "@/lib/contact-fields"
 import { escapeMarkup } from "@/lib/escape"
 import { sendMail } from "@/lib/mail"
 import { CONTACT_EMAIL } from "@/lib/site"
@@ -27,6 +28,7 @@ export interface ContactFormState {
   fields?: {
     name: string
     email: string
+    /** Lista rodzajów projektu (`joinProjectTypes`, `src/lib/contact-fields.ts`). */
     projectType: string
     message: string
   }
@@ -64,10 +66,12 @@ export async function sendContactEmail(
 ): Promise<ContactFormState> {
   const locale = readLocale(formData.get("locale"))
   const copy = getCommon(locale).contactAction
+  // Jedno pole tekstowe (serwis) albo kilka pigułek (nowa wersja) — jedna lista.
+  const types = joinProjectTypes(formData.getAll("project-type"))
   const fields = {
     name: text(formData.get("name"), 100),
     email: text(formData.get("email"), 200),
-    projectType: text(formData.get("project-type"), 200),
+    projectType: types.slice(0, 200),
     message: text(formData.get("message"), 5000),
   }
 
@@ -95,7 +99,7 @@ export async function sendContactEmail(
     email: formData.get("email") ?? "",
     // Pole opcjonalne: brak w zgłoszeniu to `undefined`, nie `null`
     // (inaczej użytkownik dostawał angielski komunikat zod).
-    projectType: formData.get("project-type") ?? undefined,
+    projectType: types || undefined,
     message: formData.get("message") ?? "",
   })
 

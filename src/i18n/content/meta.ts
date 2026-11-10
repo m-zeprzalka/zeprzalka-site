@@ -16,8 +16,7 @@ const pl = {
     /** Opis serwisu: metadane układu głównego i manifest aplikacji. */
     description:
       "Strony internetowe, aplikacje webowe, design i integracje AI. 15 lat doświadczenia w tworzeniu rozwiązań webowych i multimedialnych dla biznesu.",
-    ogDescription:
-      "Strony internetowe, aplikacje webowe, design i integracje AI dla biznesu.",
+    ogDescription: "Strony internetowe, aplikacje webowe, design i integracje AI dla biznesu.",
     siteName: "Michał Zeprzałka",
     feedTitle: "Blog — Michał Zeprzałka",
   },
@@ -130,8 +129,7 @@ const en: typeof pl = {
     titleTemplate: "%s | Michał Zeprzałka",
     description:
       "Websites, web applications, design and AI integrations. 15 years of building web and multimedia solutions for businesses.",
-    ogDescription:
-      "Websites, web applications, design and AI integrations for business.",
+    ogDescription: "Websites, web applications, design and AI integrations for business.",
     siteName: "Michał Zeprzałka",
     feedTitle: "Blog — Michał Zeprzałka",
   },

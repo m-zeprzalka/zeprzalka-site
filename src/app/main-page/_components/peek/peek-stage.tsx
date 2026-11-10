@@ -4,7 +4,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from "react"
 import { HEADER_OFFSET } from "@/app/main-page/_lib/anchors"
 import { cn } from "@/lib/utils"
 import { PeekCard } from "./peek-card"
-import { usePeekActions, usePeekState } from "./peek-context"
+import { usePeekActions, usePeekState, type PeekState } from "./peek-context"
 
 export const STAGE_ID = "podglad"
 
@@ -24,15 +24,19 @@ const FADE_MS = 500
  *   proporcjach), a poprzednia treść gaśnie w rozmyciu, gdy nowa się wyostrza.
  * Wizualne uzupełnienie treści strony: `aria-hidden`, a linki poza kolejnością
  * Tab — klawiatura i czytnik dostają tę samą kartę jako popover (`PeekTrigger`).
- * Kursor może przejechać na kartę (zwłoka ukrycia, `hold`) i kliknąć jej link.
+ * Kursor może przejechać na kartę (zwłoka ukrycia, `hold`), kliknąć jej link albo
+ * zamknąć ją krzyżykiem.
  */
 export function PeekStage() {
-  const { peeks, stage, hide, hold } = usePeekActions()
+  const { peeks, closeLabel, stage, hide, hold } = usePeekActions()
   const state = usePeekState()
   const frame = useRef<HTMLDivElement>(null)
   const body = useRef<HTMLDivElement>(null)
   /** Ostatnia pozycja kursora w pionie — karta pojawia się od razu tam, gdzie on jest. */
   const pointerY = useRef(0)
+  /** Środek karty w pionie (px okna) i karta, dla której go wymierzono. */
+  const center = useRef(0)
+  const aimed = useRef<PeekState | null>(null)
   /** Od kiedy karta jest schowana (`null` — widoczna). */
   const hiddenAt = useRef<number | null>(-Infinity)
   const [height, setHeight] = useState(0)
@@ -86,17 +90,32 @@ export function PeekStage() {
     const element = frame.current
     const { anchor, via, id } = state
     if (!element || !id || !anchor) return
-    const place = () => {
+    // Środek karty wyznacza fraza: kursor nad nią albo — przy fokusie — sam element.
+    const aim = () => {
       const box = anchor.getBoundingClientRect()
-      const center = via === "focus" ? box.top + box.height / 2 : pointerY.current
+      center.current = via === "focus" ? box.top + box.height / 2 : pointerY.current
+    }
+    const place = () => {
+      // Fokus: karta stoi przy elemencie, także gdy strona się przewija.
+      if (via === "focus") aim()
       const max = window.innerHeight - BOTTOM - element.offsetHeight
-      const top = Math.max(TOP, Math.min(center - element.offsetHeight / 2, max))
+      const top = Math.max(TOP, Math.min(center.current - element.offsetHeight / 2, max))
       element.style.translate = `0 ${Math.round(top)}px`
     }
+    // Nowa karta (albo fraza) — nowy środek; sama zmiana wysokości karty go nie przestawia
+    // (inaczej karta skakała do kursora, który akurat celował w jej krzyżyk).
+    if (aimed.current !== state) {
+      aimed.current = state
+      aim()
+    }
     place()
-    // Kursor na samej karcie — karta stoi (inaczej uciekałaby spod niego).
-    const onMove = (event: PointerEvent) =>
-      event.pointerType === "mouse" && !element.contains(event.target as Node) && place()
+    // Karta płynie za kursorem tylko nad frazą (wierszem): w drodze z frazy na kartę i na
+    // samej karcie stoi — inaczej uciekała spod kursora, który celował w jej link albo krzyżyk.
+    const onMove = (event: PointerEvent) => {
+      if (event.pointerType !== "mouse" || !anchor.contains(event.target as Node)) return
+      aim()
+      place()
+    }
     window.addEventListener("pointermove", onMove, { passive: true })
     window.addEventListener("scroll", place, { passive: true })
     window.addEventListener("resize", place)
@@ -108,6 +127,9 @@ export function PeekStage() {
   }, [state, height])
 
   if (!stage) return null
+
+  // Krzyżyk chowa kartę od razu — bez zwłoki zjechania z frazy.
+  const close = { onClose: () => hide(), label: closeLabel }
 
   const current = layers.id ? peeks[layers.id] : undefined
   const leaving = layers.leaving ? peeks[layers.leaving] : undefined
@@ -139,7 +161,9 @@ export function PeekStage() {
             className="absolute inset-x-0 top-0 animate-peek-out"
             onAnimationEnd={() => setLayers((value) => ({ ...value, leaving: null }))}
           >
-            <PeekCard peek={leaving} play={false} inStage />
+            {/* Krzyżyk także w gasnącej warstwie (zamyka tak samo): karta nie gubi go
+                w połowie przenikania. */}
+            <PeekCard peek={leaving} play={false} inStage close={close} />
           </div>
         )}
         {current && (
@@ -149,7 +173,7 @@ export function PeekStage() {
             data-peek-layer={layers.id ?? undefined}
             className="animate-peek-in"
           >
-            <PeekCard peek={current} play inStage />
+            <PeekCard peek={current} play inStage close={close} />
           </div>
         )}
       </div>

@@ -8,8 +8,8 @@ import {
 import { Example } from "@/app/main-page/_design-system/example"
 import { FooterExample } from "@/app/main-page/_design-system/examples/footer"
 import { HeaderControlsExample } from "@/app/main-page/_design-system/examples/header-controls"
-import { LeftTrackExample } from "@/app/main-page/_design-system/examples/left-track"
 import { SearchExample } from "@/app/main-page/_design-system/examples/search"
+import { TracksExample } from "@/app/main-page/_design-system/examples/tracks"
 
 export function ShellChapter(props: ChapterProps) {
   return (
@@ -18,15 +18,20 @@ export function ShellChapter(props: ChapterProps) {
         <Lead>Powłoka (MainShell).</Lead> Link „Przejdź do treści”, przyklejony nagłówek (
         <Code>h-16</Code>, rozmycie z trzech warstw bez koloru i kreski), menu główne w lewym torze,{" "}
         <Code>main#main</Code>, stopka. Ciemny motyw jest w HTML od pierwszej klatki, a skrypt przed
-        malowaniem ustawia <Code>data-os</Code> (skrót ⌘ albo Ctrl) i kolor paska przeglądarki.
+        malowaniem ustawia <Code>data-os</Code> (skrót ⌘ albo Ctrl) i kolor paska przeglądarki.{" "}
+        <Code>data-scroll-behavior=&quot;smooth&quot;</Code> na <Code>&lt;html&gt;</Code>: kotwice
+        przewijają płynnie, a przejście na inną stronę od razu zaczyna się na górze (Next 16 wyłącza
+        płynność na czas nawigacji tylko z tym atrybutem).
       </DsNote>
       <DsNote>
         <Lead>Nawigacja.</Lead> Nagłówek nie ma menu: od 1280 px podstrony prowadzi{" "}
         <Code>RailNav</Code> w lewym torze, węziej — ⌘K (na telefonie arkusz od dołu) i lista w
-        stopce. Bieżąca podstrona ma kropkę (wpis podświetla „Blog”). Pod menu stoi{" "}
-        <Code>TableOfContents</Code> — rozdziały wpisu i tej strony: wszystkie pozycje widoczne,
-        kropka płynie do rozdziału, którego nagłówek minął 45% okna, długie tytuły są ucięte (pełne
-        w <Code>title</Code>). Nad stopką oba tory gasną; fokus z klawiatury pokazuje je z powrotem.
+        stopce. Bieżąca podstrona ma kropkę (wpis podświetla „Blog”). Rozdziały wpisu i tej strony (
+        <Code>TableOfContents</Code>) stoją w prawym torze, na wysokości menu: pełne nazwy łamane w
+        szerokości toru, kropka płynie do rozdziału, którego nagłówek minął 45% okna. Menu gaśnie
+        nad stopką, spis — za końcem treści (<Code>[data-toc-scope]</Code>) i na czas karty podglądu
+        w tym samym torze (<Code>useEdgeAbove</Code> w <Code>_lib/hooks.ts</Code>); fokus z
+        klawiatury pokazuje je z powrotem.
       </DsNote>
 
       <Example
@@ -43,17 +48,17 @@ export function ShellChapter(props: ChapterProps) {
         <HeaderControlsExample />
       </Example>
       <Example
-        file="left-track.tsx"
-        title="Lewy tor — menu główne i spis rozdziałów"
+        file="tracks.tsx"
+        title="Tory — menu główne i spis rozdziałów"
         note={
           <>
-            Obraz statyczny w szerokości toru (<Code>w-(--container-track)</Code>). Żywe menu i spis
-            tej strony stoją w lewym torze od 1280 px — przewiń i patrz, jak kropka spisu idzie za
-            rozdziałem.
+            Obraz statyczny w szerokości toru (<Code>w-(--container-track)</Code>). Żywe menu stoi
+            od 1280 px w lewym torze, a spis tej strony — w prawym (wchodzi z prawej). Przewiń i
+            patrz, jak kropka spisu idzie za rozdziałem; najedź na frazę — spis ustąpi karcie.
           </>
         }
       >
-        <LeftTrackExample />
+        <TracksExample />
       </Example>
       <Example
         file="search.tsx"

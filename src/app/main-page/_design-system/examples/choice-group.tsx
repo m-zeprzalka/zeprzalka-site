@@ -2,12 +2,23 @@ import { ChoiceGroup } from "@/app/main-page/_components/ui/choice-group"
 
 export function ChoiceGroupExample() {
   return (
-    // Natywne radio w `fieldset`: strzałki, Tab i wysyłka działają bez hydratacji.
-    <ChoiceGroup
-      legend="Rodzaj projektu"
-      name="ds-type"
-      options={["Strona", "Sklep", "Aplikacja", "Wdrożenie AI"]}
-      defaultValue="Strona"
-    />
+    <div className="grid gap-6">
+      {/* `multiple` — pola wyboru (kilka naraz), jak rodzaj projektu w formularzu. */}
+      <ChoiceGroup
+        legend="Rodzaj projektu"
+        description="Możesz wybrać kilka."
+        name="ds-types"
+        options={["Strona internetowa", "Animacja", "Grafika", "Inny"]}
+        multiple
+        defaultValue={["Strona internetowa", "Animacja"]}
+      />
+      {/* Bez `multiple` — natywne radio: strzałki, Tab i wysyłka działają bez hydratacji. */}
+      <ChoiceGroup
+        legend="Budżet (jeden)"
+        name="ds-budget"
+        options={["do 10 000 zł", "10–30 000 zł", "powyżej 30 000 zł"]}
+        defaultValue={["10–30 000 zł"]}
+      />
+    </div>
   )
 }

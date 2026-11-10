@@ -11,7 +11,11 @@ import { getSource } from "./source"
 /** Profil X jest pierwszy (prośba właściciela); przy przepięciu trafi do `SOCIAL_PROFILES`. */
 const PROFILES: readonly LinkData[] = [
   { label: "X", href: "https://x.com/zeprzalka_com", external: true },
-  ...SOCIAL_PROFILES.map((profile) => ({ label: profile.label, href: profile.url, external: true })),
+  ...SOCIAL_PROFILES.map((profile) => ({
+    label: profile.label,
+    href: profile.url,
+    external: true,
+  })),
 ]
 
 export function getShellContent(locale: Locale) {

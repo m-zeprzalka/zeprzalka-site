@@ -97,6 +97,7 @@ export function getHomeContent(locale: Locale) {
       newTab: common.ui.newTab,
       playVideo: copy.ui.playVideo,
       pauseVideo: copy.ui.pauseVideo,
+      closeCard: copy.ui.closeCard,
     },
     peeks: buildPeeks(source),
     hero: { status: home.hero.status, title: home.hero.title, lead, cta: home.hero.cta },
@@ -135,9 +136,9 @@ export function getHomeContent(locale: Locale) {
         locale,
         copy: common.form,
         projectTypes: copy.contact.projectTypes,
+        projectTypeHint: copy.contact.projectTypeHint,
         privacyHref: pageHref("privacy", locale),
       },
     },
   }
 }
-

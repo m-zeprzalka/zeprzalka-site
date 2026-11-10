@@ -1,16 +1,17 @@
 import Link from "next/link"
-import { ArrowRightIcon } from "lucide-react"
+import { LinkArrow } from "@/app/main-page/_components/page/link-arrow"
 import { Button } from "@/app/main-page/_components/ui/button"
 import { pageHref } from "@/app/main-page/_lib/routes"
 
 export function ButtonExample() {
   return (
     <>
-      {/* Link to link: `asChild` oddaje wygląd przycisku elementowi `<a>` (Button jest serwerowy). */}
-      <Button asChild>
+      {/* Link to link: `asChild` oddaje wygląd przycisku elementowi `<a>` (Button jest serwerowy),
+          a ↗ (`LinkArrow`) wychyla się, gdy najedziesz na link z `group/link`. */}
+      <Button asChild className="group/link">
         <Link href={pageHref("contact", "pl")}>
           Default
-          <ArrowRightIcon />
+          <LinkArrow />
         </Link>
       </Button>
       <Button variant="secondary">Secondary</Button>

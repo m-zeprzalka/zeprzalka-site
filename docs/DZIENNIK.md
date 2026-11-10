@@ -6,6 +6,59 @@ w `docs/prywatne/` (poza repozytorium). Iteracja bez wpisu tutaj nie jest skońc
 
 ---
 
+## Iteracja 13 — 10 listopada 2026: wersja MVP, blog, audyty i ocena gotowości (`main-page`)
+
+Zakres od właściciela: menu w lewym torze przesuwało się przy otwarciu ⌘K, jasna linia przy
+krawędzi wideo startu, krzyżyk z powrotem na wszystkich kartach (jak przycisk odtwarzania),
+„O mnie” prawie słowo po słowie jak w `/demo/indeks-1`, łapka na wszystkim, co się klika, ↗ jako
+znak linku, wybór wielokrotny z „Inny” w formularzu, start każdej podstrony od góry, spis treści
+wpisu w prawym torze z pełnymi nazwami, kontrastowa typografia bloga, najwyżej dwa działania
+w wezwaniach; na koniec audyt, poprawki, dokumentacja i ocena gotowości. Bez przepięcia.
+
+**Zrobione:**
+- tory `fixed` odejmują połowę paska przewijania zdjętego przez okno (`--removed-body-scroll-bar-size`)
+  — przy ⌘K nic się nie rusza (zmierzone 0,00 px przy pasku 15 px);
+- wideo: `scale-[0.999]` (iteracja 12) odsłaniało rząd pikseli plakatu; teraz `scale-[1.002]`
+  (wideo w transformacji nie jest kandydatem LCP), a plakat chowa się, gdy wideo gra — także przy
+  ułamkowym DPR telefonów;
+- krzyżyk na każdej karcie podglądu (popover i tor): na kadrze `variant="media"` 12 px od krawędzi,
+  bez kadru — obwódka w barwach motywu; pole dotyku 44 px; w torze bez fokusu po kliknięciu;
+  karta w torze nie ucieka już spod kursora w drodze z frazy;
+- „O mnie”: każde słowo wypełnia się na odcinku trzech słów (ostra granica na 58% okna),
+  niewypełnione 45% / 36% (najciemniej przy kontraście 3:1), frazy z kartą idą z falą;
+- łapka: reguła bazowa dla przycisków i `summary` (Tailwind 4 zdjął ją z preflightu);
+- `LinkArrow` (↗, wychyla się na najechaniu) na każdym linku; → tylko na wysyłce formularza;
+- formularz: rodzaj projektu jako pola wyboru z „Inny” i podpowiedzią; akcja serwisu składa
+  zaznaczenia w listę (`src/lib/contact-fields.ts` z testami; stary formularz bez zmian); błąd
+  pola ogłaszany raz;
+- przejścia: przyczyna „lądowania w połowie strony” — brak `data-scroll-behavior="smooth"`
+  na `<html>` (Next 16 przewijał na górę płynnie od starej pozycji);
+- wpis: spis rozdziałów w prawym torze (pełne nazwy, kropka za czytanym rozdziałem, chowa się
+  za treścią i przy karcie podglądu, wejście z prawej); typografia od nowa: tytuł 36 → 48 px
+  (`text-title`), h2 26 → 32 px, h3 20 → 24 px, tekst 17 → 19 px o ton cichszy od nagłówków,
+  miara 34 em, kod 14 px, bloki ` ```mdx ` kolorowane (alias Markdown), bez sierot w treści
+  (`rehypeNoOrphans`), wydruk łamie długi kod; `renderArticle` — jeden tor MDX nowej wersji;
+- wezwania: `CtaPanel` przyjmuje najwyżej dwa działania (typ krotki); usługi i „O mnie” po dwa;
+- audyty: przegląd kodu (P1: zepsuty hash `#50%` wywracał stronę → `hashId()`) i audyt UX
+  (P1: zamknięcie ⌘K przewijało o 450–900 px → `focus({ preventScroll })`), dalej kropka spisu
+  po zmianie szerokości, `useEdgeAbove` z `ResizeObserver` i tylko od 1280 px, dopasowanie ⌘K
+  po słowach zamiast rozmytego (`matchScore` z testami), pola dotyku `sm`/`icon` 44 px na
+  dotyku, wydruk bez przycisków nagłówka i menu stopki, spis po nagłówku w kolejności Tab;
+- porządki: `.prettierignore` od korzenia (samo `content/` pomijało `src/i18n/content`
+  i `_lib/content`), stałe klas torów w `layout/track-classes.ts`, części ⌘K w `search-parts.tsx`,
+  design system zgodny z iteracją (tory, krzyżyk, strzałka, CTA, skala wpisu, `mdx`);
+- dokumentacja: README nowej wersji z oceną gotowości (8/10, braki do 10/10) i ścieżką czytania
+  kodu przed ręcznym przeglądem; ZASADY z decyzjami i pułapkami 10.11.
+
+**Sprawdzone:** `pnpm check` w czystej kopii (z podglądem, 20 testów); axe 0 naruszeń WCAG 2.2 AA
+i dobrych praktyk (audyt: 140 przebiegów; końcowy: 16 tras × 2 motywy × 390/1440), przepełnienie
+0 px (320–1920), bez błędów konsoli; LCP plakatu 0,1–0,14 s (desktop), 0,7–1,8 s (telefon, wolne
+4G) — wideo nie jest kandydatem; zamknięcie ⌘K bez przewinięcia; krzyżyk karty w torze trafiany
+po skosie; stary formularz działa ze zmienioną akcją; `pnpm visual --all` — stara strona
+identyczna co do piksela.
+
+---
+
 ## Iteracja 12 — 9 listopada 2026: seria poprawek startu, design system, audyt (`main-page`)
 
 Zakres od właściciela: poziome przewijanie na telefonie, sygnet w pętli, menu = podstrony (bez

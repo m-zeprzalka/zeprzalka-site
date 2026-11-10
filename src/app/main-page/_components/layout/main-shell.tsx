@@ -30,11 +30,14 @@ export function MainShell({ locale, children }: { locale: Locale; children: Reac
   return (
     // `dark` i `color-scheme` już w HTML: domyślny motyw maluje się od pierwszej klatki, bez
     // błysku jasnych tokenów, zanim skrypt next-themes ustawi klasę (jasny motyw ją podmienia).
+    // `data-scroll-behavior`: arkusz włącza płynne przewijanie (kotwice), a Next 16 wyłącza je
+    // na czas przejścia tylko z tym atrybutem — bez niego nowa strona rysowała się na wysokości
+    // poprzedniej i dopiero potem płynęła na górę.
     <html
       lang={locale}
       className={`dark ${fontVariables} ${logoFontVariables}`}
-      // `--rail-items`: liczba pozycji menu w torze — spis rozdziałów wpisu stoi tuż pod nim.
-      style={{ colorScheme: "dark", "--rail-items": rail.items.length }}
+      data-scroll-behavior="smooth"
+      style={{ colorScheme: "dark" }}
       suppressHydrationWarning
     >
       <body className="font-sans antialiased">

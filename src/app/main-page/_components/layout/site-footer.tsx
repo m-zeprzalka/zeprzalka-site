@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { ArrowUpRightIcon } from "lucide-react"
+import { LinkArrow } from "@/app/main-page/_components/page/link-arrow"
 import { Button } from "@/app/main-page/_components/ui/button"
 import type { LinkData } from "@/app/main-page/_lib/types"
 import { FooterWordmark } from "./footer-wordmark"
@@ -37,7 +37,8 @@ export function SiteFooter({
 }) {
   return (
     <footer data-site-footer="" className="mt-40 overflow-hidden">
-      <nav aria-label={navigationHeading} className="column">
+      {/* Menu i profile nie trafiają na wydruk (linki bez adresu na papierze). */}
+      <nav aria-label={navigationHeading} className="column print:hidden">
         {/* Ujemny margines = wcięcie przycisku: tekst pierwszego linku stoi na linii kolumny. */}
         <ul className="-mx-3 flex flex-wrap">
           {[...pages, privacy].map((page) => (
@@ -54,16 +55,16 @@ export function SiteFooter({
           <span>{copyright}</span>
           <LocalTime city={city} label={localTimeLabel} locale={locale} />
         </p>
-        <nav aria-label={profilesHeading}>
+        <nav aria-label={profilesHeading} className="print:hidden">
           {/* Profile to kontakt z autorem strony — `address` (bez kursywy przeglądarki). */}
           <address className="not-italic">
             <ul className="flex flex-wrap gap-2">
               {profiles.map((profile) => (
                 <li key={profile.href}>
-                  <Button asChild variant="secondary" size="sm">
+                  <Button asChild variant="secondary" size="sm" className="group/link">
                     <a href={profile.href} target="_blank" rel="noopener noreferrer me">
                       {profile.label}
-                      <ArrowUpRightIcon />
+                      <LinkArrow />
                       <span className="sr-only">({newTabLabel})</span>
                     </a>
                   </Button>

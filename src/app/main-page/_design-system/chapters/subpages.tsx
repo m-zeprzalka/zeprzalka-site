@@ -39,7 +39,8 @@ export function SubpagesChapter(props: ChapterProps) {
             Żywy przykład to nagłówek tej strony (na górze). Okruszki, potem słowa tytułu i
             rozwinięcia wchodzą z rozmycia jedno po drugim, na końcu <Code>children</Code>. Tytuł i
             rozwinięcie to <Code>h1</Code> i <Code>p</Code>, a czytają się jak dwutonowe zdanie
-            startu; wpis ma rozwinięcie stopień niżej (<Code>compactLead</Code>).
+            startu. Wpis (<Code>variant=&quot;article&quot;</Code>) ma tytuł stopień wyżej (
+            <Code>text-title</Code>), a rozwinięcie stopień niżej, osobnym akapitem.
           </>
         }
       />
@@ -109,8 +110,9 @@ export function SubpagesChapter(props: ChapterProps) {
         title="Kafel galerii portfolio"
         note={
           <>
-            Klip gra tylko na żądanie (WCAG 2.2.2): najechanie myszą to podgląd, przycisk włącza i
-            wyłącza. Plik pobiera się dopiero wtedy, a poza kadrem klip stoi.
+            Klip gra tylko na żądanie (WCAG 2.2.2): najechanie myszą to podgląd, przycisk na kadrze
+            (12 px od rogu, jak każda kontrolka kadru) włącza i wyłącza. Plik pobiera się dopiero
+            wtedy, a poza kadrem klip stoi. Tytuł z adresem to link z ↗.
           </>
         }
       >
@@ -135,9 +137,9 @@ export function SubpagesChapter(props: ChapterProps) {
         title="Zamknięcie podstrony — CtaPanel"
         note={
           <>
-            Pierwsze działanie jest główne (ze strzałką), kolejne coraz cichsze:{" "}
-            <Code>default</Code> → <Code>outline</Code> → <Code>ghost</Code>. We wpisie jako{" "}
-            <Code>aside</Code>.
+            Najwyżej dwa działania (typ <Code>[primary, secondary?]</Code>): główne{" "}
+            <Code>default</Code> ze strzałką linku (<Code>LinkArrow</Code>) i ciche{" "}
+            <Code>outline</Code> obok. We wpisie jako <Code>aside</Code>.
           </>
         }
       >

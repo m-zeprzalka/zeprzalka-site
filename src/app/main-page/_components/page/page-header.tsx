@@ -25,16 +25,21 @@ export function PageHeader({
   breadcrumb,
   title,
   lead,
-  compactLead = false,
+  variant = "page",
   children,
 }: {
   breadcrumb: { label: string; trail: readonly LinkData[]; current: string }
   title: string
   lead?: string
-  /** Wpis: rozwinięcie stopień niżej — długi opis nie spycha okładki o kilkanaście wierszy. */
-  compactLead?: boolean
+  /**
+   * `article` — wpis: tytuł stopień wyżej (`text-title`), a rozwinięcie stopień niżej,
+   * osobnym akapitem — długi opis nie spycha okładki o kilkanaście wierszy.
+   */
+  variant?: "page" | "article"
   children?: ReactNode
 }) {
+  const article = variant === "article"
+
   return (
     <header id={SECTION.start} className="column pt-14 md:pt-24">
       <Breadcrumb
@@ -61,14 +66,19 @@ export function PageHeader({
         </BreadcrumbList>
       </Breadcrumb>
       <div className="mt-6 text-display">
-        <h1 className="enter-stagger [--enter-delay:var(--enter-title)] [--enter-step:40ms]">
+        <h1
+          className={cn(
+            "enter-stagger [--enter-delay:var(--enter-title)] [--enter-step:40ms]",
+            article && "text-title"
+          )}
+        >
           <Segments segments={[{ text: noOrphans(title) }]} split="block" />
         </h1>
         {lead && (
           <p
             className={cn(
               "enter-stagger text-muted-foreground [--enter-delay:var(--enter-lead)] [--enter-step:16ms]",
-              compactLead && "mt-3 text-lg leading-snug font-normal tracking-normal sm:text-xl"
+              article && "mt-5 text-lg leading-snug font-normal tracking-normal sm:text-xl"
             )}
           >
             <Segments segments={[{ text: noOrphans(lead) }]} split="block" />

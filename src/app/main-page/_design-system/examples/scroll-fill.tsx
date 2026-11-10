@@ -1,6 +1,11 @@
 import { countSegments, Segments } from "@/app/main-page/_components/peek/segments"
 
-const TEXT = [{ text: "Fala koloru idzie słowo po słowie, gdy akapit przejeżdża przez okno." }]
+/** Spacje między frazą a tekstem stoją w segmentach tekstu — fraza to jeden element `--i`. */
+const TEXT = [
+  { text: "Kolor idzie słowo po słowie, gdy akapit przejeżdża przez okno, a " },
+  { text: "fraza z kartą", peek: "systems" },
+  { text: " razem z nim." },
+]
 
 export function ScrollFillExample() {
   return (

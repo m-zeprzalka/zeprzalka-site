@@ -76,7 +76,11 @@ export function HomeChapter(props: ChapterProps) {
         note={
           <>
             Ten sam wygląd w torze i w popoverze: pierwszy kadr w naturalnych proporcjach (gra tylko
-            on), miniatury, podpis, opis albo oś czasu i link (↗ zewnętrzny, → wewnętrzny).
+            on), miniatury, podpis, opis albo oś czasu i link z ↗ (<Code>LinkArrow</Code>). Z{" "}
+            <Code>onClose</Code> karta ma krzyżyk: na kadrze <Code>variant=&quot;media&quot;</Code>{" "}
+            12 px od rogu (jak odtwarzanie, tylko u góry), bez kadru <Code>ghost</Code> obok tytułu.
+            Nazwę daje <Code>PeekProvider</Code> (<Code>closeLabel</Code>). Tutaj krzyżyk nic nie
+            zamyka.
           </>
         }
       >

@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { ArrowRightIcon } from "lucide-react"
+import { LinkArrow } from "@/app/main-page/_components/page/link-arrow"
 import { PageHeader } from "@/app/main-page/_components/page/page-header"
 import { Button } from "@/app/main-page/_components/ui/button"
 import { breadcrumb } from "@/app/main-page/_lib/content/pages"
@@ -13,10 +13,10 @@ export function NotFoundPage({ locale }: { locale: Locale }) {
 
   return (
     <PageHeader breadcrumb={breadcrumb(locale, "404")} title={copy.title} lead={copy.description}>
-      <Button asChild size="lg">
+      <Button asChild size="lg" className="group/link">
         <Link href={pageHref("home", locale)}>
           {copy.cta}
-          <ArrowRightIcon />
+          <LinkArrow />
         </Link>
       </Button>
     </PageHeader>

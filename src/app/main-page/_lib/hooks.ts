@@ -113,3 +113,51 @@ export function useToggleTheme(): () => void {
     requestAnimationFrame(() => requestAnimationFrame(() => freeze.remove()))
   }
 }
+
+/** Tory siatki (menu, spis rozdziałów) — od 1280 px; to samo `xl:` w ich klasach. */
+export const TRACKS_QUERY = "(min-width: 80rem)"
+
+/**
+ * Krawędź strony minęła linię toru: `edge` elementu z `selector` stoi wyżej niż `line` —
+ * domyślnie dolna krawędź elementu toru z odstępem 32 px, z `line` — ten ułamek wysokości
+ * okna. Menu chowa się nad stopką (jej znak idzie przez całą szerokość okna), a spis
+ * rozdziałów — gdy koniec treści minie linię czytania. Na krótkiej stronie (404, kontakt na
+ * wysokim ekranie) krawędź stoi niżej i tor zostaje. Mierzy tylko tam, gdzie są tory: raz na
+ * klatkę przy przewijaniu, zmianie okna i wysokości strony (akordeony, „Pokaż wszystkie”).
+ */
+export function useEdgeAbove(
+  ref: RefObject<HTMLElement | null>,
+  selector: string,
+  edge: "top" | "bottom",
+  line?: number
+): boolean {
+  const tracks = useMediaQuery(TRACKS_QUERY)
+  const [above, setAbove] = useState(false)
+  useEffect(() => {
+    const target = document.querySelector(selector)
+    const element = ref.current
+    if (!tracks || !target || !element) return
+    let frame = 0
+    const measure = () => {
+      frame = 0
+      const limit =
+        line === undefined ? element.getBoundingClientRect().bottom + 32 : window.innerHeight * line
+      setAbove(target.getBoundingClientRect()[edge] < limit)
+    }
+    const schedule = () => {
+      if (!frame) frame = requestAnimationFrame(measure)
+    }
+    schedule()
+    const resize = new ResizeObserver(schedule)
+    resize.observe(document.body)
+    window.addEventListener("scroll", schedule, { passive: true })
+    window.addEventListener("resize", schedule)
+    return () => {
+      cancelAnimationFrame(frame)
+      resize.disconnect()
+      window.removeEventListener("scroll", schedule)
+      window.removeEventListener("resize", schedule)
+    }
+  }, [ref, selector, edge, line, tracks])
+  return tracks && above
+}

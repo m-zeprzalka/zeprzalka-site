@@ -51,7 +51,7 @@ export function CodeBlock({
         type="button"
         onClick={copy}
         aria-label={copyLabel}
-        className="absolute top-2.5 right-2.5 grid size-8 place-items-center rounded-lg border bg-background/80 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100 hover:text-foreground focus-visible:opacity-100 focus-visible:ring-[3px] focus-visible:ring-ring focus-visible:outline-none pointer-coarse:opacity-100 [&_svg]:size-4"
+        className="absolute top-2.5 right-2.5 grid size-8 place-items-center rounded-lg border bg-background/80 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100 hover:text-foreground focus-visible:opacity-100 focus-visible:ring-[3px] focus-visible:ring-ring focus-visible:outline-none pointer-coarse:opacity-100 pointer-coarse:after:absolute pointer-coarse:after:-inset-1.5 [&_svg]:size-4"
       >
         {copied ? <CheckIcon /> : <CopyIcon />}
       </button>

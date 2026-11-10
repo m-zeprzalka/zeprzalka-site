@@ -48,18 +48,21 @@ const CHAPTERS = [
  * startu i jeden `PeekStage`. Strona wewnętrzna (noindex), tylko po polsku — wyjątek z AGENTS.md.
  */
 export default function DesignSystemPage() {
-  const { peeks } = getHomeContent("pl")
+  const { peeks, ui } = getHomeContent("pl")
 
   return (
-    <PeekProvider peeks={peeks}>
+    <PeekProvider peeks={peeks} closeLabel={ui.closeCard}>
       <TableOfContents
         label="Rozdziały"
         sections={CHAPTERS.map(({ id, label }) => ({ id, label }))}
       />
       <PageHeaderExample />
-      {CHAPTERS.map(({ id, label, Chapter }) => (
-        <Chapter key={id} id={id} title={label} />
-      ))}
+      {/* Treść objęta spisem rozdziałów — za nią spis w torze się chowa. */}
+      <div data-toc-scope="">
+        {CHAPTERS.map(({ id, label, Chapter }) => (
+          <Chapter key={id} id={id} title={label} />
+        ))}
+      </div>
       <PeekStage />
     </PeekProvider>
   )

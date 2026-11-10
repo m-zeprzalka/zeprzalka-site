@@ -2,13 +2,8 @@
 
 import Link from "next/link"
 import { useState } from "react"
-import {
-  BrainCircuitIcon,
-  CodeXmlIcon,
-  GraduationCapIcon,
-  PenToolIcon,
-  ArrowUpRightIcon,
-} from "lucide-react"
+import { BrainCircuitIcon, CodeXmlIcon, GraduationCapIcon, PenToolIcon } from "lucide-react"
+import { LinkArrow } from "@/app/main-page/_components/page/link-arrow"
 import { usePeekHover } from "@/app/main-page/_components/peek/peek-context"
 import {
   Accordion,
@@ -98,10 +93,10 @@ function SkillItem({ skill }: { skill: Skill }) {
                   <li key={proof.href}>
                     <ProofLink
                       href={proof.href}
-                      className="group/proof flex min-h-12 items-center justify-between gap-3 rounded-xl bg-muted/60 px-4 py-2.5 text-sm transition-colors outline-none hover:bg-accent focus-visible:ring-[3px] focus-visible:ring-ring"
+                      className="group/link flex min-h-12 items-center justify-between gap-3 rounded-xl bg-muted/60 px-4 py-2.5 text-sm transition-colors outline-none hover:bg-accent focus-visible:ring-[3px] focus-visible:ring-ring"
                     >
                       <span className="line-clamp-2">{proof.label}</span>
-                      <ArrowUpRightIcon className="size-4 shrink-0 text-muted-foreground transition-[translate,color] duration-200 ease-out group-hover/proof:translate-x-0.5 group-hover/proof:-translate-y-0.5 group-hover/proof:text-foreground" />
+                      <LinkArrow className="text-muted-foreground group-hover/link:text-foreground" />
                     </ProofLink>
                   </li>
                 )

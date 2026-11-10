@@ -96,9 +96,9 @@ export function buildPeeks(source: Source): Record<string, Peek> {
     },
     award: {
       title: copy.about.facts.award.label,
-      body: sentences(`${about.bioSecondPrefix}${about.bioSecondStrong}${about.bioSecondSuffix}`).at(
-        -1
-      ),
+      body: sentences(
+        `${about.bioSecondPrefix}${about.bioSecondStrong}${about.bioSecondSuffix}`
+      ).at(-1),
       media: [],
     },
     web: workPeek(PEEK_WORKS.web, allWorks),
@@ -121,14 +121,8 @@ export function buildPeeks(source: Source): Record<string, Peek> {
       skills.development.title[source.locale],
       PEEK_WORKS.development.map((slug) => media(work(slug)))
     ),
-    "skill-ai": mosaic(
-      skills.ai.category,
-      covers("ai")
-    ),
-    "skill-teaching": mosaic(
-      source.teaching.role,
-      covers("teaching")
-    ),
+    "skill-ai": mosaic(skills.ai.category, covers("ai")),
+    "skill-teaching": mosaic(source.teaching.role, covers("teaching")),
     ...Object.fromEntries(
       groups.flatMap((group) =>
         group.works.map((entry) => [

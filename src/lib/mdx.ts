@@ -1,7 +1,7 @@
 import "server-only"
 import type { ReactElement } from "react"
 import { compileMDX, type MDXRemoteProps } from "next-mdx-remote/rsc"
-import rehypeHighlight from "rehype-highlight"
+import rehypeHighlight, { type Options as HighlightOptions } from "rehype-highlight"
 import rehypeSlug from "rehype-slug"
 import remarkEmoji from "remark-emoji"
 import remarkGfm from "remark-gfm"
@@ -47,10 +47,22 @@ function rehypeCollectHeadings({ into }: { into: Heading[] }) {
   return (tree: HastNode) => visit(tree)
 }
 
-/** Kompiluje treść wpisu i zwraca ją razem ze spisem nagłówków. */
+type RehypePlugins = NonNullable<
+  NonNullable<NonNullable<MDXRemoteProps["options"]>["mdxOptions"]>["rehypePlugins"]
+>
+
+/**
+ * Kompiluje treść wpisu i zwraca ją razem ze spisem nagłówków. `highlight` — opcje
+ * kolorowania składni (np. aliasy języków); bez nich domyślne rehype-highlight.
+ * `rehypePlugins` — dodatkowe kroki po wbudowanych (kotwice, spis, składnia).
+ */
 export async function renderMdx(
   source: string,
-  components: MDXRemoteProps["components"]
+  components: MDXRemoteProps["components"],
+  {
+    highlight,
+    rehypePlugins = [],
+  }: { highlight?: HighlightOptions; rehypePlugins?: RehypePlugins } = {}
 ): Promise<{ content: ReactElement; headings: Heading[] }> {
   const headings: Heading[] = []
   const { content } = await compileMDX({
@@ -59,7 +71,12 @@ export async function renderMdx(
     options: {
       mdxOptions: {
         remarkPlugins: [remarkGfm, remarkEmoji],
-        rehypePlugins: [rehypeSlug, [rehypeCollectHeadings, { into: headings }], rehypeHighlight],
+        rehypePlugins: [
+          rehypeSlug,
+          [rehypeCollectHeadings, { into: headings }],
+          [rehypeHighlight, highlight ?? {}],
+          ...rehypePlugins,
+        ],
       },
     },
   })

@@ -52,6 +52,7 @@ export function ContactPage({ locale }: { locale: Locale }) {
             locale={locale}
             copy={common.form}
             projectTypes={mainPage.contact.projectTypes}
+            projectTypeHint={mainPage.contact.projectTypeHint}
             privacyHref={pageHref("privacy", locale)}
           />
         </div>

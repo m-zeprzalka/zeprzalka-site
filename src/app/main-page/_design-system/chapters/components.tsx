@@ -42,9 +42,11 @@ export function ComponentsChapter(props: ChapterProps) {
         note={
           <>
             Pigułki. Na stronie: <Code>default</Code> (główne wezwanie), <Code>secondary</Code> (⌘K,
-            profile, „Odwiedź stronę”), <Code>outline</Code> (e-mail, CV, kolejne działania),{" "}
-            <Code>ghost</Code> (motyw, stopka, „wszystkie …”). <Code>link</Code> i{" "}
-            <Code>destructive</Code> są w systemie, ale strona ich nie używa.
+            profile, „Odwiedź stronę”), <Code>outline</Code> (e-mail, CV, drugie działanie panelu
+            CTA), <Code>ghost</Code> (motyw, stopka, „wszystkie …”). <Code>link</Code> i{" "}
+            <Code>destructive</Code> są w systemie, ale strona ich nie używa. Łapkę przyciskom,{" "}
+            <Code>[role=button]</Code> (poza wyłączonymi) i <Code>summary</Code> oddaje warstwa base
+            w <Code>globals.css</Code> — preflight Tailwinda 4 ją zdjął.
           </>
         }
       >
@@ -69,7 +71,10 @@ export function ComponentsChapter(props: ChapterProps) {
         note={
           <>
             Własny wariant (<Code>{"// zeprzalka:"}</Code>): ciemne szkło z rozmyciem, niezależne od
-            motywu. Wideo startu i kafle galerii.
+            motywu. Każda kontrolka na kadrze to <Code>variant=&quot;media&quot;</Code>{" "}
+            <Code>size=&quot;icon&quot;</Code> 12 px od jego krawędzi: odtwarzanie w prawym dolnym
+            rogu (<Code>right-3 bottom-3</Code> — wideo startu, kafle galerii), zamknięcie karty
+            podglądu w prawym górnym (<Code>top-3 right-3</Code>).
           </>
         }
       >
@@ -116,12 +121,13 @@ export function ComponentsChapter(props: ChapterProps) {
       </Example>
       <Example
         file="choice-group.tsx"
-        title="Wybór jednokrotny — ChoiceGroup"
+        title="Wybór z pigułek — ChoiceGroup"
         note={
           <>
-            Jedyny własny prymityw w <Code>ui/</Code>: <Code>RadioGroup</Code> i{" "}
-            <Code>ToggleGroup</Code> shadcn to Radix ze stanem, a tu wystarczy natywne radio z
-            wyglądem z <Code>buttonVariants</Code>.
+            Jedyny własny prymityw w <Code>ui/</Code>: <Code>RadioGroup</Code>,{" "}
+            <Code>Checkbox</Code> i <Code>ToggleGroup</Code> shadcn to Radix ze stanem, a tu
+            wystarczą natywne pola z wyglądem z <Code>buttonVariants</Code>. Z <Code>multiple</Code>{" "}
+            — pola wyboru (kilka naraz, formularz kontaktu), bez — radio.
           </>
         }
       >

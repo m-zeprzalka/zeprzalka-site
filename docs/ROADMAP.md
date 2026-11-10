@@ -1,6 +1,6 @@
 # Plan — jedyna lista otwartych zadań
 
-Stan na 9 listopada 2026. Tu są **tylko rzeczy do zrobienia**: zrobione punkty
+Stan na 10 listopada 2026. Tu są **tylko rzeczy do zrobienia**: zrobione punkty
 przenosimy do [DZIENNIK.md](DZIENNIK.md) i usuwamy stąd. Szczegóły, które nie mogą być
 publiczne (bezpieczeństwo, marketing), są w `docs/prywatne/` — tutaj tylko odnośnik.
 
@@ -28,11 +28,16 @@ Plan i budżet jakości: [KIERUNEK-WIZUALNY.md](KIERUNEK-WIZUALNY.md) §3.
       w formularzu (nowy napis, np. „(opcjonalnie)” przy rodzaju projektu); teksty alternatywne obrazów
       we wpisie „Claude Design” (dziś angielskie, ogólne) i literówka `**Pytania? **` na jego końcu;
       ujęcia ekipy w pętli wideo startu — sprawdzić, że to nie Ty.
-- [ ] **[Ty]** Decyzje z iteracji 12 (9.11): strzałki linków wewnętrznych — w karcie podglądu
-      „→”, w dowodach kompetencji, ⌘K i „W portfolio” „↗” (jedna zasada dla całej strony?);
-      sygnet bez końca to formalne odstępstwo od WCAG 2.2.2 (poziom A) — zostaje czy przycisk
-      pauzy / stop po kilku cyklach; spis rozdziałów wpisu na telefonie (nowe zwijane „Spis
-      treści” nad treścią) — zostaje?
+- [ ] **[Ty]** Decyzje z iteracji 12 (9.11): sygnet bez końca to formalne odstępstwo od WCAG
+      2.2.2 (poziom A) — zostaje czy przycisk pauzy / stop po kilku cyklach; spis rozdziałów wpisu
+      na telefonie (zwijane „Spis treści” nad treścią) — zostaje?
+- [ ] **[Ty]** Ręczny przegląd kodu `main-page` (10.11) — od czego zacząć: `src/app/main-page/README.md`,
+      „Przegląd kodu”; ocena gotowości i braki do 10/10 — tamże, „Gotowość do wdrożenia”.
+- [ ] **[Kod]** Do 10/10 przed przepięciem (z oceny 10.11): testy `main-page` — maszyna stanów
+      kart podglądu, spis rozdziałów i `useEdgeAbove`, akcja formularza (zgodność ze starym
+      formularzem) — oraz automatyczny przebieg axe, przepełnienia i LCP dla `/main-page`
+      w CI (dziś ręcznie; `check:build` nie obejmuje podglądu); strażnik sztuczki LCP wideo startu
+      (`scale-[1.002]` — heurystyka Chrome, nie specyfikacja).
 - [ ] **[Kod]** Design system `/main-page/design-system`: HTML ok. 1,26 MB (kod ~40 przykładów
       kolorowany na serwerze) — zwijać kod przykładów albo dzielić katalog na podstrony.
 - [ ] **[Kod]** `main-page`, wydajność: dane ⌘K jako statyczny plik pobierany z oknem (dziś

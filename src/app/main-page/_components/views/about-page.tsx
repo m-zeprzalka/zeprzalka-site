@@ -1,5 +1,6 @@
 import Link from "next/link"
-import { ArrowRightIcon, DownloadIcon } from "lucide-react"
+import { DownloadIcon } from "lucide-react"
+import { LinkArrow } from "@/app/main-page/_components/page/link-arrow"
 import { LabelRow } from "@/app/main-page/_components/page/label-row"
 import { PageHeader } from "@/app/main-page/_components/page/page-header"
 import { Section } from "@/app/main-page/_components/page/section"
@@ -21,8 +22,8 @@ const ID = PAGE_SECTION
 
 /**
  * O mnie — biogram i CV na jednej stronie: doświadczenie, umiejętności
- * i edukacja w rytmie kolumny etykiet (okres, kategoria), na końcu kontakt,
- * PDF z CV i portfolio. Wykłady trwają: okres „2016–obecnie” i opis bez nazw
+ * i edukacja w rytmie kolumny etykiet (okres, kategoria), na końcu dwa działania:
+ * rozmowa i PDF z CV. Wykłady trwają: okres „2016–obecnie” i opis bez nazw
  * uczelni — tak samo jak na starcie (`lecturesOf`).
  */
 export function AboutPage({ locale }: { locale: Locale }) {
@@ -152,10 +153,10 @@ export function AboutPage({ locale }: { locale: Locale }) {
       </Section>
 
       <div className="column mt-20 flex flex-wrap gap-3">
-        <Button asChild size="lg">
+        <Button asChild size="lg" className="group/link">
           <Link href={pageHref("contact", locale)}>
             {about.ctaContact}
-            <ArrowRightIcon />
+            <LinkArrow />
           </Link>
         </Button>
         <Button asChild size="lg" variant="outline">
@@ -163,9 +164,6 @@ export function AboutPage({ locale }: { locale: Locale }) {
             <DownloadIcon />
             {about.ctaCv}
           </a>
-        </Button>
-        <Button asChild size="lg" variant="ghost">
-          <Link href={pageHref("portfolio", locale)}>{about.ctaPortfolio}</Link>
         </Button>
       </div>
     </>

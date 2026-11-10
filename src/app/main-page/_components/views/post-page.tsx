@@ -1,7 +1,7 @@
 import Image from "next/image"
 import { ChevronDownIcon } from "lucide-react"
-import { mdxComponents } from "@/app/main-page/_components/blog/mdx-components"
 import "@/app/main-page/_components/blog/article.css"
+import { renderArticle } from "@/app/main-page/_components/blog/render-article"
 import { TableOfContents } from "@/app/main-page/_components/layout/table-of-contents"
 import { CtaPanel } from "@/app/main-page/_components/page/cta-panel"
 import { PageHeader } from "@/app/main-page/_components/page/page-header"
@@ -18,7 +18,6 @@ import { getSource } from "@/app/main-page/_lib/content/source"
 import { COLUMN_SIZES, COVER } from "@/app/main-page/_lib/media"
 import { pageHref } from "@/app/main-page/_lib/routes"
 import type { Locale } from "@/i18n/config"
-import { renderMdx } from "@/lib/mdx"
 import { postPageSchema } from "@/lib/page-schema"
 import { formatReadingTime, getRelatedPosts, type Post } from "@/lib/posts"
 import { AUTHOR } from "@/lib/site"
@@ -26,14 +25,14 @@ import { AUTHOR } from "@/lib/site"
 /**
  * Wpis: okruszki, tytuł z opisem (jak każda podstrona), data, czas lektury
  * i kategorie, okładka, treść w kolumnie (`article.css`), spis rozdziałów
- * w lewym torze pod menu głównym, tagi i autor, wezwanie do
+ * w prawym torze (po lewej zostaje menu główne), tagi i autor, wezwanie do
  * rozmowy i „Czytaj dalej”. Zdjęcia autora świadomie nie ma.
  */
 export async function PostPage({ post, locale }: { post: Post; locale: Locale }) {
   const { common, copy: mainPage, pages } = getSource(locale)
   const copy = pages.blog
   const { frontmatter } = post
-  const { content, headings } = await renderMdx(post.content, mdxComponents(locale))
+  const { content, headings } = await renderArticle(post.content, locale)
   const related = cardsOf(locale, getRelatedPosts(post))
   const chapters = headings
     .filter((heading) => heading.level === 2)
@@ -45,11 +44,8 @@ export async function PostPage({ post, locale }: { post: Post; locale: Locale })
   const Cover = frontmatter.imageCaption ? "figure" : "div"
 
   return (
-    <PeekProvider peeks={postPeeks(related)}>
+    <PeekProvider peeks={postPeeks(related)} closeLabel={mainPage.ui.closeCard}>
       <JsonLd data={postPageSchema(locale, post)} />
-      {chapters.length > 0 && (
-        <TableOfContents label={common.ui.tableOfContents} sections={chapters} />
-      )}
       <article>
         <PageHeader
           breadcrumb={breadcrumb(locale, frontmatter.title, [
@@ -57,7 +53,7 @@ export async function PostPage({ post, locale }: { post: Post; locale: Locale })
           ])}
           title={frontmatter.title}
           lead={frontmatter.description}
-          compactLead
+          variant="article"
         >
           <div className="flex flex-wrap items-center gap-x-3 gap-y-3 text-sm text-muted-foreground">
             <time dateTime={frontmatter.date} className="tabular-nums">
@@ -96,15 +92,12 @@ export async function PostPage({ post, locale }: { post: Post; locale: Locale })
         </Cover>
 
         {/* Spis rozdziałów poniżej 1280 px (w torze go nie ma): natywne `details` — działa bez JS,
-            zwinięty nie zabiera miejsca nad treścią. Od 1280 px ten sam spis stoi w lewym torze. */}
+            zwinięty nie zabiera miejsca nad treścią. Od 1280 px ten sam spis stoi w prawym torze. */}
         {chapters.length > 2 && (
           <details className="group/toc column mt-10 xl:hidden">
             <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between gap-3 rounded-2xl border px-4 text-sm font-medium outline-none hover:bg-accent/50 focus-visible:ring-[3px] focus-visible:ring-ring [&::-webkit-details-marker]:hidden">
               {common.ui.tableOfContents}
-              <ChevronDownIcon
-                aria-hidden="true"
-                className="size-4 text-muted-foreground transition-transform group-open/toc:rotate-180"
-              />
+              <ChevronDownIcon className="size-4 text-muted-foreground transition-transform group-open/toc:rotate-180" />
             </summary>
             <ol className="mt-2 grid gap-0.5 px-1">
               {chapters.map((chapter) => (
@@ -121,7 +114,14 @@ export async function PostPage({ post, locale }: { post: Post; locale: Locale })
           </details>
         )}
 
-        <div className="column mt-12">
+        {/* Spis w prawym torze: w DOM po nagłówku i okładce — Tab idzie od tytułu, nie przez
+            cały spis. W torze nic nie zabiera, więc stoi od pierwszego rozdziału; nad treścią
+            (telefon, `details` wyżej) — od trzech, krótszy nie jest wart rozwijania. */}
+        {chapters.length > 0 && (
+          <TableOfContents label={common.ui.tableOfContents} sections={chapters} />
+        )}
+        {/* Treść objęta spisem (`data-toc-scope`) — za jej końcem spis w torze się chowa. */}
+        <div data-toc-scope="" className="column mt-12">
           <div className="article">{content}</div>
         </div>
 

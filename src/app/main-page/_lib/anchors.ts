@@ -33,6 +33,20 @@ export const workAnchor = (slug: string) => `${WORK_PREFIX}${slug}`
  */
 export const HEADER_OFFSET = 80
 
+/**
+ * Kotwica z adresu (`#…`) jako id elementu. Hash bywa zakodowany (`%C5%BC`), a bywa po prostu
+ * zepsuty (`#50%`) — wtedy `decodeURIComponent` rzuca wyjątek, który w powłoce wywracał całą
+ * stronę na ekran błędu. Zepsuty zostaje taki, jaki jest: żadnego elementu nie wskaże.
+ */
+export function hashId(hash: string): string {
+  const raw = hash.startsWith("#") ? hash.slice(1) : hash
+  try {
+    return decodeURIComponent(raw)
+  } catch {
+    return raw
+  }
+}
+
 /** Zdarzenie skoku do kotwicy na tej stronie (`goToAnchor`); `detail` — id elementu. */
 export const ANCHOR_EVENT = "main-page:anchor"
 

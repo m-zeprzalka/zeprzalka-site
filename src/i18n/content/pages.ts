@@ -56,8 +56,7 @@ const pl = {
     bioSecondPrefix:
       "Specjalizuję się w projektowaniu design systemów i stron internetowych, integracjach AI oraz budowie skalowalnych aplikacji. Mam duże doświadczenie w projektowaniu graficznym, animacji i tworzeniu materiałów wideo. Przez wiele lat byłem wykładowcą akademickim, ",
     bioSecondStrong: "zdobywając Nagrodę Rektora",
-    bioSecondSuffix:
-      " za najwyższą średnią ocen w ankietach studenckich: 99,28%.",
+    bioSecondSuffix: " za najwyższą średnią ocen w ankietach studenckich: 99,28%.",
     experience: [
       {
         role: "Projektant i programista produktów cyfrowych",
@@ -108,25 +107,11 @@ const pl = {
       },
       {
         category: "Design",
-        items: [
-          "Figma",
-          "Design systems",
-          "UI/UX",
-          "Typografia",
-          "Adobe CC",
-          "Branding",
-        ],
+        items: ["Figma", "Design systems", "UI/UX", "Typografia", "Adobe CC", "Branding"],
       },
       {
         category: "Backend & Infrastruktura",
-        items: [
-          "WordPress",
-          "Node.js",
-          "PostgreSQL",
-          "Vercel",
-          "Docker",
-          "REST API",
-        ],
+        items: ["WordPress", "Node.js", "PostgreSQL", "Vercel", "Docker", "REST API"],
       },
       {
         category: "AI & Automatyzacja",
@@ -143,8 +128,7 @@ const pl = {
       {
         school: "Szkoła Główna Gospodarstwa Wiejskiego",
         degree: "Studia licencjackie",
-        field:
-          "Socjologia i pedagogika, specjalizacja: animacja społeczna z edukacją kulturalną",
+        field: "Socjologia i pedagogika, specjalizacja: animacja społeczna z edukacją kulturalną",
         period: "2011–2014",
       },
       {
@@ -201,8 +185,7 @@ const pl = {
   blog: {
     badge: "Blog",
     title: "Blog technologiczny",
-    description:
-      "Odkryj najnowsze trendy w AI, web developmencie, designie i technologii.",
+    description: "Odkryj najnowsze trendy w AI, web developmencie, designie i technologii.",
     featuredHeading: "Wyróżnione artykuły",
     allHeading: "Wszystkie artykuły",
     /** {current} i {total} podstawia komponent paginacji. */
@@ -273,8 +256,7 @@ const en: typeof pl = {
     bioSecondPrefix:
       "I specialise in design systems, websites, AI integrations and scalable applications. I have long-standing experience in graphic design, animation and video production. For many years I taught at universities, ",
     bioSecondStrong: "earning the Rector's Award",
-    bioSecondSuffix:
-      " for the highest average score in student surveys: 99.28%.",
+    bioSecondSuffix: " for the highest average score in student surveys: 99.28%.",
     experience: [
       {
         role: "Digital Product Designer & Developer",
@@ -325,25 +307,11 @@ const en: typeof pl = {
       },
       {
         category: "Design",
-        items: [
-          "Figma",
-          "Design systems",
-          "UI/UX",
-          "Typography",
-          "Adobe CC",
-          "Branding",
-        ],
+        items: ["Figma", "Design systems", "UI/UX", "Typography", "Adobe CC", "Branding"],
       },
       {
         category: "Backend & Infrastructure",
-        items: [
-          "WordPress",
-          "Node.js",
-          "PostgreSQL",
-          "Vercel",
-          "Docker",
-          "REST API",
-        ],
+        items: ["WordPress", "Node.js", "PostgreSQL", "Vercel", "Docker", "REST API"],
       },
       {
         category: "AI & Automation",
@@ -360,8 +328,7 @@ const en: typeof pl = {
       {
         school: "Warsaw University of Life Sciences (SGGW)",
         degree: "Bachelor's degree",
-        field:
-          "Sociology and Pedagogy, specialising in community work with cultural education",
+        field: "Sociology and Pedagogy, specialising in community work with cultural education",
         period: "2011–2014",
       },
       {
@@ -416,8 +383,7 @@ const en: typeof pl = {
   blog: {
     badge: "Blog",
     title: "Technology blog",
-    description:
-      "The latest in AI, web development, design and technology.",
+    description: "The latest in AI, web development, design and technology.",
     featuredHeading: "Featured articles",
     allHeading: "All articles",
     pageOf: "page {current} of {total}",

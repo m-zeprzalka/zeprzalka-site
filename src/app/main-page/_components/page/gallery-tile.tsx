@@ -1,9 +1,10 @@
 "use client"
 
 import { useState } from "react"
-import { ArrowUpRightIcon, PauseIcon, PlayIcon } from "lucide-react"
+import { PauseIcon, PlayIcon } from "lucide-react"
 import { PeekMedia } from "@/app/main-page/_components/peek/peek-media"
 import { Button } from "@/app/main-page/_components/ui/button"
+import { LinkArrow } from "./link-arrow"
 import { workAnchor } from "@/app/main-page/_lib/anchors"
 import { useReducedMotion } from "@/app/main-page/_lib/hooks"
 import { HALF_COLUMN_SIZES } from "@/app/main-page/_lib/media"
@@ -64,7 +65,7 @@ export function GalleryTile({
             }}
             // Nazwa z tytułem — piętnaście przycisków nie brzmi jednakowo.
             aria-label={`${live ? labels.pause : labels.play}: ${work.title}`}
-            className="absolute right-2.5 bottom-2.5"
+            className="absolute right-3 bottom-3"
           >
             {live ? <PauseIcon /> : <PlayIcon />}
           </Button>
@@ -76,10 +77,10 @@ export function GalleryTile({
             href={work.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex w-fit items-center gap-1 font-medium underline-offset-4 hover:underline"
+            className="group/link flex w-fit items-center gap-1 font-medium underline-offset-4 hover:underline"
           >
             {work.title}
-            <ArrowUpRightIcon className="size-3.5 text-muted-foreground" />
+            <LinkArrow className="size-3.5 text-muted-foreground" />
             <span className="sr-only">({labels.newTab})</span>
           </a>
         ) : (

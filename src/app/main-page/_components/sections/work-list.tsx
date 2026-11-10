@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState } from "react"
 import { flushSync } from "react-dom"
 import Link from "next/link"
-import { ArrowUpRightIcon, ArrowRightIcon } from "lucide-react"
 import { usePeekActions, usePeekHover } from "@/app/main-page/_components/peek/peek-context"
 import { LabelRow } from "@/app/main-page/_components/page/label-row"
 import { PeekMedia } from "@/app/main-page/_components/peek/peek-media"
@@ -15,7 +14,14 @@ import {
   AccordionTrigger,
 } from "@/app/main-page/_components/ui/accordion"
 import { Button } from "@/app/main-page/_components/ui/button"
-import { ANCHOR_EVENT, WORK_PREFIX, goToAnchor, workAnchor } from "@/app/main-page/_lib/anchors"
+import { LinkArrow } from "@/app/main-page/_components/page/link-arrow"
+import {
+  ANCHOR_EVENT,
+  goToAnchor,
+  hashId,
+  WORK_PREFIX,
+  workAnchor,
+} from "@/app/main-page/_lib/anchors"
 import { keepInView } from "@/app/main-page/_lib/keep-in-view"
 import { morph } from "@/app/main-page/_lib/morph"
 import type { LinkData, Work, WorkGroup } from "@/app/main-page/_lib/types"
@@ -74,7 +80,7 @@ export function WorkList({
     const onAnchor = (event: Event) => {
       if (reveal((event as CustomEvent<string>).detail)) event.preventDefault()
     }
-    const onHashChange = () => reveal(window.location.hash.slice(1))
+    const onHashChange = () => reveal(hashId(window.location.hash))
     // Linki do realizacji w treści strony (dowody kompetencji) — także ponowny klik w ten sam.
     const onClick = (event: MouseEvent) => {
       if (event.defaultPrevented || event.button !== 0) return
@@ -97,7 +103,7 @@ export function WorkList({
   // Wejście z adresem `#realizacja-…`: przeglądarka już przewinęła do wiersza — wystarczy go
   // otworzyć, raz. (Bez `flushSync`: w efekcie i tak nie opróżnia kolejki.)
   useEffect(() => {
-    const id = window.location.hash.slice(1)
+    const id = hashId(window.location.hash)
     if (!id.startsWith(WORK_PREFIX) || !document.getElementById(id)) return
     // eslint-disable-next-line react-hooks/set-state-in-effect -- stan z adresu, raz po hydratacji
     setOpen(id.slice(WORK_PREFIX.length))
@@ -142,10 +148,10 @@ export function WorkList({
           </LabelRow>
         ))}
       </Accordion>
-      <Button asChild variant="ghost" size="sm" className="-ms-2.5 mt-6">
+      <Button asChild variant="ghost" size="sm" className="group/link -ms-2.5 mt-6">
         <Link href={all.href}>
           {all.label}
-          <ArrowRightIcon />
+          <LinkArrow />
         </Link>
       </Button>
     </>
@@ -185,17 +191,17 @@ function WorkItem({ work, open, labels }: { work: Work; open: boolean; labels: L
           {work.description && (
             <p className="text-base text-pretty text-muted-foreground">{work.description}</p>
           )}
-          <Button asChild variant="secondary" className="w-fit">
+          <Button asChild variant="secondary" className="group/link w-fit">
             {work.url ? (
               <a href={work.url} target="_blank" rel="noopener noreferrer">
                 {labels.visitSite}
-                <ArrowUpRightIcon />
+                <LinkArrow />
                 <span className="sr-only">({labels.newTab})</span>
               </a>
             ) : (
               <Link href={`${labels.portfolioHref}#${workAnchor(work.slug)}`}>
                 {labels.inPortfolio}
-                <ArrowUpRightIcon />
+                <LinkArrow />
               </Link>
             )}
           </Button>
